@@ -1,0 +1,143 @@
+{
+  "id": "engineering-loop",
+  "name": "Engineering Loop",
+  "version": "2.0.0",
+  "description": "Complete engineering loop for building production-quality software. Takes requirements through specification, architecture, implementation, testing, validation, documentation, review, and deployment.",
+
+  "phases": [
+    {
+      "name": "INIT",
+      "skills": ["spec"],
+      "required": true
+    },
+    {
+      "name": "SCAFFOLD",
+      "skills": ["architect", "scaffold"],
+      "required": true
+    },
+    {
+      "name": "IMPLEMENT",
+      "skills": ["implement"],
+      "required": true
+    },
+    {
+      "name": "TEST",
+      "skills": ["test-generation"],
+      "required": true
+    },
+    {
+      "name": "VERIFY",
+      "skills": ["code-verification"],
+      "required": true
+    },
+    {
+      "name": "DOCUMENT",
+      "skills": ["document"],
+      "required": false
+    },
+    {
+      "name": "REVIEW",
+      "skills": ["code-review"],
+      "required": true
+    },
+    {
+      "name": "SHIP",
+      "skills": ["deploy"],
+      "required": false
+    },
+    {
+      "name": "COMPLETE",
+      "skills": ["loop-controller"],
+      "required": true
+    }
+  ],
+
+  "gates": [
+    {
+      "id": "spec-gate",
+      "name": "Specification Approval",
+      "afterPhase": "INIT",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": ["FEATURESPEC.md"]
+    },
+    {
+      "id": "architecture-gate",
+      "name": "Architecture Approval",
+      "afterPhase": "SCAFFOLD",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": ["ARCHITECTURE.md"]
+    },
+    {
+      "id": "review-gate",
+      "name": "Code Review Approval",
+      "afterPhase": "REVIEW",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": ["CODE-REVIEW.md"]
+    },
+    {
+      "id": "deploy-gate",
+      "name": "Deployment Approval",
+      "afterPhase": "SHIP",
+      "required": false,
+      "approvalType": "conditional",
+      "deliverables": []
+    }
+  ],
+
+  "defaults": {
+    "mode": "greenfield",
+    "autonomy": "supervised"
+  },
+
+  "ui": {
+    "theme": "engineering",
+    "layout": "chat-focused",
+    "features": {
+      "skillBrowser": true,
+      "deliverableViewer": true,
+      "gateApprovalUI": true,
+      "progressTimeline": true,
+      "metricsPanel": true
+    },
+    "branding": {
+      "title": "Engineering Harness",
+      "subtitle": "Build production-quality software"
+    }
+  },
+
+  "skillUI": {
+    "spec": {
+      "displayName": "Feature Specification",
+      "icon": "document-text",
+      "outputDisplay": "markdown"
+    },
+    "architect": {
+      "displayName": "Architecture Design",
+      "icon": "sitemap",
+      "outputDisplay": "markdown"
+    },
+    "implement": {
+      "displayName": "Implementation",
+      "icon": "code",
+      "outputDisplay": "diff"
+    },
+    "test-generation": {
+      "displayName": "Test Generation",
+      "icon": "beaker",
+      "outputDisplay": "code"
+    },
+    "code-review": {
+      "displayName": "Code Review",
+      "icon": "eye",
+      "outputDisplay": "markdown"
+    }
+  },
+
+  "metadata": {
+    "author": "Orchestrator",
+    "tags": ["engineering", "full-loop", "production"]
+  }
+}

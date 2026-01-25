@@ -10,9 +10,14 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
+import { join } from 'path';
 import { loadConfig, validateConfig } from './config.js';
 import { SkillRegistry } from './services/SkillRegistry.js';
+import { LoopComposer } from './services/LoopComposer.js';
+import { ExecutionEngine } from './services/ExecutionEngine.js';
 import { skillToolDefinitions, createSkillToolHandlers } from './tools/skillTools.js';
+import { loopToolDefinitions, createLoopToolHandlers } from './tools/loopTools.js';
+import { executionToolDefinitions, createExecutionToolHandlers } from './tools/executionTools.js';
 import { createHttpServer, startHttpServer } from './server/httpServer.js';
 
 async function main() {
@@ -32,22 +37,69 @@ async function main() {
   }));
 
   // Initialize skill registry
-  const registry = new SkillRegistry({
+  const skillRegistry = new SkillRegistry({
     skillsPath: config.skillsPath,
     repoPath: config.repoPath,
     watchEnabled: config.watchEnabled,
   });
 
-  await registry.initialize();
+  await skillRegistry.initialize();
 
   console.error(JSON.stringify({
     timestamp: new Date().toISOString(),
     level: 'info',
-    message: `Skill registry initialized with ${registry.skillCount} skills`,
+    message: `Skill registry initialized with ${skillRegistry.skillCount} skills`,
+  }));
+
+  // Initialize loop composer
+  const loopsPath = join(config.repoPath, 'loops');
+  const loopComposer = new LoopComposer(
+    { loopsPath, watchEnabled: config.watchEnabled },
+    skillRegistry
+  );
+
+  await loopComposer.initialize();
+
+  console.error(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    level: 'info',
+    message: `Loop composer initialized with ${loopComposer.loopCount} loops`,
+  }));
+
+  // Initialize execution engine
+  const dataPath = join(config.repoPath, 'data', 'executions');
+  const executionEngine = new ExecutionEngine(
+    { dataPath },
+    loopComposer,
+    skillRegistry
+  );
+
+  await executionEngine.initialize();
+
+  console.error(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    level: 'info',
+    message: 'Execution engine initialized',
   }));
 
   // Create tool handlers
-  const skillHandlers = createSkillToolHandlers(registry);
+  const skillHandlers = createSkillToolHandlers(skillRegistry);
+  const loopHandlers = createLoopToolHandlers(loopComposer);
+  const executionHandlers = createExecutionToolHandlers(executionEngine);
+
+  // Combine all handlers
+  const allHandlers = {
+    ...skillHandlers,
+    ...loopHandlers,
+    ...executionHandlers,
+  };
+
+  // Combine all tool definitions
+  const allToolDefinitions = [
+    ...skillToolDefinitions,
+    ...loopToolDefinitions,
+    ...executionToolDefinitions,
+  ];
 
   // Create MCP server factory
   const createServer = () => {
@@ -65,7 +117,7 @@ async function main() {
 
     // Register tool list handler
     server.setRequestHandler(ListToolsRequestSchema, async () => {
-      return { tools: skillToolDefinitions };
+      return { tools: allToolDefinitions };
     });
 
     // Register tool call handler
@@ -73,7 +125,7 @@ async function main() {
       const { name, arguments: args } = request.params;
 
       try {
-        const handler = skillHandlers[name as keyof typeof skillHandlers];
+        const handler = allHandlers[name as keyof typeof allHandlers];
         if (!handler) {
           throw new Error(`Unknown tool: ${name}`);
         }
@@ -109,13 +161,13 @@ async function main() {
   await startHttpServer(app, config);
 
   // Handle graceful shutdown
-  process.on('SIGTERM', () => {
-    registry.destroy();
-  });
+  const shutdown = () => {
+    skillRegistry.destroy();
+    loopComposer.destroy();
+  };
 
-  process.on('SIGINT', () => {
-    registry.destroy();
-  });
+  process.on('SIGTERM', shutdown);
+  process.on('SIGINT', shutdown);
 }
 
 main().catch((error) => {

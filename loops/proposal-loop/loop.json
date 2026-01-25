@@ -1,0 +1,113 @@
+{
+  "id": "proposal-loop",
+  "name": "Proposal Loop",
+  "version": "1.0.0",
+  "description": "Create compelling proposals by ingesting context, cultivating insights, prioritizing opportunities, and generating polished proposal documents.",
+
+  "phases": [
+    {
+      "name": "INIT",
+      "skills": ["context-ingestion"],
+      "required": true
+    },
+    {
+      "name": "SCAFFOLD",
+      "skills": ["context-cultivation"],
+      "required": true
+    },
+    {
+      "name": "IMPLEMENT",
+      "skills": ["priority-matrix"],
+      "required": true
+    },
+    {
+      "name": "COMPLETE",
+      "skills": ["proposal-builder"],
+      "required": true
+    }
+  ],
+
+  "gates": [
+    {
+      "id": "context-gate",
+      "name": "Context Review",
+      "afterPhase": "INIT",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": ["CONTEXT-SOURCES.md", "RAW-CONTEXT.md"]
+    },
+    {
+      "id": "cultivation-gate",
+      "name": "Insights Review",
+      "afterPhase": "SCAFFOLD",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": ["CULTIVATED-CONTEXT.md", "PATTERNS.md"]
+    },
+    {
+      "id": "priorities-gate",
+      "name": "Priorities Review",
+      "afterPhase": "IMPLEMENT",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": ["PRIORITIES.md", "MATRIX.md"]
+    },
+    {
+      "id": "final-gate",
+      "name": "Final Proposal Review",
+      "afterPhase": "COMPLETE",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": ["PROPOSAL.md"]
+    }
+  ],
+
+  "defaults": {
+    "mode": "greenfield",
+    "autonomy": "supervised"
+  },
+
+  "ui": {
+    "theme": "proposal",
+    "layout": "dashboard",
+    "features": {
+      "skillBrowser": false,
+      "deliverableViewer": true,
+      "gateApprovalUI": true,
+      "progressTimeline": true,
+      "metricsPanel": false
+    },
+    "branding": {
+      "title": "Proposal Builder",
+      "subtitle": "Create compelling proposals"
+    }
+  },
+
+  "skillUI": {
+    "context-ingestion": {
+      "displayName": "Context Ingestion",
+      "icon": "inbox",
+      "outputDisplay": "markdown"
+    },
+    "context-cultivation": {
+      "displayName": "Context Cultivation",
+      "icon": "sparkles",
+      "outputDisplay": "markdown"
+    },
+    "priority-matrix": {
+      "displayName": "Priority Matrix",
+      "icon": "table",
+      "outputDisplay": "markdown"
+    },
+    "proposal-builder": {
+      "displayName": "Proposal Builder",
+      "icon": "document",
+      "outputDisplay": "markdown"
+    }
+  },
+
+  "metadata": {
+    "author": "Orchestrator",
+    "tags": ["proposal", "sales", "consulting"]
+  }
+}

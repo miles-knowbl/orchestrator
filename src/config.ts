@@ -32,7 +32,7 @@ export function loadConfig(args: string[] = process.argv.slice(2)): Orchestrator
   const repoPath = process.env.REPO_PATH || cwd;
 
   return {
-    port: parseInt(process.env.PORT || '3000', 10),
+    port: parseInt(process.env.PORT || '3002', 10),
     host: process.env.HOST || '0.0.0.0',
     skillsPath,
     repoPath,
