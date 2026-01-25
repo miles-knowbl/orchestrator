@@ -1,0 +1,137 @@
+/**
+ * HTTP Server for MCP transport
+ */
+
+import express, { Express, Request, Response, NextFunction } from 'express';
+import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
+import type { OrchestratorConfig } from '../config.js';
+
+export interface HttpServerOptions {
+  config: OrchestratorConfig;
+  createServer: () => Server;
+}
+
+export function createHttpServer(options: HttpServerOptions): Express {
+  const { config, createServer } = options;
+  const app = express();
+
+  app.use(express.json());
+
+  // API Key authentication middleware
+  if (config.apiKey) {
+    app.use('/mcp', (req: Request, res: Response, next: NextFunction) => {
+      const authHeader = req.headers['x-api-key'] || req.headers['authorization'];
+      const providedKey = typeof authHeader === 'string'
+        ? authHeader.replace('Bearer ', '')
+        : undefined;
+
+      if (providedKey !== config.apiKey) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
+      next();
+    });
+  }
+
+  // Health check
+  app.get('/health', (_req: Request, res: Response) => {
+    res.json({
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      version: process.env.npm_package_version || '0.1.0',
+    });
+  });
+
+  // MCP endpoint using Streamable HTTP transport
+  const mcpTransport = new StreamableHTTPServerTransport({
+    sessionIdGenerator: undefined, // Stateless mode
+  });
+
+  // Create and connect MCP server
+  const mcpServer = createServer();
+  mcpServer.connect(mcpTransport).catch(err => {
+    console.error('Failed to connect MCP server:', err);
+  });
+
+  // Handle MCP requests
+  app.post('/mcp', async (req: Request, res: Response) => {
+    try {
+      await mcpTransport.handleRequest(req, res, req.body);
+    } catch (error) {
+      console.error('MCP request error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+  // Handle SSE for notifications (GET /mcp)
+  app.get('/mcp', async (req: Request, res: Response) => {
+    try {
+      await mcpTransport.handleRequest(req, res);
+    } catch (error) {
+      console.error('MCP SSE error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+  // Handle session termination (DELETE /mcp)
+  app.delete('/mcp', async (req: Request, res: Response) => {
+    try {
+      await mcpTransport.handleRequest(req, res);
+    } catch (error) {
+      console.error('MCP delete error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+  return app;
+}
+
+export function startHttpServer(
+  app: Express,
+  config: OrchestratorConfig
+): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const server = app.listen(config.port, config.host, () => {
+      console.error(JSON.stringify({
+        timestamp: new Date().toISOString(),
+        level: 'info',
+        message: `Orchestrator MCP server listening on http://${config.host}:${config.port}`,
+        endpoints: {
+          mcp: `http://${config.host}:${config.port}/mcp`,
+          health: `http://${config.host}:${config.port}/health`,
+        },
+      }));
+      resolve();
+    });
+
+    server.on('error', reject);
+
+    // Graceful shutdown
+    const shutdown = () => {
+      console.error(JSON.stringify({
+        timestamp: new Date().toISOString(),
+        level: 'info',
+        message: 'Shutting down server...',
+      }));
+
+      server.close(() => {
+        console.error(JSON.stringify({
+          timestamp: new Date().toISOString(),
+          level: 'info',
+          message: 'Server closed',
+        }));
+        process.exit(0);
+      });
+
+      // Force exit after 10 seconds
+      setTimeout(() => {
+        console.error('Forced shutdown');
+        process.exit(1);
+      }, 10000);
+    };
+
+    process.on('SIGTERM', shutdown);
+    process.on('SIGINT', shutdown);
+  });
+}

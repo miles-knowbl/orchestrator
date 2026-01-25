@@ -1,0 +1,23 @@
+{
+  "display": {
+    "name": "Architecture",
+    "icon": "sitemap",
+    "description": "Design system architecture with ADRs and component diagrams",
+    "category": "output"
+  },
+  "inputs": {
+    "context": [
+      { "type": "featureSpec", "required": true },
+      { "type": "constraints", "required": false }
+    ]
+  },
+  "output": {
+    "type": "markdown",
+    "deliverables": ["ARCHITECTURE.md", "docs/adr/*.md"]
+  },
+  "execution": {
+    "autoExecute": false,
+    "confirmationRequired": true,
+    "progressIndicator": "steps"
+  }
+}

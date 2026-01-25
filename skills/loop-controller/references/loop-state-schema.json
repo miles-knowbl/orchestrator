@@ -1,0 +1,365 @@
+# Loop State Schema
+
+JSON Schema for loop-state.json validation.
+
+## Schema
+
+```json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "loop-state.schema.json",
+  "title": "Loop State",
+  "description": "Execution state for the engineering loop",
+  "type": "object",
+  "required": [
+    "systemId",
+    "systemName",
+    "branch",
+    "worktree",
+    "state",
+    "stateEnteredAt",
+    "stages",
+    "failures",
+    "gates",
+    "updatedAt"
+  ],
+  "properties": {
+    "systemId": {
+      "type": "string",
+      "pattern": "^sys-[0-9]{3,}$",
+      "description": "System identifier from queue"
+    },
+    "systemName": {
+      "type": "string",
+      "description": "Human-readable system name"
+    },
+    "githubIssue": {
+      "type": ["integer", "null"],
+      "description": "GitHub issue number"
+    },
+    "branch": {
+      "type": "string",
+      "pattern": "^feature/",
+      "description": "Git branch name"
+    },
+    "worktree": {
+      "type": "string",
+      "pattern": "^\\.worktrees/",
+      "description": "Worktree path"
+    },
+    "state": {
+      "type": "string",
+      "enum": [
+        "INIT",
+        "SCAFFOLD",
+        "IMPLEMENT",
+        "TEST",
+        "VERIFY",
+        "VALIDATE",
+        "DOCUMENT",
+        "REVIEW",
+        "SHIP",
+        "COMPLETE",
+        "FAILED",
+        "RETRY",
+        "BLOCKED"
+      ],
+      "description": "Current loop state"
+    },
+    "stateEnteredAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When current state was entered"
+    },
+    "capabilities": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "completed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "current": {
+          "type": ["string", "null"]
+        },
+        "remaining": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["total", "completed", "remaining"]
+    },
+    "stages": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["pending", "in-progress", "complete", "failed", "skipped"]
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "error": {
+            "type": "string"
+          }
+        },
+        "required": ["status"]
+      }
+    },
+    "failures": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maxRetries": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 3
+        },
+        "totalFailures": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        },
+        "maxTotalFailures": {
+          "type": "integer",
+          "default": 10
+        },
+        "history": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "stage": { "type": "string" },
+              "capability": { "type": "string" },
+              "error": { "type": "string" },
+              "timestamp": { "type": "string", "format": "date-time" },
+              "resolution": { "type": "string" },
+              "resolvedAt": { "type": "string", "format": "date-time" }
+            },
+            "required": ["stage", "error", "timestamp"]
+          }
+        }
+      },
+      "required": ["count", "maxRetries", "history"]
+    },
+    "gates": {
+      "type": "object",
+      "properties": {
+        "architecture": { "$ref": "#/$defs/gate" },
+        "security": { "$ref": "#/$defs/gate" },
+        "database": { "$ref": "#/$defs/gate" },
+        "external": { "$ref": "#/$defs/gate" },
+        "deploy": { "$ref": "#/$defs/gate" }
+      }
+    },
+    "checkpoints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["commit", "milestone", "approval", "note"]
+          },
+          "hash": { "type": "string" },
+          "message": { "type": "string" },
+          "at": { "type": "string", "format": "date-time" }
+        },
+        "required": ["type", "at"]
+      }
+    },
+    "blockedReason": {
+      "type": "string",
+      "description": "Why the loop is blocked (if state is BLOCKED)"
+    },
+    "metrics": {
+      "type": "object",
+      "description": "Execution metrics for velocity tracking",
+      "properties": {
+        "skillsInvoked": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total count of skills invoked"
+        },
+        "skillHistory": {
+          "type": "array",
+          "description": "History of skill invocations for velocity-tracker",
+          "items": {
+            "type": "object",
+            "properties": {
+              "skill": {
+                "type": "string",
+                "description": "Name of the skill invoked"
+              },
+              "timestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When the skill completed"
+              },
+              "durationMs": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Duration in milliseconds"
+              }
+            },
+            "required": ["skill", "timestamp"]
+          }
+        }
+      }
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "$defs": {
+    "gate": {
+      "type": "object",
+      "properties": {
+        "required": {
+          "type": "boolean",
+          "default": false
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "requested", "approved", "rejected", "not-applicable"]
+        },
+        "requestedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "approvedBy": {
+          "type": "string"
+        },
+        "approvedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "required": ["required", "status"]
+    }
+  }
+}
+```
+
+## Example Valid State
+
+```json
+{
+  "systemId": "sys-002",
+  "systemName": "Work Order Service",
+  "githubIssue": 123,
+  "branch": "feature/system-work-orders",
+  "worktree": ".worktrees/system-work-orders",
+  "state": "IMPLEMENT",
+  "stateEnteredAt": "2024-01-17T10:30:00Z",
+  "capabilities": {
+    "total": 5,
+    "completed": 2,
+    "current": "work-order-assignment",
+    "remaining": ["status-transitions", "completion-flow"]
+  },
+  "stages": {
+    "INIT": { "status": "complete", "completedAt": "2024-01-17T09:00:00Z" },
+    "SCAFFOLD": { "status": "complete", "completedAt": "2024-01-17T09:30:00Z" },
+    "IMPLEMENT": { "status": "in-progress", "startedAt": "2024-01-17T09:35:00Z" },
+    "TEST": { "status": "pending" },
+    "VERIFY": { "status": "pending" },
+    "VALIDATE": { "status": "pending" },
+    "DOCUMENT": { "status": "pending" },
+    "REVIEW": { "status": "pending" },
+    "SHIP": { "status": "pending" },
+    "COMPLETE": { "status": "pending" }
+  },
+  "failures": {
+    "count": 0,
+    "maxRetries": 3,
+    "totalFailures": 1,
+    "maxTotalFailures": 10,
+    "history": [
+      {
+        "stage": "VERIFY",
+        "capability": "work-order-creation",
+        "error": "Type error in WorkOrder model",
+        "timestamp": "2024-01-17T10:15:00Z",
+        "resolution": "Fixed type definition",
+        "resolvedAt": "2024-01-17T10:25:00Z"
+      }
+    ]
+  },
+  "gates": {
+    "architecture": { "required": false, "status": "not-applicable" },
+    "security": { "required": true, "status": "pending" },
+    "database": { "required": true, "status": "approved", "approvedBy": "dba@company.com", "approvedAt": "2024-01-17T08:00:00Z" },
+    "external": { "required": false, "status": "not-applicable" },
+    "deploy": { "required": true, "status": "pending" }
+  },
+  "checkpoints": [
+    { "type": "commit", "hash": "abc1234", "message": "feat: work order model", "at": "2024-01-17T09:45:00Z" },
+    { "type": "commit", "hash": "def5678", "message": "feat: create endpoint", "at": "2024-01-17T10:00:00Z" },
+    { "type": "approval", "message": "DBA approved schema", "at": "2024-01-17T08:00:00Z" }
+  ],
+  "updatedAt": "2024-01-17T10:30:00Z"
+}
+```
+
+## Validation Commands
+
+```bash
+# Validate with ajv-cli
+npm install -g ajv-cli
+ajv validate -s loop-state-schema.json -d loop-state.json
+
+# Validate with Python jsonschema
+pip install jsonschema
+python -c "
+import json
+from jsonschema import validate
+
+with open('loop-state-schema.json') as f:
+    schema = json.load(f)
+with open('loop-state.json') as f:
+    data = json.load(f)
+    
+validate(data, schema)
+print('Valid!')
+"
+```
+
+## State Transitions Validation
+
+Valid transitions:
+
+```
+INIT → SCAFFOLD
+SCAFFOLD → IMPLEMENT
+IMPLEMENT → TEST
+TEST → VERIFY
+VERIFY → IMPLEMENT (more capabilities) | VALIDATE (all done)
+VALIDATE → DOCUMENT
+DOCUMENT → REVIEW
+REVIEW → SHIP
+SHIP → COMPLETE (PR merged) | SHIP (waiting)
+COMPLETE → (terminal)
+
+Any → FAILED (on error)
+FAILED → RETRY (if retries left) | BLOCKED (max retries)
+RETRY → (previous failed state)
+BLOCKED → (any state, after human intervention)
+```

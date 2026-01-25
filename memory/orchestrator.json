@@ -1,0 +1,14 @@
+{
+  "id": "orchestrator",
+  "level": "orchestrator",
+  "decisions": [],
+  "patterns": [],
+  "calibration": {
+    "estimates": [],
+    "adjustments": {
+      "global": { "multiplier": 1.0, "samples": 0 }
+    }
+  },
+  "createdAt": "2026-01-25T00:00:00Z",
+  "updatedAt": "2026-01-25T00:00:00Z"
+}

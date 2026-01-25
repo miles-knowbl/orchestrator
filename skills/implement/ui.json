@@ -1,0 +1,23 @@
+{
+  "display": {
+    "name": "Implementation",
+    "icon": "code",
+    "description": "Transform specifications into working code",
+    "category": "processing"
+  },
+  "inputs": {
+    "context": [
+      { "type": "featureSpec", "required": true },
+      { "type": "architecture", "required": false }
+    ]
+  },
+  "output": {
+    "type": "diff",
+    "deliverables": ["src/**/*.ts", "tests/**/*.test.ts"]
+  },
+  "execution": {
+    "autoExecute": false,
+    "confirmationRequired": true,
+    "progressIndicator": "steps"
+  }
+}

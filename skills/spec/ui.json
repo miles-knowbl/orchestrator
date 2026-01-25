@@ -1,0 +1,23 @@
+{
+  "display": {
+    "name": "Feature Specification",
+    "icon": "document-text",
+    "description": "Compile requirements into a production-ready technical spec",
+    "category": "output"
+  },
+  "inputs": {
+    "context": [
+      { "type": "requirements", "required": true },
+      { "type": "existingSpec", "required": false }
+    ]
+  },
+  "output": {
+    "type": "markdown",
+    "deliverables": ["FEATURESPEC.md"]
+  },
+  "execution": {
+    "autoExecute": false,
+    "confirmationRequired": true,
+    "progressIndicator": "steps"
+  }
+}
