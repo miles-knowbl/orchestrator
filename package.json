@@ -27,6 +27,18 @@
   ],
   "author": "Superorganism",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/miles-knowbl/orchestrator.git"
+  },
+  "homepage": "https://orchestrator-xi.vercel.app",
+  "files": [
+    "dist/",
+    "skills/",
+    "loops/",
+    "README.md",
+    "LICENSE"
+  ],
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
     "@modelcontextprotocol/sdk": "^1.0.0",

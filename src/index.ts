@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /**
  * Orchestrator - MCP Server Entry Point
  *
@@ -32,16 +33,14 @@ async function main() {
   const config = loadConfig();
   validateConfig(config);
 
-  console.error(JSON.stringify({
-    timestamp: new Date().toISOString(),
-    level: 'info',
-    message: 'Starting Orchestrator',
-    config: {
-      skillsPath: config.skillsPath,
-      port: config.port,
-      watchEnabled: config.watchEnabled,
-    },
-  }));
+  // Warn about missing optional config
+  if (!process.env.ANTHROPIC_API_KEY) {
+    console.error(JSON.stringify({
+      timestamp: new Date().toISOString(),
+      level: 'warn',
+      message: 'ANTHROPIC_API_KEY not set — AI features (inbox processing) will be unavailable',
+    }));
+  }
 
   // Initialize skill registry
   const skillRegistry = new SkillRegistry({
@@ -236,6 +235,21 @@ async function main() {
     },
   });
   await startHttpServer(app, config);
+
+  // Startup banner
+  const baseUrl = `http://${config.host === '0.0.0.0' ? 'localhost' : config.host}:${config.port}`;
+  console.error([
+    '',
+    `  Orchestrator v${process.env.npm_package_version || '0.1.0'}`,
+    `  API:       ${baseUrl}`,
+    `  MCP:       ${baseUrl}/mcp`,
+    `  Health:    ${baseUrl}/health`,
+    `  Auth:      ${config.apiKey ? 'enabled' : 'disabled'}`,
+    `  AI:        ${process.env.ANTHROPIC_API_KEY ? 'enabled' : 'disabled'}`,
+    `  Skills:    ${skillRegistry.skillCount} loaded`,
+    `  Loops:     ${loopComposer.loopCount} loaded`,
+    '',
+  ].join('\n'));
 
   // Handle graceful shutdown
   const shutdown = () => {
