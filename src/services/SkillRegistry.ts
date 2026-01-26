@@ -48,13 +48,23 @@ export interface SkillRegistryOptions {
   watchEnabled?: boolean;
 }
 
+/** Inline version bump when git is not available */
+function calculateNextVersionInline(current: string | null, bump: 'patch' | 'minor' | 'major') {
+  const from = current || '0.0.0';
+  const [major, minor, patch] = from.split('.').map(Number);
+  const to = bump === 'major' ? `${major + 1}.0.0`
+    : bump === 'minor' ? `${major}.${minor + 1}.0`
+    : `${major}.${minor}.${patch + 1}`;
+  return { from, to, type: bump };
+}
+
 export class SkillRegistry {
   private skills: Map<string, Skill> = new Map();
   private byPhase: Map<Phase, Skill[]> = new Map();
   private byCategory: Map<SkillCategory, Skill[]> = new Map();
   private watchers: FSWatcher[] = [];
   private reindexTimeout: NodeJS.Timeout | null = null;
-  private gitStorage: GitStorage;
+  private gitStorage: GitStorage | null;
   private lastIndexed: Date = new Date();
 
   constructor(private options: SkillRegistryOptions) {
@@ -65,7 +75,16 @@ export class SkillRegistry {
    * Initialize the registry
    */
   async initialize(): Promise<void> {
-    await this.gitStorage.initialize();
+    try {
+      await this.gitStorage!.initialize();
+    } catch {
+      console.error(JSON.stringify({
+        timestamp: new Date().toISOString(),
+        level: 'warn',
+        message: 'Git not available — versioning features disabled',
+      }));
+      this.gitStorage = null;
+    }
     await this.indexAll();
 
     if (this.options.watchEnabled !== false) {
@@ -127,13 +146,15 @@ export class SkillRegistry {
 
       // Get version from git or frontmatter
       let version = parsed.version || '1.0.0';
-      try {
-        const gitVersion = await this.gitStorage.getLatestVersion(skillName);
-        if (gitVersion) {
-          version = gitVersion;
+      if (this.gitStorage) {
+        try {
+          const gitVersion = await this.gitStorage.getLatestVersion(skillName);
+          if (gitVersion) {
+            version = gitVersion;
+          }
+        } catch {
+          // Use frontmatter version if git fails
         }
-      } catch {
-        // Use frontmatter version if git fails
       }
 
       // Load learning metadata from memory file if exists
@@ -363,7 +384,7 @@ export class SkillRegistry {
     if (!skill) return null;
 
     // If specific version requested, get content from git
-    if (options.version && options.version !== skill.version) {
+    if (options.version && options.version !== skill.version && this.gitStorage) {
       const content = await this.gitStorage.getFileAtVersion(
         name,
         options.version,
@@ -601,10 +622,12 @@ export class SkillRegistry {
 `;
     await writeFile(join(skillDir, 'CHANGELOG.md'), changelog);
 
-    // Stage and commit
-    await this.gitStorage.stageSkillFiles(params.name);
-    await this.gitStorage.commitSkillChanges(params.name, '1.0.0', 'Initial release');
-    await this.gitStorage.createVersion(params.name, '1.0.0', 'Initial release');
+    // Stage and commit (if git available)
+    if (this.gitStorage) {
+      await this.gitStorage.stageSkillFiles(params.name);
+      await this.gitStorage.commitSkillChanges(params.name, '1.0.0', 'Initial release');
+      await this.gitStorage.createVersion(params.name, '1.0.0', 'Initial release');
+    }
 
     // Re-index
     await this.indexAll();
@@ -628,10 +651,9 @@ export class SkillRegistry {
     }
 
     // Calculate new version
-    const versionBump = this.gitStorage.calculateNextVersion(
-      skill.version,
-      params.versionBump
-    );
+    const versionBump = this.gitStorage
+      ? this.gitStorage.calculateNextVersion(skill.version, params.versionBump)
+      : calculateNextVersionInline(skill.version, params.versionBump);
 
     // Update SKILL.md
     const skillMdPath = join(this.options.skillsPath, params.name, 'SKILL.md');
@@ -665,18 +687,20 @@ export class SkillRegistry {
     changelog = changelog.replace('# Changelog\n', `# Changelog\n${newEntry}`);
     await writeFile(changelogPath, changelog);
 
-    // Git operations
-    await this.gitStorage.stageSkillFiles(params.name);
-    await this.gitStorage.commitSkillChanges(
-      params.name,
-      versionBump.to,
-      params.changeDescription
-    );
-    await this.gitStorage.createVersion(
-      params.name,
-      versionBump.to,
-      params.changeDescription
-    );
+    // Git operations (if git available)
+    if (this.gitStorage) {
+      await this.gitStorage.stageSkillFiles(params.name);
+      await this.gitStorage.commitSkillChanges(
+        params.name,
+        versionBump.to,
+        params.changeDescription
+      );
+      await this.gitStorage.createVersion(
+        params.name,
+        versionBump.to,
+        params.changeDescription
+      );
+    }
 
     // Re-index
     await this.indexAll();
@@ -729,6 +753,7 @@ export class SkillRegistry {
    * Get version history for a skill
    */
   async getVersionHistory(skillName: string) {
+    if (!this.gitStorage) return [];
     return this.gitStorage.getSkillVersions(skillName);
   }
 
@@ -736,6 +761,7 @@ export class SkillRegistry {
    * Get diff between versions
    */
   async getVersionDiff(skillName: string, fromVersion: string, toVersion: string) {
+    if (!this.gitStorage) throw new Error('Git not available — version diff requires git');
     return this.gitStorage.getVersionDiff(skillName, fromVersion, toVersion);
   }
 
