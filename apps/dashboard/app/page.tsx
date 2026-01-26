@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Activity, Layers, Zap, Inbox, ChevronRight, Clock } from 'lucide-react';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
+import { fetchApi } from '@/lib/api';
 
 interface DashboardData {
   summary: {
@@ -149,7 +148,7 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(`${API_URL}/api/dashboard`);
+        const res = await fetchApi('/api/dashboard');
         if (!res.ok) throw new Error('Failed to fetch dashboard data');
         const json = await res.json();
         setData(json);
@@ -171,7 +170,7 @@ export default function Dashboard() {
         <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-6 text-center">
           <p className="text-red-400">Failed to connect to Orchestrator API</p>
           <p className="text-gray-500 text-sm mt-2">{error}</p>
-          <p className="text-gray-600 text-xs mt-4">Make sure the orchestrator is running on {API_URL}</p>
+          <p className="text-gray-600 text-xs mt-4">Make sure the orchestrator server is running</p>
         </div>
       </div>
     );

@@ -4,8 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Layers, Play, Zap, Shield, ChevronRight, Settings, X, BookOpen } from 'lucide-react';
 import { Prose } from '@/components/Prose';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
+import { fetchApi } from '@/lib/api';
 
 const phaseColors: Record<string, string> = {
   INIT: 'bg-purple-500',
@@ -236,7 +235,7 @@ export default function LoopDetailPage() {
   useEffect(() => {
     const fetchLoop = async () => {
       try {
-        const res = await fetch(`${API_URL}/api/loops/${id}`);
+        const res = await fetchApi(`/api/loops/${id}`);
         if (!res.ok) throw new Error('Loop not found');
         const data = await res.json();
         setLoop(data);
@@ -251,7 +250,7 @@ export default function LoopDetailPage() {
 
   const handleStartExecution = async (config: { project: string; mode: string; autonomy: string }) => {
     try {
-      const res = await fetch(`${API_URL}/api/executions`, {
+      const res = await fetchApi('/api/executions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

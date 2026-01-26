@@ -10,6 +10,7 @@ export interface OrchestratorConfig {
   skillsPath: string;
   repoPath: string;
   apiKey?: string;
+  allowedOrigins: string[];
   watchEnabled: boolean;
   logLevel: 'debug' | 'info' | 'warn' | 'error';
 }
@@ -37,6 +38,9 @@ export function loadConfig(args: string[] = process.argv.slice(2)): Orchestrator
     skillsPath,
     repoPath,
     apiKey: process.env.API_KEY,
+    allowedOrigins: process.env.ALLOWED_ORIGINS
+      ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
+      : ['http://localhost:3003'],
     watchEnabled: process.env.WATCH_ENABLED !== 'false',
     logLevel: (process.env.LOG_LEVEL || 'info') as OrchestratorConfig['logLevel'],
   };

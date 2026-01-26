@@ -3,8 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Inbox, Plus, Sparkles, Check, X, RefreshCw, ChevronDown, ChevronRight, FileText, Puzzle, BookOpen } from 'lucide-react';
 import { Prose } from '@/components/Prose';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
+import { fetchApi } from '@/lib/api';
 
 interface InboxItem {
   id: string;
@@ -96,7 +95,7 @@ function AddItemModal({ onClose, onAdd }: { onClose: () => void; onAdd: () => vo
         ? { url: content }
         : { content, sourceType: 'paste', sourceName: sourceName || 'manual-paste' };
 
-      const res = await fetch(`${API_URL}/api/inbox`, {
+      const res = await fetchApi(`/api/inbox`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
@@ -337,7 +336,7 @@ function ItemDetailModal({ item, onClose, onAction }: {
     setProcessing(true);
     setError(null);
     try {
-      const res = await fetch(`${API_URL}/api/inbox/${item.id}/process`, {
+      const res = await fetchApi(`/api/inbox/${item.id}/process`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -359,7 +358,7 @@ function ItemDetailModal({ item, onClose, onAction }: {
     setActionLoading(`approve-${index}`);
     setError(null);
     try {
-      const res = await fetch(`${API_URL}/api/inbox/${item.id}/extractions/${index}/approve`, {
+      const res = await fetchApi(`/api/inbox/${item.id}/extractions/${index}/approve`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -381,7 +380,7 @@ function ItemDetailModal({ item, onClose, onAction }: {
     setActionLoading(`reject-${index}`);
     setError(null);
     try {
-      const res = await fetch(`${API_URL}/api/inbox/${item.id}/extractions/${index}/reject`, {
+      const res = await fetchApi(`/api/inbox/${item.id}/extractions/${index}/reject`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -542,13 +541,13 @@ export default function InboxPage() {
   const fetchData = async () => {
     try {
       // Fetch items
-      const itemsRes = await fetch(`${API_URL}/api/inbox`);
+      const itemsRes = await fetchApi(`/api/inbox`);
       if (!itemsRes.ok) throw new Error('Failed to fetch inbox');
       const itemsData = await itemsRes.json();
       setItems(itemsData.items || []);
 
       // Fetch stats
-      const statsRes = await fetch(`${API_URL}/api/inbox/stats`);
+      const statsRes = await fetchApi(`/api/inbox/stats`);
       if (!statsRes.ok) throw new Error('Failed to fetch stats');
       const statsData = await statsRes.json();
       setStats(statsData);
@@ -561,7 +560,7 @@ export default function InboxPage() {
 
   const fetchItemDetail = async (id: string) => {
     try {
-      const res = await fetch(`${API_URL}/api/inbox/${id}`);
+      const res = await fetchApi(`/api/inbox/${id}`);
       if (!res.ok) throw new Error('Failed to fetch item');
       const data = await res.json();
       setSelectedItem(data);

@@ -29,9 +29,31 @@ export function createHttpServer(options: HttpServerOptions): Express {
 
   app.use(express.json());
 
-  // API Key authentication middleware
+  // CORS middleware — restrict to allowed origins
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    const origin = req.headers.origin;
+    const allowed = config.allowedOrigins;
+
+    if (allowed.includes('*')) {
+      res.setHeader('Access-Control-Allow-Origin', '*');
+    } else if (origin && allowed.includes(origin)) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+      res.setHeader('Vary', 'Origin');
+    }
+
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-API-Key');
+
+    if (req.method === 'OPTIONS') {
+      res.status(200).end();
+      return;
+    }
+    next();
+  });
+
+  // API Key authentication middleware — protects /mcp and /api
   if (config.apiKey) {
-    app.use('/mcp', (req: Request, res: Response, next: NextFunction) => {
+    const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
       const authHeader = req.headers['x-api-key'] || req.headers['authorization'];
       const providedKey = typeof authHeader === 'string'
         ? authHeader.replace('Bearer ', '')
@@ -42,20 +64,11 @@ export function createHttpServer(options: HttpServerOptions): Express {
         return;
       }
       next();
-    });
-  }
+    };
 
-  // CORS headers for dashboard
-  app.use((req: Request, res: Response, next: NextFunction) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-API-Key');
-    if (req.method === 'OPTIONS') {
-      res.status(200).end();
-      return;
-    }
-    next();
-  });
+    app.use('/mcp', authMiddleware);
+    app.use('/api', authMiddleware);
+  }
 
   // Health check
   app.get('/health', (_req: Request, res: Response) => {

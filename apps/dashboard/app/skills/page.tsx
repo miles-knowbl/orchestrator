@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Zap, Search, ChevronRight, Tag } from 'lucide-react';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
+import { fetchApi } from '@/lib/api';
 
 interface Skill {
   id: string;
@@ -40,7 +39,7 @@ export default function SkillsPage() {
         if (search) params.set('query', search);
         if (phaseFilter) params.set('phase', phaseFilter);
 
-        const res = await fetch(`${API_URL}/api/skills?${params}`);
+        const res = await fetchApi(`/api/skills?${params}`);
         if (!res.ok) throw new Error('Failed to fetch skills');
         const data = await res.json();
         setSkills(data.skills);

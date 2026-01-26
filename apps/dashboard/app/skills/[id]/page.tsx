@@ -4,8 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { ArrowLeft, Zap, Tag, BookOpen, Clock, BarChart2, FileText, ChevronDown, ChevronRight } from 'lucide-react';
 import { Prose } from '@/components/Prose';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
+import { fetchApi } from '@/lib/api';
 
 const phaseColors: Record<string, string> = {
   INIT: 'bg-purple-500/10 text-purple-400 border-purple-500/30',
@@ -81,7 +80,7 @@ export default function SkillDetailPage() {
   useEffect(() => {
     const fetchSkill = async () => {
       try {
-        const res = await fetch(`${API_URL}/api/skills/${id}?includeReferences=true`);
+        const res = await fetchApi(`/api/skills/${id}?includeReferences=true`);
         if (!res.ok) throw new Error('Skill not found');
         const data = await res.json();
         setSkill(data);

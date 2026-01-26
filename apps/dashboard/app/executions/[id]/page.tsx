@@ -3,8 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import { ArrowLeft, Play, Pause, CheckCircle, XCircle, Clock, AlertCircle, Zap } from 'lucide-react';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
+import { fetchApi, apiUrl } from '@/lib/api';
 
 interface LogEntry {
   id: string;
@@ -227,7 +226,7 @@ export default function ExecutionDetail() {
   useEffect(() => {
     const fetchExecution = async () => {
       try {
-        const res = await fetch(`${API_URL}/api/executions/${id}`);
+        const res = await fetchApi(`/api/executions/${id}`);
         if (!res.ok) throw new Error('Execution not found');
         const data = await res.json();
         setExecution(data);
@@ -240,7 +239,7 @@ export default function ExecutionDetail() {
     fetchExecution();
 
     // Set up SSE for live updates if execution is active
-    const eventSource = new EventSource(`${API_URL}/api/executions/${id}/stream`);
+    const eventSource = new EventSource(apiUrl(`/api/executions/${id}/stream`));
 
     eventSource.addEventListener('log', (event) => {
       const log = JSON.parse(event.data);

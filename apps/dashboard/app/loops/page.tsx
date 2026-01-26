@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Layers, ChevronRight, Play, Zap } from 'lucide-react';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
+import { fetchApi } from '@/lib/api';
 
 interface Loop {
   id: string;
@@ -21,7 +20,7 @@ export default function LoopsPage() {
   useEffect(() => {
     const fetchLoops = async () => {
       try {
-        const res = await fetch(`${API_URL}/api/loops`);
+        const res = await fetchApi('/api/loops');
         if (!res.ok) throw new Error('Failed to fetch loops');
         const data = await res.json();
         setLoops(data.loops);

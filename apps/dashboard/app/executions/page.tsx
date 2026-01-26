@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Play, Clock, CheckCircle, XCircle, Pause, AlertCircle, ChevronRight } from 'lucide-react';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
+import { fetchApi } from '@/lib/api';
 
 interface ExecutionSummary {
   id: string;
@@ -29,7 +28,7 @@ export default function ExecutionsPage() {
   useEffect(() => {
     const fetchExecutions = async () => {
       try {
-        const res = await fetch(`${API_URL}/api/executions`);
+        const res = await fetchApi('/api/executions');
         if (!res.ok) throw new Error('Failed to fetch executions');
         const data = await res.json();
         setExecutions(data.executions);
