@@ -79,14 +79,18 @@ export default function DistributePage() {
         const data: ReleaseData = await res.json();
         setRelease(data);
 
-        // Fetch checksum file
-        const checksumAsset = data.assets.find(a => a.name === 'checksums.txt');
-        if (checksumAsset) {
-          const checksumRes = await fetch(checksumAsset.browser_download_url);
-          if (checksumRes.ok) {
-            const text = await checksumRes.text();
-            setChecksum(text.split('  ')[0]); // SHA256 hash before filename
+        // Fetch checksum file (separate try/catch — CORS redirect may fail)
+        try {
+          const checksumAsset = data.assets.find(a => a.name === 'checksums.txt');
+          if (checksumAsset) {
+            const checksumRes = await fetch(checksumAsset.browser_download_url);
+            if (checksumRes.ok) {
+              const text = await checksumRes.text();
+              setChecksum(text.split('  ')[0]);
+            }
           }
+        } catch {
+          // Checksum fetch may fail due to CORS on GitHub redirect — non-critical
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error');
