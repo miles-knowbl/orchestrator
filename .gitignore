@@ -33,3 +33,4 @@ coverage/
 *.pptx
 *-state.json
 render-manifest.json
+.vercel
