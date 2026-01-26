@@ -163,6 +163,21 @@ export default function DistributePage() {
         </div>
       </div>
 
+      {/* One-Command Install */}
+      <div className="bg-[#111] border border-[#222] rounded-xl p-6 mb-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Terminal className="w-5 h-5 text-green-400" />
+          <h2 className="text-lg font-semibold text-white">Install</h2>
+        </div>
+        <p className="text-sm text-gray-400 mb-4">
+          One command — requires Node.js 18+, npm, and git
+        </p>
+        <CodeBlock command={`curl -fsSL https://raw.githubusercontent.com/${GITHUB_REPO}/main/install.sh | bash`} />
+        <p className="text-xs text-gray-500 mt-3">
+          Clones the repo, installs dependencies, builds, and creates <code className="text-gray-400">.env</code>. Then run <code className="text-gray-400">cd orchestrator && npm start</code>.
+        </p>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Download Tarball */}
         <div className="bg-[#111] border border-[#222] rounded-xl p-6">
