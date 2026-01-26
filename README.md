@@ -4,6 +4,14 @@ A self-improving meta-system for composing AI-driven workflows. Skills are the a
 
 ## Quick Start
 
+**One-command install:**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/miles-knowbl/orchestrator/main/install.sh | bash
+```
+
+**Or manually:**
+
 ```bash
 # Clone and enter
 git clone https://github.com/miles-knowbl/orchestrator.git && cd orchestrator
