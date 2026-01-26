@@ -63,13 +63,56 @@ if [ -f .env.example ]; then
   echo "[OK] Created .env from template"
 fi
 
+# --- Install slash commands ---
+
+mkdir -p ~/.claude/commands
+INSTALLED=0
+for cmd in commands/*.md; do
+  [ -f "$cmd" ] || continue
+  cp "$cmd" ~/.claude/commands/
+  INSTALLED=$((INSTALLED + 1))
+done
+echo "[OK] Installed $INSTALLED slash commands to ~/.claude/commands/"
+
 # --- Done ---
 
 echo ""
-echo "Ready! To start:"
+echo "========================================"
+echo "  Installation complete!"
+echo "========================================"
 echo ""
-echo "  cd orchestrator"
-echo "  npm start"
+echo "  STEP 1: Start the server"
 echo ""
-echo "Then open http://localhost:3002/health"
+echo "    cd orchestrator"
+echo "    npm start"
+echo ""
+echo "  STEP 2: Verify it works (in a new terminal)"
+echo ""
+echo "    curl http://localhost:3002/health"
+echo ""
+echo "  STEP 3: Connect Claude Code"
+echo ""
+echo "    If you don't have Claude Code:"
+echo "      npm install -g @anthropic-ai/claude-code"
+echo ""
+echo "    Register the orchestrator:"
+echo "      claude mcp add orchestrator http://localhost:3002/mcp"
+echo ""
+echo "  STEP 4: Use it"
+echo ""
+echo "    Start a Claude Code session:"
+echo "      claude"
+echo ""
+echo "    Then try a slash command:"
+echo "      /agentic-harness    Full engineering loop (build anything)"
+echo "      /bugfix-harness     Systematic bug fixing"
+echo "      /refactor-harness   Safe refactoring with tests"
+echo "      /release-harness    Version, validate, and ship"
+echo "      /proposal-harness   Create evidence-backed proposals"
+echo "      /incident-harness   Incident response and postmortem"
+echo "      /migration-harness  Technology migrations"
+echo "      /infra-harness      Infrastructure provisioning"
+echo "      /audit-harness      System audit (read-only)"
+echo "      /deck-harness       Generate slide decks"
+echo "      /meta-harness       Create new loops"
 echo ""

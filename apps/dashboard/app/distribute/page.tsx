@@ -139,6 +139,129 @@ export default function DistributePage() {
         </div>
       </div>
 
+      {/* Getting Started — Full Guide */}
+      <div className="bg-[#111] border border-[#222] rounded-xl p-6 mb-8">
+        <div className="flex items-center gap-2 mb-2">
+          <Terminal className="w-5 h-5 text-orch-400" />
+          <h2 className="text-lg font-semibold text-white">Getting Started</h2>
+        </div>
+        <p className="text-sm text-gray-500 mb-6">From zero to running an agentic loop</p>
+
+        <div className="space-y-6">
+          {/* Prerequisites */}
+          <div>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Prerequisites</p>
+            <div className="space-y-2">
+              <div className="flex items-start gap-3">
+                <span className="w-6 h-6 rounded-full bg-[#222] text-gray-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
+                <div>
+                  <p className="text-sm text-gray-300">Install Node.js 18+</p>
+                  <p className="text-xs text-gray-500">Download from <a href="https://nodejs.org" className="text-orch-400 hover:underline" target="_blank" rel="noopener noreferrer">nodejs.org</a> (includes npm)</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="w-6 h-6 rounded-full bg-[#222] text-gray-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
+                <div>
+                  <p className="text-sm text-gray-300">Install git</p>
+                  <p className="text-xs text-gray-500">Mac: <code className="text-gray-400">xcode-select --install</code> &middot; Others: <a href="https://git-scm.com" className="text-orch-400 hover:underline" target="_blank" rel="noopener noreferrer">git-scm.com</a></p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="w-6 h-6 rounded-full bg-[#222] text-gray-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
+                <div>
+                  <p className="text-sm text-gray-300">Install Claude Code</p>
+                  <CodeBlock command="npm install -g @anthropic-ai/claude-code" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t border-[#222]" />
+
+          {/* Install & Run */}
+          <div>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Install & Run</p>
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <span className="w-6 h-6 rounded-full bg-orch-500/10 text-orch-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">4</span>
+                <div className="w-full">
+                  <p className="text-sm text-gray-300 mb-2">Run the installer</p>
+                  <CodeBlock command={`curl -fsSL https://raw.githubusercontent.com/${GITHUB_REPO}/main/install.sh | bash`} />
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="w-6 h-6 rounded-full bg-orch-500/10 text-orch-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">5</span>
+                <div className="w-full">
+                  <p className="text-sm text-gray-300 mb-2">Start the server</p>
+                  <CodeBlock command="cd orchestrator && npm start" />
+                  <p className="text-xs text-gray-500 mt-1">Leave this terminal running</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="w-6 h-6 rounded-full bg-orch-500/10 text-orch-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">6</span>
+                <div className="w-full">
+                  <p className="text-sm text-gray-300 mb-2">Verify it works (new terminal)</p>
+                  <CodeBlock command="curl http://localhost:3002/health" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t border-[#222]" />
+
+          {/* Connect & Use */}
+          <div>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Connect & Use</p>
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <span className="w-6 h-6 rounded-full bg-orch-500/10 text-orch-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">7</span>
+                <div className="w-full">
+                  <p className="text-sm text-gray-300 mb-2">Register the MCP server</p>
+                  <CodeBlock command="claude mcp add orchestrator http://localhost:3002/mcp" />
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="w-6 h-6 rounded-full bg-orch-500/10 text-orch-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">8</span>
+                <div className="w-full">
+                  <p className="text-sm text-gray-300 mb-2">Start Claude Code and run a loop</p>
+                  <CodeBlock command="claude" />
+                  <div className="mt-3 bg-[#0a0a0a] border border-[#222] rounded-lg px-4 py-3">
+                    <p className="text-xs text-gray-500 mb-2">Slash commands (installed automatically):</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5 text-sm">
+                      <div><code className="text-orch-400">/agentic-harness</code> <span className="text-gray-500">— build anything</span></div>
+                      <div><code className="text-orch-400">/bugfix-harness</code> <span className="text-gray-500">— fix bugs</span></div>
+                      <div><code className="text-orch-400">/refactor-harness</code> <span className="text-gray-500">— safe refactoring</span></div>
+                      <div><code className="text-orch-400">/release-harness</code> <span className="text-gray-500">— ship releases</span></div>
+                      <div><code className="text-orch-400">/proposal-harness</code> <span className="text-gray-500">— write proposals</span></div>
+                      <div><code className="text-orch-400">/incident-harness</code> <span className="text-gray-500">— incident response</span></div>
+                      <div><code className="text-orch-400">/migration-harness</code> <span className="text-gray-500">— tech migrations</span></div>
+                      <div><code className="text-orch-400">/infra-harness</code> <span className="text-gray-500">— infrastructure</span></div>
+                      <div><code className="text-orch-400">/audit-harness</code> <span className="text-gray-500">— system audits</span></div>
+                      <div><code className="text-orch-400">/deck-harness</code> <span className="text-gray-500">— slide decks</span></div>
+                      <div><code className="text-orch-400">/meta-harness</code> <span className="text-gray-500">— create new loops</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 pt-4 border-t border-[#222]">
+          <p className="text-xs text-gray-500">
+            Server: <code className="text-gray-400">http://localhost:3002</code> &middot;
+            Health: <code className="text-gray-400">http://localhost:3002/health</code> &middot;
+            MCP: <code className="text-gray-400">http://localhost:3002/mcp</code>
+          </p>
+        </div>
+      </div>
+
+      {/* Alternative Install Methods */}
+      <div className="mt-10 mb-2">
+        <h2 className="text-lg font-semibold text-gray-400">Alternative Install Methods</h2>
+        <p className="text-sm text-gray-600 mt-1">Already familiar? Grab the tarball or Docker image directly.</p>
+      </div>
+
       {/* Version Info */}
       <div className="bg-[#111] border border-[#222] rounded-xl p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
@@ -161,21 +284,6 @@ export default function DistributePage() {
             <span className="text-sm font-mono">{commit.slice(0, 12)}</span>
           </div>
         </div>
-      </div>
-
-      {/* One-Command Install */}
-      <div className="bg-[#111] border border-[#222] rounded-xl p-6 mb-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Terminal className="w-5 h-5 text-green-400" />
-          <h2 className="text-lg font-semibold text-white">Install</h2>
-        </div>
-        <p className="text-sm text-gray-400 mb-4">
-          One command — requires Node.js 18+, npm, and git
-        </p>
-        <CodeBlock command={`curl -fsSL https://raw.githubusercontent.com/${GITHUB_REPO}/main/install.sh | bash`} />
-        <p className="text-xs text-gray-500 mt-3">
-          Clones the repo, installs dependencies, builds, and creates <code className="text-gray-400">.env</code>. Then run <code className="text-gray-400">cd orchestrator && npm start</code>.
-        </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -228,48 +336,6 @@ export default function DistributePage() {
               command={`docker run -p 3002:3002 ${DOCKER_IMAGE}:latest`}
             />
           </div>
-        </div>
-      </div>
-
-      {/* Quick Start */}
-      <div className="bg-[#111] border border-[#222] rounded-xl p-6 mt-6">
-        <div className="flex items-center gap-2 mb-6">
-          <Terminal className="w-5 h-5 text-orch-400" />
-          <h2 className="text-lg font-semibold text-white">Quick Start</h2>
-        </div>
-
-        <div className="space-y-4">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="w-6 h-6 rounded-full bg-orch-500/10 text-orch-400 text-xs font-bold flex items-center justify-center">1</span>
-              <p className="text-sm text-gray-300">Clone the repository</p>
-            </div>
-            <CodeBlock command={`git clone https://github.com/${GITHUB_REPO}.git && cd orchestrator`} />
-          </div>
-
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="w-6 h-6 rounded-full bg-orch-500/10 text-orch-400 text-xs font-bold flex items-center justify-center">2</span>
-              <p className="text-sm text-gray-300">Install dependencies and build</p>
-            </div>
-            <CodeBlock command="npm install && npm run build" />
-          </div>
-
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="w-6 h-6 rounded-full bg-orch-500/10 text-orch-400 text-xs font-bold flex items-center justify-center">3</span>
-              <p className="text-sm text-gray-300">Start the server</p>
-            </div>
-            <CodeBlock command="npm start" />
-          </div>
-        </div>
-
-        <div className="mt-6 pt-4 border-t border-[#222]">
-          <p className="text-xs text-gray-500">
-            Server runs on <code className="text-gray-400">http://localhost:3002</code> &middot;
-            Dashboard at <code className="text-gray-400">http://localhost:3003</code> &middot;
-            MCP endpoint at <code className="text-gray-400">http://localhost:3002/mcp</code>
-          </p>
         </div>
       </div>
     </div>

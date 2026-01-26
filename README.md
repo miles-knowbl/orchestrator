@@ -2,31 +2,56 @@
 
 A self-improving meta-system for composing AI-driven workflows. Skills are the atomic primitive — everything else (loops, phases, memory, learning) emerges from how skills are collected, composed, and evolved.
 
-## Quick Start
+## Getting Started
 
-**One-command install:**
+### Prerequisites
+
+1. [Node.js 18+](https://nodejs.org) (includes npm)
+2. git — Mac: `xcode-select --install` / Others: [git-scm.com](https://git-scm.com)
+3. [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — `npm install -g @anthropic-ai/claude-code`
+
+### Install & Run
 
 ```bash
+# One-command install
 curl -fsSL https://raw.githubusercontent.com/miles-knowbl/orchestrator/main/install.sh | bash
+
+# Start the server
+cd orchestrator
+npm start
 ```
 
-**Or manually:**
+The server starts on **http://localhost:3002**. Verify with `curl http://localhost:3002/health`.
+
+### Connect Claude Code
+
+In a new terminal:
 
 ```bash
-# Clone and enter
-git clone https://github.com/miles-knowbl/orchestrator.git && cd orchestrator
+# Register the orchestrator as an MCP server
+claude mcp add orchestrator http://localhost:3002/mcp
 
-# Configure environment
-cp .env.example .env
-# Edit .env and add your ANTHROPIC_API_KEY
-
-# Install, build, and run
-npm install && npm run build && npm start
+# Start a session
+claude
 ```
 
-The server starts on **http://localhost:3002**.
+The installer sets up 11 slash commands. Try one:
 
-### Dashboard
+| Command | What it does |
+|---------|-------------|
+| `/agentic-harness` | **Full engineering loop** — build anything from scratch or extend existing code |
+| `/bugfix-harness` | Systematic bug fixing with reproduction and regression tests |
+| `/refactor-harness` | Safe refactoring verified by tests at every step |
+| `/release-harness` | Version, validate, document, and ship releases |
+| `/proposal-harness` | Create evidence-backed proposals |
+| `/incident-harness` | Incident response — triage, fix, deploy, postmortem |
+| `/migration-harness` | Technology migrations with rollback safety |
+| `/infra-harness` | Infrastructure provisioning (Docker, CI/CD, databases) |
+| `/audit-harness` | Read-only system audit with prioritized findings |
+| `/deck-harness` | Generate slide decks from context and brand assets |
+| `/meta-harness` | Create new loops (the loop that makes loops) |
+
+### Dashboard (optional)
 
 ```bash
 cd apps/dashboard
@@ -40,7 +65,7 @@ The dashboard starts on **http://localhost:3003**.
 
 ```bash
 docker pull ghcr.io/miles-knowbl/orchestrator:latest
-docker run -p 3002:3002 -e ANTHROPIC_API_KEY=your_key ghcr.io/miles-knowbl/orchestrator:latest
+docker run -p 3002:3002 ghcr.io/miles-knowbl/orchestrator:latest
 ```
 
 ## Architecture
@@ -99,7 +124,7 @@ This exposes 54+ tools for managing skills, loops, executions, memory, and inbox
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `ANTHROPIC_API_KEY` | Yes | — | Anthropic API key for AI features |
+| `ANTHROPIC_API_KEY` | No | — | Anthropic API key (only needed for inbox processing) |
 | `PORT` | No | `3002` | Server port |
 | `HOST` | No | `0.0.0.0` | Server host |
 | `API_KEY` | No | — | API key for `/api` and `/mcp` auth |
