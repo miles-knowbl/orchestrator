@@ -1,0 +1,61 @@
+{
+  "version": "1.0.0",
+  "releaseDate": "2026-01-25",
+  "description": "Orchestrator skills library - comprehensive skill definitions for AI-driven software development workflows",
+  "skills": {
+    "total": 17,
+    "core": [
+      "spec",
+      "architect",
+      "scaffold",
+      "implement",
+      "test-generation",
+      "code-verification",
+      "code-review",
+      "deploy",
+      "document",
+      "error-handling"
+    ],
+    "meta": [
+      "loop-controller",
+      "content-analysis",
+      "metadata-extraction"
+    ],
+    "specialized": [
+      "context-ingestion",
+      "context-cultivation",
+      "priority-matrix",
+      "proposal-builder"
+    ]
+  },
+  "phases": {
+    "INIT": ["spec", "architect", "context-ingestion", "context-cultivation", "priority-matrix"],
+    "SCAFFOLD": ["scaffold", "proposal-builder"],
+    "IMPLEMENT": ["implement", "error-handling"],
+    "TEST": ["test-generation"],
+    "VERIFY": ["code-verification"],
+    "VALIDATE": [],
+    "DOCUMENT": ["document"],
+    "REVIEW": ["code-review"],
+    "SHIP": ["deploy"],
+    "META": ["loop-controller", "content-analysis", "metadata-extraction"]
+  },
+  "compatibility": {
+    "minMcpVersion": "1.0.0",
+    "recommendedMcpVersion": "2.1.0",
+    "claudeModels": ["claude-3-opus", "claude-3-sonnet", "claude-3-haiku", "claude-opus-4-5"]
+  },
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-01-25",
+      "type": "major",
+      "changes": [
+        "Initial release with 17 skills",
+        "Comprehensive skill template with YAML frontmatter",
+        "Dynamic reference document composition",
+        "UI metadata for dashboard rendering"
+      ]
+    }
+  ]
+}

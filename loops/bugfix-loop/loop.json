@@ -1,0 +1,152 @@
+{
+  "id": "bugfix-loop",
+  "name": "Bug Fix Loop",
+  "version": "1.0.0",
+  "description": "Systematic debugging loop from reproduction to verified fix. Takes bug reports through reproduction, root cause analysis, implementation, testing, verification, and review with enforced quality gates.",
+
+  "phases": [
+    {
+      "name": "INIT",
+      "skills": ["bug-reproducer"],
+      "required": true
+    },
+    {
+      "name": "SCAFFOLD",
+      "skills": ["debug-assist", "root-cause-analysis"],
+      "required": true
+    },
+    {
+      "name": "IMPLEMENT",
+      "skills": ["implement"],
+      "required": true
+    },
+    {
+      "name": "TEST",
+      "skills": ["test-generation"],
+      "required": true
+    },
+    {
+      "name": "VERIFY",
+      "skills": ["code-verification"],
+      "required": true
+    },
+    {
+      "name": "REVIEW",
+      "skills": ["code-review"],
+      "required": true
+    },
+    {
+      "name": "COMPLETE",
+      "skills": ["retrospective"],
+      "required": true
+    }
+  ],
+
+  "gates": [
+    {
+      "id": "repro-gate",
+      "name": "Reproduction Confirmation",
+      "afterPhase": "INIT",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": ["BUG-REPRODUCTION.md"]
+    },
+    {
+      "id": "diagnosis-gate",
+      "name": "Diagnosis Approval",
+      "afterPhase": "SCAFFOLD",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": ["ROOT-CAUSE.md"]
+    },
+    {
+      "id": "verification-gate",
+      "name": "Verification Check",
+      "afterPhase": "VERIFY",
+      "required": true,
+      "approvalType": "auto",
+      "deliverables": ["VERIFICATION.md"],
+      "autoCheck": "build passes, tests pass, lint clean"
+    },
+    {
+      "id": "review-gate",
+      "name": "Code Review Approval",
+      "afterPhase": "REVIEW",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": ["CODE-REVIEW.md"]
+    }
+  ],
+
+  "defaults": {
+    "mode": "greenfield",
+    "autonomy": "supervised"
+  },
+
+  "ui": {
+    "theme": "bugfix",
+    "layout": "chat-focused",
+    "features": {
+      "skillBrowser": true,
+      "deliverableViewer": true,
+      "gateApprovalUI": true,
+      "progressTimeline": true,
+      "metricsPanel": true
+    },
+    "branding": {
+      "title": "Bug Fix Harness",
+      "subtitle": "Fix it right"
+    }
+  },
+
+  "skillUI": {
+    "bug-reproducer": {
+      "displayName": "Bug Reproducer",
+      "icon": "bug",
+      "outputDisplay": "markdown"
+    },
+    "debug-assist": {
+      "displayName": "Debug Assistant",
+      "icon": "search",
+      "outputDisplay": "markdown"
+    },
+    "root-cause-analysis": {
+      "displayName": "Root Cause Analysis",
+      "icon": "chart-pie",
+      "outputDisplay": "markdown"
+    },
+    "implement": {
+      "displayName": "Implementation",
+      "icon": "code",
+      "outputDisplay": "diff"
+    },
+    "test-generation": {
+      "displayName": "Test Generation",
+      "icon": "beaker",
+      "outputDisplay": "code"
+    },
+    "code-verification": {
+      "displayName": "Code Verification",
+      "icon": "check-circle",
+      "outputDisplay": "markdown"
+    },
+    "code-review": {
+      "displayName": "Code Review",
+      "icon": "eye",
+      "outputDisplay": "markdown"
+    },
+    "retrospective": {
+      "displayName": "Retrospective",
+      "icon": "refresh",
+      "outputDisplay": "markdown"
+    }
+  },
+
+  "metadata": {
+    "author": "Orchestrator",
+    "tags": ["bugfix", "debugging", "troubleshooting"],
+    "changelog": {
+      "1.0.0": "Initial release"
+    }
+  }
+}

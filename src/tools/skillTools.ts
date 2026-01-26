@@ -4,7 +4,8 @@
 
 import { z } from 'zod';
 import type { SkillRegistry } from '../services/SkillRegistry.js';
-import type { Phase, SkillCategory } from '../types.js';
+import type { LearningService } from '../services/LearningService.js';
+import type { Phase, SkillCategory, ImprovementCategory } from '../types.js';
 
 // Zod schemas for validation
 const ListSkillsSchema = z.object({
@@ -268,12 +269,49 @@ export const skillToolDefinitions = [
       properties: {},
     },
   },
+  {
+    name: 'get_skill_graph',
+    description: 'Get skill dependency graph showing relationships between skills',
+    inputSchema: {
+      type: 'object',
+      properties: {},
+    },
+  },
+  {
+    name: 'analyze_skill_coverage',
+    description: 'Analyze skill coverage by phase and category, identify gaps and orphan skills',
+    inputSchema: {
+      type: 'object',
+      properties: {},
+    },
+  },
+  {
+    name: 'find_similar_skills',
+    description: 'Find skills with similar names to check for potential duplicates',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: {
+          type: 'string',
+          description: 'Skill name to check for similar matches',
+        },
+        threshold: {
+          type: 'number',
+          description: 'Minimum similarity threshold (0-1, default 0.3)',
+        },
+      },
+      required: ['name'],
+    },
+  },
 ];
 
 /**
  * Create skill tool handlers
  */
-export function createSkillToolHandlers(registry: SkillRegistry) {
+export function createSkillToolHandlers(
+  registry: SkillRegistry,
+  learningService?: LearningService
+) {
   return {
     list_skills: async (params: unknown) => {
       const validated = ListSkillsSchema.parse(params);
@@ -363,14 +401,37 @@ export function createSkillToolHandlers(registry: SkillRegistry) {
 
     capture_improvement: async (params: unknown) => {
       const validated = CaptureImprovementSchema.parse(params);
-
-      // For now, just log the improvement. Full implementation would:
-      // 1. Append to IMPROVEMENTS.md
-      // 2. Link to recent executions
-      // 3. Suggest skill if not provided
-
-      const id = `IMP-${Date.now().toString(36).toUpperCase()}`;
       const skill = validated.skill || 'general';
+      const category = (validated.category || 'enhancement') as ImprovementCategory;
+
+      // If learningService is available and skill is specified, create a proper proposal
+      if (learningService && skill !== 'general') {
+        try {
+          const proposal = await learningService.captureImprovement({
+            skillId: skill,
+            feedback: validated.feedback,
+            source: validated.source || 'manual',
+            category,
+          });
+
+          return {
+            id: proposal.id,
+            skill: proposal.skillId,
+            status: proposal.status,
+            message: `Improvement proposal ${proposal.id} created for skill '${skill}'`,
+          };
+        } catch (error) {
+          // Fall back to simple logging if skill not found
+          console.error(JSON.stringify({
+            timestamp: new Date().toISOString(),
+            level: 'warn',
+            message: `Failed to create proposal: ${error}`,
+          }));
+        }
+      }
+
+      // Fallback: log the improvement
+      const id = `IMP-${Date.now().toString(36).toUpperCase()}`;
 
       console.error(JSON.stringify({
         timestamp: new Date().toISOString(),
@@ -378,7 +439,7 @@ export function createSkillToolHandlers(registry: SkillRegistry) {
         type: 'improvement',
         id,
         skill,
-        category: validated.category || 'enhancement',
+        category,
         feedback: validated.feedback,
         source: validated.source,
       }));
@@ -400,6 +461,40 @@ export function createSkillToolHandlers(registry: SkillRegistry) {
         indexed: result.indexed,
         duration: result.duration,
         message: `Indexed ${result.indexed} skills in ${result.duration}ms`,
+      };
+    },
+
+    get_skill_graph: async () => {
+      return registry.getSkillGraph();
+    },
+
+    analyze_skill_coverage: async () => {
+      return registry.analyzeSkillCoverage();
+    },
+
+    find_similar_skills: async (params: unknown) => {
+      const validated = z.object({
+        name: z.string().min(1),
+        threshold: z.number().min(0).max(1).optional(),
+      }).parse(params);
+
+      const similar = registry.findSimilarSkills(
+        validated.name,
+        validated.threshold ?? 0.3
+      );
+
+      return {
+        query: validated.name,
+        threshold: validated.threshold ?? 0.3,
+        similar: similar.map(({ skill, similarity }) => ({
+          name: skill.id,
+          description: skill.description,
+          similarity: Math.round(similarity * 100),
+          phase: skill.phase,
+        })),
+        message: similar.length > 0
+          ? `Found ${similar.length} similar skill(s)`
+          : 'No similar skills found',
       };
     },
   };

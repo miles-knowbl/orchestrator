@@ -1,0 +1,23 @@
+{
+  "display": {
+    "name": "Distribute",
+    "icon": "cloud-upload",
+    "description": "Set up CI/CD distribution pipelines",
+    "category": "core"
+  },
+  "inputs": {
+    "context": [
+      { "type": "codebase", "required": true },
+      { "type": "environment", "required": false }
+    ]
+  },
+  "output": {
+    "type": "markdown",
+    "deliverables": [".github/workflows/distribute.yml"]
+  },
+  "execution": {
+    "autoExecute": false,
+    "confirmationRequired": true,
+    "progressIndicator": "steps"
+  }
+}

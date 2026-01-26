@@ -1,0 +1,23 @@
+{
+  "display": {
+    "name": "Scaffold",
+    "icon": "folder-tree",
+    "description": "Generate project and feature scaffolding",
+    "category": "core"
+  },
+  "inputs": {
+    "context": [
+      { "type": "featureSpec", "required": true },
+      { "type": "architecture", "required": false }
+    ]
+  },
+  "output": {
+    "type": "diff",
+    "deliverables": ["src/**/*", "package.json", "tsconfig.json"]
+  },
+  "execution": {
+    "autoExecute": false,
+    "confirmationRequired": true,
+    "progressIndicator": "steps"
+  }
+}

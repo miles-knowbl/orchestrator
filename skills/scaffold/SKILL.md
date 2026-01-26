@@ -1,6 +1,11 @@
 ---
 name: scaffold
 description: "Generate project and feature scaffolding with proper structure, configuration, and boilerplate. Creates new projects from scratch or adds features to existing codebases. Applies stack-specific conventions, tooling setup, and best practices. Produces ready-to-develop foundations that follow team standards."
+phase: SCAFFOLD
+category: core
+version: "1.0.0"
+depends_on: ["spec"]
+tags: [setup, structure, boilerplate]
 ---
 
 # Scaffold

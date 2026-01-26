@@ -1,0 +1,110 @@
+{
+  "id": "meta-loop",
+  "name": "Meta Loop",
+  "version": "1.0.0",
+  "description": "Meta loop for designing and publishing new loops and skills. Takes loop requirements through composition, skill design, and documentation to produce ready-to-use loop definitions.",
+
+  "phases": [
+    {
+      "name": "INIT",
+      "skills": ["requirements"],
+      "required": true
+    },
+    {
+      "name": "SCAFFOLD",
+      "skills": ["loop-composer", "skill-design"],
+      "required": true
+    },
+    {
+      "name": "DOCUMENT",
+      "skills": ["loop-to-slash-command", "document"],
+      "required": true
+    },
+    {
+      "name": "COMPLETE",
+      "skills": ["retrospective"],
+      "required": true
+    }
+  ],
+
+  "gates": [
+    {
+      "id": "design-gate",
+      "name": "Loop Design Approval",
+      "afterPhase": "INIT",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": ["LOOP-REQUIREMENTS.md"]
+    },
+    {
+      "id": "composition-gate",
+      "name": "Composition Approval",
+      "afterPhase": "SCAFFOLD",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": ["loop.json", "SKILL.md"]
+    }
+  ],
+
+  "defaults": {
+    "mode": "greenfield",
+    "autonomy": "supervised"
+  },
+
+  "ui": {
+    "theme": "meta",
+    "layout": "chat-focused",
+    "features": {
+      "skillBrowser": true,
+      "deliverableViewer": true,
+      "gateApprovalUI": true,
+      "progressTimeline": true,
+      "metricsPanel": true
+    },
+    "branding": {
+      "title": "Meta Harness",
+      "subtitle": "Build your loops"
+    }
+  },
+
+  "skillUI": {
+    "requirements": {
+      "displayName": "Requirements Analysis",
+      "icon": "clipboard-list",
+      "outputDisplay": "markdown"
+    },
+    "loop-composer": {
+      "displayName": "Loop Composer",
+      "icon": "puzzle",
+      "outputDisplay": "markdown"
+    },
+    "skill-design": {
+      "displayName": "Skill Design",
+      "icon": "pencil",
+      "outputDisplay": "markdown"
+    },
+    "loop-to-slash-command": {
+      "displayName": "Slash Command Generator",
+      "icon": "terminal",
+      "outputDisplay": "markdown"
+    },
+    "document": {
+      "displayName": "Documentation",
+      "icon": "book-open",
+      "outputDisplay": "markdown"
+    },
+    "retrospective": {
+      "displayName": "Retrospective",
+      "icon": "refresh",
+      "outputDisplay": "markdown"
+    }
+  },
+
+  "metadata": {
+    "author": "Orchestrator",
+    "tags": ["meta", "loops", "skills", "authoring"],
+    "changelog": {
+      "1.0.0": "Initial release"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "display": {
+    "name": "Metadata Extraction",
+    "icon": "tag",
+    "description": "Extract metadata from content sources",
+    "category": "meta"
+  },
+  "inputs": {
+    "context": [
+      { "type": "content", "required": true }
+    ]
+  },
+  "output": {
+    "type": "json",
+    "deliverables": []
+  },
+  "execution": {
+    "autoExecute": true,
+    "confirmationRequired": false,
+    "progressIndicator": "spinner"
+  }
+}

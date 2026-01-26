@@ -48,6 +48,10 @@ export interface Skill {
   content: string;               // Markdown from SKILL.md
   references: SkillReference[];  // Supporting docs
 
+  // MECE support
+  tags?: string[];               // e.g., ["data-layer", "validation", "api"]
+  dependsOn?: string[];          // Skills this skill depends on
+
   // Metadata
   createdAt: Date;
   updatedAt: Date;
@@ -109,6 +113,7 @@ export interface Loop {
   name: string;
   description: string;
   version: string;               // semver
+  content?: string;              // LOOP.md content for rendering
 
   // Structure
   phases: LoopPhase[];
@@ -213,6 +218,9 @@ export interface LoopExecution {
   updatedAt: Date;
   completedAt?: Date;
 
+  // Logs
+  logs: ExecutionLogEntry[];
+
   // Memory link
   memoryId: string;
 }
@@ -271,6 +279,29 @@ export interface SkillExecution {
   // Nesting
   parentExecutionId?: string;
   children?: SkillExecution[];
+}
+
+export interface ExecutionLogEntry {
+  id: string;
+  timestamp: Date;
+  level: 'debug' | 'info' | 'warn' | 'error';
+  category: 'phase' | 'skill' | 'gate' | 'system';
+
+  // Context
+  phase?: Phase;
+  skillId?: string;
+  gateId?: string;
+
+  // Content
+  message: string;
+  details?: Record<string, unknown>;
+
+  // Metrics
+  durationMs?: number;
+  tokenUsage?: {
+    input: number;
+    output: number;
+  };
 }
 
 // =============================================================================
@@ -376,6 +407,7 @@ export interface InboxItem {
   // Extraction results
   extractedSkills?: ExtractedSkill[];
   extractedPatterns?: Pattern[];
+  classifiedExtractions?: ClassifiedExtraction[];
 
   createdAt: Date;
   processedAt?: Date;
@@ -393,6 +425,37 @@ export interface ExtractedSkill {
   phase?: Phase;
   confidence: number;            // 0-1
   needsReview: boolean;
+}
+
+// =============================================================================
+// CLASSIFIED EXTRACTION TYPES
+// =============================================================================
+
+export type ExtractionType = 'standalone_skill' | 'skill_enhancement' | 'reference_doc';
+
+export interface ClassifiedExtraction {
+  type: ExtractionType;
+  confidence: number;            // 0-1
+  reasoning: string;
+
+  // For standalone_skill
+  skill?: ExtractedSkill;
+
+  // For skill_enhancement
+  targetSkill?: string;
+  enhancement?: {
+    section: string;
+    content: string;
+    description: string;
+  };
+
+  // For reference_doc
+  parentSkill?: string;
+  reference?: {
+    name: string;
+    content: string;
+    description: string;
+  };
 }
 
 // =============================================================================

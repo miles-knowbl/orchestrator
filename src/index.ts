@@ -5,6 +5,7 @@
  * Skills are the atomic primitive.
  */
 
+import 'dotenv/config';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import {
   CallToolRequestSchema,
@@ -15,9 +16,15 @@ import { loadConfig, validateConfig } from './config.js';
 import { SkillRegistry } from './services/SkillRegistry.js';
 import { LoopComposer } from './services/LoopComposer.js';
 import { ExecutionEngine } from './services/ExecutionEngine.js';
+import { MemoryService } from './services/MemoryService.js';
+import { LearningService } from './services/LearningService.js';
+import { CalibrationService } from './services/CalibrationService.js';
+import { InboxProcessor } from './services/InboxProcessor.js';
 import { skillToolDefinitions, createSkillToolHandlers } from './tools/skillTools.js';
 import { loopToolDefinitions, createLoopToolHandlers } from './tools/loopTools.js';
 import { executionToolDefinitions, createExecutionToolHandlers } from './tools/executionTools.js';
+import { memoryToolDefinitions, createMemoryToolHandlers } from './tools/memoryTools.js';
+import { inboxToolDefinitions, createInboxToolHandlers } from './tools/inboxTools.js';
 import { createHttpServer, startHttpServer } from './server/httpServer.js';
 
 async function main() {
@@ -82,16 +89,75 @@ async function main() {
     message: 'Execution engine initialized',
   }));
 
+  // Initialize memory service
+  const memoryPath = join(config.repoPath, 'memory');
+  const memoryService = new MemoryService({ memoryPath });
+  await memoryService.initialize();
+
+  console.error(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    level: 'info',
+    message: 'Memory service initialized',
+  }));
+
+  // Initialize learning service
+  const learningDataPath = join(config.repoPath, 'data', 'learning');
+  const learningService = new LearningService(
+    { dataPath: learningDataPath },
+    skillRegistry,
+    memoryService
+  );
+  await learningService.initialize();
+
+  console.error(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    level: 'info',
+    message: 'Learning service initialized',
+  }));
+
+  // Initialize calibration service
+  const calibrationDataPath = join(config.repoPath, 'data', 'calibration');
+  const calibrationService = new CalibrationService(
+    { dataPath: calibrationDataPath },
+    memoryService
+  );
+  await calibrationService.initialize();
+
+  console.error(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    level: 'info',
+    message: 'Calibration service initialized',
+  }));
+
+  // Initialize inbox processor (second brain)
+  const inboxPath = join(config.repoPath, 'inbox');
+  const inboxDataPath = join(config.repoPath, 'data', 'inbox');
+  const inboxProcessor = new InboxProcessor(
+    { inboxPath, dataPath: inboxDataPath },
+    skillRegistry
+  );
+  await inboxProcessor.initialize();
+
+  console.error(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    level: 'info',
+    message: 'Inbox processor initialized',
+  }));
+
   // Create tool handlers
-  const skillHandlers = createSkillToolHandlers(skillRegistry);
+  const skillHandlers = createSkillToolHandlers(skillRegistry, learningService);
   const loopHandlers = createLoopToolHandlers(loopComposer);
   const executionHandlers = createExecutionToolHandlers(executionEngine);
+  const memoryHandlers = createMemoryToolHandlers(memoryService, learningService, calibrationService);
+  const inboxHandlers = createInboxToolHandlers(inboxProcessor);
 
   // Combine all handlers
   const allHandlers = {
     ...skillHandlers,
     ...loopHandlers,
     ...executionHandlers,
+    ...memoryHandlers,
+    ...inboxHandlers,
   };
 
   // Combine all tool definitions
@@ -99,6 +165,8 @@ async function main() {
     ...skillToolDefinitions,
     ...loopToolDefinitions,
     ...executionToolDefinitions,
+    ...memoryToolDefinitions,
+    ...inboxToolDefinitions,
   ];
 
   // Create MCP server factory
@@ -156,8 +224,17 @@ async function main() {
     return server;
   };
 
-  // Create and start HTTP server
-  const app = createHttpServer({ config, createServer });
+  // Create and start HTTP server with services for REST API
+  const app = createHttpServer({
+    config,
+    createServer,
+    services: {
+      executionEngine,
+      skillRegistry,
+      loopComposer,
+      inboxProcessor,
+    },
+  });
   await startHttpServer(app, config);
 
   // Handle graceful shutdown

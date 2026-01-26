@@ -1,0 +1,23 @@
+{
+  "display": {
+    "name": "Document",
+    "icon": "file-text",
+    "description": "Generate and maintain documentation",
+    "category": "core"
+  },
+  "inputs": {
+    "context": [
+      { "type": "codebase", "required": true },
+      { "type": "architecture", "required": false }
+    ]
+  },
+  "output": {
+    "type": "markdown",
+    "deliverables": ["README.md", "docs/**/*.md"]
+  },
+  "execution": {
+    "autoExecute": false,
+    "confirmationRequired": true,
+    "progressIndicator": "steps"
+  }
+}

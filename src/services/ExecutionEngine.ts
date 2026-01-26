@@ -15,6 +15,7 @@ import type {
   PhaseExecutionState,
   GateState,
   SkillExecution,
+  ExecutionLogEntry,
   Phase,
   LoopMode,
   AutonomyLevel,
@@ -118,10 +119,19 @@ export class ExecutionEngine {
       phases,
       gates,
       skillExecutions: [],
+      logs: [],
       startedAt: now,
       updatedAt: now,
       memoryId: `memory-${id}`,
     };
+
+    // Add initial log entry
+    this.addExecutionLog(execution, {
+      level: 'info',
+      category: 'system',
+      message: `Started ${loop.name} execution`,
+      details: { project: params.project, mode: execution.mode, autonomy: execution.autonomy },
+    });
 
     // Mark first phase as in-progress
     execution.phases[0].status = 'in-progress';
@@ -210,6 +220,17 @@ export class ExecutionEngine {
       execution.status = 'completed';
       execution.completedAt = new Date();
       execution.updatedAt = new Date();
+
+      this.addExecutionLog(execution, {
+        level: 'info',
+        category: 'system',
+        message: `Loop execution completed`,
+        details: {
+          totalPhases: loop.phases.length,
+          totalDurationMs: execution.completedAt.getTime() - execution.startedAt.getTime(),
+        },
+      });
+
       await this.saveExecution(execution);
       this.log('info', `Execution ${executionId} completed`);
       return execution;
@@ -221,6 +242,14 @@ export class ExecutionEngine {
     execution.phases[currentIndex + 1].status = 'in-progress';
     execution.phases[currentIndex + 1].startedAt = new Date();
     execution.updatedAt = new Date();
+
+    this.addExecutionLog(execution, {
+      level: 'info',
+      category: 'phase',
+      phase: nextPhase.name,
+      message: `Entered ${nextPhase.name} phase`,
+      details: { skills: nextPhase.skills.map(s => s.skillId) },
+    });
 
     await this.saveExecution(execution);
     this.log('info', `Execution ${executionId} advanced to phase ${nextPhase.name}`);
@@ -345,6 +374,19 @@ export class ExecutionEngine {
       outcome: result?.outcome ? { ...result.outcome, signals: [] } : undefined,
     });
 
+    this.addExecutionLog(execution, {
+      level: 'info',
+      category: 'skill',
+      phase: execution.currentPhase,
+      skillId,
+      message: `Skill "${skillId}" completed`,
+      details: {
+        deliverables: result?.deliverables,
+        outcome: result?.outcome,
+      },
+    });
+
+    await this.saveExecution(execution);
     return execution;
   }
 
@@ -373,6 +415,15 @@ export class ExecutionEngine {
 
     skillState.status = 'skipped';
     execution.updatedAt = new Date();
+
+    this.addExecutionLog(execution, {
+      level: 'info',
+      category: 'skill',
+      phase: execution.currentPhase,
+      skillId,
+      message: `Skill "${skillId}" skipped`,
+      details: { reason },
+    });
 
     await this.saveExecution(execution);
     this.log('info', `Skill ${skillId} skipped: ${reason}`);
@@ -410,6 +461,14 @@ export class ExecutionEngine {
     gateState.approvedAt = new Date();
     execution.updatedAt = new Date();
 
+    this.addExecutionLog(execution, {
+      level: 'info',
+      category: 'gate',
+      gateId,
+      message: `Gate "${gateId}" approved`,
+      details: { approvedBy },
+    });
+
     await this.saveExecution(execution);
     this.log('info', `Gate ${gateId} approved for execution ${executionId}`);
     return execution;
@@ -439,6 +498,14 @@ export class ExecutionEngine {
 
     // Optionally block execution
     execution.status = 'blocked';
+
+    this.addExecutionLog(execution, {
+      level: 'warn',
+      category: 'gate',
+      gateId,
+      message: `Gate "${gateId}" rejected - execution blocked`,
+      details: { feedback },
+    });
 
     await this.saveExecution(execution);
     this.log('info', `Gate ${gateId} rejected for execution ${executionId}`);
@@ -550,6 +617,76 @@ export class ExecutionEngine {
       startedAt: execution.startedAt,
       updatedAt: execution.updatedAt,
     };
+  }
+
+  // ==========================================================================
+  // EXECUTION LOGGING
+  // ==========================================================================
+
+  /**
+   * Add a log entry to an execution
+   */
+  addExecutionLog(
+    execution: LoopExecution,
+    entry: Omit<ExecutionLogEntry, 'id' | 'timestamp'>
+  ): void {
+    const logEntry: ExecutionLogEntry = {
+      id: randomUUID(),
+      timestamp: new Date(),
+      ...entry,
+    };
+    execution.logs.push(logEntry);
+
+    // Also log to console
+    this.log(entry.level, `[${execution.id.slice(0, 8)}] ${entry.message}`);
+  }
+
+  /**
+   * Add log entry by execution ID
+   */
+  async addLog(
+    executionId: string,
+    entry: Omit<ExecutionLogEntry, 'id' | 'timestamp'>
+  ): Promise<void> {
+    const execution = this.executions.get(executionId);
+    if (!execution) {
+      throw new Error(`Execution not found: ${executionId}`);
+    }
+
+    this.addExecutionLog(execution, entry);
+    await this.saveExecution(execution);
+  }
+
+  /**
+   * Get logs for an execution
+   */
+  getLogs(executionId: string, options?: {
+    level?: ExecutionLogEntry['level'];
+    category?: ExecutionLogEntry['category'];
+    since?: Date;
+    limit?: number;
+  }): ExecutionLogEntry[] {
+    const execution = this.executions.get(executionId);
+    if (!execution) {
+      return [];
+    }
+
+    let logs = execution.logs || [];
+
+    if (options?.level) {
+      logs = logs.filter(l => l.level === options.level);
+    }
+    if (options?.category) {
+      logs = logs.filter(l => l.category === options.category);
+    }
+    if (options?.since) {
+      logs = logs.filter(l => new Date(l.timestamp) > options.since!);
+    }
+    if (options?.limit) {
+      logs = logs.slice(-options.limit);
+    }
+
+    return logs;
   }
 
   private log(level: string, message: string): void {

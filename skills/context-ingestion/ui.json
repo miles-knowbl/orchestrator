@@ -1,0 +1,24 @@
+{
+  "display": {
+    "name": "Context Ingestion",
+    "icon": "download",
+    "description": "Gather and organize context from sources",
+    "category": "specialized"
+  },
+  "inputs": {
+    "context": [
+      { "type": "urls", "required": false },
+      { "type": "documents", "required": false },
+      { "type": "conversations", "required": false }
+    ]
+  },
+  "output": {
+    "type": "markdown",
+    "deliverables": ["CONTEXT.md"]
+  },
+  "execution": {
+    "autoExecute": false,
+    "confirmationRequired": false,
+    "progressIndicator": "spinner"
+  }
+}

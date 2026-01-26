@@ -1,13 +1,13 @@
 {
   "id": "proposal-loop",
   "name": "Proposal Loop",
-  "version": "1.0.0",
-  "description": "Create compelling proposals by ingesting context, cultivating insights, prioritizing opportunities, and generating polished proposal documents.",
+  "version": "2.0.0",
+  "description": "Create compelling proposals through structured context gathering, insight cultivation, priority analysis, content validation, and polished document assembly. Six phases with human-in-the-loop gates ensure quality at every transition.",
 
   "phases": [
     {
       "name": "INIT",
-      "skills": ["context-ingestion"],
+      "skills": ["context-ingestion", "requirements"],
       "required": true
     },
     {
@@ -21,8 +21,18 @@
       "required": true
     },
     {
-      "name": "COMPLETE",
+      "name": "VALIDATE",
+      "skills": ["content-analysis"],
+      "required": true
+    },
+    {
+      "name": "DOCUMENT",
       "skills": ["proposal-builder"],
+      "required": true
+    },
+    {
+      "name": "COMPLETE",
+      "skills": ["retrospective"],
       "required": true
     }
   ],
@@ -30,15 +40,15 @@
   "gates": [
     {
       "id": "context-gate",
-      "name": "Context Review",
+      "name": "Context & Requirements Review",
       "afterPhase": "INIT",
       "required": true,
       "approvalType": "human",
-      "deliverables": ["CONTEXT-SOURCES.md", "RAW-CONTEXT.md"]
+      "deliverables": ["CONTEXT-SOURCES.md", "RAW-CONTEXT.md", "REQUIREMENTS.md"]
     },
     {
-      "id": "cultivation-gate",
-      "name": "Insights Review",
+      "id": "synthesis-gate",
+      "name": "Insights & Patterns Review",
       "afterPhase": "SCAFFOLD",
       "required": true,
       "approvalType": "human",
@@ -46,16 +56,24 @@
     },
     {
       "id": "priorities-gate",
-      "name": "Priorities Review",
+      "name": "Priorities & Strategy Review",
       "afterPhase": "IMPLEMENT",
       "required": true,
       "approvalType": "human",
       "deliverables": ["PRIORITIES.md", "MATRIX.md"]
     },
     {
-      "id": "final-gate",
+      "id": "quality-gate",
+      "name": "Content Quality Review",
+      "afterPhase": "VALIDATE",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": ["CONTENT-ANALYSIS.md"]
+    },
+    {
+      "id": "proposal-gate",
       "name": "Final Proposal Review",
-      "afterPhase": "COMPLETE",
+      "afterPhase": "DOCUMENT",
       "required": true,
       "approvalType": "human",
       "deliverables": ["PROPOSAL.md"]
@@ -71,15 +89,15 @@
     "theme": "proposal",
     "layout": "dashboard",
     "features": {
-      "skillBrowser": false,
+      "skillBrowser": true,
       "deliverableViewer": true,
       "gateApprovalUI": true,
       "progressTimeline": true,
-      "metricsPanel": false
+      "metricsPanel": true
     },
     "branding": {
       "title": "Proposal Builder",
-      "subtitle": "Create compelling proposals"
+      "subtitle": "Create compelling proposals with structured quality gates"
     }
   },
 
@@ -87,6 +105,11 @@
     "context-ingestion": {
       "displayName": "Context Ingestion",
       "icon": "inbox",
+      "outputDisplay": "markdown"
+    },
+    "requirements": {
+      "displayName": "Requirements Clarification",
+      "icon": "clipboard-list",
       "outputDisplay": "markdown"
     },
     "context-cultivation": {
@@ -99,15 +122,25 @@
       "icon": "table",
       "outputDisplay": "markdown"
     },
+    "content-analysis": {
+      "displayName": "Content Analysis",
+      "icon": "search",
+      "outputDisplay": "markdown"
+    },
     "proposal-builder": {
       "displayName": "Proposal Builder",
       "icon": "document",
+      "outputDisplay": "markdown"
+    },
+    "retrospective": {
+      "displayName": "Retrospective",
+      "icon": "chart-bar",
       "outputDisplay": "markdown"
     }
   },
 
   "metadata": {
     "author": "Orchestrator",
-    "tags": ["proposal", "sales", "consulting"]
+    "tags": ["proposal", "sales", "consulting", "strategy"]
   }
 }

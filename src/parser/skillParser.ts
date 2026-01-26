@@ -13,6 +13,8 @@ export interface ParsedSkill {
   category?: SkillCategory;
   author?: string;
   learning?: Partial<SkillLearning>;
+  dependsOn?: string[];
+  tags?: string[];
   content: string;
   raw: string;
 }
@@ -68,6 +70,8 @@ export function parseSkillFile(fileContent: string): ParsedSkill {
     category,
     author: data.author,
     learning,
+    dependsOn: Array.isArray(data.depends_on) ? data.depends_on : [],
+    tags: Array.isArray(data.tags) ? data.tags : [],
     content: content.trim(),
     raw: fileContent,
   };
@@ -181,6 +185,8 @@ export function serializeSkillFile(skill: {
   category?: SkillCategory;
   author?: string;
   learning?: SkillLearning;
+  dependsOn?: string[];
+  tags?: string[];
   content: string;
 }): string {
   const frontmatter: Record<string, unknown> = {
@@ -191,6 +197,8 @@ export function serializeSkillFile(skill: {
 
   if (skill.phase) frontmatter.phase = skill.phase;
   if (skill.category) frontmatter.category = skill.category;
+  if (skill.dependsOn) frontmatter.depends_on = skill.dependsOn;
+  if (skill.tags?.length) frontmatter.tags = skill.tags;
   if (skill.author) frontmatter.author = skill.author;
 
   if (skill.learning) {

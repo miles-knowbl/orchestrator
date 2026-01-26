@@ -1,0 +1,147 @@
+{
+  "id": "release-loop",
+  "name": "Release Loop",
+  "version": "1.0.0",
+  "description": "Release loop for versioning, documenting, and distributing releases. Takes release planning through readiness validation, changelog generation, and deployment with enforced quality gates.",
+
+  "phases": [
+    {
+      "name": "INIT",
+      "skills": ["release-planner"],
+      "required": true
+    },
+    {
+      "name": "VALIDATE",
+      "skills": ["code-verification", "integration-test"],
+      "required": true
+    },
+    {
+      "name": "DOCUMENT",
+      "skills": ["changelog-generator", "release-notes"],
+      "required": true
+    },
+    {
+      "name": "SHIP",
+      "skills": ["deploy", "distribute", "git-workflow"],
+      "required": true
+    },
+    {
+      "name": "COMPLETE",
+      "skills": ["retrospective"],
+      "required": true
+    }
+  ],
+
+  "gates": [
+    {
+      "id": "scope-gate",
+      "name": "Release Scope Approval",
+      "afterPhase": "INIT",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": ["RELEASE-PLAN.md"]
+    },
+    {
+      "id": "readiness-gate",
+      "name": "Release Readiness Check",
+      "afterPhase": "VALIDATE",
+      "required": true,
+      "approvalType": "auto",
+      "deliverables": ["READINESS-REPORT.md"],
+      "autoCheck": "build passes, all tests pass, no lint errors"
+    },
+    {
+      "id": "notes-gate",
+      "name": "Release Notes Approval",
+      "afterPhase": "DOCUMENT",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": ["CHANGELOG.md", "RELEASE-NOTES.md"]
+    },
+    {
+      "id": "release-gate",
+      "name": "Release Approval",
+      "afterPhase": "SHIP",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": []
+    }
+  ],
+
+  "defaults": {
+    "mode": "greenfield",
+    "autonomy": "supervised"
+  },
+
+  "ui": {
+    "theme": "release",
+    "layout": "chat-focused",
+    "features": {
+      "skillBrowser": true,
+      "deliverableViewer": true,
+      "gateApprovalUI": true,
+      "progressTimeline": true,
+      "metricsPanel": true
+    },
+    "branding": {
+      "title": "Release Harness",
+      "subtitle": "Ship with confidence"
+    }
+  },
+
+  "skillUI": {
+    "release-planner": {
+      "displayName": "Release Planner",
+      "icon": "clipboard-list",
+      "outputDisplay": "markdown"
+    },
+    "code-verification": {
+      "displayName": "Code Verification",
+      "icon": "check-circle",
+      "outputDisplay": "markdown"
+    },
+    "integration-test": {
+      "displayName": "Integration Testing",
+      "icon": "puzzle",
+      "outputDisplay": "markdown"
+    },
+    "changelog-generator": {
+      "displayName": "Changelog Generator",
+      "icon": "document-text",
+      "outputDisplay": "markdown"
+    },
+    "release-notes": {
+      "displayName": "Release Notes",
+      "icon": "newspaper",
+      "outputDisplay": "markdown"
+    },
+    "deploy": {
+      "displayName": "Deployment",
+      "icon": "rocket",
+      "outputDisplay": "markdown"
+    },
+    "distribute": {
+      "displayName": "Distribution",
+      "icon": "share",
+      "outputDisplay": "markdown"
+    },
+    "git-workflow": {
+      "displayName": "Git Workflow",
+      "icon": "git-branch",
+      "outputDisplay": "markdown"
+    },
+    "retrospective": {
+      "displayName": "Retrospective",
+      "icon": "refresh",
+      "outputDisplay": "markdown"
+    }
+  },
+
+  "metadata": {
+    "author": "Orchestrator",
+    "tags": ["release", "versioning", "distribution", "changelog"],
+    "changelog": {
+      "1.0.0": "Initial release"
+    }
+  }
+}

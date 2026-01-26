@@ -1,6 +1,11 @@
 ---
 name: implement
 description: "Transform specifications into working, production-quality code. Takes FeatureSpecs, requirements, or design documents and produces complete implementations following established patterns. Handles data layer, service layer, API layer, and UI components with proper error handling, validation, and tests."
+phase: IMPLEMENT
+category: core
+version: "1.0.0"
+depends_on: ["spec", "scaffold"]
+tags: [coding, core-workflow, implementation]
 ---
 
 # Implement

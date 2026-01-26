@@ -1,0 +1,22 @@
+{
+  "display": {
+    "name": "Content Analysis",
+    "icon": "search",
+    "description": "Extract skills and patterns from content",
+    "category": "meta"
+  },
+  "inputs": {
+    "context": [
+      { "type": "content", "required": true }
+    ]
+  },
+  "output": {
+    "type": "json",
+    "deliverables": []
+  },
+  "execution": {
+    "autoExecute": false,
+    "confirmationRequired": false,
+    "progressIndicator": "spinner"
+  }
+}

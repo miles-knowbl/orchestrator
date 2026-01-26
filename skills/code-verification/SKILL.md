@@ -1,6 +1,11 @@
 ---
 name: code-verification
 description: "Fast structural correctness checks for code generation loops. Use after every code generation to catch complexity issues, security vulnerabilities, resource leaks, and error handling gaps before they compound. Supports two strictness levels: 'fast' for tight iteration loops, 'thorough' for pre-PR checks. Outputs pass/fail per category with specific issues."
+phase: VERIFY
+category: core
+version: "1.0.0"
+depends_on: ["implement"]
+tags: [quality, verification, core-workflow]
 ---
 
 # Code Verification

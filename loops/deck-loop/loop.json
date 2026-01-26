@@ -1,0 +1,149 @@
+{
+  "id": "deck-loop",
+  "name": "Deck Loop",
+  "version": "1.0.0",
+  "description": "Presentation generation loop that transforms discovery context and brand assets into polished slide decks. Sequences context gathering, brand extraction, slide composition, quality validation, and PowerPoint rendering.",
+
+  "phases": [
+    {
+      "name": "INIT",
+      "skills": ["context-ingestion"],
+      "required": true
+    },
+    {
+      "name": "SCAFFOLD",
+      "skills": ["taste-schema"],
+      "required": true
+    },
+    {
+      "name": "IMPLEMENT",
+      "skills": ["deck-text-schema", "deck-image-schema"],
+      "required": true
+    },
+    {
+      "name": "VALIDATE",
+      "skills": ["content-analysis"],
+      "required": true
+    },
+    {
+      "name": "DOCUMENT",
+      "skills": ["pptx"],
+      "required": true
+    },
+    {
+      "name": "COMPLETE",
+      "skills": ["retrospective"],
+      "required": true
+    }
+  ],
+
+  "gates": [
+    {
+      "id": "context-gate",
+      "name": "Context Approval",
+      "afterPhase": "INIT",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": ["CONTEXT-SOURCES.md", "RAW-CONTEXT.md"]
+    },
+    {
+      "id": "taste-gate",
+      "name": "Brand Identity Approval",
+      "afterPhase": "SCAFFOLD",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": ["taste-schema.json"]
+    },
+    {
+      "id": "composition-gate",
+      "name": "Deck Composition Approval",
+      "afterPhase": "IMPLEMENT",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": ["deck-text-schema.json", "deck-image-schema.json"]
+    },
+    {
+      "id": "quality-gate",
+      "name": "Content Quality Approval",
+      "afterPhase": "VALIDATE",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": ["CONTENT-ANALYSIS.md"]
+    },
+    {
+      "id": "render-gate",
+      "name": "Render Approval",
+      "afterPhase": "DOCUMENT",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": ["render-manifest.json"]
+    }
+  ],
+
+  "defaults": {
+    "mode": "greenfield",
+    "autonomy": "supervised"
+  },
+
+  "ui": {
+    "theme": "presentation",
+    "layout": "dashboard",
+    "features": {
+      "skillBrowser": true,
+      "deliverableViewer": true,
+      "gateApprovalUI": true,
+      "progressTimeline": true,
+      "metricsPanel": true
+    },
+    "branding": {
+      "title": "Deck Harness",
+      "subtitle": "Create compelling presentations"
+    }
+  },
+
+  "skillUI": {
+    "context-ingestion": {
+      "displayName": "Context Ingestion",
+      "icon": "inbox",
+      "outputDisplay": "markdown"
+    },
+    "taste-schema": {
+      "displayName": "Brand Identity",
+      "icon": "palette",
+      "outputDisplay": "json"
+    },
+    "deck-text-schema": {
+      "displayName": "Slide Composition",
+      "icon": "document-text",
+      "outputDisplay": "json"
+    },
+    "deck-image-schema": {
+      "displayName": "Visual Specification",
+      "icon": "photograph",
+      "outputDisplay": "json"
+    },
+    "content-analysis": {
+      "displayName": "Content Analysis",
+      "icon": "shield-check",
+      "outputDisplay": "markdown"
+    },
+    "pptx": {
+      "displayName": "PowerPoint Render",
+      "icon": "presentation-chart-bar",
+      "outputDisplay": "markdown"
+    },
+    "retrospective": {
+      "displayName": "Retrospective",
+      "icon": "refresh",
+      "outputDisplay": "markdown"
+    }
+  },
+
+  "metadata": {
+    "author": "Orchestrator",
+    "tags": ["presentation", "deck", "slides", "pptx"],
+    "changelog": {
+      "1.0.0": "Initial deck loop with 6 phases, 7 skills, 5 gates. Context → brand → composition → validation → render pipeline."
+    }
+  }
+}

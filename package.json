@@ -6,11 +6,11 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "orchestrator": "dist/cli.js",
+    "orchestrator": "dist/index.js",
     "create-loop-app": "dist/generator/cli.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && cp -r src/generator/templates dist/generator/",
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
     "lint": "eslint src/",
@@ -30,8 +30,10 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
     "@modelcontextprotocol/sdk": "^1.0.0",
+    "dotenv": "^17.2.3",
     "express": "^4.21.0",
     "gray-matter": "^4.0.3",
+    "pptxgenjs": "^4.0.1",
     "simple-git": "^3.27.0",
     "zod": "^3.23.8"
   },

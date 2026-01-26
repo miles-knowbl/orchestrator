@@ -1,0 +1,23 @@
+{
+  "display": {
+    "name": "Proposal Builder",
+    "icon": "file-signature",
+    "description": "Create compelling proposals",
+    "category": "specialized"
+  },
+  "inputs": {
+    "context": [
+      { "type": "priorities", "required": true },
+      { "type": "template", "required": false }
+    ]
+  },
+  "output": {
+    "type": "markdown",
+    "deliverables": ["PROPOSAL.md"]
+  },
+  "execution": {
+    "autoExecute": false,
+    "confirmationRequired": true,
+    "progressIndicator": "steps"
+  }
+}

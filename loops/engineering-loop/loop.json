@@ -1,13 +1,13 @@
 {
   "id": "engineering-loop",
   "name": "Engineering Loop",
-  "version": "2.0.0",
-  "description": "Complete engineering loop for building production-quality software. Takes requirements through specification, architecture, implementation, testing, validation, documentation, review, and deployment.",
+  "version": "3.1.0",
+  "description": "Complete engineering loop for building production-quality software. Takes requirements through specification, architecture, implementation, testing, verification, validation, documentation, review, and deployment with enforced quality gates.",
 
   "phases": [
     {
       "name": "INIT",
-      "skills": ["spec"],
+      "skills": ["requirements", "spec"],
       "required": true
     },
     {
@@ -31,9 +31,14 @@
       "required": true
     },
     {
+      "name": "VALIDATE",
+      "skills": ["code-validation", "security-audit"],
+      "required": true
+    },
+    {
       "name": "DOCUMENT",
       "skills": ["document"],
-      "required": false
+      "required": true
     },
     {
       "name": "REVIEW",
@@ -42,12 +47,12 @@
     },
     {
       "name": "SHIP",
-      "skills": ["deploy"],
-      "required": false
+      "skills": ["deploy", "distribute"],
+      "required": true
     },
     {
       "name": "COMPLETE",
-      "skills": ["loop-controller"],
+      "skills": ["retrospective"],
       "required": true
     }
   ],
@@ -59,7 +64,7 @@
       "afterPhase": "INIT",
       "required": true,
       "approvalType": "human",
-      "deliverables": ["FEATURESPEC.md"]
+      "deliverables": ["REQUIREMENTS.md", "FEATURESPEC.md"]
     },
     {
       "id": "architecture-gate",
@@ -68,6 +73,23 @@
       "required": true,
       "approvalType": "human",
       "deliverables": ["ARCHITECTURE.md"]
+    },
+    {
+      "id": "verification-gate",
+      "name": "Verification Check",
+      "afterPhase": "VERIFY",
+      "required": true,
+      "approvalType": "auto",
+      "deliverables": ["VERIFICATION.md"],
+      "autoCheck": "build passes, tests pass, lint clean"
+    },
+    {
+      "id": "validation-gate",
+      "name": "Validation Approval",
+      "afterPhase": "VALIDATE",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": ["VALIDATION.md", "SECURITY-AUDIT.md"]
     },
     {
       "id": "review-gate",
@@ -83,7 +105,8 @@
       "afterPhase": "SHIP",
       "required": false,
       "approvalType": "conditional",
-      "deliverables": []
+      "deliverables": [],
+      "condition": "Auto-passes if no deploy target configured"
     }
   ],
 
@@ -109,6 +132,11 @@
   },
 
   "skillUI": {
+    "requirements": {
+      "displayName": "Requirements Analysis",
+      "icon": "clipboard-list",
+      "outputDisplay": "markdown"
+    },
     "spec": {
       "displayName": "Feature Specification",
       "icon": "document-text",
@@ -118,6 +146,11 @@
       "displayName": "Architecture Design",
       "icon": "sitemap",
       "outputDisplay": "markdown"
+    },
+    "scaffold": {
+      "displayName": "Project Scaffolding",
+      "icon": "folder-tree",
+      "outputDisplay": "tree"
     },
     "implement": {
       "displayName": "Implementation",
@@ -129,15 +162,55 @@
       "icon": "beaker",
       "outputDisplay": "code"
     },
+    "code-verification": {
+      "displayName": "Code Verification",
+      "icon": "check-circle",
+      "outputDisplay": "markdown"
+    },
+    "code-validation": {
+      "displayName": "Code Validation",
+      "icon": "shield-check",
+      "outputDisplay": "markdown"
+    },
+    "security-audit": {
+      "displayName": "Security Audit",
+      "icon": "lock-closed",
+      "outputDisplay": "markdown"
+    },
+    "document": {
+      "displayName": "Documentation",
+      "icon": "book-open",
+      "outputDisplay": "markdown"
+    },
     "code-review": {
       "displayName": "Code Review",
       "icon": "eye",
+      "outputDisplay": "markdown"
+    },
+    "deploy": {
+      "displayName": "Deployment",
+      "icon": "rocket",
+      "outputDisplay": "markdown"
+    },
+    "distribute": {
+      "displayName": "Distribution",
+      "icon": "cloud-upload",
+      "outputDisplay": "markdown"
+    },
+    "retrospective": {
+      "displayName": "Retrospective",
+      "icon": "refresh",
       "outputDisplay": "markdown"
     }
   },
 
   "metadata": {
     "author": "Orchestrator",
-    "tags": ["engineering", "full-loop", "production"]
+    "tags": ["engineering", "full-loop", "production"],
+    "changelog": {
+      "3.1.0": "Add distribute skill to SHIP phase alongside deploy, 13 skills total",
+      "3.0.0": "Add VALIDATE phase, requirements skill in INIT, replace loop-controller with retrospective, all phases required, 6 gates (verification-gate auto, validation-gate human), full skillUI for all 12 skills",
+      "2.0.0": "Initial 9-phase loop with 4 gates"
+    }
   }
 }

@@ -1,0 +1,132 @@
+{
+  "meta": {
+    "version": "1.0.0",
+    "source": "Derived from project identity — no formal brand kit exists",
+    "project": "Orchestrator",
+    "author": "Superorganism"
+  },
+
+  "visual": {
+    "colorHarmony": {
+      "palette": {
+        "primary": "#1E293B",
+        "primaryLight": "#334155",
+        "accent": "#3B82F6",
+        "accentWarm": "#F59E0B",
+        "success": "#10B981",
+        "surface": "#F8FAFC",
+        "surfaceMuted": "#E2E8F0",
+        "text": "#0F172A",
+        "textMuted": "#64748B",
+        "white": "#FFFFFF"
+      },
+      "rationale": "Slate + blue foundation: technical credibility without corporate coldness. Amber accent for callouts and gate indicators. Green for success states. High contrast for readability on projected screens.",
+      "harmony": "analogous-with-complement",
+      "confidence": 0.85
+    },
+
+    "typography": {
+      "headings": {
+        "family": "Inter or system sans-serif",
+        "weight": "700 (bold) for slide titles, 600 (semibold) for section headers",
+        "style": "Clean, geometric, high x-height for projection readability"
+      },
+      "body": {
+        "family": "Inter or system sans-serif",
+        "weight": "400 (regular), 500 (medium) for emphasis",
+        "size": "Minimum 18pt for body text (projection legibility)"
+      },
+      "code": {
+        "family": "JetBrains Mono or monospace fallback",
+        "weight": "400",
+        "usage": "Code snippets, file paths, tool names, terminal output"
+      },
+      "rationale": "Inter is the de facto developer tool typeface — clean, neutral, excellent at small and large sizes. Monospace for anything code-adjacent reinforces the technical identity.",
+      "confidence": 0.92
+    },
+
+    "shapeLanguage": {
+      "corners": "Rounded (6-8px radius) — approachable but not playful",
+      "containers": "Cards with subtle borders (#E2E8F0) and light shadows, not hard boxes",
+      "dividers": "Thin horizontal rules or whitespace, not heavy lines",
+      "icons": "Lucide icon set (already used in dashboard) — thin stroke, consistent sizing",
+      "rationale": "Rounded shapes soften the technical density. Cards create visual hierarchy without overwhelming structure.",
+      "confidence": 0.80
+    },
+
+    "spatialComposition": {
+      "grid": "12-column with generous margins (min 10% side margins for projection)",
+      "alignment": "Left-aligned text, centered diagrams and large callouts",
+      "density": "Low — max 6 bullet points per slide, max 40 words per bullet zone",
+      "whitespace": "Generous. 30-40% of each slide should be whitespace.",
+      "rationale": "15-minute talk to 6 people in a room. Low density = higher retention. Whitespace signals confidence.",
+      "confidence": 0.88
+    },
+
+    "imagery": {
+      "style": "Diagrams and architecture visuals — no stock photos",
+      "diagrams": "ASCII-art-to-SVG conversions of the system architecture, loop flow, memory hierarchy",
+      "charts": "Minimal — one comparison table slide, possibly one before/after visual",
+      "photos": "None. This is a developer tool presentation, not a marketing deck.",
+      "codeBlocks": "Dark background (#1E293B) with syntax highlighting for any code/config shown",
+      "rationale": "Engineers trust diagrams and code. Stock photos signal 'marketing deck' which erodes credibility with this audience.",
+      "confidence": 0.90
+    },
+
+    "motion": {
+      "transitions": "None or simple fade (0.3s). No slide animations.",
+      "builds": "Progressive reveal only if a slide has a sequence to walk through",
+      "rationale": "Animations in a 15-minute technical talk feel like filler. Simplicity signals respect for the audience's time.",
+      "confidence": 0.95
+    }
+  },
+
+  "narrative": {
+    "voice": {
+      "register": "Peer-to-peer technical. Not selling — showing.",
+      "person": "First person plural ('we built', 'here's what we found') or direct address ('your team', 'your workflows')",
+      "jargon": "Allowed: MCP, CI/CD, ADR, SSE, Git, TypeScript. Avoided: 'paradigm shift', 'synergy', 'best-in-class', 'leverage'.",
+      "confidence": 0.90
+    },
+
+    "tone": {
+      "primary": "Honest and grounded. Acknowledge alpha status. Show the real thing, not a polished pitch.",
+      "secondary": "Quietly confident. The architecture speaks for itself. No hard sell.",
+      "energy": "Measured. Not excited/breathless. Not dry/academic. Just clear.",
+      "confidence": 0.88
+    },
+
+    "complexity": {
+      "level": "Mid-high. Audience is technical. Don't oversimplify, but don't dump architecture diagrams without context.",
+      "abstractions": "Lead with the problem, show the concept, then show the concrete implementation",
+      "numbers": "Use specific numbers (38 skills, 10 phases, 105+ tools) — precision builds credibility",
+      "confidence": 0.85
+    },
+
+    "pace": {
+      "opening": "Start with the problem they feel. No 'about us' slide. No agenda slide.",
+      "development": "Problem → concept → concrete demo walkthrough → architecture → adoption path",
+      "closing": "Honest assessment (what works, what's early), then invite questions / live demo",
+      "slidePace": "~80 seconds per slide for 12 slides in 15 minutes. Some slides faster (transitions), some slower (architecture).",
+      "confidence": 0.82
+    },
+
+    "persuasion": {
+      "strategy": "Show, don't tell. Let the architecture and specifics do the convincing.",
+      "proofPoints": "Concrete: 38 skills with real names, 10-phase loop with real gates, actual TypeScript code",
+      "objectionHandling": "Pre-empt 'what's the catch' with an honest limitations slide before Q&A",
+      "callToAction": "Soft: 'Want to run the engineering loop on a real feature together? We can do that now.'",
+      "confidence": 0.87
+    },
+
+    "storyArc": {
+      "act1_hook": "Your engineering practices are scattered across wikis, heads, and CI configs. What if they were composable, versioned, and self-improving?",
+      "act2_journey": "Here's what that looks like: skills, loops, gates, memory. Walk through a real engineering loop execution.",
+      "act3_resolution": "This is alpha software. Here's what works, what's early, and what adoption looks like. Let's try it.",
+      "confidence": 0.86
+    }
+  },
+
+  "overallConfidence": 0.87,
+  "derivationNote": "No formal brand kit. Identity derived from: project name ('Orchestrator' implies precision, coordination), org name ('Superorganism' implies collective intelligence), tech stack (TypeScript/Node signals modern pragmatism), audience profile (DevEx engineers who value substance over style), and presentation context (small room, 15 minutes, evaluation meeting — not a keynote)."
+}

@@ -1,15 +1,26 @@
 /**
- * HTTP Server for MCP transport
+ * HTTP Server for MCP transport and REST API
  */
 
 import express, { Express, Request, Response, NextFunction } from 'express';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import type { OrchestratorConfig } from '../config.js';
+import type { ExecutionEngine } from '../services/ExecutionEngine.js';
+import type { SkillRegistry } from '../services/SkillRegistry.js';
+import type { LoopComposer } from '../services/LoopComposer.js';
+import type { InboxProcessor } from '../services/InboxProcessor.js';
+import { createApiRoutes } from './apiRoutes.js';
 
 export interface HttpServerOptions {
   config: OrchestratorConfig;
   createServer: () => Server;
+  services?: {
+    executionEngine: ExecutionEngine;
+    skillRegistry: SkillRegistry;
+    loopComposer: LoopComposer;
+    inboxProcessor: InboxProcessor;
+  };
 }
 
 export function createHttpServer(options: HttpServerOptions): Express {
@@ -34,6 +45,18 @@ export function createHttpServer(options: HttpServerOptions): Express {
     });
   }
 
+  // CORS headers for dashboard
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-API-Key');
+    if (req.method === 'OPTIONS') {
+      res.status(200).end();
+      return;
+    }
+    next();
+  });
+
   // Health check
   app.get('/health', (_req: Request, res: Response) => {
     res.json({
@@ -42,6 +65,12 @@ export function createHttpServer(options: HttpServerOptions): Express {
       version: process.env.npm_package_version || '0.1.0',
     });
   });
+
+  // REST API routes (if services are provided)
+  if (options.services) {
+    const apiRoutes = createApiRoutes(options.services);
+    app.use('/api', apiRoutes);
+  }
 
   // MCP endpoint using Streamable HTTP transport
   const mcpTransport = new StreamableHTTPServerTransport({
@@ -100,6 +129,10 @@ export function startHttpServer(
         endpoints: {
           mcp: `http://${config.host}:${config.port}/mcp`,
           health: `http://${config.host}:${config.port}/health`,
+          dashboard: `http://${config.host}:${config.port}/api/dashboard`,
+          executions: `http://${config.host}:${config.port}/api/executions`,
+          skills: `http://${config.host}:${config.port}/api/skills`,
+          loops: `http://${config.host}:${config.port}/api/loops`,
         },
       }));
       resolve();

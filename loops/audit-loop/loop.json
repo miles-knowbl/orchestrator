@@ -1,0 +1,133 @@
+{
+  "id": "audit-loop",
+  "name": "Audit Loop",
+  "version": "1.0.0",
+  "description": "Audit loop for evaluating existing systems across architecture, performance, and security dimensions. Takes audit scope through systematic review, validation, and reporting with enforced quality gates.",
+
+  "phases": [
+    {
+      "name": "INIT",
+      "skills": ["requirements"],
+      "required": true
+    },
+    {
+      "name": "REVIEW",
+      "skills": ["architecture-review", "security-audit", "perf-analysis"],
+      "required": true
+    },
+    {
+      "name": "VALIDATE",
+      "skills": ["integration-test", "code-verification"],
+      "required": true
+    },
+    {
+      "name": "DOCUMENT",
+      "skills": ["document"],
+      "required": true
+    },
+    {
+      "name": "COMPLETE",
+      "skills": ["retrospective"],
+      "required": true
+    }
+  ],
+
+  "gates": [
+    {
+      "id": "scope-gate",
+      "name": "Audit Scope Approval",
+      "afterPhase": "INIT",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": ["AUDIT-SCOPE.md"]
+    },
+    {
+      "id": "findings-gate",
+      "name": "Findings Review",
+      "afterPhase": "REVIEW",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": ["ARCHITECTURE-REVIEW.md", "SECURITY-AUDIT.md", "PERF-ANALYSIS.md"]
+    },
+    {
+      "id": "report-gate",
+      "name": "Audit Report Approval",
+      "afterPhase": "DOCUMENT",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": ["AUDIT-REPORT.md"]
+    }
+  ],
+
+  "defaults": {
+    "mode": "greenfield",
+    "autonomy": "supervised"
+  },
+
+  "ui": {
+    "theme": "audit",
+    "layout": "chat-focused",
+    "features": {
+      "skillBrowser": true,
+      "deliverableViewer": true,
+      "gateApprovalUI": true,
+      "progressTimeline": true,
+      "metricsPanel": true
+    },
+    "branding": {
+      "title": "Audit Harness",
+      "subtitle": "Evaluate your systems"
+    }
+  },
+
+  "skillUI": {
+    "requirements": {
+      "displayName": "Requirements Analysis",
+      "icon": "clipboard-list",
+      "outputDisplay": "markdown"
+    },
+    "architecture-review": {
+      "displayName": "Architecture Review",
+      "icon": "sitemap",
+      "outputDisplay": "markdown"
+    },
+    "security-audit": {
+      "displayName": "Security Audit",
+      "icon": "lock-closed",
+      "outputDisplay": "markdown"
+    },
+    "perf-analysis": {
+      "displayName": "Performance Analysis",
+      "icon": "chart-bar",
+      "outputDisplay": "markdown"
+    },
+    "integration-test": {
+      "displayName": "Integration Testing",
+      "icon": "puzzle",
+      "outputDisplay": "markdown"
+    },
+    "code-verification": {
+      "displayName": "Code Verification",
+      "icon": "check-circle",
+      "outputDisplay": "markdown"
+    },
+    "document": {
+      "displayName": "Documentation",
+      "icon": "book-open",
+      "outputDisplay": "markdown"
+    },
+    "retrospective": {
+      "displayName": "Retrospective",
+      "icon": "refresh",
+      "outputDisplay": "markdown"
+    }
+  },
+
+  "metadata": {
+    "author": "Orchestrator",
+    "tags": ["audit", "review", "security", "performance"],
+    "changelog": {
+      "1.0.0": "Initial release"
+    }
+  }
+}

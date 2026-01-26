@@ -1,0 +1,23 @@
+{
+  "display": {
+    "name": "Test Generation",
+    "icon": "flask",
+    "description": "Generate comprehensive test suites",
+    "category": "core"
+  },
+  "inputs": {
+    "context": [
+      { "type": "codebase", "required": true },
+      { "type": "featureSpec", "required": false }
+    ]
+  },
+  "output": {
+    "type": "diff",
+    "deliverables": ["tests/**/*.test.ts", "tests/**/*.spec.ts"]
+  },
+  "execution": {
+    "autoExecute": false,
+    "confirmationRequired": true,
+    "progressIndicator": "steps"
+  }
+}

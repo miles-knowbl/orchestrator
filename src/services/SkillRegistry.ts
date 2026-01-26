@@ -31,7 +31,7 @@ const CORE_SKILLS = [
   'memory-manager', 'architect', 'architecture-review', 'scaffold',
   'git-workflow', 'implement', 'test-generation', 'code-verification',
   'debug-assist', 'code-validation', 'integration-test', 'security-audit',
-  'perf-analysis', 'document', 'code-review', 'refactor', 'deploy',
+  'perf-analysis', 'document', 'code-review', 'refactor', 'deploy', 'distribute',
 ];
 
 const INFRA_SKILLS = [
@@ -39,7 +39,7 @@ const INFRA_SKILLS = [
 ];
 
 const SPECIALIZED_SKILLS = [
-  'frontend-design', 'agentic-harness', 'taste-schema', 'image-schema', 'text-schema',
+  'frontend-design', 'agentic-harness', 'taste-schema', 'deck-image-schema', 'deck-text-schema',
 ];
 
 export interface SkillRegistryOptions {
@@ -165,6 +165,8 @@ export class SkillRegistry {
         category: this.determineCategory(skillName, parsed.category),
         content: parsed.content,
         references,
+        tags: parsed.tags,
+        dependsOn: parsed.dependsOn,
         createdAt: new Date(),
         updatedAt: new Date(),
         author: parsed.author,
@@ -427,6 +429,119 @@ export class SkillRegistry {
   }
 
   /**
+   * Find skills with similar names (for MECE enforcement)
+   * Uses Jaccard similarity on hyphen-split words
+   */
+  findSimilarSkills(name: string, threshold: number = 0.5): { skill: Skill; similarity: number }[] {
+    const skills = [...this.skills.values()];
+    const nameWords = new Set(name.split('-'));
+
+    return skills
+      .map(s => {
+        const skillWords = new Set(s.id.split('-'));
+        const intersection = [...nameWords].filter(w => skillWords.has(w));
+        const union = new Set([...nameWords, ...skillWords]);
+        const similarity = intersection.length / union.size; // Jaccard similarity
+        return { skill: s, similarity };
+      })
+      .filter(({ similarity, skill }) => similarity >= threshold && skill.id !== name)
+      .sort((a, b) => b.similarity - a.similarity);
+  }
+
+  /**
+   * Validate skill dependencies exist
+   */
+  validateDependencies(skill: Skill): string[] {
+    const warnings: string[] = [];
+    for (const dep of skill.dependsOn || []) {
+      if (!this.skills.has(dep)) {
+        warnings.push(`Skill '${skill.id}' depends on unknown skill '${dep}'`);
+      }
+    }
+    return warnings;
+  }
+
+  /**
+   * Analyze skill coverage by phase and identify gaps
+   */
+  analyzeSkillCoverage(): {
+    byPhase: Record<string, string[]>;
+    byCategory: Record<string, string[]>;
+    emptyPhases: string[];
+    orphanSkills: string[];
+    dependencyWarnings: string[];
+    suggestions: string[];
+  } {
+    const skills = [...this.skills.values()];
+    const phases = ['INIT', 'SCAFFOLD', 'IMPLEMENT', 'TEST', 'VERIFY', 'VALIDATE', 'DOCUMENT', 'REVIEW', 'SHIP', 'COMPLETE'];
+
+    // Phase coverage
+    const byPhase: Record<string, string[]> = {};
+    for (const phase of phases) {
+      byPhase[phase] = skills.filter(s => s.phase === phase).map(s => s.id);
+    }
+    const emptyPhases = phases.filter(p => byPhase[p].length === 0);
+
+    // Category coverage
+    const categories = ['core', 'meta', 'specialized', 'custom'];
+    const byCategory: Record<string, string[]> = {};
+    for (const cat of categories) {
+      byCategory[cat] = skills.filter(s => s.category === cat).map(s => s.id);
+    }
+
+    // Dependency analysis - find orphan skills
+    const dependedUpon = new Set(skills.flatMap(s => s.dependsOn || []));
+    const hasDependents = new Set(
+      skills.filter(s => (s.dependsOn || []).length > 0).map(s => s.id)
+    );
+    const orphanSkills = skills
+      .filter(s => !dependedUpon.has(s.id) && !hasDependents.has(s.id))
+      .map(s => s.id);
+
+    // Validate all dependencies
+    const dependencyWarnings: string[] = [];
+    for (const skill of skills) {
+      dependencyWarnings.push(...this.validateDependencies(skill));
+    }
+
+    // Generate suggestions
+    const suggestions: string[] = [];
+    for (const phase of emptyPhases) {
+      suggestions.push(`No skills for phase ${phase} - consider adding coverage`);
+    }
+    if (orphanSkills.length > 5) {
+      suggestions.push(`${orphanSkills.length} orphan skills without dependency relationships`);
+    }
+
+    return { byPhase, byCategory, emptyPhases, orphanSkills, dependencyWarnings, suggestions };
+  }
+
+  /**
+   * Get skill dependency graph
+   */
+  getSkillGraph(): {
+    nodes: { id: string; phase?: string; category: string }[];
+    edges: { from: string; to: string }[];
+  } {
+    const skills = [...this.skills.values()];
+
+    const nodes = skills.map(s => ({
+      id: s.id,
+      phase: s.phase,
+      category: s.category,
+    }));
+
+    const edges: { from: string; to: string }[] = [];
+    for (const skill of skills) {
+      for (const dep of skill.dependsOn || []) {
+        edges.push({ from: skill.id, to: dep });
+      }
+    }
+
+    return { nodes, edges };
+  }
+
+  /**
    * Create a new skill
    */
   async createSkill(params: {
@@ -436,7 +551,30 @@ export class SkillRegistry {
     phase?: Phase;
     category?: SkillCategory;
   }): Promise<Skill> {
+    // Check for exact duplicate in registry
+    if (this.skills.has(params.name)) {
+      throw new Error(`Skill '${params.name}' already exists. Use updateSkill() to modify.`);
+    }
+
+    // Check filesystem as safety net
     const skillDir = join(this.options.skillsPath, params.name);
+    try {
+      await stat(skillDir);
+      throw new Error(`Skill directory '${params.name}' already exists on disk.`);
+    } catch (e) {
+      if ((e as NodeJS.ErrnoException).code !== 'ENOENT') throw e;
+      // Directory doesn't exist, safe to proceed
+    }
+
+    // Check for similar skills (MECE enforcement)
+    const similar = this.findSimilarSkills(params.name);
+    if (similar.length > 0) {
+      const matches = similar.map(s => `'${s.skill.id}' (${Math.round(s.similarity * 100)}% similar)`).join(', ');
+      throw new Error(
+        `Cannot create skill '${params.name}' - similar skills already exist: ${matches}. ` +
+        `Consider enhancing the existing skill instead, or use a more distinct name.`
+      );
+    }
 
     // Create directory
     await mkdir(skillDir, { recursive: true });
@@ -544,6 +682,47 @@ export class SkillRegistry {
     await this.indexAll();
 
     return this.skills.get(params.name)!;
+  }
+
+  /**
+   * Add a reference document to an existing skill
+   */
+  async addReference(params: {
+    skillName: string;
+    referenceName: string;
+    content: string;
+    description: string;
+    versionBump?: 'patch' | 'minor';
+  }): Promise<Skill> {
+    const skill = this.skills.get(params.skillName);
+    if (!skill) {
+      throw new Error(`Skill not found: ${params.skillName}`);
+    }
+
+    const fileName = params.referenceName.endsWith('.md')
+      ? params.referenceName
+      : `${params.referenceName}.md`;
+
+    const referencesDir = join(this.options.skillsPath, params.skillName, 'references');
+    await mkdir(referencesDir, { recursive: true });
+
+    const refPath = join(referencesDir, fileName);
+
+    // Check if reference already exists
+    try {
+      await stat(refPath);
+      throw new Error(`Reference '${fileName}' already exists in skill '${params.skillName}'`);
+    } catch (e) {
+      if ((e as NodeJS.ErrnoException).code !== 'ENOENT') throw e;
+    }
+
+    await writeFile(refPath, params.content);
+
+    return this.updateSkill({
+      name: params.skillName,
+      versionBump: params.versionBump || 'patch',
+      changeDescription: `Added reference: ${fileName} - ${params.description}`,
+    });
   }
 
   /**

@@ -1,0 +1,22 @@
+{
+  "display": {
+    "name": "Context Cultivation",
+    "icon": "sprout",
+    "description": "Transform raw context into insights",
+    "category": "specialized"
+  },
+  "inputs": {
+    "context": [
+      { "type": "rawContext", "required": true }
+    ]
+  },
+  "output": {
+    "type": "markdown",
+    "deliverables": ["INSIGHTS.md"]
+  },
+  "execution": {
+    "autoExecute": false,
+    "confirmationRequired": false,
+    "progressIndicator": "spinner"
+  }
+}

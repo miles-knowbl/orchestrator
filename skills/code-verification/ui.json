@@ -1,0 +1,23 @@
+{
+  "display": {
+    "name": "Code Verification",
+    "icon": "check-circle",
+    "description": "Fast structural correctness checks",
+    "category": "core"
+  },
+  "inputs": {
+    "context": [
+      { "type": "codebase", "required": true },
+      { "type": "diff", "required": false }
+    ]
+  },
+  "output": {
+    "type": "json",
+    "deliverables": ["VERIFICATION.md"]
+  },
+  "execution": {
+    "autoExecute": true,
+    "confirmationRequired": false,
+    "progressIndicator": "spinner"
+  }
+}

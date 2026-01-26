@@ -1,6 +1,11 @@
 ---
 name: document
 description: "Generate and maintain technical documentation. Creates README files, API documentation, code comments, architecture docs, and user guides. Ensures documentation stays accurate, accessible, and useful. Follows documentation standards and best practices for different audiences."
+phase: DOCUMENT
+category: core
+version: "1.0.0"
+depends_on: ["implement"]
+tags: [documentation, core-workflow]
 ---
 
 # Document

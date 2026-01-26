@@ -1,0 +1,38 @@
+// Auto-generated from loop definition
+// Do not edit directly - regenerate from orchestrator
+
+export interface LoopConfig {
+  id: string;
+  name: string;
+  description: string;
+  version: string;
+  phases: Phase[];
+  gates: Gate[];
+  ui: {
+    theme: string;
+    layout: string;
+    primaryColor: string;
+  };
+}
+
+export interface Phase {
+  name: string;
+  order: number;
+  skills: { skillId: string; required: boolean }[];
+  required: boolean;
+}
+
+export interface Gate {
+  id: string;
+  name: string;
+  afterPhase: string;
+  required: boolean;
+  deliverables: string[];
+  ui?: {
+    title: string;
+    approvalPrompt: string;
+    feedbackRequired: boolean;
+  };
+}
+
+export const loopConfig: LoopConfig = {{LOOP_CONFIG_JSON}};

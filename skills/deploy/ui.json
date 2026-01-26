@@ -1,0 +1,23 @@
+{
+  "display": {
+    "name": "Deploy",
+    "icon": "rocket",
+    "description": "Ship code to production safely",
+    "category": "core"
+  },
+  "inputs": {
+    "context": [
+      { "type": "codebase", "required": true },
+      { "type": "environment", "required": true }
+    ]
+  },
+  "output": {
+    "type": "markdown",
+    "deliverables": ["DEPLOYMENT.md", ".github/workflows/*.yml"]
+  },
+  "execution": {
+    "autoExecute": false,
+    "confirmationRequired": true,
+    "progressIndicator": "steps"
+  }
+}

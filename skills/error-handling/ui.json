@@ -1,0 +1,23 @@
+{
+  "display": {
+    "name": "Error Handling",
+    "icon": "alert-triangle",
+    "description": "Implement robust error handling strategies",
+    "category": "core"
+  },
+  "inputs": {
+    "context": [
+      { "type": "codebase", "required": true },
+      { "type": "featureSpec", "required": false }
+    ]
+  },
+  "output": {
+    "type": "diff",
+    "deliverables": ["src/**/*.ts"]
+  },
+  "execution": {
+    "autoExecute": false,
+    "confirmationRequired": true,
+    "progressIndicator": "steps"
+  }
+}

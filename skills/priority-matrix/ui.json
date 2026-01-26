@@ -1,0 +1,23 @@
+{
+  "display": {
+    "name": "Priority Matrix",
+    "icon": "grid",
+    "description": "Rank and prioritize opportunities",
+    "category": "specialized"
+  },
+  "inputs": {
+    "context": [
+      { "type": "insights", "required": true },
+      { "type": "constraints", "required": false }
+    ]
+  },
+  "output": {
+    "type": "markdown",
+    "deliverables": ["PRIORITIES.md"]
+  },
+  "execution": {
+    "autoExecute": false,
+    "confirmationRequired": false,
+    "progressIndicator": "spinner"
+  }
+}

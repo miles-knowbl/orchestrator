@@ -129,8 +129,9 @@ export function configToLoop(config: LoopConfig, markdownContent?: string): Loop
   return {
     id: config.id,
     name: config.name,
-    description: config.description || markdownContent || '',
+    description: config.description || '',
     version: config.version || '1.0.0',
+    content: markdownContent,
     phases,
     gates,
     defaultMode: config.defaults?.mode || 'greenfield',

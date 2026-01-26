@@ -1,0 +1,23 @@
+{
+  "display": {
+    "name": "Loop Controller",
+    "icon": "cpu",
+    "description": "Orchestrate loop execution",
+    "category": "meta"
+  },
+  "inputs": {
+    "context": [
+      { "type": "loopState", "required": true },
+      { "type": "execution", "required": true }
+    ]
+  },
+  "output": {
+    "type": "json",
+    "deliverables": []
+  },
+  "execution": {
+    "autoExecute": true,
+    "confirmationRequired": false,
+    "progressIndicator": "none"
+  }
+}

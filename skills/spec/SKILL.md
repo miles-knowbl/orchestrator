@@ -1,6 +1,11 @@
 ---
 name: spec
 description: "Compile requirements into production-ready technical specifications. Transforms requirements documents into comprehensive 18-section FeatureSpecs (~2000+ lines) with full code, SQL migrations, UI components, feedback timing, and senior engineer audit. Maintains Process Map as system-of-record. The primary driver of the implementation process."
+phase: INIT
+category: core
+version: "1.0.0"
+depends_on: ["architect"]
+tags: [planning, specification, requirements]
 ---
 
 # Spec

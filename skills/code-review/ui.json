@@ -1,0 +1,23 @@
+{
+  "display": {
+    "name": "Code Review",
+    "icon": "eye",
+    "description": "Comprehensive PR review for merge readiness",
+    "category": "core"
+  },
+  "inputs": {
+    "context": [
+      { "type": "pullRequest", "required": true },
+      { "type": "codebase", "required": true }
+    ]
+  },
+  "output": {
+    "type": "markdown",
+    "deliverables": ["REVIEW.md"]
+  },
+  "execution": {
+    "autoExecute": false,
+    "confirmationRequired": true,
+    "progressIndicator": "steps"
+  }
+}

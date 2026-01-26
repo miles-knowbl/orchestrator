@@ -1,0 +1,135 @@
+{
+  "id": "infrastructure-loop",
+  "name": "Infrastructure Loop",
+  "version": "1.0.0",
+  "description": "Infrastructure loop for provisioning dev environments, databases, containers, and CI/CD pipelines. Takes infrastructure requirements through planning, provisioning, and deployment with enforced quality gates.",
+
+  "phases": [
+    {
+      "name": "INIT",
+      "skills": ["requirements"],
+      "required": true
+    },
+    {
+      "name": "SCAFFOLD",
+      "skills": ["scaffold", "infra-devenv"],
+      "required": true
+    },
+    {
+      "name": "IMPLEMENT",
+      "skills": ["infra-docker", "infra-database", "infra-monorepo", "infra-services"],
+      "required": true
+    },
+    {
+      "name": "SHIP",
+      "skills": ["deploy", "distribute"],
+      "required": true
+    },
+    {
+      "name": "COMPLETE",
+      "skills": ["retrospective"],
+      "required": true
+    }
+  ],
+
+  "gates": [
+    {
+      "id": "infra-gate",
+      "name": "Infrastructure Plan Approval",
+      "afterPhase": "SCAFFOLD",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": ["INFRASTRUCTURE-PLAN.md"]
+    },
+    {
+      "id": "deploy-gate",
+      "name": "Deployment Approval",
+      "afterPhase": "SHIP",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": []
+    }
+  ],
+
+  "defaults": {
+    "mode": "greenfield",
+    "autonomy": "supervised"
+  },
+
+  "ui": {
+    "theme": "infrastructure",
+    "layout": "chat-focused",
+    "features": {
+      "skillBrowser": true,
+      "deliverableViewer": true,
+      "gateApprovalUI": true,
+      "progressTimeline": true,
+      "metricsPanel": true
+    },
+    "branding": {
+      "title": "Infrastructure Harness",
+      "subtitle": "Provision your platform"
+    }
+  },
+
+  "skillUI": {
+    "requirements": {
+      "displayName": "Requirements Analysis",
+      "icon": "clipboard-list",
+      "outputDisplay": "markdown"
+    },
+    "scaffold": {
+      "displayName": "Project Scaffolding",
+      "icon": "folder-tree",
+      "outputDisplay": "tree"
+    },
+    "infra-devenv": {
+      "displayName": "Dev Environment Setup",
+      "icon": "terminal",
+      "outputDisplay": "markdown"
+    },
+    "infra-docker": {
+      "displayName": "Docker Configuration",
+      "icon": "cube",
+      "outputDisplay": "markdown"
+    },
+    "infra-database": {
+      "displayName": "Database Provisioning",
+      "icon": "database",
+      "outputDisplay": "markdown"
+    },
+    "infra-monorepo": {
+      "displayName": "Monorepo Setup",
+      "icon": "collection",
+      "outputDisplay": "markdown"
+    },
+    "infra-services": {
+      "displayName": "Service Configuration",
+      "icon": "server",
+      "outputDisplay": "markdown"
+    },
+    "deploy": {
+      "displayName": "Deployment",
+      "icon": "rocket",
+      "outputDisplay": "markdown"
+    },
+    "distribute": {
+      "displayName": "Distribution",
+      "icon": "share",
+      "outputDisplay": "markdown"
+    },
+    "retrospective": {
+      "displayName": "Retrospective",
+      "icon": "refresh",
+      "outputDisplay": "markdown"
+    }
+  },
+
+  "metadata": {
+    "author": "Orchestrator",
+    "tags": ["infrastructure", "devops", "platform"],
+    "changelog": {
+      "1.0.0": "Initial release"
+    }
+  }
+}

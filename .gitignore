@@ -27,3 +27,8 @@ npm-debug.log*
 
 # Test coverage
 coverage/
+
+# Generated artifacts
+*.pptx
+*-state.json
+render-manifest.json

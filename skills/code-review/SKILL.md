@@ -1,6 +1,11 @@
 ---
 name: code-review
 description: "Comprehensive PR review combining structural verification, semantic validation, and PR-specific concerns. Use before merging to assess code quality, correctness, and merge readiness. Produces actionable feedback formatted for PR comments with clear blocking vs. non-blocking distinctions."
+phase: REVIEW
+category: core
+version: "1.0.0"
+depends_on: ["code-verification"]
+tags: [quality, review, core-workflow]
 ---
 
 # Code Review
