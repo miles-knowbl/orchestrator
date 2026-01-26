@@ -69,13 +69,15 @@ jobs:
       - name: Create tarball
         run: |
           REPO_NAME=$(basename "$GITHUB_REPOSITORY")
-          tar czf "$REPO_NAME-v${{ steps.version.outputs.version }}.tar.gz" \
+          TARBALL="$REPO_NAME-v${{ steps.version.outputs.version }}.tar.gz"
+          tar czf "/tmp/$TARBALL" \
             --exclude='.git' \
             --exclude='node_modules' \
             --exclude='.env*' \
             --exclude='dist' \
             .
-          shasum -a 256 "$REPO_NAME-v${{ steps.version.outputs.version }}.tar.gz" > checksums.txt
+          mv "/tmp/$TARBALL" .
+          shasum -a 256 "$TARBALL" > checksums.txt
 
       - name: Create or update rolling release
         env:
