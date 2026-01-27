@@ -30,7 +30,7 @@ jobs:
   deploy-vercel:
     needs: test
     runs-on: ubuntu-latest
-    if: ${{ vars.DEPLOY_PLATFORM == 'vercel' || (env.VERCEL_TOKEN != '' && vars.DEPLOY_PLATFORM != 'railway') }}
+    if: ${{ vars.DEPLOY_PLATFORM == 'vercel' }}
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -138,7 +138,7 @@ jobs:
 | Job | Depends On | Condition | Purpose |
 |-----|-----------|-----------|---------|
 | `test` | — | Always | Run test suite as gate |
-| `deploy-vercel` | test | `DEPLOY_PLATFORM == 'vercel'` or Vercel secrets exist | Deploy to Vercel |
+| `deploy-vercel` | test | `DEPLOY_PLATFORM == 'vercel'` | Deploy to Vercel |
 | `deploy-railway` | test | `DEPLOY_PLATFORM == 'railway'` | Deploy to Railway |
 | `release` | test | Always | Create tarball + rolling release |
 | `docker` | test | Dockerfile exists | Build and push to GHCR |
@@ -157,7 +157,7 @@ jobs:
 
 | Variable | Values | Purpose |
 |----------|--------|---------|
-| `DEPLOY_PLATFORM` | `vercel` or `railway` | Explicit platform selection (optional — auto-detected from secrets if not set) |
+| `DEPLOY_PLATFORM` | `vercel` or `railway` | Required for platform deploy jobs to run |
 
 ## Customization Points
 
