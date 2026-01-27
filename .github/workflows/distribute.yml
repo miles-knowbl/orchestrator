@@ -24,7 +24,7 @@ jobs:
   deploy-vercel:
     needs: build
     runs-on: ubuntu-latest
-    if: ${{ vars.DEPLOY_PLATFORM == 'vercel' }}
+    if: ${{ secrets.VERCEL_TOKEN != '' }}
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -43,7 +43,7 @@ jobs:
   deploy-railway:
     needs: build
     runs-on: ubuntu-latest
-    if: ${{ vars.DEPLOY_PLATFORM == 'railway' }}
+    if: ${{ secrets.RAILWAY_TOKEN != '' }}
     steps:
       - uses: actions/checkout@v4
       - name: Install Railway CLI
