@@ -90,9 +90,38 @@ jobs:
           gh release delete latest --yes 2>/dev/null || true
           git push origin :refs/tags/latest 2>/dev/null || true
 
+          cat > /tmp/release-notes.md << EOF
+          ## Quick Start (from tarball)
+
+          \`\`\`bash
+          tar xzf $TARBALL
+          cd orchestrator
+          npm install && npm run build
+          npm start
+          \`\`\`
+
+          ### Install slash commands
+
+          \`\`\`bash
+          cp commands/*.md ~/.claude/commands/
+          \`\`\`
+
+          ### Connect Claude Code
+
+          \`\`\`bash
+          claude mcp add orchestrator http://localhost:3002/mcp
+          claude
+          \`\`\`
+
+          ---
+
+          **Version:** ${VERSION} · **Commit:** ${{ github.sha }}
+          **Prefer one-command install?** \`curl -fsSL https://raw.githubusercontent.com/miles-knowbl/orchestrator/main/install.sh | bash\`
+          EOF
+
           gh release create latest \
             --title "Latest (v${VERSION})" \
-            --notes "Rolling release updated on every push to main. Version: ${VERSION}, Commit: ${{ github.sha }}" \
+            --notes-file /tmp/release-notes.md \
             "$TARBALL" checksums.txt
 
   docker:
