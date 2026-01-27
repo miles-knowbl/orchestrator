@@ -79,6 +79,16 @@ jobs:
           mv "/tmp/$TARBALL" .
           shasum -a 256 "$TARBALL" > checksums.txt
 
+      - name: Generate changelog
+        run: |
+          COMMITS=$(git log --oneline --no-decorate -20)
+          CHANGELOG=$(echo "$COMMITS" | grep -E '^[a-f0-9]+ (feat|fix|style|chore):' | sed 's/^[a-f0-9]* /- /' | head -15)
+          if [ -z "$CHANGELOG" ]; then
+            echo "- Various improvements and fixes" > /tmp/changelog.md
+          else
+            echo "$CHANGELOG" > /tmp/changelog.md
+          fi
+
       - name: Create or update rolling release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -112,6 +122,10 @@ jobs:
           claude mcp add --transport http orchestrator http://localhost:3002/mcp
           claude
           \`\`\`
+
+          ### What's New
+
+          $(cat /tmp/changelog.md)
 
           ---
 
