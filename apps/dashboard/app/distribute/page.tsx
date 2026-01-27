@@ -101,8 +101,8 @@ export default function DistributePage() {
   }, []);
 
   // Parse version and commit from release body
-  const version = release?.body?.match(/Version: ([\d.]+)/)?.[1] || '0.0.0';
-  const commit = release?.body?.match(/Commit: ([a-f0-9]+)/)?.[1] || '';
+  const version = release?.body?.match(/Version:\*{0,2}\s*([\d.]+)/)?.[1] || '0.0.0';
+  const commit = release?.body?.match(/Commit:\*{0,2}\s*([a-f0-9]+)/)?.[1] || '';
   const tarball = release?.assets.find(a => a.name.endsWith('.tar.gz'));
 
   if (error) {
