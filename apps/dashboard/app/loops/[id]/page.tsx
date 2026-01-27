@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Layers, Play, Zap, Shield, Settings, X, BookOpen, WifiOff } from 'lucide-react';
+import { ArrowLeft, Layers, Play, Zap, Shield, Settings, X, BookOpen, WifiOff, FlaskConical } from 'lucide-react';
 import { Prose } from '@/components/Prose';
 import { fetchApi, fetchWithFallback } from '@/lib/api';
 
@@ -320,13 +320,13 @@ export default function LoopDetailPage() {
           </div>
 
           {isStatic ? (
-            <div
-              className="flex items-center gap-2 px-4 py-2 bg-[#222] rounded-lg text-gray-500 cursor-not-allowed shrink-0"
-              title="Start the orchestrator server to execute loops"
+            <a
+              href={`/demo/${loop.id}`}
+              className="flex items-center gap-2 px-4 py-2 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/30 rounded-lg text-amber-400 font-medium transition-colors shrink-0"
             >
-              <Play className="w-4 h-4" />
-              Start Execution
-            </div>
+              <FlaskConical className="w-4 h-4" />
+              Try Demo
+            </a>
           ) : (
             <button
               onClick={() => setShowStartModal(true)}
@@ -342,7 +342,7 @@ export default function LoopDetailPage() {
       {isStatic && (
         <div className="mb-6 flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-4 py-2 text-sm text-yellow-400">
           <WifiOff className="w-4 h-4 shrink-0" />
-          <span>Viewing static loop data. Connect to the orchestrator server to start executions.</span>
+          <span>Viewing static loop data. Try the demo to see this loop in action, or connect to the orchestrator server for real executions.</span>
         </div>
       )}
 
