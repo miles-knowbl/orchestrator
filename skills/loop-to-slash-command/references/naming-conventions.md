@@ -10,7 +10,7 @@ The command name is derived mechanically from the loop ID:
 Algorithm:
 1. Take $.id from loop.json (e.g., "engineering-loop")
 2. Strip the "-loop" suffix if present (e.g., "engineering")
-3. Map domain to harness name (e.g., "agentic-harness")
+3. Map domain to harness name (e.g., "engineering-harness")
 4. If no "-loop" suffix, use full ID + "-harness"
 ```
 
@@ -18,13 +18,13 @@ Algorithm:
 
 | Loop ID | Strip Suffix | Domain | Command Name |
 |---------|-------------|--------|-------------|
-| `engineering-loop` | `engineering` | `agentic`* | `agentic-harness` |
+| `engineering-loop` | `engineering` | `engineering` | `engineering-harness` |
 | `proposal-loop` | `proposal` | `proposal` | `proposal-harness` |
 | `content-pipeline` | (no suffix) | `content-pipeline` | `content-pipeline-harness` |
 | `review-loop` | `review` | `review` | `review-harness` |
 | `sales` | (no suffix) | `sales` | `sales-harness` |
 
-*Note: `engineering` maps to `agentic` by convention. This is the only non-mechanical mapping. All other loops use direct domain mapping.
+All loops use direct domain mapping.
 
 ### Domain Override
 
@@ -32,7 +32,7 @@ If `$.ui.branding.title` exists and differs from the mechanical name, use it for
 
 | Branding Title | File Name | Display Name |
 |---------------|-----------|-------------|
-| "Engineering Harness" | `agentic-harness.md` | "Agentic Harness" |
+| "Engineering Harness" | `engineering-harness.md` | "Engineering Harness" |
 | "Proposal Builder" | `proposal-harness.md` | "Proposal Builder" |
 | "Sales Pipeline" | `sales-harness.md` | "Sales Pipeline" |
 
@@ -59,7 +59,7 @@ Algorithm:
 
 | Loop ID | Domain | State File |
 |---------|--------|------------|
-| `engineering-loop` | `agentic` | `loop-state.json`* |
+| `engineering-loop` | `engineering` | `loop-state.json`* |
 | `proposal-loop` | `proposal` | `proposal-state.json` |
 | `review-loop` | `review` | `review-state.json` |
 

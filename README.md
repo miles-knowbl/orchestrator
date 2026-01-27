@@ -39,7 +39,7 @@ The installer sets up 11 slash commands. Try one:
 
 | Command | What it does |
 |---------|-------------|
-| `/agentic-harness` | **Full engineering loop** — build anything from scratch or extend existing code |
+| `/engineering-harness` | **Full engineering loop** — build anything from scratch or extend existing code |
 | `/bugfix-harness` | Systematic bug fixing with reproduction and regression tests |
 | `/refactor-harness` | Safe refactoring verified by tests at every step |
 | `/release-harness` | Version, validate, document, and ship releases |

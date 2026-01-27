@@ -455,7 +455,7 @@ Sequential phases, no mode detection, all-human gates. The proposal-harness is t
 
 ### Multi-Mode Engineering Loop
 
-Mode detection, conditional phases, mixed gate types, extensive skill trees. The agentic-harness is the canonical example.
+Mode detection, conditional phases, mixed gate types, extensive skill trees. The engineering-harness is the canonical example.
 
 **Use when:** Loop has 7+ phases, mode detection, conditional gates/phases. Generate using Full Format.
 
@@ -504,4 +504,4 @@ Brand-new loop needs everything: command file, state schema, documentation. Full
 - `references/naming-conventions.md`: Naming rules for commands, flags, state files, and deliverables with derivation algorithms and conflict resolution
 - `references/state-schema.md`: State file structure for loop execution: phase tracking, gate statuses, deliverable paths, timestamps, and resume logic
 - `references/gate-prompts.md`: Templates for gate approval prompts, deliverable checklists, skip-with-reason logic, and gate type handling
-- `references/existing-commands.md`: Analysis of agentic-harness.md and proposal-harness.md as reference implementations with extracted patterns
+- `references/existing-commands.md`: Analysis of engineering-harness.md and proposal-harness.md as reference implementations with extracted patterns

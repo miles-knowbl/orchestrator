@@ -237,7 +237,7 @@ export default function DistributePage() {
                   <div className="mt-3 bg-[#0a0a0a] border border-[#222] rounded-lg px-4 py-3">
                     <p className="text-xs text-gray-500 mb-2">Slash commands (installed automatically):</p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5 text-sm">
-                      <div><code className="text-orch-400">/agentic-harness</code> <span className="text-gray-500">— build anything</span></div>
+                      <div><code className="text-orch-400">/engineering-harness</code> <span className="text-gray-500">— build anything</span></div>
                       <div><code className="text-orch-400">/bugfix-harness</code> <span className="text-gray-500">— fix bugs</span></div>
                       <div><code className="text-orch-400">/refactor-harness</code> <span className="text-gray-500">— safe refactoring</span></div>
                       <div><code className="text-orch-400">/release-harness</code> <span className="text-gray-500">— ship releases</span></div>

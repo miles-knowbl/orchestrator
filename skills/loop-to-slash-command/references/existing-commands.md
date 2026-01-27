@@ -1,19 +1,19 @@
 # Existing Commands
 
-Analysis of the two existing slash commands --- `agentic-harness.md` and `proposal-harness.md` --- as reference implementations. These are the canonical examples of what loop-to-slash-command generates.
+Analysis of the two existing slash commands --- `engineering-harness.md` and `proposal-harness.md` --- as reference implementations. These are the canonical examples of what loop-to-slash-command generates.
 
 ## Command Inventory
 
 | Command | Loop Source | Phases | Gates | Lines | State File |
 |---------|-----------|--------|-------|-------|------------|
-| `agentic-harness` | `engineering-loop` | 9 (INIT through COMPLETE) | 4 (spec, architecture, review, deploy) | ~489 | `loop-state.json` |
+| `engineering-harness` | `engineering-loop` | 9 (INIT through COMPLETE) | 4 (spec, architecture, review, deploy) | ~489 | `loop-state.json` |
 | `proposal-harness` | `proposal-loop` | 4 (INIT through COMPLETE) | 4 (references, synthesis, alignment, final) | ~432 | `proposal-state.json` |
 
 ## Structural Comparison
 
 ### Section Presence
 
-| Section | agentic-harness | proposal-harness | Standard |
+| Section | engineering-harness | proposal-harness | Standard |
 |---------|----------------|-----------------|----------|
 | H1 Title + tagline | Yes | Yes | Required |
 | Purpose | Yes | Yes | Required |
@@ -33,7 +33,7 @@ Analysis of the two existing slash commands --- `agentic-harness.md` and `propos
 
 ### Key Differences
 
-| Aspect | agentic-harness | proposal-harness |
+| Aspect | engineering-harness | proposal-harness |
 |--------|----------------|-----------------|
 | **Modes** | 3 (greenfield, brownfield-polish, brownfield-enterprise) | 1 (proposal) |
 | **Mode detection** | Yes (directory analysis) | No |
@@ -144,7 +144,7 @@ Both commands show:
 
 ## Section Length Analysis
 
-| Section | agentic-harness | proposal-harness | Recommended |
+| Section | engineering-harness | proposal-harness | Recommended |
 |---------|----------------|-----------------|-------------|
 | Title + tagline | 3 lines | 3 lines | 3 lines |
 | Purpose | 15 lines | 10 lines | 10-15 lines |
@@ -161,9 +161,9 @@ Both commands show:
 
 | Anti-Pattern | Where Found | Correction |
 |-------------|------------|-----------|
-| Phase list in execution flow does not match loop.json | agentic-harness lists 10 phases, loop.json has 9 | Always derive from loop.json |
-| Implicit skill invocation | agentic-harness embeds skills in phase diagram | Always provide explicit skill invocation sequence |
-| Missing hook documentation | agentic-harness defers to CLAUDE.md | Include hook section if hooks exist |
+| Phase list in execution flow does not match loop.json | engineering-harness lists 10 phases, loop.json has 9 | Always derive from loop.json |
+| Implicit skill invocation | engineering-harness embeds skills in phase diagram | Always provide explicit skill invocation sequence |
+| Missing hook documentation | engineering-harness defers to CLAUDE.md | Include hook section if hooks exist |
 | Inconsistent state schema | Engineering uses `systems`, Proposal uses `deliverables` | Standardize on `deliverables` in phase entries |
 
 ## Generation Implications
@@ -173,7 +173,7 @@ When generating a new command, use these implementations as templates:
 | Loop Complexity | Reference Command | Format |
 |----------------|------------------|--------|
 | Simple (3-6 phases, no modes) | `proposal-harness` | Quick Format |
-| Complex (7+ phases, modes, conditional) | `agentic-harness` | Full Format |
+| Complex (7+ phases, modes, conditional) | `engineering-harness` | Full Format |
 | Domain-specific (non-engineering) | `proposal-harness` | Quick Format + domain sections |
 
 ## Quick Reference
