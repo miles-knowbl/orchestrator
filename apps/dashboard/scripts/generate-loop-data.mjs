@@ -59,6 +59,10 @@ function parseFrontmatter(raw) {
 }
 
 async function main() {
+  // Clean output dirs so deleted loops/skills don't linger
+  const { rm } = await import('fs/promises');
+  await rm(OUT_DIR, { recursive: true, force: true });
+  await rm(OUT_SKILLS_DIR, { recursive: true, force: true });
   await mkdir(OUT_DIR, { recursive: true });
 
   const entries = await readdir(LOOPS_DIR, { withFileTypes: true });

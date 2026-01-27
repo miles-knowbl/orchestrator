@@ -15,17 +15,17 @@ interface Loop {
 }
 
 const CATEGORIES = [
-  { key: 'all', label: 'All' },
   { key: 'development', label: 'Development' },
   { key: 'operations', label: 'Operations' },
   { key: 'meta', label: 'Meta' },
+  { key: 'all', label: 'All' },
 ] as const;
 
 export default function LoopsPage() {
   const [loops, setLoops] = useState<Loop[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isStatic, setIsStatic] = useState(false);
-  const [activeCategory, setActiveCategory] = useState('all');
+  const [activeCategory, setActiveCategory] = useState('development');
 
   useEffect(() => {
     const fetchLoops = async () => {
