@@ -18,10 +18,18 @@ export default function RootLayout({
           <header className="border-b border-[#222] bg-[#111] sticky top-0 z-50">
             <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orch-500 to-orch-700 flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">O</span>
-                </div>
-                <h1 className="text-lg font-semibold text-white">Orchestrator</h1>
+                <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none">
+                  <defs>
+                    <linearGradient id="orch-grad" x1="0" y1="0" x2="24" y2="24">
+                      <stop offset="0%" stopColor="#4ade80" />
+                      <stop offset="100%" stopColor="#15803d" />
+                    </linearGradient>
+                  </defs>
+                  <path d="M13.6 3.1 A9 9 0 0 1 20.5 15.1" stroke="url(#orch-grad)" strokeWidth="2.5" strokeLinecap="round" />
+                  <path d="M18.9 17.8 A9 9 0 0 1 5.1 17.8" stroke="url(#orch-grad)" strokeWidth="2.5" strokeLinecap="round" />
+                  <path d="M3.5 15.1 A9 9 0 0 1 10.4 3.1" stroke="url(#orch-grad)" strokeWidth="2.5" strokeLinecap="round" />
+                </svg>
+                <h1 className="text-lg font-bold tracking-tight text-white">Orchestrator</h1>
               </div>
               <nav className="flex items-center gap-6">
                 <a href="/" className="text-sm text-gray-400 hover:text-white transition-colors">Dashboard</a>
