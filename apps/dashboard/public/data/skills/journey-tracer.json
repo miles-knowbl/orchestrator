@@ -1,0 +1,20 @@
+{
+  "id": "journey-tracer",
+  "name": "journey-tracer",
+  "version": "1.0.0",
+  "description": "Track execution journey through phases and skills with structured logging, state persistence, and timeline visualization for post-mortem analysis.",
+  "phase": "DOCUMENT",
+  "category": "meta",
+  "content": "# Journey Tracer\n\nTrack the execution journey with structured logging and state persistence.\n\n## When to Use\n\n- **During loop execution** — Capture every phase transition, skill completion, and gate decision\n- **Post-mortem analysis** — Understand what happened and why during a loop run\n- **Performance analysis** — Identify bottlenecks in the engineering process\n- When you say: \"trace execution\", \"what happened in this loop\", \"execution timeline\"\n\n## Required Deliverables\n\n| Deliverable | Location | Condition |\n|-------------|----------|-----------|\n| Journey log | `memory/journeys/{executionId}.json` | Always |\n| Timeline summary | Included in retrospective | Always |\n\n## Core Concept\n\nJourney tracing answers: **\"What exactly happened during this loop execution, and in what order?\"**\n\n```\nPhase Start → Skill Invoked → Decision Made → Gate Evaluated → Phase Complete\n     ↓              ↓              ↓                ↓               ↓\n  [logged]      [logged]       [logged]         [logged]        [logged]\n```\n\nEvery significant event is captured with timestamp, context, and outcome.\n\n## Event Schema\n\n```typescript\ninterface JourneyEvent {\n  id: string;\n  timestamp: string;          // ISO 8601\n  category: 'phase' | 'skill' | 'gate' | 'decision' | 'system';\n  action: string;             // \"started\", \"completed\", \"approved\", \"rejected\"\n  subject: string;            // Phase name, skill ID, gate ID\n  context: Record<string, unknown>;  // Additional metadata\n  duration?: number;          // Milliseconds (for completed events)\n  outcome?: 'success' | 'failure' | 'skipped';\n}\n```\n\n## Event Categories\n\n| Category | Events | Example |\n|----------|--------|---------|\n| `phase` | started, completed, skipped | Phase IMPLEMENT started |\n| `skill` | invoked, completed, skipped, failed | Skill implement completed (success) |\n| `gate` | evaluated, approved, rejected | Gate spec-gate approved by human |\n| `decision` | made, deferred, overridden | Decision: use Drizzle over Prisma |\n| `system` | paused, resumed, error, recovered | Execution paused by user |\n\n## Timeline Visualization\n\n```\nINIT ─────────── SCAFFOLD ──── IMPLEMENT ─────────────── TEST ──── ...\n├─ requirements   ├─ architect  ├─ implement              ├─ test-gen\n│  (2 min)        │  (5 min)    │  (45 min)               │  (10 min)\n├─ spec           ├─ scaffold   │                          │\n│  (8 min)        │  (3 min)    │                          │\n├─ [spec-gate]    ├─ [arch-gate]│                          │\n│  APPROVED       │  APPROVED   │                          │\n```\n\n## Checklist\n\n- [ ] All phase transitions logged with timestamps\n- [ ] All skill invocations logged with duration\n- [ ] All gate decisions logged with reason\n- [ ] Key decisions captured with context\n- [ ] Journey file persisted to memory/journeys/\n- [ ] Timeline summary available for retrospective\n\n## Relationship to Other Skills\n\n| Skill | Relationship |\n|-------|--------------|\n| `retrospective` | Consumes journey data for loop analysis |\n| `calibration-tracker` | Uses journey timing data for calibration |\n| `loop-controller` | Journey traces the controller's decisions |\n| `memory-manager` | Journey data persisted via memory service |\n\n## Key Principles\n\n**Log everything.** Better to have too much data than too little for post-mortem.\n\n**Structured events.** Every log entry follows the same schema for queryability.\n\n**Timestamps are mandatory.** Duration is derived from start/end pairs.\n\n**Context captures why.** Not just what happened, but the reasoning behind decisions.",
+  "references": [],
+  "tags": [
+    "meta",
+    "logging",
+    "tracing",
+    "state-machine",
+    "execution-log"
+  ],
+  "dependsOn": [
+    "retrospective"
+  ]
+}

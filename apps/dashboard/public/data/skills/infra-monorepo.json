@@ -1,0 +1,20 @@
+{
+  "id": "infra-monorepo",
+  "name": "infra-monorepo",
+  "version": "1.0.0",
+  "description": "Configure monorepo tooling with workspace management, task orchestration, and build caching for multi-package projects.",
+  "phase": "IMPLEMENT",
+  "category": "infra",
+  "content": "# Infra Monorepo\n\nConfigure monorepo tooling for multi-package projects.\n\n## When to Use\n\n- **Multi-package project** — Shared code across multiple apps or libraries\n- **Monorepo migration** — Moving from multi-repo to monorepo\n- **Build optimization** — Adding caching and incremental builds\n- When you say: \"set up monorepo\", \"workspace config\", \"turborepo\"\n\n## Required Deliverables\n\n| Deliverable | Location | Condition |\n|-------------|----------|-----------|\n| Workspace config | `package.json` or `pnpm-workspace.yaml` | Always |\n| Task config | `turbo.json` | When using Turborepo |\n| Package structure | `packages/` and/or `apps/` | Always |\n\n## Core Concept\n\nMonorepo setup answers: **\"How do multiple packages share code, dependencies, and build infrastructure?\"**\n\n```\nRoot Config → Workspace Packages → Shared Dependencies → Cached Builds → Coordinated Publishing\n```\n\n## Tool Selection\n\n| Tool | Best For | Package Manager |\n|------|----------|-----------------|\n| **Turborepo** | Task caching, incremental builds | npm/pnpm/yarn |\n| **pnpm workspaces** | Dependency management, disk efficiency | pnpm |\n| **npm workspaces** | Simple monorepos, no extra tools | npm |\n| **Nx** | Enterprise, generators, plugins | npm/pnpm/yarn |\n\n## Turborepo Setup\n\n```json\n// turbo.json\n{\n  \"$schema\": \"https://turbo.build/schema.json\",\n  \"tasks\": {\n    \"build\": {\n      \"dependsOn\": [\"^build\"],\n      \"outputs\": [\"dist/**\"]\n    },\n    \"test\": {\n      \"dependsOn\": [\"build\"]\n    },\n    \"lint\": {},\n    \"dev\": {\n      \"cache\": false,\n      \"persistent\": true\n    }\n  }\n}\n```\n\n## Workspace Structure\n\n```\nmonorepo/\n├── package.json          # Root with workspaces\n├── turbo.json            # Task configuration\n├── apps/\n│   ├── web/              # Next.js app\n│   │   └── package.json\n│   └── api/              # Express server\n│       └── package.json\n├── packages/\n│   ├── shared/           # Shared utilities\n│   │   └── package.json\n│   └── config/           # Shared config (tsconfig, eslint)\n│       └── package.json\n└── pnpm-workspace.yaml   # If using pnpm\n```\n\n## pnpm Workspace Config\n\n```yaml\n# pnpm-workspace.yaml\npackages:\n  - 'apps/*'\n  - 'packages/*'\n```\n\n## Cross-Package Dependencies\n\n```json\n// apps/web/package.json\n{\n  \"dependencies\": {\n    \"@monorepo/shared\": \"workspace:*\"\n  }\n}\n```\n\n## Checklist\n\n- [ ] Workspace configuration in root package.json\n- [ ] Task runner configured (turbo.json or scripts)\n- [ ] Shared packages in packages/ directory\n- [ ] Apps in apps/ directory\n- [ ] Cross-package dependencies use workspace protocol\n- [ ] Build caching enabled\n\n## Relationship to Other Skills\n\n| Skill | Relationship |\n|-------|--------------|\n| `scaffold` | Scaffold creates the directory structure; monorepo adds workspace tooling |\n| `infra-docker` | Each app may have its own Dockerfile |\n| `distribute` | CI/CD may need to build affected packages only |\n| `test-generation` | Tests run per-package with shared configuration |\n\n## Key Principles\n\n**Share code, not coupling.** Packages should have clear boundaries and APIs.\n\n**Cache everything.** Turborepo caching avoids rebuilding unchanged packages.\n\n**Workspace protocol.** Use `workspace:*` for internal dependencies, never published versions.\n\n**Incremental builds.** Only rebuild what changed; task graphs express dependencies.",
+  "references": [],
+  "tags": [
+    "infrastructure",
+    "monorepo",
+    "turbo",
+    "workspace",
+    "build-system"
+  ],
+  "dependsOn": [
+    "scaffold"
+  ]
+}

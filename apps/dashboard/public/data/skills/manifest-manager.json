@@ -1,0 +1,20 @@
+{
+  "id": "manifest-manager",
+  "name": "manifest-manager",
+  "version": "1.0.0",
+  "description": "Generate and maintain execution manifests that specify what should run, in what order, with what constraints and expected outputs.",
+  "phase": "SHIP",
+  "category": "meta",
+  "content": "# Manifest Manager\n\nGenerate and maintain execution manifests for reproducible runs.\n\n## When to Use\n\n- **Before deployment** — Create a manifest of what will be deployed\n- **Reproducible execution** — Document the exact configuration for a loop run\n- **Audit trail** — Record what was executed and with what parameters\n- When you say: \"create manifest\", \"execution record\", \"deployment manifest\"\n\n## Required Deliverables\n\n| Deliverable | Location | Condition |\n|-------------|----------|-----------|\n| Execution manifest | `render-manifest.json` | Always |\n\n## Core Concept\n\nManifest management answers: **\"What exactly is being executed or deployed, and how can we reproduce it?\"**\n\n```\nLoop Definition + Configuration + Environment → Manifest → Execution/Deployment\n```\n\nA manifest is a complete, self-contained record of what should happen (or what did happen).\n\n## Manifest Schema\n\n```json\n{\n  \"version\": \"1.0.0\",\n  \"created\": \"2026-01-26T12:00:00Z\",\n  \"loop\": {\n    \"id\": \"engineering-loop\",\n    \"version\": \"3.1.0\"\n  },\n  \"project\": {\n    \"name\": \"my-project\",\n    \"version\": \"1.0.0\",\n    \"commit\": \"abc1234\"\n  },\n  \"phases\": [\n    {\n      \"name\": \"IMPLEMENT\",\n      \"skills\": [\"implement\"],\n      \"status\": \"completed\",\n      \"outputs\": [\"src/index.ts\", \"src/services/auth.ts\"]\n    }\n  ],\n  \"gates\": [\n    {\n      \"id\": \"spec-gate\",\n      \"status\": \"approved\",\n      \"approvedBy\": \"human\",\n      \"timestamp\": \"2026-01-26T12:30:00Z\"\n    }\n  ],\n  \"artifacts\": [\n    { \"type\": \"tarball\", \"path\": \"project-v1.0.0.tar.gz\", \"checksum\": \"sha256:...\" }\n  ]\n}\n```\n\n## Manifest Types\n\n| Type | Purpose | When |\n|------|---------|------|\n| **Execution manifest** | Records what the loop produced | After loop completion |\n| **Deployment manifest** | Specifies what to deploy | Before deployment |\n| **Render manifest** | Specifies assets to generate | Before generation |\n\n## Validation\n\nManifests should be validated before use:\n\n```typescript\n// Verify all referenced files exist\n// Verify all checksums match\n// Verify all dependencies are met\n// Verify version compatibility\n```\n\n## Checklist\n\n- [ ] Manifest includes all phases, skills, and gates\n- [ ] All artifacts have checksums\n- [ ] Project version and commit recorded\n- [ ] Loop version recorded\n- [ ] Manifest is valid JSON and parseable\n\n## Relationship to Other Skills\n\n| Skill | Relationship |\n|-------|--------------|\n| `deploy` | Deployment manifest feeds into deploy |\n| `distribute` | Distribution artifacts recorded in manifest |\n| `journey-tracer` | Journey data feeds manifest creation |\n| `retrospective` | Manifest is input for retrospective analysis |\n\n## Key Principles\n\n**Complete and self-contained.** A manifest has everything needed to understand or reproduce an execution.\n\n**Checksums on artifacts.** Every file referenced by a manifest should be verifiable.\n\n**Version everything.** Loop version, project version, skill versions — all recorded.\n\n**Immutable after creation.** Manifests are a record; never modify a published manifest.",
+  "references": [],
+  "tags": [
+    "meta",
+    "manifests",
+    "orchestration",
+    "deployment",
+    "specifications"
+  ],
+  "dependsOn": [
+    "deploy"
+  ]
+}

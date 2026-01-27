@@ -1,0 +1,500 @@
+{
+  "skills": [
+    {
+      "id": "architect",
+      "name": "architect",
+      "version": "1.0.0",
+      "description": "Design system and feature architecture from requirements. Produces high-level technical designs with component decomposition, data flow, integration patterns, and technology choices. Documents decisio",
+      "phase": "INIT",
+      "category": "core"
+    },
+    {
+      "id": "architecture-review",
+      "name": "architecture-review",
+      "version": "1.0.0",
+      "description": "Evaluate existing system architecture for soundness, risks, and improvement opportunities. Assesses structural integrity, quality attributes, technical debt, and alignment with business needs. Produce",
+      "phase": "REVIEW",
+      "category": "core"
+    },
+    {
+      "id": "bug-reproducer",
+      "name": "bug-reproducer",
+      "version": "1.0.0",
+      "description": "Create minimal, reliable reproduction of reported bugs from issues, logs, and user reports. Produces step-by-step reproduction cases with expected vs actual behavior.",
+      "phase": "INIT",
+      "category": "core"
+    },
+    {
+      "id": "calibration-tracker",
+      "name": "calibration-tracker",
+      "version": "1.0.0",
+      "description": "Tracks estimate accuracy over time and adjusts future estimates based on historical data. Compares estimated vs actual effort, identifies systematic biases, and generates calibration adjustments. Enab",
+      "phase": "COMPLETE",
+      "category": "meta"
+    },
+    {
+      "id": "changelog-generator",
+      "name": "changelog-generator",
+      "version": "1.0.0",
+      "description": "Generate structured changelogs from git history, PRs, and commit messages. Categorizes changes by type (Added, Changed, Deprecated, Removed, Fixed, Security) following Keep a Changelog format.",
+      "phase": "DOCUMENT",
+      "category": "core"
+    },
+    {
+      "id": "code-review",
+      "name": "code-review",
+      "version": "1.0.0",
+      "description": "Comprehensive PR review combining structural verification, semantic validation, and PR-specific concerns. Use before merging to assess code quality, correctness, and merge readiness. Produces actionab",
+      "phase": "REVIEW",
+      "category": "core"
+    },
+    {
+      "id": "code-validation",
+      "name": "code-validation",
+      "version": "1.0.0",
+      "description": "Semantic correctness checks at development checkpoints. Use before committing, before PR, or at feature milestones to verify the code solves the right problem correctly. Evaluates requirements alignme",
+      "phase": "VALIDATE",
+      "category": "core"
+    },
+    {
+      "id": "code-verification",
+      "name": "code-verification",
+      "version": "1.0.0",
+      "description": "Fast structural correctness checks for code generation loops. Use after every code generation to catch complexity issues, security vulnerabilities, resource leaks, and error handling gaps before they ",
+      "phase": "VERIFY",
+      "category": "core"
+    },
+    {
+      "id": "compatibility-checker",
+      "name": "compatibility-checker",
+      "version": "1.0.0",
+      "description": "Verify API, schema, and interface compatibility between old and new versions during migrations. Tests backward compatibility, data format changes, and integration contracts.",
+      "phase": "SCAFFOLD",
+      "category": "core"
+    },
+    {
+      "id": "content-analysis",
+      "name": "content-analysis",
+      "version": "2.0.0",
+      "description": "Analyze provided content to extract meaningful information, reusable skills, and recurring patterns. Applies structured decomposition, taxonomy-driven classification, and confidence-scored extraction ",
+      "phase": "VALIDATE",
+      "category": "meta"
+    },
+    {
+      "id": "context-cultivation",
+      "name": "context-cultivation",
+      "version": "2.0.0",
+      "description": "Process raw context into cultivated insights. Performs qualitative analysis across ingested sources to identify themes, patterns, contradictions, gaps, and opportunities. Produces a structured synthes",
+      "phase": "SCAFFOLD",
+      "category": "specialized"
+    },
+    {
+      "id": "context-ingestion",
+      "name": "context-ingestion",
+      "version": "2.0.0",
+      "description": "Gather and organize context from multiple sources into a structured format. Handles documents, URLs, conversations, and notes. Produces a verified source registry and compiled context corpus ready for",
+      "phase": "INIT",
+      "category": "specialized"
+    },
+    {
+      "id": "coordination-protocol",
+      "name": "coordination-protocol",
+      "version": "1.0.0",
+      "description": "Define communication patterns and handoff protocols for multi-agent orchestration with locks, heartbeats, and conflict resolution.",
+      "phase": "COMPLETE",
+      "category": "meta"
+    },
+    {
+      "id": "debug-assist",
+      "name": "debug-assist",
+      "version": "1.0.0",
+      "description": "Systematic bug isolation for when you're stuck. Guides structured debugging using hypothesis generation, binary search, and systematic elimination. Tracks debugging state across turns. Specialized mod",
+      "phase": "VERIFY",
+      "category": "core"
+    },
+    {
+      "id": "deck-image-schema",
+      "name": "deck-image-schema",
+      "version": "1.0.0",
+      "description": "Define visual schema for presentation content specifying image types, layout positions, sizing, and styling rules for deck generation.",
+      "phase": "IMPLEMENT",
+      "category": "specialized"
+    },
+    {
+      "id": "deck-text-schema",
+      "name": "deck-text-schema",
+      "version": "1.0.0",
+      "description": "Define text content schema for presentation slides specifying typography, hierarchy, formatting rules, and content structure.",
+      "phase": "IMPLEMENT",
+      "category": "specialized"
+    },
+    {
+      "id": "deploy",
+      "name": "deploy",
+      "version": "1.0.0",
+      "description": "Guides deployment of systems to production environments. Covers deployment strategies, production validation, rollback procedures, and monitoring setup. Completes the engineering loop by bridging the ",
+      "phase": "SHIP",
+      "category": "core"
+    },
+    {
+      "id": "distribute",
+      "name": "distribute",
+      "version": "1.0.0",
+      "description": "Set up CI/CD distribution pipelines for automated releases. Creates GitHub Actions workflows, configures platform deployment (Vercel or Railway), produces tarball releases with SHA256 checksums, and o",
+      "phase": "SHIP",
+      "category": "core"
+    },
+    {
+      "id": "document",
+      "name": "document",
+      "version": "1.0.0",
+      "description": "Generate and maintain technical documentation. Creates README files, API documentation, code comments, architecture docs, and user guides. Ensures documentation stays accurate, accessible, and useful.",
+      "phase": "DOCUMENT",
+      "category": "core"
+    },
+    {
+      "id": "entry-portal",
+      "name": "entry-portal",
+      "version": "1.0.0",
+      "description": "Converts fuzzy requirements into structured FeatureSpecs and GitHub issues. Manages the system queue for a domain's journey toward its dream state. The entry point for all new systems and features ent",
+      "phase": "INIT",
+      "category": "meta"
+    },
+    {
+      "id": "error-handling",
+      "name": "error-handling",
+      "version": "2.0.0",
+      "description": "Implement robust error handling strategies for applications. Covers error classification, custom error hierarchies, propagation patterns, recovery mechanisms (retry, fallback, circuit breaker, bulkhea",
+      "phase": "IMPLEMENT",
+      "category": "core"
+    },
+    {
+      "id": "estimation",
+      "name": "estimation",
+      "version": "1.0.0",
+      "description": "Estimate effort, complexity, and duration for systems and features. Provides frameworks for sizing work, accounting for risk, and calibrating estimates over time. Supports planning and expectation set",
+      "phase": "INIT",
+      "category": "core"
+    },
+    {
+      "id": "frontend-design",
+      "name": "frontend-design",
+      "version": "1.0.0",
+      "description": "Design frontend components, layouts, and interactions before implementation. Creates component specifications, defines design tokens, and documents interaction patterns for consistent UI/UX across the",
+      "phase": "SCAFFOLD",
+      "category": "specialized"
+    },
+    {
+      "id": "git-workflow",
+      "name": "git-workflow",
+      "version": "1.0.0",
+      "description": "Manages git workflows for the engineering loop. Handles worktrees for parallel development, branching conventions, PR creation, and coordination between agents and human engineers. Provides isolation ",
+      "phase": "SHIP",
+      "category": "core"
+    },
+    {
+      "id": "implement",
+      "name": "implement",
+      "version": "1.0.0",
+      "description": "Transform specifications into working, production-quality code. Takes FeatureSpecs, requirements, or design documents and produces complete implementations following established patterns. Handles data",
+      "phase": "IMPLEMENT",
+      "category": "core"
+    },
+    {
+      "id": "incident-triage",
+      "name": "incident-triage",
+      "version": "1.0.0",
+      "description": "Rapidly classify production incidents by severity, identify blast radius, assign ownership, and determine immediate response strategy. Time-critical first response.",
+      "phase": "INIT",
+      "category": "core"
+    },
+    {
+      "id": "infra-database",
+      "name": "infra-database",
+      "version": "1.0.0",
+      "description": "Set up database schema, ORM configuration, migrations, and data access layer with connection pooling and seed data.",
+      "phase": "IMPLEMENT",
+      "category": "infra"
+    },
+    {
+      "id": "infra-devenv",
+      "name": "infra-devenv",
+      "version": "1.0.0",
+      "description": "Set up local development environment with scripts, devcontainers, and environment variable templates for consistent onboarding.",
+      "phase": "SCAFFOLD",
+      "category": "infra"
+    },
+    {
+      "id": "infra-docker",
+      "name": "infra-docker",
+      "version": "1.0.0",
+      "description": "Create Docker configuration with multi-stage builds, docker-compose for local development, and container optimization.",
+      "phase": "IMPLEMENT",
+      "category": "infra"
+    },
+    {
+      "id": "infra-monorepo",
+      "name": "infra-monorepo",
+      "version": "1.0.0",
+      "description": "Configure monorepo tooling with workspace management, task orchestration, and build caching for multi-package projects.",
+      "phase": "IMPLEMENT",
+      "category": "infra"
+    },
+    {
+      "id": "infra-services",
+      "name": "infra-services",
+      "version": "1.0.0",
+      "description": "Configure service layer with lazy singleton initialization, dependency management, and lifecycle hooks.",
+      "phase": "IMPLEMENT",
+      "category": "infra"
+    },
+    {
+      "id": "integration-test",
+      "name": "integration-test",
+      "version": "1.0.0",
+      "description": "Validates that multiple systems work together correctly. Tests cross-system contracts, end-to-end workflows, and interface compatibility. Complements unit testing (test-generation) and code validation",
+      "phase": "TEST",
+      "category": "core"
+    },
+    {
+      "id": "journey-tracer",
+      "name": "journey-tracer",
+      "version": "1.0.0",
+      "description": "Track execution journey through phases and skills with structured logging, state persistence, and timeline visualization for post-mortem analysis.",
+      "phase": "DOCUMENT",
+      "category": "meta"
+    },
+    {
+      "id": "loop-composer",
+      "name": "loop-composer",
+      "version": "1.0.0",
+      "description": "Design and compose loops from requirements. Handles skill selection, phase sequencing, gate placement, dependency validation, and loop.json generation. The architectural counterpart to loop-controller",
+      "phase": "SCAFFOLD",
+      "category": "meta"
+    },
+    {
+      "id": "loop-controller",
+      "name": "loop-controller",
+      "version": "1.0.0",
+      "description": "Orchestrates the engineering loop execution. Manages state machine transitions, decides what to do next, handles failures and retries, determines completion, and triggers human handoffs. The 'brain' t",
+      "phase": "META",
+      "category": "meta"
+    },
+    {
+      "id": "loop-to-slash-command",
+      "name": "loop-to-slash-command",
+      "version": "1.0.0",
+      "description": "Generate Claude Code slash command .md files from loop definitions. Transforms loop.json into executable CLI commands with state management, gate procedures, and skill integration instructions.",
+      "phase": "SHIP",
+      "category": "meta"
+    },
+    {
+      "id": "manifest-manager",
+      "name": "manifest-manager",
+      "version": "1.0.0",
+      "description": "Generate and maintain execution manifests that specify what should run, in what order, with what constraints and expected outputs.",
+      "phase": "SHIP",
+      "category": "meta"
+    },
+    {
+      "id": "memory-manager",
+      "name": "memory-manager",
+      "version": "1.0.0",
+      "description": "Maintains context across long-running autonomous tasks. Handles session handoffs, context compression, cold boot procedures, and domain memory persistence. Enables continuity between sessions and coor",
+      "phase": "META",
+      "category": "meta"
+    },
+    {
+      "id": "metadata-extraction",
+      "name": "metadata-extraction",
+      "version": "2.0.0",
+      "description": "Extract, parse, and normalize metadata from diverse content sources including URLs, HTTP headers, HTML meta tags, structured data formats, and document structural elements. Produces standardized metad",
+      "phase": "IMPLEMENT",
+      "category": "meta"
+    },
+    {
+      "id": "migration-planner",
+      "name": "migration-planner",
+      "version": "1.0.0",
+      "description": "Plan technology migrations with dependency mapping, risk assessment, rollback strategy, and phased execution timeline. Handles framework upgrades, database changes, and architecture shifts.",
+      "phase": "INIT",
+      "category": "core"
+    },
+    {
+      "id": "mitigation",
+      "name": "mitigation",
+      "version": "1.0.0",
+      "description": "Execute immediate mitigation for production incidents. Decide between rollback, hotfix, feature flag, or traffic management. Prioritizes restoring service over finding root cause.",
+      "phase": "IMPLEMENT",
+      "category": "core"
+    },
+    {
+      "id": "orchestrator",
+      "name": "orchestrator",
+      "version": "1.0.0",
+      "description": "Unified development orchestration across greenfield and brownfield modes. Detects project mode, performs pre-loop scope discovery, spawns parallel sub-agents, and coordinates execution to minimize loo",
+      "phase": "META",
+      "category": "meta"
+    },
+    {
+      "id": "perf-analysis",
+      "name": "perf-analysis",
+      "version": "1.0.0",
+      "description": "Identify and resolve performance bottlenecks in code and systems. Profiles CPU, memory, and I/O usage. Analyzes database queries, API latency, and frontend rendering. Conducts load testing and provide",
+      "phase": "VALIDATE",
+      "category": "core"
+    },
+    {
+      "id": "portability",
+      "name": "portability",
+      "version": "1.0.0",
+      "description": "Assess and document skill transferability across projects and domains, identifying required adaptations and context dependencies.",
+      "phase": "COMPLETE",
+      "category": "meta"
+    },
+    {
+      "id": "postmortem",
+      "name": "postmortem",
+      "version": "1.0.0",
+      "description": "Write blameless postmortems after incidents. Document timeline, root cause, impact, mitigation taken, and prevention measures. Focus on systemic improvements, not individual blame.",
+      "phase": "DOCUMENT",
+      "category": "core"
+    },
+    {
+      "id": "priority-matrix",
+      "name": "priority-matrix",
+      "version": "2.0.0",
+      "description": "Rank opportunities and work threads across multiple prioritization dimensions. Produces actionable priority matrices with calibrated scores, bias-checked rationale, and stakeholder-aligned rankings. C",
+      "phase": "IMPLEMENT",
+      "category": "specialized"
+    },
+    {
+      "id": "proposal-builder",
+      "name": "proposal-builder",
+      "version": "2.0.0",
+      "description": "Generate polished proposal documents from cultivated context and priorities. Transform insights, patterns, and ranked opportunities into compelling narratives with clear value propositions, scope defi",
+      "phase": "COMPLETE",
+      "category": "specialized"
+    },
+    {
+      "id": "refactor",
+      "name": "refactor",
+      "version": "1.0.0",
+      "description": "Improve existing code without changing its external behavior. Identifies code smells, applies proven refactoring patterns, and ensures safety through tests. Makes code more readable, maintainable, and",
+      "phase": "REVIEW",
+      "category": "core"
+    },
+    {
+      "id": "release-notes",
+      "name": "release-notes",
+      "version": "1.0.0",
+      "description": "Write user-facing release notes that communicate what changed, why it matters, and what to do. Translates technical changes into user impact language.",
+      "phase": "DOCUMENT",
+      "category": "core"
+    },
+    {
+      "id": "release-planner",
+      "name": "release-planner",
+      "version": "1.0.0",
+      "description": "Plan releases by scoping included changes, defining version strategy, coordinating cherry-picks, and establishing release criteria. Manages the ceremony of shipping.",
+      "phase": "INIT",
+      "category": "core"
+    },
+    {
+      "id": "requirements",
+      "name": "requirements",
+      "version": "1.0.0",
+      "description": "Gather and clarify requirements from vague input. Transforms ambiguous requests into clear, testable requirements documents with explicit scope, acceptance criteria, and identified unknowns. Supports ",
+      "phase": "INIT",
+      "category": "core"
+    },
+    {
+      "id": "retrospective",
+      "name": "retrospective",
+      "version": "1.0.0",
+      "description": "Analyzes completed journeys to extract learning and propose improvements. Identifies what worked, what didn't, and why. Generates skill amendment proposals, calibration adjustments, and pattern candid",
+      "phase": "COMPLETE",
+      "category": "meta"
+    },
+    {
+      "id": "roadmap-tracker",
+      "name": "roadmap-tracker",
+      "version": "1.0.0",
+      "description": "Maintain and evolve project roadmaps based on execution history, learnings, and re-prioritization signals.",
+      "phase": "COMPLETE",
+      "category": "meta"
+    },
+    {
+      "id": "rollback-validator",
+      "name": "rollback-validator",
+      "version": "1.0.0",
+      "description": "Validate that rollback paths work correctly during migrations. Tests downgrade procedures, data reversibility, and state recovery to ensure safe retreat from failed migrations.",
+      "phase": "VALIDATE",
+      "category": "core"
+    },
+    {
+      "id": "root-cause-analysis",
+      "name": "root-cause-analysis",
+      "version": "1.0.0",
+      "description": "Systematic root cause identification using 5-whys, git bisect, hypothesis testing, and fault tree analysis. Traces symptoms to their origin.",
+      "phase": "SCAFFOLD",
+      "category": "core"
+    },
+    {
+      "id": "scaffold",
+      "name": "scaffold",
+      "version": "1.0.0",
+      "description": "Generate project and feature scaffolding with proper structure, configuration, and boilerplate. Creates new projects from scratch or adds features to existing codebases. Applies stack-specific convent",
+      "phase": "SCAFFOLD",
+      "category": "core"
+    },
+    {
+      "id": "security-audit",
+      "name": "security-audit",
+      "version": "1.0.0",
+      "description": "Perform comprehensive security analysis of code and systems. Identifies vulnerabilities including injection attacks, authentication flaws, data exposure, and misconfigurations. Follows OWASP guideline",
+      "phase": "VALIDATE",
+      "category": "core"
+    },
+    {
+      "id": "skill-design",
+      "name": "skill-design",
+      "version": "1.0.0",
+      "description": "Design, create, and maintain skills in the skill library. Codifies the 13-section template, quality standards, MECE validation, lifecycle management, and extraction pipeline integration. The authorita",
+      "phase": "SCAFFOLD",
+      "category": "meta"
+    },
+    {
+      "id": "skill-verifier",
+      "name": "skill-verifier",
+      "version": "1.0.0",
+      "description": "Verifies that skills were applied correctly. Self-audit mechanism that checks process compliance and outcome quality. Ensures required deliverables exist, checklists were completed, and reference docu",
+      "phase": "VERIFY",
+      "category": "meta"
+    },
+    {
+      "id": "spec",
+      "name": "spec",
+      "version": "1.0.0",
+      "description": "Compile requirements into production-ready technical specifications. Transforms requirements documents into comprehensive 18-section FeatureSpecs (~2000+ lines) with full code, SQL migrations, UI comp",
+      "phase": "INIT",
+      "category": "core"
+    },
+    {
+      "id": "test-generation",
+      "name": "test-generation",
+      "version": "1.0.0",
+      "description": "Generate comprehensive test suites for code. Creates unit tests, integration tests, and end-to-end tests. Identifies what to test, designs test cases, and produces readable, maintainable tests. Ensure",
+      "phase": "TEST",
+      "category": "core"
+    },
+    {
+      "id": "triage",
+      "name": "triage",
+      "version": "1.0.0",
+      "description": "Prioritize and re-prioritize work in the system queue based on changing conditions. Uses prioritization frameworks to order work by value, urgency, and dependencies. Responds to triggers like new requ",
+      "phase": "INIT",
+      "category": "core"
+    }
+  ]
+}

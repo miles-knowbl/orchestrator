@@ -6,7 +6,7 @@ dist/
 .next/
 
 # Runtime data
-data/
+/data/
 
 # Environment
 .env

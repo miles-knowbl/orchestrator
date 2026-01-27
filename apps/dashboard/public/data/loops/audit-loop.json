@@ -1,0 +1,123 @@
+{
+  "id": "audit-loop",
+  "name": "Audit Loop",
+  "version": "1.0.0",
+  "description": "Audit loop for evaluating existing systems across architecture, performance, and security dimensions. Takes audit scope through systematic review, validation, and reporting with enforced quality gates.",
+  "category": "development",
+  "phases": [
+    {
+      "name": "INIT",
+      "order": 0,
+      "skills": [
+        {
+          "skillId": "requirements",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "REVIEW",
+      "order": 1,
+      "skills": [
+        {
+          "skillId": "architecture-review",
+          "required": true,
+          "order": 0
+        },
+        {
+          "skillId": "security-audit",
+          "required": true,
+          "order": 1
+        },
+        {
+          "skillId": "perf-analysis",
+          "required": true,
+          "order": 2
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "VALIDATE",
+      "order": 2,
+      "skills": [
+        {
+          "skillId": "integration-test",
+          "required": true,
+          "order": 0
+        },
+        {
+          "skillId": "code-verification",
+          "required": true,
+          "order": 1
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "DOCUMENT",
+      "order": 3,
+      "skills": [
+        {
+          "skillId": "document",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "COMPLETE",
+      "order": 4,
+      "skills": [
+        {
+          "skillId": "retrospective",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    }
+  ],
+  "gates": [
+    {
+      "id": "scope-gate",
+      "name": "Audit Scope Approval",
+      "afterPhase": "INIT",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": [
+        "AUDIT-SCOPE.md"
+      ]
+    },
+    {
+      "id": "findings-gate",
+      "name": "Findings Review",
+      "afterPhase": "REVIEW",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": [
+        "ARCHITECTURE-REVIEW.md",
+        "SECURITY-AUDIT.md",
+        "PERF-ANALYSIS.md"
+      ]
+    },
+    {
+      "id": "report-gate",
+      "name": "Audit Report Approval",
+      "afterPhase": "DOCUMENT",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": [
+        "AUDIT-REPORT.md"
+      ]
+    }
+  ],
+  "defaultMode": "greenfield",
+  "defaultAutonomy": "supervised",
+  "skillCount": 8,
+  "phaseCount": 5,
+  "author": "Orchestrator"
+}

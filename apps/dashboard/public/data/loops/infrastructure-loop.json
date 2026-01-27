@@ -1,0 +1,119 @@
+{
+  "id": "infrastructure-loop",
+  "name": "Infrastructure Loop",
+  "version": "1.0.0",
+  "description": "Infrastructure loop for provisioning dev environments, databases, containers, and CI/CD pipelines. Takes infrastructure requirements through planning, provisioning, and deployment with enforced quality gates.",
+  "category": "development",
+  "phases": [
+    {
+      "name": "INIT",
+      "order": 0,
+      "skills": [
+        {
+          "skillId": "requirements",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "SCAFFOLD",
+      "order": 1,
+      "skills": [
+        {
+          "skillId": "scaffold",
+          "required": true,
+          "order": 0
+        },
+        {
+          "skillId": "infra-devenv",
+          "required": true,
+          "order": 1
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "IMPLEMENT",
+      "order": 2,
+      "skills": [
+        {
+          "skillId": "infra-docker",
+          "required": true,
+          "order": 0
+        },
+        {
+          "skillId": "infra-database",
+          "required": true,
+          "order": 1
+        },
+        {
+          "skillId": "infra-monorepo",
+          "required": true,
+          "order": 2
+        },
+        {
+          "skillId": "infra-services",
+          "required": true,
+          "order": 3
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "SHIP",
+      "order": 3,
+      "skills": [
+        {
+          "skillId": "deploy",
+          "required": true,
+          "order": 0
+        },
+        {
+          "skillId": "distribute",
+          "required": true,
+          "order": 1
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "COMPLETE",
+      "order": 4,
+      "skills": [
+        {
+          "skillId": "retrospective",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    }
+  ],
+  "gates": [
+    {
+      "id": "infra-gate",
+      "name": "Infrastructure Plan Approval",
+      "afterPhase": "SCAFFOLD",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": [
+        "INFRASTRUCTURE-PLAN.md"
+      ]
+    },
+    {
+      "id": "deploy-gate",
+      "name": "Deployment Approval",
+      "afterPhase": "SHIP",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": []
+    }
+  ],
+  "defaultMode": "greenfield",
+  "defaultAutonomy": "supervised",
+  "skillCount": 10,
+  "phaseCount": 5,
+  "author": "Orchestrator"
+}

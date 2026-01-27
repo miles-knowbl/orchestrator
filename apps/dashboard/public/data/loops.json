@@ -1,0 +1,103 @@
+{
+  "loops": [
+    {
+      "id": "audit-loop",
+      "name": "Audit Loop",
+      "version": "1.0.0",
+      "description": "Audit loop for evaluating existing systems across architecture, performance, and security dimensions. Takes audit scope through systematic review, validation, and reporting with enforced quality gates",
+      "category": "development",
+      "phaseCount": 5,
+      "skillCount": 8
+    },
+    {
+      "id": "bugfix-loop",
+      "name": "Bug Fix Loop",
+      "version": "1.0.0",
+      "description": "Systematic debugging loop from reproduction to verified fix. Takes bug reports through reproduction, root cause analysis, implementation, testing, verification, and review with enforced quality gates.",
+      "category": "development",
+      "phaseCount": 7,
+      "skillCount": 8
+    },
+    {
+      "id": "deck-loop",
+      "name": "Deck Loop",
+      "version": "1.0.0",
+      "description": "Presentation generation loop that transforms discovery context and brand assets into polished slide decks. Sequences context gathering, brand extraction, slide composition, quality validation, and Pow",
+      "category": "operations",
+      "phaseCount": 6,
+      "skillCount": 7
+    },
+    {
+      "id": "engineering-loop",
+      "name": "Engineering Loop",
+      "version": "3.1.0",
+      "description": "Complete engineering loop for building production-quality software. Takes requirements through specification, architecture, implementation, testing, verification, validation, documentation, review, an",
+      "category": "development",
+      "phaseCount": 10,
+      "skillCount": 14
+    },
+    {
+      "id": "incident-loop",
+      "name": "Incident Loop",
+      "version": "1.0.0",
+      "description": "Incident response loop for triage, mitigation, deployment, and postmortem. Takes incident reports through severity assessment, mitigation, verified fix deployment, and documentation with enforced qual",
+      "category": "development",
+      "phaseCount": 6,
+      "skillCount": 6
+    },
+    {
+      "id": "infrastructure-loop",
+      "name": "Infrastructure Loop",
+      "version": "1.0.0",
+      "description": "Infrastructure loop for provisioning dev environments, databases, containers, and CI/CD pipelines. Takes infrastructure requirements through planning, provisioning, and deployment with enforced qualit",
+      "category": "development",
+      "phaseCount": 5,
+      "skillCount": 10
+    },
+    {
+      "id": "learning-loop",
+      "name": "Learning Loop",
+      "version": "1.0.0",
+      "description": "Iterate on the skills library by reviewing past work, identifying gaps, creating new skills, and refining existing ones. Turns execution experience into lasting improvements.",
+      "category": "meta",
+      "phaseCount": 5,
+      "skillCount": 7
+    },
+    {
+      "id": "loop-composer",
+      "name": "Loop Composer",
+      "version": "1.1.0",
+      "description": "Design and publish new loops and skills. Takes loop requirements through composition, skill design, and documentation to produce ready-to-use loop definitions.",
+      "category": "meta",
+      "phaseCount": 4,
+      "skillCount": 6
+    },
+    {
+      "id": "migration-loop",
+      "name": "Migration Loop",
+      "version": "1.0.0",
+      "description": "Migration loop for moving between technologies with rollback safety. Takes migration planning through architecture, implementation, testing, verification, validation, review, and deployment with enfor",
+      "category": "development",
+      "phaseCount": 9,
+      "skillCount": 11
+    },
+    {
+      "id": "proposal-loop",
+      "name": "Proposal Loop",
+      "version": "2.0.0",
+      "description": "Create compelling proposals through structured context gathering, insight cultivation, priority analysis, content validation, and polished document assembly. Six phases with human-in-the-loop gates en",
+      "category": "operations",
+      "phaseCount": 6,
+      "skillCount": 7
+    },
+    {
+      "id": "release-loop",
+      "name": "Release Loop",
+      "version": "1.0.0",
+      "description": "Release loop for versioning, documenting, and distributing releases. Takes release planning through readiness validation, changelog generation, and deployment with enforced quality gates.",
+      "category": "development",
+      "phaseCount": 5,
+      "skillCount": 9
+    }
+  ]
+}

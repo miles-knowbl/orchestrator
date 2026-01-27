@@ -1,0 +1,107 @@
+{
+  "id": "learning-loop",
+  "name": "Learning Loop",
+  "version": "1.0.0",
+  "description": "Iterate on the skills library by reviewing past work, identifying gaps, creating new skills, and refining existing ones. Turns execution experience into lasting improvements.",
+  "category": "meta",
+  "phases": [
+    {
+      "name": "INIT",
+      "order": 0,
+      "skills": [
+        {
+          "skillId": "requirements",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "ANALYZE",
+      "order": 1,
+      "skills": [
+        {
+          "skillId": "retrospective",
+          "required": true,
+          "order": 0
+        },
+        {
+          "skillId": "skill-verifier",
+          "required": true,
+          "order": 1
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "IMPROVE",
+      "order": 2,
+      "skills": [
+        {
+          "skillId": "skill-design",
+          "required": true,
+          "order": 0
+        },
+        {
+          "skillId": "calibration-tracker",
+          "required": true,
+          "order": 1
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "VALIDATE",
+      "order": 3,
+      "skills": [
+        {
+          "skillId": "memory-manager",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "COMPLETE",
+      "order": 4,
+      "skills": [
+        {
+          "skillId": "retrospective",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    }
+  ],
+  "gates": [
+    {
+      "id": "analysis-gate",
+      "name": "Analysis Findings Approval",
+      "afterPhase": "ANALYZE",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": [
+        "ANALYSIS-FINDINGS.md"
+      ]
+    },
+    {
+      "id": "improvement-gate",
+      "name": "Skill Changes Approval",
+      "afterPhase": "IMPROVE",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": [
+        "SKILL.md",
+        "CHANGELOG.md"
+      ]
+    }
+  ],
+  "defaultMode": "greenfield",
+  "defaultAutonomy": "supervised",
+  "skillCount": 7,
+  "phaseCount": 5,
+  "author": "Orchestrator"
+}

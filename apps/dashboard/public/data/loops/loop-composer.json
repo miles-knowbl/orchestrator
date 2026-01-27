@@ -1,0 +1,95 @@
+{
+  "id": "loop-composer",
+  "name": "Loop Composer",
+  "version": "1.1.0",
+  "description": "Design and publish new loops and skills. Takes loop requirements through composition, skill design, and documentation to produce ready-to-use loop definitions.",
+  "category": "meta",
+  "phases": [
+    {
+      "name": "INIT",
+      "order": 0,
+      "skills": [
+        {
+          "skillId": "requirements",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "SCAFFOLD",
+      "order": 1,
+      "skills": [
+        {
+          "skillId": "loop-composer",
+          "required": true,
+          "order": 0
+        },
+        {
+          "skillId": "skill-design",
+          "required": true,
+          "order": 1
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "DOCUMENT",
+      "order": 2,
+      "skills": [
+        {
+          "skillId": "loop-to-slash-command",
+          "required": true,
+          "order": 0
+        },
+        {
+          "skillId": "document",
+          "required": true,
+          "order": 1
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "COMPLETE",
+      "order": 3,
+      "skills": [
+        {
+          "skillId": "retrospective",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    }
+  ],
+  "gates": [
+    {
+      "id": "design-gate",
+      "name": "Loop Design Approval",
+      "afterPhase": "INIT",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": [
+        "LOOP-REQUIREMENTS.md"
+      ]
+    },
+    {
+      "id": "composition-gate",
+      "name": "Composition Approval",
+      "afterPhase": "SCAFFOLD",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": [
+        "loop.json",
+        "SKILL.md"
+      ]
+    }
+  ],
+  "defaultMode": "greenfield",
+  "defaultAutonomy": "supervised",
+  "skillCount": 6,
+  "phaseCount": 4,
+  "author": "Orchestrator"
+}

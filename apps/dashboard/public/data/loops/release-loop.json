@@ -1,0 +1,135 @@
+{
+  "id": "release-loop",
+  "name": "Release Loop",
+  "version": "1.0.0",
+  "description": "Release loop for versioning, documenting, and distributing releases. Takes release planning through readiness validation, changelog generation, and deployment with enforced quality gates.",
+  "category": "development",
+  "phases": [
+    {
+      "name": "INIT",
+      "order": 0,
+      "skills": [
+        {
+          "skillId": "release-planner",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "VALIDATE",
+      "order": 1,
+      "skills": [
+        {
+          "skillId": "code-verification",
+          "required": true,
+          "order": 0
+        },
+        {
+          "skillId": "integration-test",
+          "required": true,
+          "order": 1
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "DOCUMENT",
+      "order": 2,
+      "skills": [
+        {
+          "skillId": "changelog-generator",
+          "required": true,
+          "order": 0
+        },
+        {
+          "skillId": "release-notes",
+          "required": true,
+          "order": 1
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "SHIP",
+      "order": 3,
+      "skills": [
+        {
+          "skillId": "deploy",
+          "required": true,
+          "order": 0
+        },
+        {
+          "skillId": "distribute",
+          "required": true,
+          "order": 1
+        },
+        {
+          "skillId": "git-workflow",
+          "required": true,
+          "order": 2
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "COMPLETE",
+      "order": 4,
+      "skills": [
+        {
+          "skillId": "retrospective",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    }
+  ],
+  "gates": [
+    {
+      "id": "scope-gate",
+      "name": "Release Scope Approval",
+      "afterPhase": "INIT",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": [
+        "RELEASE-PLAN.md"
+      ]
+    },
+    {
+      "id": "readiness-gate",
+      "name": "Release Readiness Check",
+      "afterPhase": "VALIDATE",
+      "required": true,
+      "approvalType": "auto",
+      "deliverables": [
+        "READINESS-REPORT.md"
+      ]
+    },
+    {
+      "id": "notes-gate",
+      "name": "Release Notes Approval",
+      "afterPhase": "DOCUMENT",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": [
+        "CHANGELOG.md",
+        "RELEASE-NOTES.md"
+      ]
+    },
+    {
+      "id": "release-gate",
+      "name": "Release Approval",
+      "afterPhase": "SHIP",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": []
+    }
+  ],
+  "defaultMode": "greenfield",
+  "defaultAutonomy": "supervised",
+  "skillCount": 9,
+  "phaseCount": 5,
+  "author": "Orchestrator"
+}

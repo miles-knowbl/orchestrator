@@ -1,0 +1,148 @@
+{
+  "id": "proposal-loop",
+  "name": "Proposal Loop",
+  "version": "2.0.0",
+  "description": "Create compelling proposals through structured context gathering, insight cultivation, priority analysis, content validation, and polished document assembly. Six phases with human-in-the-loop gates ensure quality at every transition.",
+  "category": "operations",
+  "content": "# Proposal Loop\n\nCreate compelling proposals through structured context processing.\n\n## Overview\n\nThe proposal loop transforms raw context about a potential client or engagement into a polished proposal:\n\n1. **Context Ingestion** - Gather and organize all relevant context sources\n2. **Context Cultivation** - Process context into insights, patterns, and gaps\n3. **Priority Matrix** - Rank opportunities across prioritization dimensions\n4. **Proposal Builder** - Generate the final proposal document\n\n## Phases\n\n### INIT: Context Ingestion\n- Gather context from multiple sources (documents, URLs, conversations)\n- Create CONTEXT-SOURCES.md with source registry\n- Create RAW-CONTEXT.md with extracted content\n\n### SCAFFOLD: Context Cultivation\n- Identify themes and patterns in the raw context\n- Surface gaps and opportunities\n- Create CULTIVATED-CONTEXT.md and PATTERNS.md\n\n### IMPLEMENT: Priority Matrix\n- Rank all possible work threads\n- Apply 4 prioritization dimensions:\n  - Impact\n  - Effort\n  - Urgency\n  - Strategic alignment\n- Create PRIORITIES.md and MATRIX.md\n\n### COMPLETE: Proposal Builder\n- Generate polished proposal document\n- Apply appropriate template\n- Include executive summary, scope, timeline, pricing\n- Create PROPOSAL.md\n\n## Gates\n\nEach phase requires human approval before proceeding:\n\n| Gate | Deliverables | Purpose |\n|------|--------------|---------|\n| Context | CONTEXT-SOURCES.md, RAW-CONTEXT.md | Ensure 80% source coverage |\n| Cultivation | CULTIVATED-CONTEXT.md, PATTERNS.md | Validate insights |\n| Priorities | PRIORITIES.md, MATRIX.md | Confirm priority ranking |\n| Final | PROPOSAL.md | Approve for delivery |\n\n## When to Use\n\n- New client proposals\n- Project scoping\n- Engagement planning\n- Any situation requiring structured context-to-proposal flow\n",
+  "phases": [
+    {
+      "name": "INIT",
+      "order": 0,
+      "skills": [
+        {
+          "skillId": "context-ingestion",
+          "required": true,
+          "order": 0
+        },
+        {
+          "skillId": "requirements",
+          "required": true,
+          "order": 1
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "SCAFFOLD",
+      "order": 1,
+      "skills": [
+        {
+          "skillId": "context-cultivation",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "IMPLEMENT",
+      "order": 2,
+      "skills": [
+        {
+          "skillId": "priority-matrix",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "VALIDATE",
+      "order": 3,
+      "skills": [
+        {
+          "skillId": "content-analysis",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "DOCUMENT",
+      "order": 4,
+      "skills": [
+        {
+          "skillId": "proposal-builder",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "COMPLETE",
+      "order": 5,
+      "skills": [
+        {
+          "skillId": "retrospective",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    }
+  ],
+  "gates": [
+    {
+      "id": "context-gate",
+      "name": "Context & Requirements Review",
+      "afterPhase": "INIT",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": [
+        "CONTEXT-SOURCES.md",
+        "RAW-CONTEXT.md",
+        "REQUIREMENTS.md"
+      ]
+    },
+    {
+      "id": "synthesis-gate",
+      "name": "Insights & Patterns Review",
+      "afterPhase": "SCAFFOLD",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": [
+        "CULTIVATED-CONTEXT.md",
+        "PATTERNS.md"
+      ]
+    },
+    {
+      "id": "priorities-gate",
+      "name": "Priorities & Strategy Review",
+      "afterPhase": "IMPLEMENT",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": [
+        "PRIORITIES.md",
+        "MATRIX.md"
+      ]
+    },
+    {
+      "id": "quality-gate",
+      "name": "Content Quality Review",
+      "afterPhase": "VALIDATE",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": [
+        "CONTENT-ANALYSIS.md"
+      ]
+    },
+    {
+      "id": "proposal-gate",
+      "name": "Final Proposal Review",
+      "afterPhase": "DOCUMENT",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": [
+        "PROPOSAL.md"
+      ]
+    }
+  ],
+  "defaultMode": "greenfield",
+  "defaultAutonomy": "supervised",
+  "skillCount": 7,
+  "phaseCount": 6,
+  "author": "Orchestrator"
+}

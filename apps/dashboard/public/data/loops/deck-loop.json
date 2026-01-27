@@ -1,0 +1,145 @@
+{
+  "id": "deck-loop",
+  "name": "Deck Loop",
+  "version": "1.0.0",
+  "description": "Presentation generation loop that transforms discovery context and brand assets into polished slide decks. Sequences context gathering, brand extraction, slide composition, quality validation, and PowerPoint rendering.",
+  "category": "operations",
+  "phases": [
+    {
+      "name": "INIT",
+      "order": 0,
+      "skills": [
+        {
+          "skillId": "context-ingestion",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "SCAFFOLD",
+      "order": 1,
+      "skills": [
+        {
+          "skillId": "taste-schema",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "IMPLEMENT",
+      "order": 2,
+      "skills": [
+        {
+          "skillId": "deck-text-schema",
+          "required": true,
+          "order": 0
+        },
+        {
+          "skillId": "deck-image-schema",
+          "required": true,
+          "order": 1
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "VALIDATE",
+      "order": 3,
+      "skills": [
+        {
+          "skillId": "content-analysis",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "DOCUMENT",
+      "order": 4,
+      "skills": [
+        {
+          "skillId": "pptx",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "COMPLETE",
+      "order": 5,
+      "skills": [
+        {
+          "skillId": "retrospective",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    }
+  ],
+  "gates": [
+    {
+      "id": "context-gate",
+      "name": "Context Approval",
+      "afterPhase": "INIT",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": [
+        "CONTEXT-SOURCES.md",
+        "RAW-CONTEXT.md"
+      ]
+    },
+    {
+      "id": "taste-gate",
+      "name": "Brand Identity Approval",
+      "afterPhase": "SCAFFOLD",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": [
+        "taste-schema.json"
+      ]
+    },
+    {
+      "id": "composition-gate",
+      "name": "Deck Composition Approval",
+      "afterPhase": "IMPLEMENT",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": [
+        "deck-text-schema.json",
+        "deck-image-schema.json"
+      ]
+    },
+    {
+      "id": "quality-gate",
+      "name": "Content Quality Approval",
+      "afterPhase": "VALIDATE",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": [
+        "CONTENT-ANALYSIS.md"
+      ]
+    },
+    {
+      "id": "render-gate",
+      "name": "Render Approval",
+      "afterPhase": "DOCUMENT",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": [
+        "render-manifest.json"
+      ]
+    }
+  ],
+  "defaultMode": "greenfield",
+  "defaultAutonomy": "supervised",
+  "skillCount": 7,
+  "phaseCount": 6,
+  "author": "Orchestrator"
+}

@@ -1,0 +1,21 @@
+{
+  "id": "infra-database",
+  "name": "infra-database",
+  "version": "1.0.0",
+  "description": "Set up database schema, ORM configuration, migrations, and data access layer with connection pooling and seed data.",
+  "phase": "IMPLEMENT",
+  "category": "infra",
+  "content": "# Infra Database\n\nSet up database schema and data access layer.\n\n## When to Use\n\n- **New project with persistence** — Setting up the database from scratch\n- **Adding a database** — Existing project needs data persistence\n- **Schema redesign** — Major changes to data model\n- When you say: \"set up database\", \"add persistence\", \"create schema\"\n\n## Required Deliverables\n\n| Deliverable | Location | Condition |\n|-------------|----------|-----------|\n| Schema definition | `src/db/schema.ts` or equivalent | Always |\n| Migration files | `drizzle/` or `prisma/migrations/` | Always |\n| DB initialization | `src/db/index.ts` | Always |\n\n## Core Concept\n\nDatabase setup answers: **\"How does the application persist and retrieve data reliably?\"**\n\n```\nSchema Definition → Migration Generation → Connection Pool → Repository Layer → Application\n```\n\n## ORM Selection\n\n| ORM | Best For | Tradeoffs |\n|-----|----------|-----------|\n| **Drizzle** | TypeScript-first, lightweight | Newer, smaller ecosystem |\n| **Prisma** | Rapid development, schema-first | Heavier runtime, query engine binary |\n| **Knex** | SQL-close, flexible | More manual, less type safety |\n| **None (pg/mysql2)** | Maximum control | All manual, no migrations |\n\n## Drizzle Setup Pattern\n\n```typescript\n// src/db/schema.ts\nimport { pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';\n\nexport const users = pgTable('users', {\n  id: uuid('id').primaryKey().defaultRandom(),\n  email: text('email').notNull().unique(),\n  name: text('name').notNull(),\n  createdAt: timestamp('created_at').defaultNow().notNull(),\n  updatedAt: timestamp('updated_at').defaultNow().notNull(),\n});\n```\n\n```typescript\n// src/db/index.ts\nimport { drizzle } from 'drizzle-orm/node-postgres';\nimport { Pool } from 'pg';\nimport * as schema from './schema';\n\nconst pool = new Pool({ connectionString: process.env.DATABASE_URL });\nexport const db = drizzle(pool, { schema });\n```\n\n## Migration Workflow\n\n```bash\n# Generate migration from schema changes\nnpx drizzle-kit generate\n\n# Apply migrations\nnpx drizzle-kit migrate\n\n# Push schema directly (dev only)\nnpx drizzle-kit push\n```\n\n## Connection Pooling\n\nAlways use connection pooling in production:\n\n| Setting | Development | Production |\n|---------|-------------|------------|\n| Pool size | 5 | 20 |\n| Idle timeout | 30s | 10s |\n| Connection timeout | 5s | 3s |\n\n## Seed Data\n\n```typescript\n// src/db/seed.ts\nimport { db } from './index';\nimport { users } from './schema';\n\nasync function seed() {\n  await db.insert(users).values([\n    { email: 'admin@example.com', name: 'Admin' },\n  ]);\n}\n\nseed().then(() => process.exit(0));\n```\n\n## Checklist\n\n- [ ] Schema defined with proper types and constraints\n- [ ] Migrations generated and tested\n- [ ] Connection pooling configured\n- [ ] Environment variable for DATABASE_URL\n- [ ] Seed data for development\n- [ ] Indexes on frequently queried columns\n\n## Relationship to Other Skills\n\n| Skill | Relationship |\n|-------|--------------|\n| `infra-devenv` | Dev environment must include database setup |\n| `infra-services` | Services consume the database layer |\n| `scaffold` | Project structure includes db directory |\n| `deploy` | Migrations must run safely in production |\n\n## Key Principles\n\n**Schema is code.** Version-controlled, reviewed, tested like any other code.\n\n**Migrations are forward-only.** Never edit applied migrations; create new ones.\n\n**Pool connections.** Never create a new connection per request.\n\n**Seed for development.** Realistic seed data makes development faster.",
+  "references": [],
+  "tags": [
+    "infrastructure",
+    "database",
+    "orm",
+    "schema",
+    "migrations"
+  ],
+  "dependsOn": [
+    "infra-devenv",
+    "scaffold"
+  ]
+}
