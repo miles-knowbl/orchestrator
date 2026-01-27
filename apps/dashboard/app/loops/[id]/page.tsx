@@ -319,23 +319,24 @@ export default function LoopDetailPage() {
             </div>
           </div>
 
-          {isStatic ? (
+          <div className="flex items-center gap-2 shrink-0">
             <a
               href={`/demo/${loop.id}`}
-              className="flex items-center gap-2 px-4 py-2 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/30 rounded-lg text-amber-400 font-medium transition-colors shrink-0"
+              className="flex items-center gap-2 px-4 py-2 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/30 rounded-lg text-amber-400 font-medium transition-colors"
             >
               <FlaskConical className="w-4 h-4" />
               Try Demo
             </a>
-          ) : (
-            <button
-              onClick={() => setShowStartModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-orch-500 hover:bg-orch-600 rounded-lg text-white font-medium transition-colors shrink-0"
-            >
-              <Play className="w-4 h-4" />
-              Start Execution
-            </button>
-          )}
+            {!isStatic && (
+              <button
+                onClick={() => setShowStartModal(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-orch-500 hover:bg-orch-600 rounded-lg text-white font-medium transition-colors"
+              >
+                <Play className="w-4 h-4" />
+                Start Execution
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
