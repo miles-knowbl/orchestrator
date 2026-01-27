@@ -29,7 +29,7 @@ In a new terminal:
 
 ```bash
 # Register the orchestrator as an MCP server
-claude mcp add orchestrator http://localhost:3002/mcp
+claude mcp add --transport http orchestrator http://localhost:3002/mcp
 
 # Start a session
 claude
@@ -113,7 +113,7 @@ orchestrator/
 Register the orchestrator as an MCP server in Claude Code:
 
 ```bash
-claude mcp add orchestrator http://localhost:3002/mcp
+claude mcp add --transport http orchestrator http://localhost:3002/mcp
 ```
 
 This exposes 54+ tools for managing skills, loops, executions, memory, and inbox.

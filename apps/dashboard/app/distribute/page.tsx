@@ -219,7 +219,7 @@ export default function DistributePage() {
                 <div className="w-full">
                   <p className="text-sm text-gray-300 mb-2">Register the MCP server</p>
                   <p className="text-xs text-gray-500 mb-1.5">Same terminal (or any new terminal)</p>
-                  <CodeBlock command="claude mcp add orchestrator http://localhost:3002/mcp" />
+                  <CodeBlock command="claude mcp add --transport http orchestrator http://localhost:3002/mcp" />
                 </div>
               </div>
               <div className="flex items-start gap-3">

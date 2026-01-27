@@ -109,7 +109,7 @@ jobs:
           ### Connect Claude Code
 
           \`\`\`bash
-          claude mcp add orchestrator http://localhost:3002/mcp
+          claude mcp add --transport http orchestrator http://localhost:3002/mcp
           claude
           \`\`\`
 
