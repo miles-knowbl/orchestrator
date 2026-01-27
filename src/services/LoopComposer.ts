@@ -174,6 +174,7 @@ export class LoopComposer {
         name: loop.name,
         version: loop.version,
         description: loop.description.slice(0, 200),
+        category: loop.category,
         phaseCount: loop.phases.length,
         skillCount: loop.skillCount,
       }))

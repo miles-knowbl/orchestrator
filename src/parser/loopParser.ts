@@ -38,6 +38,7 @@ export interface LoopConfig {
   metadata?: {
     author?: string;
     tags?: string[];
+    category?: string;
   };
 }
 
@@ -139,6 +140,7 @@ export function configToLoop(config: LoopConfig, markdownContent?: string): Loop
     ui: { ...defaultUI, ...config.ui },
     skillUI: config.skillUI || {},
     skillCount,
+    category: config.metadata?.category || 'development',
     author: config.metadata?.author,
     createdAt: new Date(),
     updatedAt: new Date(),

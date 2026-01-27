@@ -129,6 +129,7 @@ export interface Loop {
 
   // Metadata
   skillCount: number;
+  category: string;
   author?: string;
   createdAt: Date;
   updatedAt: Date;
@@ -476,6 +477,7 @@ export interface LoopSummary {
   name: string;
   version: string;
   description: string;
+  category: string;
   phaseCount: number;
   skillCount: number;
 }
