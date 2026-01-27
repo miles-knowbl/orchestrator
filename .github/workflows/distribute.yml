@@ -46,14 +46,12 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install Railway CLI
         run: npm i -g @railway/cli
-      - name: Link project
-        run: railway link --project "$RAILWAY_PROJECT_ID" --service "$RAILWAY_SERVICE" --environment production
+      - name: List services
+        run: railway status || true
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
-          RAILWAY_SERVICE: ${{ secrets.RAILWAY_SERVICE }}
       - name: Deploy
-        run: railway up
+        run: railway up -d --service eloquent-essence
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
