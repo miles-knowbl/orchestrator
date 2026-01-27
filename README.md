@@ -35,21 +35,19 @@ claude mcp add --transport http orchestrator http://localhost:3002/mcp
 claude
 ```
 
-The installer sets up 11 slash commands. Try one:
+The installer sets up 9 slash commands. Try one:
 
 | Command | What it does |
 |---------|-------------|
-| `/engineering-harness` | **Full engineering loop** — build anything from scratch or extend existing code |
-| `/bugfix-harness` | Systematic bug fixing with reproduction and regression tests |
-| `/refactor-harness` | Safe refactoring verified by tests at every step |
-| `/release-harness` | Version, validate, document, and ship releases |
-| `/proposal-harness` | Create evidence-backed proposals |
-| `/incident-harness` | Incident response — triage, fix, deploy, postmortem |
-| `/migration-harness` | Technology migrations with rollback safety |
-| `/infra-harness` | Infrastructure provisioning (Docker, CI/CD, databases) |
-| `/audit-harness` | Read-only system audit with prioritized findings |
-| `/deck-harness` | Generate slide decks from context and brand assets |
-| `/meta-harness` | Create new loops (the loop that makes loops) |
+| `/engineering-loop` | **Full engineering loop** — build anything from scratch or extend existing code |
+| `/bugfix-loop` | Systematic bug fixing with reproduction and regression tests |
+| `/release-loop` | Version, validate, document, and ship releases |
+| `/proposal-loop` | Create evidence-backed proposals |
+| `/migration-loop` | Technology migrations with rollback safety |
+| `/infra-loop` | Infrastructure provisioning (CI/CD, databases) |
+| `/audit-loop` | Read-only system audit with prioritized findings |
+| `/deck-loop` | Generate slide decks from context and brand assets |
+| `/meta-loop` | Create new loops (the loop that makes loops) |
 
 ### Dashboard (optional)
 
@@ -60,13 +58,6 @@ npm install && npm run dev
 ```
 
 The dashboard starts on **http://localhost:3003**.
-
-### Docker
-
-```bash
-docker pull ghcr.io/miles-knowbl/orchestrator:latest
-docker run -p 3002:3002 ghcr.io/miles-knowbl/orchestrator:latest
-```
 
 ## Architecture
 
@@ -81,7 +72,7 @@ orchestrator/
 ├── memory/                 # Persistent learning state
 ├── apps/
 │   └── dashboard/          # Next.js monitoring UI
-└── .github/workflows/      # CI/CD (Vercel + Railway + GHCR)
+└── .github/workflows/      # CI/CD (Vercel + Railway)
 ```
 
 ### How It Works
@@ -104,9 +95,21 @@ orchestrator/
               │            │            │
          ┌────▼───┐  ┌────▼───┐  ┌────▼────┐
          │ Skills │  │ Loops  │  │ Memory  │
-         │ 60+    │  │ 11     │  │ learning│
+         │ 60+    │  │ 10     │  │ learning│
          └────────┘  └────────┘  └─────────┘
 ```
+
+### Deployment Topology
+
+| Context | What runs | Purpose |
+|---------|-----------|---------|
+| **Local** (`npm start`) | Orchestrator on port 3002 | Claude Code connects here for slash commands and loops |
+| **Railway** (auto-deployed) | Same Orchestrator server | Feeds live skill/loop/execution data to the hosted dashboard |
+| **Vercel** | Next.js dashboard | Read-only monitoring UI at orchestrator-xi.vercel.app |
+| **GitHub Releases** | Tarball + SHA256 | Downloadable archive, updated on every push to main |
+
+Local usage is the primary mode — install, run `npm start`, and connect Claude Code.
+The Railway + Vercel deployment exists solely to power the public dashboard.
 
 ## MCP Integration
 
@@ -155,10 +158,11 @@ npm test       # Run tests
 
 ## Live Deployment
 
-- **Dashboard**: [orchestrator-xi.vercel.app](https://orchestrator-xi.vercel.app)
-- **API**: Railway (persistent MCP/SSE connections)
-- **Docker**: `ghcr.io/miles-knowbl/orchestrator:latest`
-- **Releases**: [GitHub Releases](https://github.com/miles-knowbl/orchestrator/releases)
+The hosted deployment powers the public dashboard — it is **not** required for local usage.
+
+- **Dashboard**: [orchestrator-xi.vercel.app](https://orchestrator-xi.vercel.app) — read-only monitoring UI (Vercel)
+- **API**: Railway — auto-deployed on push, serves live data to the dashboard
+- **Releases**: [GitHub Releases](https://github.com/miles-knowbl/orchestrator/releases) — tarball with SHA256 checksum
 
 ## License
 
