@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Layers, Play, Zap, Shield, Settings, X, BookOpen, WifiOff, FlaskConical } from 'lucide-react';
+import { useParams } from 'next/navigation';
+import { ArrowLeft, Layers, Play, Zap, Shield, Settings, BookOpen, WifiOff, FlaskConical } from 'lucide-react';
 import { Prose } from '@/components/Prose';
-import { fetchApi, fetchWithFallback } from '@/lib/api';
+import { fetchWithFallback } from '@/lib/api';
 
 const phaseColors: Record<string, string> = {
   INIT: 'bg-purple-500',
@@ -123,115 +123,13 @@ function PhaseTimeline({ phases, gates }: { phases: LoopPhase[]; gates: LoopGate
   );
 }
 
-function StartExecutionModal({
-  loop,
-  onClose,
-  onStart
-}: {
-  loop: LoopDetail;
-  onClose: () => void;
-  onStart: (config: { project: string; mode: string; autonomy: string }) => void;
-}) {
-  const [project, setProject] = useState('');
-  const [mode, setMode] = useState(loop.defaultMode || 'greenfield');
-  const [autonomy, setAutonomy] = useState(loop.defaultAutonomy || 'supervised');
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!project.trim()) return;
-
-    setLoading(true);
-    await onStart({ project: project.trim(), mode, autonomy });
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-      <div className="bg-[#111] border border-[#222] rounded-xl w-full max-w-md">
-        <div className="flex items-center justify-between p-4 border-b border-[#222]">
-          <h2 className="text-lg font-semibold text-white">Start Execution</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-white">
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="p-4 space-y-4">
-          <div>
-            <label className="block text-sm text-gray-400 mb-2">Project Name</label>
-            <input
-              type="text"
-              value={project}
-              onChange={(e) => setProject(e.target.value)}
-              placeholder="my-feature"
-              className="w-full bg-[#0a0a0a] border border-[#222] rounded-lg px-4 py-2 text-white placeholder-gray-600 focus:border-orch-500 focus:outline-none"
-              autoFocus
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm text-gray-400 mb-2">Mode</label>
-            <select
-              value={mode}
-              onChange={(e) => setMode(e.target.value)}
-              className="w-full bg-[#0a0a0a] border border-[#222] rounded-lg px-4 py-2 text-white focus:border-orch-500 focus:outline-none"
-            >
-              <option value="greenfield">Greenfield (new project)</option>
-              <option value="brownfield-major">Brownfield Major (big feature)</option>
-              <option value="brownfield-minor">Brownfield Minor (small change)</option>
-              <option value="brownfield-patch">Brownfield Patch (bug fix)</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm text-gray-400 mb-2">Autonomy Level</label>
-            <select
-              value={autonomy}
-              onChange={(e) => setAutonomy(e.target.value)}
-              className="w-full bg-[#0a0a0a] border border-[#222] rounded-lg px-4 py-2 text-white focus:border-orch-500 focus:outline-none"
-            >
-              <option value="supervised">Supervised (requires approval at gates)</option>
-              <option value="autonomous">Autonomous (auto-advance through gates)</option>
-            </select>
-          </div>
-
-          <div className="flex gap-3 pt-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 px-4 py-2 border border-[#222] rounded-lg text-gray-400 hover:text-white hover:border-[#333] transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={!project.trim() || loading}
-              className="flex-1 px-4 py-2 bg-orch-500 hover:bg-orch-600 rounded-lg text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
-            >
-              {loading ? (
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <>
-                  <Play className="w-4 h-4" />
-                  Start
-                </>
-              )}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-}
-
 export default function LoopDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const id = params.id as string;
 
   const [loop, setLoop] = useState<LoopDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isStatic, setIsStatic] = useState(false);
-  const [showStartModal, setShowStartModal] = useState(false);
 
   useEffect(() => {
     const fetchLoop = async () => {
@@ -247,30 +145,6 @@ export default function LoopDetailPage() {
 
     fetchLoop();
   }, [id]);
-
-  const handleStartExecution = async (config: { project: string; mode: string; autonomy: string }) => {
-    try {
-      const res = await fetchApi('/api/executions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          loopId: loop!.id,
-          ...config,
-        }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Failed to start execution');
-      }
-
-      const execution = await res.json();
-      router.push(`/executions/${execution.id}`);
-    } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to start execution');
-      setShowStartModal(false);
-    }
-  };
 
   if (error) {
     return (
@@ -319,24 +193,13 @@ export default function LoopDetailPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
-            <a
-              href={`/demo/${loop.id}`}
-              className="flex items-center gap-2 px-4 py-2 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/30 rounded-lg text-amber-400 font-medium transition-colors"
-            >
-              <FlaskConical className="w-4 h-4" />
-              Try Demo
-            </a>
-            {!isStatic && (
-              <button
-                onClick={() => setShowStartModal(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-orch-500 hover:bg-orch-600 rounded-lg text-white font-medium transition-colors"
-              >
-                <Play className="w-4 h-4" />
-                Start Execution
-              </button>
-            )}
-          </div>
+          <a
+            href={`/demo/${loop.id}`}
+            className="flex items-center gap-2 px-4 py-2 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/30 rounded-lg text-amber-400 font-medium transition-colors shrink-0"
+          >
+            <FlaskConical className="w-4 h-4" />
+            Try Demo
+          </a>
         </div>
       </div>
 
@@ -427,14 +290,6 @@ export default function LoopDetailPage() {
         </div>
       )}
 
-      {/* Start Execution Modal */}
-      {showStartModal && (
-        <StartExecutionModal
-          loop={loop}
-          onClose={() => setShowStartModal(false)}
-          onStart={handleStartExecution}
-        />
-      )}
     </div>
   );
 }
