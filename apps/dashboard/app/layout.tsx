@@ -32,9 +32,8 @@ export default function RootLayout({
                 <h1 className="text-lg font-bold tracking-tight text-white">Orchestrator</h1>
               </div>
               <nav className="flex items-center gap-6">
-                <a href="/" className="text-sm text-gray-400 hover:text-white transition-colors">Dashboard</a>
+                <a href="/" className="text-sm text-gray-400 hover:text-white transition-colors">Loops</a>
                 <a href="/skills" className="text-sm text-gray-400 hover:text-white transition-colors">Skills</a>
-                <a href="/loops" className="text-sm text-gray-400 hover:text-white transition-colors">Loops</a>
                 <a href="/inbox" className="text-sm text-gray-400 hover:text-white transition-colors">Inbox</a>
                 <a href="/distribute" className="text-sm text-gray-400 hover:text-white transition-colors">Distribute</a>
               </nav>

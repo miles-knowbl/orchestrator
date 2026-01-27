@@ -3,60 +3,82 @@
   "name": "Engineering Loop",
   "version": "3.1.0",
   "description": "Complete engineering loop for building production-quality software. Takes requirements through specification, architecture, implementation, testing, verification, validation, documentation, review, and deployment with enforced quality gates.",
-
   "phases": [
     {
       "name": "INIT",
-      "skills": ["requirements", "spec"],
+      "skills": [
+        "requirements",
+        "spec"
+      ],
       "required": true
     },
     {
       "name": "SCAFFOLD",
-      "skills": ["architect", "scaffold"],
+      "skills": [
+        "architect",
+        "scaffold"
+      ],
       "required": true
     },
     {
       "name": "IMPLEMENT",
-      "skills": ["implement"],
+      "skills": [
+        "implement"
+      ],
       "required": true
     },
     {
       "name": "TEST",
-      "skills": ["test-generation"],
+      "skills": [
+        "test-generation"
+      ],
       "required": true
     },
     {
       "name": "VERIFY",
-      "skills": ["code-verification"],
+      "skills": [
+        "code-verification"
+      ],
       "required": true
     },
     {
       "name": "VALIDATE",
-      "skills": ["code-validation", "security-audit"],
+      "skills": [
+        "code-validation",
+        "security-audit"
+      ],
       "required": true
     },
     {
       "name": "DOCUMENT",
-      "skills": ["document"],
+      "skills": [
+        "document"
+      ],
       "required": true
     },
     {
       "name": "REVIEW",
-      "skills": ["code-review"],
+      "skills": [
+        "code-review"
+      ],
       "required": true
     },
     {
       "name": "SHIP",
-      "skills": ["deploy", "distribute"],
+      "skills": [
+        "deploy",
+        "distribute"
+      ],
       "required": true
     },
     {
       "name": "COMPLETE",
-      "skills": ["retrospective"],
+      "skills": [
+        "retrospective"
+      ],
       "required": true
     }
   ],
-
   "gates": [
     {
       "id": "spec-gate",
@@ -64,7 +86,10 @@
       "afterPhase": "INIT",
       "required": true,
       "approvalType": "human",
-      "deliverables": ["REQUIREMENTS.md", "FEATURESPEC.md"]
+      "deliverables": [
+        "REQUIREMENTS.md",
+        "FEATURESPEC.md"
+      ]
     },
     {
       "id": "architecture-gate",
@@ -72,7 +97,9 @@
       "afterPhase": "SCAFFOLD",
       "required": true,
       "approvalType": "human",
-      "deliverables": ["ARCHITECTURE.md"]
+      "deliverables": [
+        "ARCHITECTURE.md"
+      ]
     },
     {
       "id": "verification-gate",
@@ -80,7 +107,9 @@
       "afterPhase": "VERIFY",
       "required": true,
       "approvalType": "auto",
-      "deliverables": ["VERIFICATION.md"],
+      "deliverables": [
+        "VERIFICATION.md"
+      ],
       "autoCheck": "build passes, tests pass, lint clean"
     },
     {
@@ -89,7 +118,10 @@
       "afterPhase": "VALIDATE",
       "required": true,
       "approvalType": "human",
-      "deliverables": ["VALIDATION.md", "SECURITY-AUDIT.md"]
+      "deliverables": [
+        "VALIDATION.md",
+        "SECURITY-AUDIT.md"
+      ]
     },
     {
       "id": "review-gate",
@@ -97,7 +129,9 @@
       "afterPhase": "REVIEW",
       "required": true,
       "approvalType": "human",
-      "deliverables": ["CODE-REVIEW.md"]
+      "deliverables": [
+        "CODE-REVIEW.md"
+      ]
     },
     {
       "id": "deploy-gate",
@@ -109,12 +143,10 @@
       "condition": "Auto-passes if no deploy target configured"
     }
   ],
-
   "defaults": {
     "mode": "greenfield",
     "autonomy": "supervised"
   },
-
   "ui": {
     "theme": "engineering",
     "layout": "chat-focused",
@@ -130,7 +162,6 @@
       "subtitle": "Build production-quality software"
     }
   },
-
   "skillUI": {
     "requirements": {
       "displayName": "Requirements Analysis",
@@ -203,14 +234,18 @@
       "outputDisplay": "markdown"
     }
   },
-
   "metadata": {
     "author": "Orchestrator",
-    "tags": ["engineering", "full-loop", "production"],
+    "tags": [
+      "engineering",
+      "full-loop",
+      "production"
+    ],
     "changelog": {
       "3.1.0": "Add distribute skill to SHIP phase alongside deploy, 13 skills total",
       "3.0.0": "Add VALIDATE phase, requirements skill in INIT, replace loop-controller with retrospective, all phases required, 6 gates (verification-gate auto, validation-gate human), full skillUI for all 12 skills",
       "2.0.0": "Initial 9-phase loop with 4 gates"
-    }
+    },
+    "category": "development"
   }
 }

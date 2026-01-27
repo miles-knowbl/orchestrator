@@ -3,35 +3,46 @@
   "name": "Audit Loop",
   "version": "1.0.0",
   "description": "Audit loop for evaluating existing systems across architecture, performance, and security dimensions. Takes audit scope through systematic review, validation, and reporting with enforced quality gates.",
-
   "phases": [
     {
       "name": "INIT",
-      "skills": ["requirements"],
+      "skills": [
+        "requirements"
+      ],
       "required": true
     },
     {
       "name": "REVIEW",
-      "skills": ["architecture-review", "security-audit", "perf-analysis"],
+      "skills": [
+        "architecture-review",
+        "security-audit",
+        "perf-analysis"
+      ],
       "required": true
     },
     {
       "name": "VALIDATE",
-      "skills": ["integration-test", "code-verification"],
+      "skills": [
+        "integration-test",
+        "code-verification"
+      ],
       "required": true
     },
     {
       "name": "DOCUMENT",
-      "skills": ["document"],
+      "skills": [
+        "document"
+      ],
       "required": true
     },
     {
       "name": "COMPLETE",
-      "skills": ["retrospective"],
+      "skills": [
+        "retrospective"
+      ],
       "required": true
     }
   ],
-
   "gates": [
     {
       "id": "scope-gate",
@@ -39,7 +50,9 @@
       "afterPhase": "INIT",
       "required": true,
       "approvalType": "human",
-      "deliverables": ["AUDIT-SCOPE.md"]
+      "deliverables": [
+        "AUDIT-SCOPE.md"
+      ]
     },
     {
       "id": "findings-gate",
@@ -47,7 +60,11 @@
       "afterPhase": "REVIEW",
       "required": true,
       "approvalType": "human",
-      "deliverables": ["ARCHITECTURE-REVIEW.md", "SECURITY-AUDIT.md", "PERF-ANALYSIS.md"]
+      "deliverables": [
+        "ARCHITECTURE-REVIEW.md",
+        "SECURITY-AUDIT.md",
+        "PERF-ANALYSIS.md"
+      ]
     },
     {
       "id": "report-gate",
@@ -55,15 +72,15 @@
       "afterPhase": "DOCUMENT",
       "required": true,
       "approvalType": "human",
-      "deliverables": ["AUDIT-REPORT.md"]
+      "deliverables": [
+        "AUDIT-REPORT.md"
+      ]
     }
   ],
-
   "defaults": {
     "mode": "greenfield",
     "autonomy": "supervised"
   },
-
   "ui": {
     "theme": "audit",
     "layout": "chat-focused",
@@ -79,7 +96,6 @@
       "subtitle": "Evaluate your systems"
     }
   },
-
   "skillUI": {
     "requirements": {
       "displayName": "Requirements Analysis",
@@ -122,12 +138,17 @@
       "outputDisplay": "markdown"
     }
   },
-
   "metadata": {
     "author": "Orchestrator",
-    "tags": ["audit", "review", "security", "performance"],
+    "tags": [
+      "audit",
+      "review",
+      "security",
+      "performance"
+    ],
     "changelog": {
       "1.0.0": "Initial release"
-    }
+    },
+    "category": "development"
   }
 }

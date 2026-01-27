@@ -3,40 +3,50 @@
   "name": "Incident Loop",
   "version": "1.0.0",
   "description": "Incident response loop for triage, mitigation, deployment, and postmortem. Takes incident reports through severity assessment, mitigation, verified fix deployment, and documentation with enforced quality gates.",
-
   "phases": [
     {
       "name": "INIT",
-      "skills": ["incident-triage"],
+      "skills": [
+        "incident-triage"
+      ],
       "required": true
     },
     {
       "name": "IMPLEMENT",
-      "skills": ["mitigation"],
+      "skills": [
+        "mitigation"
+      ],
       "required": true
     },
     {
       "name": "VERIFY",
-      "skills": ["code-verification"],
+      "skills": [
+        "code-verification"
+      ],
       "required": true
     },
     {
       "name": "SHIP",
-      "skills": ["deploy"],
+      "skills": [
+        "deploy"
+      ],
       "required": true
     },
     {
       "name": "DOCUMENT",
-      "skills": ["postmortem"],
+      "skills": [
+        "postmortem"
+      ],
       "required": true
     },
     {
       "name": "COMPLETE",
-      "skills": ["retrospective"],
+      "skills": [
+        "retrospective"
+      ],
       "required": true
     }
   ],
-
   "gates": [
     {
       "id": "severity-gate",
@@ -44,7 +54,9 @@
       "afterPhase": "INIT",
       "required": true,
       "approvalType": "human",
-      "deliverables": ["INCIDENT-TRIAGE.md"]
+      "deliverables": [
+        "INCIDENT-TRIAGE.md"
+      ]
     },
     {
       "id": "verification-gate",
@@ -52,7 +64,9 @@
       "afterPhase": "VERIFY",
       "required": true,
       "approvalType": "auto",
-      "deliverables": ["VERIFICATION.md"],
+      "deliverables": [
+        "VERIFICATION.md"
+      ],
       "autoCheck": "build passes, tests pass"
     },
     {
@@ -64,12 +78,10 @@
       "deliverables": []
     }
   ],
-
   "defaults": {
     "mode": "greenfield",
     "autonomy": "supervised"
   },
-
   "ui": {
     "theme": "incident",
     "layout": "chat-focused",
@@ -85,7 +97,6 @@
       "subtitle": "Respond and recover"
     }
   },
-
   "skillUI": {
     "incident-triage": {
       "displayName": "Incident Triage",
@@ -118,12 +129,17 @@
       "outputDisplay": "markdown"
     }
   },
-
   "metadata": {
     "author": "Orchestrator",
-    "tags": ["incident", "response", "production", "postmortem"],
+    "tags": [
+      "incident",
+      "response",
+      "production",
+      "postmortem"
+    ],
     "changelog": {
       "1.0.0": "Initial release"
-    }
+    },
+    "category": "development"
   }
 }

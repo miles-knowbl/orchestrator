@@ -3,45 +3,58 @@
   "name": "Bug Fix Loop",
   "version": "1.0.0",
   "description": "Systematic debugging loop from reproduction to verified fix. Takes bug reports through reproduction, root cause analysis, implementation, testing, verification, and review with enforced quality gates.",
-
   "phases": [
     {
       "name": "INIT",
-      "skills": ["bug-reproducer"],
+      "skills": [
+        "bug-reproducer"
+      ],
       "required": true
     },
     {
       "name": "SCAFFOLD",
-      "skills": ["debug-assist", "root-cause-analysis"],
+      "skills": [
+        "debug-assist",
+        "root-cause-analysis"
+      ],
       "required": true
     },
     {
       "name": "IMPLEMENT",
-      "skills": ["implement"],
+      "skills": [
+        "implement"
+      ],
       "required": true
     },
     {
       "name": "TEST",
-      "skills": ["test-generation"],
+      "skills": [
+        "test-generation"
+      ],
       "required": true
     },
     {
       "name": "VERIFY",
-      "skills": ["code-verification"],
+      "skills": [
+        "code-verification"
+      ],
       "required": true
     },
     {
       "name": "REVIEW",
-      "skills": ["code-review"],
+      "skills": [
+        "code-review"
+      ],
       "required": true
     },
     {
       "name": "COMPLETE",
-      "skills": ["retrospective"],
+      "skills": [
+        "retrospective"
+      ],
       "required": true
     }
   ],
-
   "gates": [
     {
       "id": "repro-gate",
@@ -49,7 +62,9 @@
       "afterPhase": "INIT",
       "required": true,
       "approvalType": "human",
-      "deliverables": ["BUG-REPRODUCTION.md"]
+      "deliverables": [
+        "BUG-REPRODUCTION.md"
+      ]
     },
     {
       "id": "diagnosis-gate",
@@ -57,7 +72,9 @@
       "afterPhase": "SCAFFOLD",
       "required": true,
       "approvalType": "human",
-      "deliverables": ["ROOT-CAUSE.md"]
+      "deliverables": [
+        "ROOT-CAUSE.md"
+      ]
     },
     {
       "id": "verification-gate",
@@ -65,7 +82,9 @@
       "afterPhase": "VERIFY",
       "required": true,
       "approvalType": "auto",
-      "deliverables": ["VERIFICATION.md"],
+      "deliverables": [
+        "VERIFICATION.md"
+      ],
       "autoCheck": "build passes, tests pass, lint clean"
     },
     {
@@ -74,15 +93,15 @@
       "afterPhase": "REVIEW",
       "required": true,
       "approvalType": "human",
-      "deliverables": ["CODE-REVIEW.md"]
+      "deliverables": [
+        "CODE-REVIEW.md"
+      ]
     }
   ],
-
   "defaults": {
     "mode": "greenfield",
     "autonomy": "supervised"
   },
-
   "ui": {
     "theme": "bugfix",
     "layout": "chat-focused",
@@ -98,7 +117,6 @@
       "subtitle": "Fix it right"
     }
   },
-
   "skillUI": {
     "bug-reproducer": {
       "displayName": "Bug Reproducer",
@@ -141,12 +159,16 @@
       "outputDisplay": "markdown"
     }
   },
-
   "metadata": {
     "author": "Orchestrator",
-    "tags": ["bugfix", "debugging", "troubleshooting"],
+    "tags": [
+      "bugfix",
+      "debugging",
+      "troubleshooting"
+    ],
     "changelog": {
       "1.0.0": "Initial release"
-    }
+    },
+    "category": "development"
   }
 }

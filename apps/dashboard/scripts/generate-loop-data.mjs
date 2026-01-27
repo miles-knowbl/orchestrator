@@ -116,6 +116,7 @@ async function main() {
       name: raw.name,
       version: raw.version || '1.0.0',
       description: raw.description || '',
+      category: raw.metadata?.category || 'development',
       content,
       phases,
       gates,
@@ -133,6 +134,7 @@ async function main() {
       name: raw.name,
       version: raw.version || '1.0.0',
       description: (raw.description || '').slice(0, 200),
+      category: raw.metadata?.category || 'development',
       phaseCount: phases.length,
       skillCount,
     });

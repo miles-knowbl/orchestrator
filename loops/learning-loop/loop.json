@@ -1,0 +1,116 @@
+{
+  "id": "learning-loop",
+  "name": "Learning Loop",
+  "version": "1.0.0",
+  "description": "Iterate on the skills library by reviewing past work, identifying gaps, creating new skills, and refining existing ones. Turns execution experience into lasting improvements.",
+
+  "phases": [
+    {
+      "name": "INIT",
+      "skills": ["requirements"],
+      "required": true
+    },
+    {
+      "name": "ANALYZE",
+      "skills": ["retrospective", "skill-verifier"],
+      "required": true
+    },
+    {
+      "name": "IMPROVE",
+      "skills": ["skill-design", "calibration-tracker"],
+      "required": true
+    },
+    {
+      "name": "VALIDATE",
+      "skills": ["memory-manager"],
+      "required": true
+    },
+    {
+      "name": "COMPLETE",
+      "skills": ["retrospective"],
+      "required": true
+    }
+  ],
+
+  "gates": [
+    {
+      "id": "analysis-gate",
+      "name": "Analysis Findings Approval",
+      "afterPhase": "ANALYZE",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": ["ANALYSIS-FINDINGS.md"]
+    },
+    {
+      "id": "improvement-gate",
+      "name": "Skill Changes Approval",
+      "afterPhase": "IMPROVE",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": ["SKILL.md", "CHANGELOG.md"]
+    }
+  ],
+
+  "defaults": {
+    "mode": "greenfield",
+    "autonomy": "supervised"
+  },
+
+  "ui": {
+    "theme": "meta",
+    "layout": "chat-focused",
+    "features": {
+      "skillBrowser": true,
+      "deliverableViewer": true,
+      "gateApprovalUI": true,
+      "progressTimeline": true,
+      "metricsPanel": true
+    },
+    "branding": {
+      "title": "Learning Harness",
+      "subtitle": "Improve your skills"
+    }
+  },
+
+  "skillUI": {
+    "requirements": {
+      "displayName": "Learning Objectives",
+      "icon": "clipboard-list",
+      "outputDisplay": "markdown"
+    },
+    "retrospective": {
+      "displayName": "Retrospective",
+      "icon": "refresh",
+      "outputDisplay": "markdown"
+    },
+    "skill-verifier": {
+      "displayName": "Skill Auditor",
+      "icon": "search",
+      "outputDisplay": "markdown"
+    },
+    "skill-design": {
+      "displayName": "Skill Design",
+      "icon": "pencil",
+      "outputDisplay": "markdown"
+    },
+    "calibration-tracker": {
+      "displayName": "Calibration Tracker",
+      "icon": "bar-chart",
+      "outputDisplay": "markdown"
+    },
+    "memory-manager": {
+      "displayName": "Memory Manager",
+      "icon": "database",
+      "outputDisplay": "markdown"
+    }
+  },
+
+  "metadata": {
+    "author": "Orchestrator",
+    "category": "meta",
+    "tags": ["learning", "skills", "improvement", "calibration"],
+    "changelog": {
+      "1.0.0": "Initial release"
+    }
+  }
+}

@@ -3,35 +3,47 @@
   "name": "Release Loop",
   "version": "1.0.0",
   "description": "Release loop for versioning, documenting, and distributing releases. Takes release planning through readiness validation, changelog generation, and deployment with enforced quality gates.",
-
   "phases": [
     {
       "name": "INIT",
-      "skills": ["release-planner"],
+      "skills": [
+        "release-planner"
+      ],
       "required": true
     },
     {
       "name": "VALIDATE",
-      "skills": ["code-verification", "integration-test"],
+      "skills": [
+        "code-verification",
+        "integration-test"
+      ],
       "required": true
     },
     {
       "name": "DOCUMENT",
-      "skills": ["changelog-generator", "release-notes"],
+      "skills": [
+        "changelog-generator",
+        "release-notes"
+      ],
       "required": true
     },
     {
       "name": "SHIP",
-      "skills": ["deploy", "distribute", "git-workflow"],
+      "skills": [
+        "deploy",
+        "distribute",
+        "git-workflow"
+      ],
       "required": true
     },
     {
       "name": "COMPLETE",
-      "skills": ["retrospective"],
+      "skills": [
+        "retrospective"
+      ],
       "required": true
     }
   ],
-
   "gates": [
     {
       "id": "scope-gate",
@@ -39,7 +51,9 @@
       "afterPhase": "INIT",
       "required": true,
       "approvalType": "human",
-      "deliverables": ["RELEASE-PLAN.md"]
+      "deliverables": [
+        "RELEASE-PLAN.md"
+      ]
     },
     {
       "id": "readiness-gate",
@@ -47,7 +61,9 @@
       "afterPhase": "VALIDATE",
       "required": true,
       "approvalType": "auto",
-      "deliverables": ["READINESS-REPORT.md"],
+      "deliverables": [
+        "READINESS-REPORT.md"
+      ],
       "autoCheck": "build passes, all tests pass, no lint errors"
     },
     {
@@ -56,7 +72,10 @@
       "afterPhase": "DOCUMENT",
       "required": true,
       "approvalType": "human",
-      "deliverables": ["CHANGELOG.md", "RELEASE-NOTES.md"]
+      "deliverables": [
+        "CHANGELOG.md",
+        "RELEASE-NOTES.md"
+      ]
     },
     {
       "id": "release-gate",
@@ -67,12 +86,10 @@
       "deliverables": []
     }
   ],
-
   "defaults": {
     "mode": "greenfield",
     "autonomy": "supervised"
   },
-
   "ui": {
     "theme": "release",
     "layout": "chat-focused",
@@ -88,7 +105,6 @@
       "subtitle": "Ship with confidence"
     }
   },
-
   "skillUI": {
     "release-planner": {
       "displayName": "Release Planner",
@@ -136,12 +152,17 @@
       "outputDisplay": "markdown"
     }
   },
-
   "metadata": {
     "author": "Orchestrator",
-    "tags": ["release", "versioning", "distribution", "changelog"],
+    "tags": [
+      "release",
+      "versioning",
+      "distribution",
+      "changelog"
+    ],
     "changelog": {
       "1.0.0": "Initial release"
-    }
+    },
+    "category": "development"
   }
 }

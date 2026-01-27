@@ -3,55 +3,73 @@
   "name": "Migration Loop",
   "version": "1.0.0",
   "description": "Migration loop for moving between technologies with rollback safety. Takes migration planning through architecture, implementation, testing, verification, validation, review, and deployment with enforced quality gates.",
-
   "phases": [
     {
       "name": "INIT",
-      "skills": ["migration-planner"],
+      "skills": [
+        "migration-planner"
+      ],
       "required": true
     },
     {
       "name": "SCAFFOLD",
-      "skills": ["architect", "compatibility-checker"],
+      "skills": [
+        "architect",
+        "compatibility-checker"
+      ],
       "required": true
     },
     {
       "name": "IMPLEMENT",
-      "skills": ["implement"],
+      "skills": [
+        "implement"
+      ],
       "required": true
     },
     {
       "name": "TEST",
-      "skills": ["test-generation", "integration-test"],
+      "skills": [
+        "test-generation",
+        "integration-test"
+      ],
       "required": true
     },
     {
       "name": "VERIFY",
-      "skills": ["code-verification"],
+      "skills": [
+        "code-verification"
+      ],
       "required": true
     },
     {
       "name": "VALIDATE",
-      "skills": ["rollback-validator"],
+      "skills": [
+        "rollback-validator"
+      ],
       "required": true
     },
     {
       "name": "REVIEW",
-      "skills": ["code-review"],
+      "skills": [
+        "code-review"
+      ],
       "required": true
     },
     {
       "name": "SHIP",
-      "skills": ["deploy"],
+      "skills": [
+        "deploy"
+      ],
       "required": true
     },
     {
       "name": "COMPLETE",
-      "skills": ["retrospective"],
+      "skills": [
+        "retrospective"
+      ],
       "required": true
     }
   ],
-
   "gates": [
     {
       "id": "plan-gate",
@@ -59,7 +77,9 @@
       "afterPhase": "INIT",
       "required": true,
       "approvalType": "human",
-      "deliverables": ["MIGRATION-PLAN.md"]
+      "deliverables": [
+        "MIGRATION-PLAN.md"
+      ]
     },
     {
       "id": "architecture-gate",
@@ -67,7 +87,10 @@
       "afterPhase": "SCAFFOLD",
       "required": true,
       "approvalType": "human",
-      "deliverables": ["ARCHITECTURE.md", "COMPATIBILITY-REPORT.md"]
+      "deliverables": [
+        "ARCHITECTURE.md",
+        "COMPATIBILITY-REPORT.md"
+      ]
     },
     {
       "id": "verification-gate",
@@ -75,7 +98,9 @@
       "afterPhase": "VERIFY",
       "required": true,
       "approvalType": "auto",
-      "deliverables": ["VERIFICATION.md"],
+      "deliverables": [
+        "VERIFICATION.md"
+      ],
       "autoCheck": "build passes, tests pass, lint clean"
     },
     {
@@ -84,7 +109,9 @@
       "afterPhase": "VALIDATE",
       "required": true,
       "approvalType": "human",
-      "deliverables": ["ROLLBACK-REPORT.md"]
+      "deliverables": [
+        "ROLLBACK-REPORT.md"
+      ]
     },
     {
       "id": "review-gate",
@@ -92,7 +119,9 @@
       "afterPhase": "REVIEW",
       "required": true,
       "approvalType": "human",
-      "deliverables": ["CODE-REVIEW.md"]
+      "deliverables": [
+        "CODE-REVIEW.md"
+      ]
     },
     {
       "id": "deploy-gate",
@@ -103,12 +132,10 @@
       "deliverables": []
     }
   ],
-
   "defaults": {
     "mode": "greenfield",
     "autonomy": "supervised"
   },
-
   "ui": {
     "theme": "migration",
     "layout": "chat-focused",
@@ -124,7 +151,6 @@
       "subtitle": "Migrate with confidence"
     }
   },
-
   "skillUI": {
     "migration-planner": {
       "displayName": "Migration Planner",
@@ -182,12 +208,16 @@
       "outputDisplay": "markdown"
     }
   },
-
   "metadata": {
     "author": "Orchestrator",
-    "tags": ["migration", "upgrade", "technology-change"],
+    "tags": [
+      "migration",
+      "upgrade",
+      "technology-change"
+    ],
     "changelog": {
       "1.0.0": "Initial release"
-    }
+    },
+    "category": "development"
   }
 }

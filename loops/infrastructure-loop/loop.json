@@ -3,35 +3,48 @@
   "name": "Infrastructure Loop",
   "version": "1.0.0",
   "description": "Infrastructure loop for provisioning dev environments, databases, containers, and CI/CD pipelines. Takes infrastructure requirements through planning, provisioning, and deployment with enforced quality gates.",
-
   "phases": [
     {
       "name": "INIT",
-      "skills": ["requirements"],
+      "skills": [
+        "requirements"
+      ],
       "required": true
     },
     {
       "name": "SCAFFOLD",
-      "skills": ["scaffold", "infra-devenv"],
+      "skills": [
+        "scaffold",
+        "infra-devenv"
+      ],
       "required": true
     },
     {
       "name": "IMPLEMENT",
-      "skills": ["infra-docker", "infra-database", "infra-monorepo", "infra-services"],
+      "skills": [
+        "infra-docker",
+        "infra-database",
+        "infra-monorepo",
+        "infra-services"
+      ],
       "required": true
     },
     {
       "name": "SHIP",
-      "skills": ["deploy", "distribute"],
+      "skills": [
+        "deploy",
+        "distribute"
+      ],
       "required": true
     },
     {
       "name": "COMPLETE",
-      "skills": ["retrospective"],
+      "skills": [
+        "retrospective"
+      ],
       "required": true
     }
   ],
-
   "gates": [
     {
       "id": "infra-gate",
@@ -39,7 +52,9 @@
       "afterPhase": "SCAFFOLD",
       "required": true,
       "approvalType": "human",
-      "deliverables": ["INFRASTRUCTURE-PLAN.md"]
+      "deliverables": [
+        "INFRASTRUCTURE-PLAN.md"
+      ]
     },
     {
       "id": "deploy-gate",
@@ -50,12 +65,10 @@
       "deliverables": []
     }
   ],
-
   "defaults": {
     "mode": "greenfield",
     "autonomy": "supervised"
   },
-
   "ui": {
     "theme": "infrastructure",
     "layout": "chat-focused",
@@ -71,7 +84,6 @@
       "subtitle": "Provision your platform"
     }
   },
-
   "skillUI": {
     "requirements": {
       "displayName": "Requirements Analysis",
@@ -124,12 +136,16 @@
       "outputDisplay": "markdown"
     }
   },
-
   "metadata": {
     "author": "Orchestrator",
-    "tags": ["infrastructure", "devops", "platform"],
+    "tags": [
+      "infrastructure",
+      "devops",
+      "platform"
+    ],
     "changelog": {
       "1.0.0": "Initial release"
-    }
+    },
+    "category": "development"
   }
 }

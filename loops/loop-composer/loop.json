@@ -1,8 +1,8 @@
 {
-  "id": "meta-loop",
-  "name": "Meta Loop",
-  "version": "1.0.0",
-  "description": "Meta loop for designing and publishing new loops and skills. Takes loop requirements through composition, skill design, and documentation to produce ready-to-use loop definitions.",
+  "id": "loop-composer",
+  "name": "Loop Composer",
+  "version": "1.1.0",
+  "description": "Design and publish new loops and skills. Takes loop requirements through composition, skill design, and documentation to produce ready-to-use loop definitions.",
 
   "phases": [
     {
@@ -102,8 +102,10 @@
 
   "metadata": {
     "author": "Orchestrator",
+    "category": "meta",
     "tags": ["meta", "loops", "skills", "authoring"],
     "changelog": {
+      "1.1.0": "Renamed from meta-loop to loop-composer",
       "1.0.0": "Initial release"
     }
   }
