@@ -17,3 +17,46 @@ export function fetchApi(path: string, options?: RequestInit): Promise<Response>
 export function apiUrl(path: string): string {
   return `${API_URL}${path}`;
 }
+
+/**
+ * Maps an API path to its static JSON fallback path.
+ * Returns null if no static fallback exists for this path.
+ */
+function getStaticFallbackPath(apiPath: string): string | null {
+  if (apiPath === '/api/loops') return '/data/loops.json';
+  const match = apiPath.match(/^\/api\/loops\/([^/]+)$/);
+  if (match) return `/data/loops/${match[1]}.json`;
+  return null;
+}
+
+export interface FetchResult {
+  data: any;
+  isStatic: boolean;
+}
+
+/**
+ * Fetch from the live API first. If that fails and a static fallback
+ * exists for the given path, fetch the static JSON instead.
+ */
+export async function fetchWithFallback(apiPath: string): Promise<FetchResult> {
+  try {
+    const res = await fetchApi(apiPath);
+    if (res.ok) {
+      return { data: await res.json(), isStatic: false };
+    }
+  } catch {
+    // Network error — expected when no backend is running
+  }
+
+  const staticPath = getStaticFallbackPath(apiPath);
+  if (!staticPath) {
+    throw new Error(`API unavailable and no static fallback for ${apiPath}`);
+  }
+
+  const res = await fetch(staticPath);
+  if (!res.ok) {
+    throw new Error(`Failed to load data`);
+  }
+
+  return { data: await res.json(), isStatic: true };
+}

@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Layers, ChevronRight, Play, Zap } from 'lucide-react';
-import { fetchApi } from '@/lib/api';
+import { Layers, ChevronRight, Play, Zap, WifiOff } from 'lucide-react';
+import { fetchWithFallback } from '@/lib/api';
 
 interface Loop {
   id: string;
@@ -16,14 +16,14 @@ interface Loop {
 export default function LoopsPage() {
   const [loops, setLoops] = useState<Loop[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [isStatic, setIsStatic] = useState(false);
 
   useEffect(() => {
     const fetchLoops = async () => {
       try {
-        const res = await fetchApi('/api/loops');
-        if (!res.ok) throw new Error('Failed to fetch loops');
-        const data = await res.json();
+        const { data, isStatic: staticMode } = await fetchWithFallback('/api/loops');
         setLoops(data.loops);
+        setIsStatic(staticMode);
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error');
@@ -45,6 +45,13 @@ export default function LoopsPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
+      {isStatic && (
+        <div className="mb-4 flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-4 py-2 text-sm text-yellow-400">
+          <WifiOff className="w-4 h-4 shrink-0" />
+          <span>Viewing static loop catalog. Start the orchestrator server to execute loops.</span>
+        </div>
+      )}
+
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <Layers className="w-6 h-6 text-blue-400" />
@@ -101,7 +108,7 @@ export default function LoopsPage() {
         ))}
       </div>
 
-      {loops.length === 0 && (
+      {loops.length === 0 && !error && (
         <div className="bg-[#111] border border-[#222] rounded-xl p-12 text-center">
           <p className="text-gray-500">No loops found</p>
           <p className="text-gray-600 text-sm mt-2">

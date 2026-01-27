@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Layers, Play, Zap, Shield, ChevronRight, Settings, X, BookOpen } from 'lucide-react';
+import { ArrowLeft, Layers, Play, Zap, Shield, Settings, X, BookOpen, WifiOff } from 'lucide-react';
 import { Prose } from '@/components/Prose';
-import { fetchApi } from '@/lib/api';
+import { fetchApi, fetchWithFallback } from '@/lib/api';
 
 const phaseColors: Record<string, string> = {
   INIT: 'bg-purple-500',
@@ -64,7 +64,7 @@ function PhaseTimeline({ phases, gates }: { phases: LoopPhase[]; gates: LoopGate
 
   return (
     <div className="space-y-2">
-      {phases.map((phase, idx) => (
+      {phases.map((phase) => (
         <div key={phase.name}>
           {/* Phase */}
           <div className="bg-[#111] border border-[#222] rounded-xl p-4">
@@ -230,15 +230,15 @@ export default function LoopDetailPage() {
 
   const [loop, setLoop] = useState<LoopDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isStatic, setIsStatic] = useState(false);
   const [showStartModal, setShowStartModal] = useState(false);
 
   useEffect(() => {
     const fetchLoop = async () => {
       try {
-        const res = await fetchApi(`/api/loops/${id}`);
-        if (!res.ok) throw new Error('Loop not found');
-        const data = await res.json();
+        const { data, isStatic: staticMode } = await fetchWithFallback(`/api/loops/${id}`);
         setLoop(data);
+        setIsStatic(staticMode);
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error');
@@ -319,18 +319,35 @@ export default function LoopDetailPage() {
             </div>
           </div>
 
-          <button
-            onClick={() => setShowStartModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-orch-500 hover:bg-orch-600 rounded-lg text-white font-medium transition-colors"
-          >
-            <Play className="w-4 h-4" />
-            Start Execution
-          </button>
+          {isStatic ? (
+            <div
+              className="flex items-center gap-2 px-4 py-2 bg-[#222] rounded-lg text-gray-500 cursor-not-allowed shrink-0"
+              title="Start the orchestrator server to execute loops"
+            >
+              <Play className="w-4 h-4" />
+              Start Execution
+            </div>
+          ) : (
+            <button
+              onClick={() => setShowStartModal(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-orch-500 hover:bg-orch-600 rounded-lg text-white font-medium transition-colors shrink-0"
+            >
+              <Play className="w-4 h-4" />
+              Start Execution
+            </button>
+          )}
         </div>
       </div>
 
+      {isStatic && (
+        <div className="mb-6 flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-4 py-2 text-sm text-yellow-400">
+          <WifiOff className="w-4 h-4 shrink-0" />
+          <span>Viewing static loop data. Connect to the orchestrator server to start executions.</span>
+        </div>
+      )}
+
       {/* Stats Cards */}
-      <div className="grid grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <div className="bg-[#111] border border-[#222] rounded-xl p-4">
           <div className="flex items-center gap-2 mb-2">
             <Play className="w-4 h-4 text-orch-400" />
