@@ -168,6 +168,7 @@ export default function DistributePage() {
                 <span className="w-6 h-6 rounded-full bg-[#222] text-gray-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
                 <div>
                   <p className="text-sm text-gray-300">Install Claude Code</p>
+                  <p className="text-xs text-gray-500 mb-1.5">Any terminal</p>
                   <CodeBlock command="npm install -g @anthropic-ai/claude-code" />
                 </div>
               </div>
@@ -184,6 +185,7 @@ export default function DistributePage() {
                 <span className="w-6 h-6 rounded-full bg-orch-500/10 text-orch-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">4</span>
                 <div className="w-full">
                   <p className="text-sm text-gray-300 mb-2">Run the installer</p>
+                  <p className="text-xs text-gray-500 mb-1.5">Any terminal — clones into ./orchestrator</p>
                   <CodeBlock command={`curl -fsSL https://raw.githubusercontent.com/${GITHUB_REPO}/main/install.sh | bash`} />
                 </div>
               </div>
@@ -191,14 +193,15 @@ export default function DistributePage() {
                 <span className="w-6 h-6 rounded-full bg-orch-500/10 text-orch-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">5</span>
                 <div className="w-full">
                   <p className="text-sm text-gray-300 mb-2">Start the server</p>
+                  <p className="text-xs text-gray-500 mb-1.5">Same terminal — leave running</p>
                   <CodeBlock command="cd orchestrator && npm start" />
-                  <p className="text-xs text-gray-500 mt-1">Leave this terminal running</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <span className="w-6 h-6 rounded-full bg-orch-500/10 text-orch-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">6</span>
                 <div className="w-full">
-                  <p className="text-sm text-gray-300 mb-2">Verify it works (new terminal)</p>
+                  <p className="text-sm text-gray-300 mb-2">Verify it works</p>
+                  <p className="text-xs text-gray-500 mb-1.5">New terminal — any directory</p>
                   <CodeBlock command="curl http://localhost:3002/health" />
                 </div>
               </div>
@@ -215,6 +218,7 @@ export default function DistributePage() {
                 <span className="w-6 h-6 rounded-full bg-orch-500/10 text-orch-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">7</span>
                 <div className="w-full">
                   <p className="text-sm text-gray-300 mb-2">Register the MCP server</p>
+                  <p className="text-xs text-gray-500 mb-1.5">Same terminal (or any new terminal)</p>
                   <CodeBlock command="claude mcp add orchestrator http://localhost:3002/mcp" />
                 </div>
               </div>
@@ -222,6 +226,7 @@ export default function DistributePage() {
                 <span className="w-6 h-6 rounded-full bg-orch-500/10 text-orch-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">8</span>
                 <div className="w-full">
                   <p className="text-sm text-gray-300 mb-2">Start Claude Code and run a loop</p>
+                  <p className="text-xs text-gray-500 mb-1.5">New terminal — cd into your project first</p>
                   <CodeBlock command="claude" />
                   <div className="mt-3 bg-[#0a0a0a] border border-[#222] rounded-lg px-4 py-3">
                     <p className="text-xs text-gray-500 mb-2">Slash commands (installed automatically):</p>
@@ -324,13 +329,13 @@ export default function DistributePage() {
           </div>
 
           <CodeBlock
-            label="Pull the latest image"
+            label="Pull the latest image (any terminal)"
             command={`docker pull ${DOCKER_IMAGE}:latest`}
           />
 
           <div className="mt-4">
             <CodeBlock
-              label="Run the server"
+              label="Run the server (any terminal — leave running)"
               command={`docker run -p 3002:3002 ${DOCKER_IMAGE}:latest`}
             />
           </div>
