@@ -487,6 +487,7 @@ export default function ExecutionDetail() {
 
     // Set up SSE for live updates
     const eventSource = new EventSource(apiUrl(`/api/executions/${id}/stream`));
+    let fallbackInterval: ReturnType<typeof setInterval> | null = null;
 
     eventSource.addEventListener('log', (event) => {
       const log = JSON.parse(event.data);
@@ -510,12 +511,15 @@ export default function ExecutionDetail() {
     });
 
     eventSource.onerror = () => {
-      const interval = setInterval(fetchExecution, 3000);
-      return () => clearInterval(interval);
+      // Fall back to polling if SSE fails, but only create one interval
+      if (!fallbackInterval) {
+        fallbackInterval = setInterval(fetchExecution, 3000);
+      }
     };
 
     return () => {
       eventSource.close();
+      if (fallbackInterval) clearInterval(fallbackInterval);
     };
   }, [id, fetchExecution]);
 
@@ -528,14 +532,19 @@ export default function ExecutionDetail() {
     setActionLoading(label);
     setActionError(null);
     try {
-      const res = await fetchApi(`/api/executions/${id}${path}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: body ? JSON.stringify(body) : undefined,
-      });
+      const options: RequestInit = { method: 'PUT' };
+      if (body) {
+        options.headers = { 'Content-Type': 'application/json' };
+        options.body = JSON.stringify(body);
+      }
+      const res = await fetchApi(`/api/executions/${id}${path}`, options);
       if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || `Failed to ${label}`);
+        let message = `Failed to ${label}`;
+        try {
+          const data = await res.json();
+          message = data.error || message;
+        } catch { /* response wasn't JSON */ }
+        throw new Error(message);
       }
       const data = await res.json();
       // abort returns {success:true} — re-fetch instead

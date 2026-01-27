@@ -329,7 +329,7 @@ export function createApiRoutes(options: ApiRoutesOptions): Router {
       const execution = await executionEngine.completeSkill(
         getParam(req, 'id'),
         getParam(req, 'skillId'),
-        req.body.result
+        req.body?.result
       );
       res.json(execution);
     } catch (err) {
@@ -342,7 +342,7 @@ export function createApiRoutes(options: ApiRoutesOptions): Router {
    */
   router.put('/executions/:id/skills/:skillId/skip', async (req: Request, res: Response) => {
     try {
-      const { reason } = req.body;
+      const reason = req.body?.reason;
       if (!reason) {
         res.status(400).json({ error: 'reason is required' });
         return;
@@ -366,7 +366,7 @@ export function createApiRoutes(options: ApiRoutesOptions): Router {
       const execution = await executionEngine.approveGate(
         getParam(req, 'id'),
         getParam(req, 'gateId'),
-        req.body.approvedBy
+        req.body?.approvedBy
       );
       res.json(execution);
     } catch (err) {
@@ -379,7 +379,7 @@ export function createApiRoutes(options: ApiRoutesOptions): Router {
    */
   router.put('/executions/:id/gates/:gateId/reject', async (req: Request, res: Response) => {
     try {
-      const { feedback } = req.body;
+      const feedback = req.body?.feedback;
       if (!feedback) {
         res.status(400).json({ error: 'feedback is required' });
         return;
@@ -424,7 +424,7 @@ export function createApiRoutes(options: ApiRoutesOptions): Router {
    */
   router.put('/executions/:id/abort', async (req: Request, res: Response) => {
     try {
-      await executionEngine.abortExecution(getParam(req, 'id'), req.body.reason);
+      await executionEngine.abortExecution(getParam(req, 'id'), req.body?.reason);
       res.json({ success: true });
     } catch (err) {
       res.status(400).json({ error: err instanceof Error ? err.message : 'Failed to abort execution' });
