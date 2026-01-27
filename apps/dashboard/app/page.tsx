@@ -50,9 +50,7 @@ function StatCard({ icon: Icon, label, value, subtext, color }: {
           <p className="text-3xl font-bold text-white">{value}</p>
           {subtext && <p className="text-gray-500 text-xs mt-1">{subtext}</p>}
         </div>
-        <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${color}`}>
-          <Icon className="w-5 h-5 text-white" />
-        </div>
+        <Icon className={`w-6 h-6 ${color}`} />
       </div>
     </div>
   );
@@ -195,25 +193,25 @@ export default function Dashboard() {
           label="Active Executions"
           value={data.summary.activeExecutions}
           subtext={`${data.summary.totalExecutions} total`}
-          color="bg-orch-600"
+          color="text-orch-400"
         />
         <StatCard
           icon={Layers}
           label="Loops"
           value={data.summary.totalLoops}
-          color="bg-blue-600"
+          color="text-blue-400"
         />
         <StatCard
           icon={Zap}
           label="Skills"
           value={data.summary.totalSkills}
-          color="bg-purple-600"
+          color="text-purple-400"
         />
         <StatCard
           icon={Inbox}
           label="Pending Inbox"
           value={data.summary.pendingInbox}
-          color="bg-orange-600"
+          color="text-orange-400"
         />
       </div>
 

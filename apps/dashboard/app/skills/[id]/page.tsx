@@ -127,9 +127,7 @@ export default function SkillDetailPage() {
         </a>
 
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-xl bg-purple-600 flex items-center justify-center shrink-0">
-            <Zap className="w-6 h-6 text-white" />
-          </div>
+          <Zap className="w-7 h-7 text-purple-400 shrink-0" />
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
               <h1 className="text-2xl font-bold text-white">{skill.name}</h1>

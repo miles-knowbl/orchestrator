@@ -47,9 +47,7 @@ export default function LoopsPage() {
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center">
-            <Layers className="w-5 h-5 text-white" />
-          </div>
+          <Layers className="w-6 h-6 text-blue-400" />
           <div>
             <h1 className="text-2xl font-bold text-white">Loops</h1>
             <p className="text-sm text-gray-500">{loops.length} loops available</p>
@@ -78,9 +76,7 @@ export default function LoopsPage() {
 
               <div className="flex items-center gap-6">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-orch-500/10 flex items-center justify-center">
-                    <Play className="w-4 h-4 text-orch-400" />
-                  </div>
+                  <Play className="w-5 h-5 text-orch-400" />
                   <div>
                     <p className="text-lg font-semibold text-white">{loop.phaseCount}</p>
                     <p className="text-xs text-gray-500">Phases</p>
@@ -88,9 +84,7 @@ export default function LoopsPage() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
-                    <Zap className="w-4 h-4 text-purple-400" />
-                  </div>
+                  <Zap className="w-5 h-5 text-purple-400" />
                   <div>
                     <p className="text-lg font-semibold text-white">{loop.skillCount}</p>
                     <p className="text-xs text-gray-500">Skills</p>
