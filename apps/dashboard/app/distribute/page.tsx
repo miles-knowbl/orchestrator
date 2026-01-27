@@ -149,7 +149,7 @@ export default function DistributePage() {
           <Terminal className="w-5 h-5 text-orch-400" />
           <h2 className="text-lg font-semibold text-white">Getting Started</h2>
         </div>
-        <p className="text-sm text-gray-500 mb-6">From zero to running an agentic loop</p>
+        <p className="text-sm text-gray-500 mb-6">From zero to running an engineering loop</p>
 
         <div className="space-y-6">
           {/* Prerequisites */}
@@ -174,7 +174,7 @@ export default function DistributePage() {
                 <span className="w-6 h-6 rounded-full bg-[#222] text-gray-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
                 <div>
                   <p className="text-sm text-gray-300">Install Claude Code</p>
-                  <p className="text-xs text-gray-500 mb-1.5">Any terminal</p>
+                  <p className="text-xs text-gray-500 mb-1.5">Open <span className="text-gray-400">Terminal.app</span> &middot; any directory</p>
                   <CodeBlock command="npm install -g @anthropic-ai/claude-code" />
                 </div>
               </div>
@@ -191,7 +191,7 @@ export default function DistributePage() {
                 <span className="w-6 h-6 rounded-full bg-orch-500/10 text-orch-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">4</span>
                 <div className="w-full">
                   <p className="text-sm text-gray-300 mb-2">Run the installer</p>
-                  <p className="text-xs text-gray-500 mb-1.5">Any terminal — clones into ./orchestrator</p>
+                  <p className="text-xs text-gray-500 mb-1.5"><span className="text-gray-400">Tab 1</span> &middot; home directory <code className="text-gray-400">cd ~</code></p>
                   <CodeBlock command={`curl -fsSL https://raw.githubusercontent.com/${GITHUB_REPO}/main/install.sh | bash`} />
                 </div>
               </div>
@@ -199,7 +199,7 @@ export default function DistributePage() {
                 <span className="w-6 h-6 rounded-full bg-orch-500/10 text-orch-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">5</span>
                 <div className="w-full">
                   <p className="text-sm text-gray-300 mb-2">Start the server</p>
-                  <p className="text-xs text-gray-500 mb-1.5">Same terminal — leave running</p>
+                  <p className="text-xs text-gray-500 mb-1.5"><span className="text-gray-400">Tab 1</span> &middot; still in <code className="text-gray-400">~</code> &mdash; leave this tab running</p>
                   <CodeBlock command="cd orchestrator && npm start" />
                 </div>
               </div>
@@ -207,7 +207,7 @@ export default function DistributePage() {
                 <span className="w-6 h-6 rounded-full bg-orch-500/10 text-orch-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">6</span>
                 <div className="w-full">
                   <p className="text-sm text-gray-300 mb-2">Verify it works</p>
-                  <p className="text-xs text-gray-500 mb-1.5">New terminal — any directory</p>
+                  <p className="text-xs text-gray-500 mb-1.5"><span className="text-gray-400">Tab 2</span> (<kbd className="text-gray-400">&#8984;T</kbd>) &middot; any directory</p>
                   <CodeBlock command="curl http://localhost:3002/health" />
                 </div>
               </div>
@@ -224,7 +224,7 @@ export default function DistributePage() {
                 <span className="w-6 h-6 rounded-full bg-orch-500/10 text-orch-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">7</span>
                 <div className="w-full">
                   <p className="text-sm text-gray-300 mb-2">Register the MCP server</p>
-                  <p className="text-xs text-gray-500 mb-1.5">Same terminal (or any new terminal)</p>
+                  <p className="text-xs text-gray-500 mb-1.5"><span className="text-gray-400">Tab 2</span> &middot; any directory</p>
                   <CodeBlock command="claude mcp add --transport http orchestrator http://localhost:3002/mcp" />
                 </div>
               </div>
@@ -232,7 +232,7 @@ export default function DistributePage() {
                 <span className="w-6 h-6 rounded-full bg-orch-500/10 text-orch-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">8</span>
                 <div className="w-full">
                   <p className="text-sm text-gray-300 mb-2">Start Claude Code and run a loop</p>
-                  <p className="text-xs text-gray-500 mb-1.5">New terminal — cd into your project first</p>
+                  <p className="text-xs text-gray-500 mb-1.5"><span className="text-gray-400">Tab 2</span> &middot; <code className="text-gray-400">cd ~/my-project</code></p>
                   <CodeBlock command="claude" />
                   <div className="mt-3 bg-[#0a0a0a] border border-[#222] rounded-lg px-4 py-3">
                     <p className="text-xs text-gray-500 mb-2">Slash commands (installed automatically):</p>
