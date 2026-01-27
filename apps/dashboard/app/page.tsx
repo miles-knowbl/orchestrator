@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Activity, Layers, Zap, Inbox, ChevronRight, Clock } from 'lucide-react';
+import { Activity, Layers, Zap, Inbox, ChevronRight, Clock, WifiOff } from 'lucide-react';
 import { fetchApi } from '@/lib/api';
 
 interface DashboardData {
@@ -142,24 +142,56 @@ function RecentExecutionRow({ execution }: { execution: DashboardData['recentExe
 export default function Dashboard() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isStatic, setIsStatic] = useState(false);
 
   useEffect(() => {
+    let interval: ReturnType<typeof setInterval> | null = null;
+
     const fetchData = async () => {
       try {
         const res = await fetchApi('/api/dashboard');
         if (!res.ok) throw new Error('Failed to fetch dashboard data');
         const json = await res.json();
         setData(json);
+        setIsStatic(false);
         setError(null);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Unknown error');
+      } catch {
+        // API unavailable — try static fallback
+        try {
+          const loopsRes = await fetch('/data/loops.json');
+          if (loopsRes.ok) {
+            const loopsData = await loopsRes.json();
+            setData({
+              summary: {
+                activeExecutions: 0,
+                totalExecutions: 0,
+                totalSkills: 0,
+                totalLoops: loopsData.loops.length,
+                pendingInbox: 0,
+              },
+              activeExecutions: [],
+              recentExecutions: [],
+              loops: loopsData.loops.map((l: { id: string; name: string; phaseCount: number }) => ({
+                id: l.id,
+                name: l.name,
+                phaseCount: l.phaseCount,
+              })),
+            });
+            setIsStatic(true);
+            setError(null);
+            // Stop polling when in static mode
+            if (interval) { clearInterval(interval); interval = null; }
+            return;
+          }
+        } catch { /* static fallback also failed */ }
+        setError('Failed to connect to Orchestrator API');
       }
     };
 
     fetchData();
-    const interval = setInterval(fetchData, 5000); // Poll every 5 seconds
+    interval = setInterval(fetchData, 5000);
 
-    return () => clearInterval(interval);
+    return () => { if (interval) clearInterval(interval); };
   }, []);
 
   if (error) {
@@ -186,6 +218,13 @@ export default function Dashboard() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
+      {isStatic && (
+        <div className="mb-6 flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-4 py-2 text-sm text-yellow-400">
+          <WifiOff className="w-4 h-4 shrink-0" />
+          <span>Viewing static catalog. Start the orchestrator server to see live executions and use all features.</span>
+        </div>
+      )}
+
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <StatCard

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Play, Clock, CheckCircle, XCircle, Pause, AlertCircle, ChevronRight } from 'lucide-react';
+import { Play, Clock, CheckCircle, XCircle, Pause, AlertCircle, ChevronRight, WifiOff } from 'lucide-react';
 import { fetchApi } from '@/lib/api';
 
 interface ExecutionSummary {
@@ -24,23 +24,28 @@ export default function ExecutionsPage() {
   const [executions, setExecutions] = useState<ExecutionSummary[]>([]);
   const [filter, setFilter] = useState<string>('all');
   const [error, setError] = useState<string | null>(null);
+  const [offline, setOffline] = useState(false);
 
   useEffect(() => {
+    let interval: ReturnType<typeof setInterval> | null = null;
+
     const fetchExecutions = async () => {
       try {
         const res = await fetchApi('/api/executions');
         if (!res.ok) throw new Error('Failed to fetch executions');
         const data = await res.json();
         setExecutions(data.executions);
+        setOffline(false);
         setError(null);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Unknown error');
+      } catch {
+        setOffline(true);
+        if (interval) { clearInterval(interval); interval = null; }
       }
     };
 
     fetchExecutions();
-    const interval = setInterval(fetchExecutions, 5000);
-    return () => clearInterval(interval);
+    interval = setInterval(fetchExecutions, 5000);
+    return () => { if (interval) clearInterval(interval); };
   }, []);
 
   const getStatusIcon = (status: string) => {
@@ -72,6 +77,19 @@ export default function ExecutionsPage() {
     if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
     return `${Math.floor(seconds / 86400)}d ago`;
   };
+
+  if (offline) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <h1 className="text-2xl font-bold text-white mb-6">Executions</h1>
+        <div className="bg-[#111] border border-[#222] rounded-xl p-12 text-center">
+          <WifiOff className="w-10 h-10 text-gray-600 mx-auto mb-4" />
+          <p className="text-gray-400 mb-2">Executions require a running orchestrator server</p>
+          <p className="text-gray-600 text-sm">Start the server to view and manage loop executions.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (error) {
     return (

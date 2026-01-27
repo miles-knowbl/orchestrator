@@ -24,8 +24,11 @@ export function apiUrl(path: string): string {
  */
 function getStaticFallbackPath(apiPath: string): string | null {
   if (apiPath === '/api/loops') return '/data/loops.json';
-  const match = apiPath.match(/^\/api\/loops\/([^/]+)$/);
-  if (match) return `/data/loops/${match[1]}.json`;
+  if (apiPath === '/api/skills' || apiPath.startsWith('/api/skills?')) return '/data/skills.json';
+  const loopMatch = apiPath.match(/^\/api\/loops\/([^/]+)$/);
+  if (loopMatch) return `/data/loops/${loopMatch[1]}.json`;
+  const skillMatch = apiPath.match(/^\/api\/skills\/([^/?]+)/);
+  if (skillMatch) return `/data/skills/${skillMatch[1]}.json`;
   return null;
 }
 

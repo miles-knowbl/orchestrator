@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Inbox, Plus, Sparkles, Check, X, RefreshCw, ChevronDown, ChevronRight, FileText, Puzzle, BookOpen } from 'lucide-react';
+import { Inbox, Plus, Sparkles, Check, X, RefreshCw, ChevronDown, ChevronRight, FileText, Puzzle, BookOpen, WifiOff } from 'lucide-react';
 import { Prose } from '@/components/Prose';
 import { fetchApi } from '@/lib/api';
 
@@ -537,6 +537,7 @@ export default function InboxPage() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [filter, setFilter] = useState<string>('all');
   const [error, setError] = useState<string | null>(null);
+  const [offline, setOffline] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -552,9 +553,10 @@ export default function InboxPage() {
       const statsData = await statsRes.json();
       setStats(statsData);
 
+      setOffline(false);
       setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+    } catch {
+      setOffline(true);
     }
   };
 
@@ -584,6 +586,22 @@ export default function InboxPage() {
     extracted: 'bg-orch-500/10 text-orch-400',
     rejected: 'bg-red-500/10 text-red-400',
   };
+
+  if (offline) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="flex items-center gap-3 mb-6">
+          <Inbox className="w-6 h-6 text-orange-400" />
+          <h1 className="text-2xl font-bold text-white">Inbox</h1>
+        </div>
+        <div className="bg-[#111] border border-[#222] rounded-xl p-12 text-center">
+          <WifiOff className="w-10 h-10 text-gray-600 mx-auto mb-4" />
+          <p className="text-gray-400 mb-2">Inbox requires a running orchestrator server</p>
+          <p className="text-gray-600 text-sm">Start the server to add content, process extractions, and harvest skills.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (error) {
     return (

@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { ArrowLeft, Zap, Tag, BookOpen, Clock, BarChart2, FileText, ChevronDown, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Zap, Tag, BookOpen, Clock, BarChart2, FileText, ChevronDown, ChevronRight, WifiOff } from 'lucide-react';
 import { Prose } from '@/components/Prose';
-import { fetchApi } from '@/lib/api';
+import { fetchWithFallback } from '@/lib/api';
 
 const phaseColors: Record<string, string> = {
   INIT: 'bg-purple-500/10 text-purple-400 border-purple-500/30',
@@ -76,14 +76,14 @@ export default function SkillDetailPage() {
 
   const [skill, setSkill] = useState<SkillDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isStatic, setIsStatic] = useState(false);
 
   useEffect(() => {
     const fetchSkill = async () => {
       try {
-        const res = await fetchApi(`/api/skills/${id}?includeReferences=true`);
-        if (!res.ok) throw new Error('Skill not found');
-        const data = await res.json();
+        const { data, isStatic: staticMode } = await fetchWithFallback(`/api/skills/${id}?includeReferences=true`);
         setSkill(data);
+        setIsStatic(staticMode);
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error');
@@ -119,6 +119,13 @@ export default function SkillDetailPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
+      {isStatic && (
+        <div className="mb-4 flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-4 py-2 text-sm text-yellow-400">
+          <WifiOff className="w-4 h-4 shrink-0" />
+          <span>Viewing static skill catalog. Start the orchestrator server for live features.</span>
+        </div>
+      )}
+
       {/* Header */}
       <div className="mb-6">
         <a href="/skills" className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-4">

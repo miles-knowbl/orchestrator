@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Zap, Search, ChevronRight, Tag } from 'lucide-react';
-import { fetchApi } from '@/lib/api';
+import { Zap, Search, ChevronRight, Tag, WifiOff } from 'lucide-react';
+import { fetchWithFallback } from '@/lib/api';
 
 interface Skill {
   id: string;
@@ -27,30 +27,46 @@ const phaseColors: Record<string, string> = {
 };
 
 export default function SkillsPage() {
+  const [allSkills, setAllSkills] = useState<Skill[]>([]);
   const [skills, setSkills] = useState<Skill[]>([]);
   const [search, setSearch] = useState('');
   const [phaseFilter, setPhaseFilter] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
+  const [isStatic, setIsStatic] = useState(false);
 
+  // Initial load
   useEffect(() => {
     const fetchSkills = async () => {
       try {
-        const params = new URLSearchParams();
-        if (search) params.set('query', search);
-        if (phaseFilter) params.set('phase', phaseFilter);
-
-        const res = await fetchApi(`/api/skills?${params}`);
-        if (!res.ok) throw new Error('Failed to fetch skills');
-        const data = await res.json();
-        setSkills(data.skills);
+        const { data, isStatic: staticMode } = await fetchWithFallback('/api/skills');
+        const list = data.skills || [];
+        setAllSkills(list);
+        setSkills(list);
+        setIsStatic(staticMode);
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error');
       }
     };
-
     fetchSkills();
-  }, [search, phaseFilter]);
+  }, []);
+
+  // Client-side filtering (used in static mode, also works live as a responsive filter)
+  useEffect(() => {
+    let filtered = allSkills;
+    if (phaseFilter) {
+      filtered = filtered.filter(s => s.phase === phaseFilter);
+    }
+    if (search) {
+      const q = search.toLowerCase();
+      filtered = filtered.filter(s =>
+        s.name.toLowerCase().includes(q) ||
+        s.description.toLowerCase().includes(q) ||
+        s.category.toLowerCase().includes(q)
+      );
+    }
+    setSkills(filtered);
+  }, [search, phaseFilter, allSkills]);
 
   const phases = ['INIT', 'SCAFFOLD', 'IMPLEMENT', 'TEST', 'VERIFY', 'VALIDATE', 'DOCUMENT', 'REVIEW', 'SHIP', 'COMPLETE'];
 
@@ -66,6 +82,13 @@ export default function SkillsPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
+      {isStatic && (
+        <div className="mb-4 flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-4 py-2 text-sm text-yellow-400">
+          <WifiOff className="w-4 h-4 shrink-0" />
+          <span>Viewing static skill catalog. Start the orchestrator server for live features.</span>
+        </div>
+      )}
+
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <Zap className="w-6 h-6 text-purple-400" />

@@ -4,7 +4,7 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import {
   ArrowLeft, Play, Pause, CheckCircle, XCircle, Clock,
-  StopCircle, ShieldCheck, ShieldX, ChevronRight, X,
+  StopCircle, ShieldCheck, ShieldX, ChevronRight, X, WifiOff,
 } from 'lucide-react';
 import { fetchApi, apiUrl } from '@/lib/api';
 
@@ -558,8 +558,10 @@ export default function ExecutionDetail() {
           <ArrowLeft className="w-4 h-4" />
           Back to Executions
         </a>
-        <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-6 text-center">
-          <p className="text-red-400">{error}</p>
+        <div className="bg-[#111] border border-[#222] rounded-xl p-12 text-center">
+          <WifiOff className="w-10 h-10 text-gray-600 mx-auto mb-4" />
+          <p className="text-gray-400 mb-2">Cannot load execution details</p>
+          <p className="text-gray-600 text-sm">This feature requires a running orchestrator server.</p>
         </div>
       </div>
     );
