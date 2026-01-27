@@ -37,15 +37,6 @@
       "skillCount": 14
     },
     {
-      "id": "incident-loop",
-      "name": "Incident Loop",
-      "version": "1.0.0",
-      "description": "Incident response loop for triage, mitigation, deployment, and postmortem. Takes incident reports through severity assessment, mitigation, verified fix deployment, and documentation with enforced qual",
-      "category": "development",
-      "phaseCount": 6,
-      "skillCount": 6
-    },
-    {
       "id": "infrastructure-loop",
       "name": "Infrastructure Loop",
       "version": "1.0.0",

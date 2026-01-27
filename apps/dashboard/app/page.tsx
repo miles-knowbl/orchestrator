@@ -18,7 +18,6 @@ const CATEGORIES = [
   { key: 'development', label: 'Development' },
   { key: 'operations', label: 'Operations' },
   { key: 'meta', label: 'Meta' },
-  { key: 'all', label: 'All' },
 ] as const;
 
 export default function LoopsPage() {
@@ -42,9 +41,7 @@ export default function LoopsPage() {
     fetchLoops();
   }, []);
 
-  const filtered = activeCategory === 'all'
-    ? loops
-    : loops.filter(l => l.category === activeCategory);
+  const filtered = loops.filter(l => l.category === activeCategory);
 
   const categoryCounts = loops.reduce<Record<string, number>>((acc, l) => {
     acc[l.category] = (acc[l.category] || 0) + 1;
@@ -83,7 +80,7 @@ export default function LoopsPage() {
       {/* Category Filter */}
       <div className="flex items-center gap-2 mb-6">
         {CATEGORIES.map(({ key, label }) => {
-          const count = key === 'all' ? loops.length : (categoryCounts[key] || 0);
+          const count = categoryCounts[key] || 0;
           return (
             <button
               key={key}
