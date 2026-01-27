@@ -1,8 +1,11 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams } from 'next/navigation';
-import { ArrowLeft, Play, Pause, CheckCircle, XCircle, Clock, AlertCircle, Zap } from 'lucide-react';
+import {
+  ArrowLeft, Play, Pause, CheckCircle, XCircle, Clock,
+  StopCircle, ShieldCheck, ShieldX, ChevronRight, X,
+} from 'lucide-react';
 import { fetchApi, apiUrl } from '@/lib/api';
 
 interface LogEntry {
@@ -40,7 +43,34 @@ interface Execution {
   completedAt?: string;
 }
 
-function PhaseTimeline({ phases, currentPhase }: { phases: Execution['phases']; currentPhase: string }) {
+// ---------------------------------------------------------------------------
+// PhaseTimeline — now interactive
+// ---------------------------------------------------------------------------
+
+function PhaseTimeline({
+  phases,
+  currentPhase,
+  executionStatus,
+  onCompletePhase,
+  onAdvancePhase,
+  onCompleteSkill,
+  onSkipSkill,
+  actionLoading,
+}: {
+  phases: Execution['phases'];
+  currentPhase: string;
+  executionStatus: string;
+  onCompletePhase: () => void;
+  onAdvancePhase: () => void;
+  onCompleteSkill: (skillId: string) => void;
+  onSkipSkill: (skillId: string, reason: string) => void;
+  actionLoading: string | null;
+}) {
+  const [skipInputs, setSkipInputs] = useState<Record<string, string>>({});
+  const [showSkip, setShowSkip] = useState<string | null>(null);
+
+  const isActive = executionStatus === 'active';
+
   const getPhaseIcon = (status: string) => {
     switch (status) {
       case 'completed':
@@ -62,53 +92,175 @@ function PhaseTimeline({ phases, currentPhase }: { phases: Execution['phases']; 
         <div className="absolute left-[7px] top-2 bottom-2 w-0.5 bg-[#222]" />
 
         <div className="space-y-3">
-          {phases.map((phase, idx) => (
-            <div key={phase.phase} className="relative flex items-start gap-3">
-              <div className={`relative z-10 w-4 h-4 flex items-center justify-center rounded-full ${
-                phase.status === 'in-progress' ? 'bg-blue-500/20' :
-                phase.status === 'completed' ? 'bg-orch-500/20' : 'bg-[#1a1a1a]'
-              }`}>
-                {getPhaseIcon(phase.status)}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className={`text-sm font-medium ${
-                    phase.phase === currentPhase ? 'text-white' : 'text-gray-400'
+          {phases.map((phase) => {
+            const isCurrent = phase.phase === currentPhase;
+            const allSkillsDone = phase.skills.every(
+              s => s.status === 'completed' || s.status === 'skipped'
+            );
+
+            return (
+              <div key={phase.phase} className="relative">
+                <div className="flex items-start gap-3">
+                  <div className={`relative z-10 w-4 h-4 flex items-center justify-center rounded-full ${
+                    phase.status === 'in-progress' ? 'bg-blue-500/20' :
+                    phase.status === 'completed' ? 'bg-orch-500/20' : 'bg-[#1a1a1a]'
                   }`}>
-                    {phase.phase}
-                  </span>
-                  {phase.status === 'in-progress' && (
-                    <span className="text-xs text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded">
-                      Active
-                    </span>
-                  )}
-                </div>
-                <div className="flex items-center gap-2 mt-1">
-                  <div className="flex gap-0.5">
-                    {phase.skills.map((skill, i) => (
-                      <div
-                        key={skill.skillId}
-                        className={`w-1.5 h-1.5 rounded-full ${
-                          skill.status === 'completed' ? 'bg-orch-500' :
-                          skill.status === 'in-progress' ? 'bg-blue-400' :
-                          skill.status === 'failed' ? 'bg-red-500' : 'bg-gray-600'
-                        }`}
-                        title={skill.skillId}
-                      />
-                    ))}
+                    {getPhaseIcon(phase.status)}
                   </div>
-                  <span className="text-xs text-gray-500">
-                    {phase.skills.filter(s => s.status === 'completed').length}/{phase.skills.length} skills
-                  </span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className={`text-sm font-medium ${
+                        isCurrent ? 'text-white' : 'text-gray-400'
+                      }`}>
+                        {phase.phase}
+                      </span>
+                      {phase.status === 'in-progress' && (
+                        <span className="text-xs text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded">
+                          Active
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Skills list for current phase */}
+                    {isCurrent && isActive ? (
+                      <div className="mt-2 space-y-1.5">
+                        {phase.skills.map((skill) => {
+                          const canAct = skill.status === 'pending' || skill.status === 'in-progress';
+                          return (
+                            <div key={skill.skillId} className="flex items-center gap-2">
+                              <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                                skill.status === 'completed' ? 'bg-orch-500' :
+                                skill.status === 'in-progress' ? 'bg-blue-400' :
+                                skill.status === 'skipped' ? 'bg-gray-500' :
+                                skill.status === 'failed' ? 'bg-red-500' : 'bg-gray-600'
+                              }`} />
+                              <span className="text-xs text-gray-300 flex-1 truncate">{skill.skillId}</span>
+                              <span className={`text-xs px-1.5 py-0.5 rounded ${
+                                skill.status === 'completed' ? 'bg-orch-500/10 text-orch-400' :
+                                skill.status === 'skipped' ? 'bg-gray-500/10 text-gray-400' :
+                                'bg-[#1a1a1a] text-gray-500'
+                              }`}>
+                                {skill.status}
+                              </span>
+                              {canAct && (
+                                <div className="flex gap-1">
+                                  <button
+                                    onClick={() => onCompleteSkill(skill.skillId)}
+                                    disabled={actionLoading !== null}
+                                    className="text-xs px-2 py-0.5 bg-orch-500/20 text-orch-400 hover:bg-orch-500/30 rounded disabled:opacity-50 transition-colors"
+                                  >
+                                    Complete
+                                  </button>
+                                  {showSkip === skill.skillId ? (
+                                    <div className="flex gap-1">
+                                      <input
+                                        type="text"
+                                        value={skipInputs[skill.skillId] || ''}
+                                        onChange={(e) => setSkipInputs(prev => ({ ...prev, [skill.skillId]: e.target.value }))}
+                                        placeholder="Reason..."
+                                        className="text-xs bg-[#0a0a0a] border border-[#333] rounded px-2 py-0.5 text-white w-28 focus:border-yellow-500 focus:outline-none"
+                                        autoFocus
+                                        onKeyDown={(e) => {
+                                          if (e.key === 'Enter' && skipInputs[skill.skillId]?.trim()) {
+                                            onSkipSkill(skill.skillId, skipInputs[skill.skillId].trim());
+                                            setShowSkip(null);
+                                            setSkipInputs(prev => ({ ...prev, [skill.skillId]: '' }));
+                                          }
+                                          if (e.key === 'Escape') setShowSkip(null);
+                                        }}
+                                      />
+                                      <button
+                                        onClick={() => {
+                                          if (skipInputs[skill.skillId]?.trim()) {
+                                            onSkipSkill(skill.skillId, skipInputs[skill.skillId].trim());
+                                            setShowSkip(null);
+                                            setSkipInputs(prev => ({ ...prev, [skill.skillId]: '' }));
+                                          }
+                                        }}
+                                        disabled={!skipInputs[skill.skillId]?.trim() || actionLoading !== null}
+                                        className="text-xs px-1.5 py-0.5 bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30 rounded disabled:opacity-50 transition-colors"
+                                      >
+                                        Go
+                                      </button>
+                                      <button
+                                        onClick={() => setShowSkip(null)}
+                                        className="text-xs px-1 py-0.5 text-gray-500 hover:text-gray-300"
+                                      >
+                                        <X className="w-3 h-3" />
+                                      </button>
+                                    </div>
+                                  ) : (
+                                    <button
+                                      onClick={() => setShowSkip(skill.skillId)}
+                                      disabled={actionLoading !== null}
+                                      className="text-xs px-2 py-0.5 bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30 rounded disabled:opacity-50 transition-colors"
+                                    >
+                                      Skip
+                                    </button>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+
+                        {/* Phase-level actions */}
+                        {phase.status === 'in-progress' && allSkillsDone && (
+                          <button
+                            onClick={onCompletePhase}
+                            disabled={actionLoading !== null}
+                            className="mt-2 flex items-center gap-1.5 text-xs px-3 py-1.5 bg-orch-500/20 text-orch-400 hover:bg-orch-500/30 rounded-lg disabled:opacity-50 transition-colors"
+                          >
+                            <CheckCircle className="w-3 h-3" />
+                            Complete Phase
+                          </button>
+                        )}
+                        {phase.status === 'completed' && (
+                          <button
+                            onClick={onAdvancePhase}
+                            disabled={actionLoading !== null}
+                            className="mt-2 flex items-center gap-1.5 text-xs px-3 py-1.5 bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 rounded-lg disabled:opacity-50 transition-colors"
+                          >
+                            <ChevronRight className="w-3 h-3" />
+                            Advance to Next Phase
+                          </button>
+                        )}
+                      </div>
+                    ) : (
+                      /* Compact dot view for non-current phases */
+                      <div className="flex items-center gap-2 mt-1">
+                        <div className="flex gap-0.5">
+                          {phase.skills.map((skill) => (
+                            <div
+                              key={skill.skillId}
+                              className={`w-1.5 h-1.5 rounded-full ${
+                                skill.status === 'completed' ? 'bg-orch-500' :
+                                skill.status === 'in-progress' ? 'bg-blue-400' :
+                                skill.status === 'failed' ? 'bg-red-500' : 'bg-gray-600'
+                              }`}
+                              title={skill.skillId}
+                            />
+                          ))}
+                        </div>
+                        <span className="text-xs text-gray-500">
+                          {phase.skills.filter(s => s.status === 'completed').length}/{phase.skills.length} skills
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>
   );
 }
+
+// ---------------------------------------------------------------------------
+// LogViewer — unchanged
+// ---------------------------------------------------------------------------
 
 function LogViewer({ logs, autoScroll }: { logs: LogEntry[]; autoScroll: boolean }) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -185,29 +337,117 @@ function LogViewer({ logs, autoScroll }: { logs: LogEntry[]; autoScroll: boolean
   );
 }
 
-function GateStatus({ gates }: { gates: Execution['gates'] }) {
+// ---------------------------------------------------------------------------
+// GateStatus — now interactive
+// ---------------------------------------------------------------------------
+
+function GateStatus({
+  gates,
+  executionStatus,
+  onApprove,
+  onReject,
+  actionLoading,
+}: {
+  gates: Execution['gates'];
+  executionStatus: string;
+  onApprove: (gateId: string) => void;
+  onReject: (gateId: string, feedback: string) => void;
+  actionLoading: string | null;
+}) {
+  const [rejectTarget, setRejectTarget] = useState<string | null>(null);
+  const [rejectFeedback, setRejectFeedback] = useState('');
+
   if (gates.length === 0) return null;
+
+  const isActive = executionStatus === 'active' || executionStatus === 'blocked';
 
   return (
     <div className="bg-[#111] border border-[#222] rounded-xl p-4">
       <h3 className="text-sm font-medium text-white mb-3">Gates</h3>
       <div className="space-y-2">
         {gates.map((gate) => (
-          <div
-            key={gate.gateId}
-            className={`flex items-center justify-between p-2 rounded-lg ${
-              gate.status === 'approved' ? 'bg-orch-500/10' :
-              gate.status === 'rejected' ? 'bg-red-500/10' : 'bg-[#1a1a1a]'
-            }`}
-          >
-            <span className="text-sm text-gray-300">{gate.gateId}</span>
-            <span className={`text-xs font-medium px-2 py-0.5 rounded ${
-              gate.status === 'approved' ? 'bg-orch-500/20 text-orch-400' :
-              gate.status === 'rejected' ? 'bg-red-500/20 text-red-400' :
-              'bg-gray-600/20 text-gray-400'
-            }`}>
-              {gate.status}
-            </span>
+          <div key={gate.gateId}>
+            <div
+              className={`flex items-center justify-between p-2 rounded-lg ${
+                gate.status === 'approved' ? 'bg-orch-500/10' :
+                gate.status === 'rejected' ? 'bg-red-500/10' : 'bg-[#1a1a1a]'
+              }`}
+            >
+              <span className="text-sm text-gray-300">{gate.gateId}</span>
+              <div className="flex items-center gap-2">
+                <span className={`text-xs font-medium px-2 py-0.5 rounded ${
+                  gate.status === 'approved' ? 'bg-orch-500/20 text-orch-400' :
+                  gate.status === 'rejected' ? 'bg-red-500/20 text-red-400' :
+                  'bg-gray-600/20 text-gray-400'
+                }`}>
+                  {gate.status}
+                </span>
+                {gate.status === 'pending' && isActive && (
+                  <div className="flex gap-1">
+                    <button
+                      onClick={() => onApprove(gate.gateId)}
+                      disabled={actionLoading !== null}
+                      className="flex items-center gap-1 text-xs px-2 py-0.5 bg-orch-500/20 text-orch-400 hover:bg-orch-500/30 rounded disabled:opacity-50 transition-colors"
+                    >
+                      <ShieldCheck className="w-3 h-3" />
+                      Approve
+                    </button>
+                    <button
+                      onClick={() => setRejectTarget(gate.gateId)}
+                      disabled={actionLoading !== null}
+                      className="flex items-center gap-1 text-xs px-2 py-0.5 bg-red-500/20 text-red-400 hover:bg-red-500/30 rounded disabled:opacity-50 transition-colors"
+                    >
+                      <ShieldX className="w-3 h-3" />
+                      Reject
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Reject feedback input */}
+            {rejectTarget === gate.gateId && (
+              <div className="flex gap-2 mt-2 pl-2">
+                <input
+                  type="text"
+                  value={rejectFeedback}
+                  onChange={(e) => setRejectFeedback(e.target.value)}
+                  placeholder="Feedback for rejection..."
+                  className="flex-1 text-xs bg-[#0a0a0a] border border-[#333] rounded-lg px-3 py-1.5 text-white focus:border-red-500 focus:outline-none"
+                  autoFocus
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && rejectFeedback.trim()) {
+                      onReject(gate.gateId, rejectFeedback.trim());
+                      setRejectTarget(null);
+                      setRejectFeedback('');
+                    }
+                    if (e.key === 'Escape') {
+                      setRejectTarget(null);
+                      setRejectFeedback('');
+                    }
+                  }}
+                />
+                <button
+                  onClick={() => {
+                    if (rejectFeedback.trim()) {
+                      onReject(gate.gateId, rejectFeedback.trim());
+                      setRejectTarget(null);
+                      setRejectFeedback('');
+                    }
+                  }}
+                  disabled={!rejectFeedback.trim() || actionLoading !== null}
+                  className="text-xs px-3 py-1.5 bg-red-500/20 text-red-400 hover:bg-red-500/30 rounded-lg disabled:opacity-50 transition-colors"
+                >
+                  Submit
+                </button>
+                <button
+                  onClick={() => { setRejectTarget(null); setRejectFeedback(''); }}
+                  className="text-xs px-2 py-1.5 text-gray-500 hover:text-gray-300"
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
           </div>
         ))}
       </div>
@@ -215,30 +455,37 @@ function GateStatus({ gates }: { gates: Execution['gates'] }) {
   );
 }
 
+// ---------------------------------------------------------------------------
+// ExecutionDetail — main page
+// ---------------------------------------------------------------------------
+
 export default function ExecutionDetail() {
   const params = useParams();
   const id = params.id as string;
 
   const [execution, setExecution] = useState<Execution | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [autoScroll, setAutoScroll] = useState(true);
 
-  useEffect(() => {
-    const fetchExecution = async () => {
-      try {
-        const res = await fetchApi(`/api/executions/${id}`);
-        if (!res.ok) throw new Error('Execution not found');
-        const data = await res.json();
-        setExecution(data);
-        setError(null);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Unknown error');
-      }
-    };
+  // Fetch execution data
+  const fetchExecution = useCallback(async () => {
+    try {
+      const res = await fetchApi(`/api/executions/${id}`);
+      if (!res.ok) throw new Error('Execution not found');
+      const data = await res.json();
+      setExecution(data);
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unknown error');
+    }
+  }, [id]);
 
+  useEffect(() => {
     fetchExecution();
 
-    // Set up SSE for live updates if execution is active
+    // Set up SSE for live updates
     const eventSource = new EventSource(apiUrl(`/api/executions/${id}/stream`));
 
     eventSource.addEventListener('log', (event) => {
@@ -259,11 +506,10 @@ export default function ExecutionDetail() {
 
     eventSource.addEventListener('complete', () => {
       eventSource.close();
-      fetchExecution(); // Fetch final state
+      fetchExecution();
     });
 
     eventSource.onerror = () => {
-      // Fall back to polling if SSE fails
       const interval = setInterval(fetchExecution, 3000);
       return () => clearInterval(interval);
     };
@@ -271,7 +517,39 @@ export default function ExecutionDetail() {
     return () => {
       eventSource.close();
     };
-  }, [id]);
+  }, [id, fetchExecution]);
+
+  // Generic action helper
+  const performAction = useCallback(async (
+    path: string,
+    label: string,
+    body?: Record<string, unknown>
+  ) => {
+    setActionLoading(label);
+    setActionError(null);
+    try {
+      const res = await fetchApi(`/api/executions/${id}${path}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: body ? JSON.stringify(body) : undefined,
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || `Failed to ${label}`);
+      }
+      const data = await res.json();
+      // abort returns {success:true} — re-fetch instead
+      if (data.success && !data.id) {
+        await fetchExecution();
+      } else {
+        setExecution(data);
+      }
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : `Failed to ${label}`);
+    } finally {
+      setActionLoading(null);
+    }
+  }, [id, fetchExecution]);
 
   if (error) {
     return (
@@ -305,8 +583,22 @@ export default function ExecutionDetail() {
     blocked: 'bg-orange-500 text-white',
   };
 
+  const canPause = execution.status === 'active';
+  const canResume = execution.status === 'paused';
+  const canAbort = execution.status === 'active' || execution.status === 'paused';
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
+      {/* Action Error Banner */}
+      {actionError && (
+        <div className="mb-4 bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 flex items-center justify-between">
+          <p className="text-sm text-red-400">{actionError}</p>
+          <button onClick={() => setActionError(null)} className="text-red-400 hover:text-red-300">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
       {/* Header */}
       <div className="mb-6">
         <a href="/executions" className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-4">
@@ -338,6 +630,42 @@ export default function ExecutionDetail() {
             <span className="text-xs text-gray-500 bg-[#1a1a1a] px-2 py-1 rounded">
               Autonomy: {execution.autonomy}
             </span>
+
+            {/* Execution controls */}
+            {canPause && (
+              <button
+                onClick={() => performAction('/pause', 'pause')}
+                disabled={actionLoading !== null}
+                className="flex items-center gap-1.5 text-xs px-3 py-1.5 bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30 rounded-lg disabled:opacity-50 transition-colors"
+              >
+                <Pause className="w-3 h-3" />
+                Pause
+              </button>
+            )}
+            {canResume && (
+              <button
+                onClick={() => performAction('/resume', 'resume')}
+                disabled={actionLoading !== null}
+                className="flex items-center gap-1.5 text-xs px-3 py-1.5 bg-orch-500/20 text-orch-400 hover:bg-orch-500/30 rounded-lg disabled:opacity-50 transition-colors"
+              >
+                <Play className="w-3 h-3" />
+                Resume
+              </button>
+            )}
+            {canAbort && (
+              <button
+                onClick={() => {
+                  if (confirm('Are you sure you want to abort this execution?')) {
+                    performAction('/abort', 'abort');
+                  }
+                }}
+                disabled={actionLoading !== null}
+                className="flex items-center gap-1.5 text-xs px-3 py-1.5 bg-red-500/20 text-red-400 hover:bg-red-500/30 rounded-lg disabled:opacity-50 transition-colors"
+              >
+                <StopCircle className="w-3 h-3" />
+                Abort
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -346,8 +674,23 @@ export default function ExecutionDetail() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left: Phase Timeline & Gates */}
         <div className="space-y-4">
-          <PhaseTimeline phases={execution.phases} currentPhase={execution.currentPhase} />
-          <GateStatus gates={execution.gates} />
+          <PhaseTimeline
+            phases={execution.phases}
+            currentPhase={execution.currentPhase}
+            executionStatus={execution.status}
+            onCompletePhase={() => performAction('/complete-phase', 'complete phase')}
+            onAdvancePhase={() => performAction('/advance', 'advance phase')}
+            onCompleteSkill={(skillId) => performAction(`/skills/${skillId}/complete`, `complete ${skillId}`)}
+            onSkipSkill={(skillId, reason) => performAction(`/skills/${skillId}/skip`, `skip ${skillId}`, { reason })}
+            actionLoading={actionLoading}
+          />
+          <GateStatus
+            gates={execution.gates}
+            executionStatus={execution.status}
+            onApprove={(gateId) => performAction(`/gates/${gateId}/approve`, `approve ${gateId}`, { approvedBy: 'dashboard' })}
+            onReject={(gateId, feedback) => performAction(`/gates/${gateId}/reject`, `reject ${gateId}`, { feedback })}
+            actionLoading={actionLoading}
+          />
         </div>
 
         {/* Right: Logs */}

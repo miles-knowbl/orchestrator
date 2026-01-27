@@ -294,6 +294,144 @@ export function createApiRoutes(options: ApiRoutesOptions): Router {
   });
 
   // ==========================================================================
+  // EXECUTIONS - Management
+  // ==========================================================================
+
+  /**
+   * Advance to next phase
+   */
+  router.put('/executions/:id/advance', async (req: Request, res: Response) => {
+    try {
+      const execution = await executionEngine.advancePhase(getParam(req, 'id'));
+      res.json(execution);
+    } catch (err) {
+      res.status(400).json({ error: err instanceof Error ? err.message : 'Failed to advance phase' });
+    }
+  });
+
+  /**
+   * Complete current phase
+   */
+  router.put('/executions/:id/complete-phase', async (req: Request, res: Response) => {
+    try {
+      const execution = await executionEngine.completePhase(getParam(req, 'id'));
+      res.json(execution);
+    } catch (err) {
+      res.status(400).json({ error: err instanceof Error ? err.message : 'Failed to complete phase' });
+    }
+  });
+
+  /**
+   * Complete a skill
+   */
+  router.put('/executions/:id/skills/:skillId/complete', async (req: Request, res: Response) => {
+    try {
+      const execution = await executionEngine.completeSkill(
+        getParam(req, 'id'),
+        getParam(req, 'skillId'),
+        req.body.result
+      );
+      res.json(execution);
+    } catch (err) {
+      res.status(400).json({ error: err instanceof Error ? err.message : 'Failed to complete skill' });
+    }
+  });
+
+  /**
+   * Skip a skill
+   */
+  router.put('/executions/:id/skills/:skillId/skip', async (req: Request, res: Response) => {
+    try {
+      const { reason } = req.body;
+      if (!reason) {
+        res.status(400).json({ error: 'reason is required' });
+        return;
+      }
+      const execution = await executionEngine.skipSkill(
+        getParam(req, 'id'),
+        getParam(req, 'skillId'),
+        reason
+      );
+      res.json(execution);
+    } catch (err) {
+      res.status(400).json({ error: err instanceof Error ? err.message : 'Failed to skip skill' });
+    }
+  });
+
+  /**
+   * Approve a gate
+   */
+  router.put('/executions/:id/gates/:gateId/approve', async (req: Request, res: Response) => {
+    try {
+      const execution = await executionEngine.approveGate(
+        getParam(req, 'id'),
+        getParam(req, 'gateId'),
+        req.body.approvedBy
+      );
+      res.json(execution);
+    } catch (err) {
+      res.status(400).json({ error: err instanceof Error ? err.message : 'Failed to approve gate' });
+    }
+  });
+
+  /**
+   * Reject a gate
+   */
+  router.put('/executions/:id/gates/:gateId/reject', async (req: Request, res: Response) => {
+    try {
+      const { feedback } = req.body;
+      if (!feedback) {
+        res.status(400).json({ error: 'feedback is required' });
+        return;
+      }
+      const execution = await executionEngine.rejectGate(
+        getParam(req, 'id'),
+        getParam(req, 'gateId'),
+        feedback
+      );
+      res.json(execution);
+    } catch (err) {
+      res.status(400).json({ error: err instanceof Error ? err.message : 'Failed to reject gate' });
+    }
+  });
+
+  /**
+   * Pause execution
+   */
+  router.put('/executions/:id/pause', async (req: Request, res: Response) => {
+    try {
+      const execution = await executionEngine.pauseExecution(getParam(req, 'id'));
+      res.json(execution);
+    } catch (err) {
+      res.status(400).json({ error: err instanceof Error ? err.message : 'Failed to pause execution' });
+    }
+  });
+
+  /**
+   * Resume execution
+   */
+  router.put('/executions/:id/resume', async (req: Request, res: Response) => {
+    try {
+      const execution = await executionEngine.resumeExecution(getParam(req, 'id'));
+      res.json(execution);
+    } catch (err) {
+      res.status(400).json({ error: err instanceof Error ? err.message : 'Failed to resume execution' });
+    }
+  });
+
+  /**
+   * Abort execution
+   */
+  router.put('/executions/:id/abort', async (req: Request, res: Response) => {
+    try {
+      await executionEngine.abortExecution(getParam(req, 'id'), req.body.reason);
+      res.json({ success: true });
+    } catch (err) {
+      res.status(400).json({ error: err instanceof Error ? err.message : 'Failed to abort execution' });
+    }
+  });
+
+  // ==========================================================================
   // INBOX
   // ==========================================================================
 
