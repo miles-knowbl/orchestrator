@@ -104,6 +104,12 @@ export default function DistributePage() {
   const commit = release?.body?.match(/Commit:\*{0,2}\s*([a-f0-9]+)/)?.[1] || '';
   const tarball = release?.assets.find(a => a.name.endsWith('.tar.gz'));
 
+  // Parse "What's New" items from release body
+  const whatsNewMatch = release?.body?.match(/###\s*What's New\s*\n([\s\S]*?)(?=\n\s*---|\n\s*###|\n\s*##|$)/);
+  const whatsNewItems: string[] = whatsNewMatch
+    ? whatsNewMatch[1].split('\n').map(l => l.replace(/^[\s]*-\s*/, '').trim()).filter(l => l.length > 0)
+    : [];
+
   if (error) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -316,7 +322,18 @@ export default function DistributePage() {
           <Sparkles className="w-5 h-5 text-orch-400" />
           <h2 className="text-lg font-semibold text-white">What&apos;s New</h2>
         </div>
-        <p className="text-sm text-gray-500">No recent updates.</p>
+        {whatsNewItems.length > 0 ? (
+          <ul className="space-y-2">
+            {whatsNewItems.slice(0, 5).map((item, i) => (
+              <li key={i} className="flex items-start gap-2 text-sm text-gray-400">
+                <span className="text-orch-500 mt-1 shrink-0">&bull;</span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-sm text-gray-500">No recent updates.</p>
+        )}
       </div>
     </div>
   );
