@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Orchestrator Dashboard',
+  title: 'Orchestrator Docs',
   description: 'Real-time monitoring and control for AI-driven workflows',
 };
 
