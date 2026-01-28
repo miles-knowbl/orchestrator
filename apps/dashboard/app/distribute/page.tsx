@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Package, Download, Copy, Check, Terminal, Clock, GitCommit, Tag } from 'lucide-react';
+import { Package, Download, Copy, Check, Terminal, Clock, GitCommit, Tag, Sparkles } from 'lucide-react';
 
 const GITHUB_REPO = 'miles-knowbl/orchestrator';
 
@@ -308,6 +308,15 @@ export default function DistributePage() {
             </div>
           </div>
         )}
+      </div>
+
+      {/* What's New */}
+      <div className="bg-[#111] border border-[#222] rounded-xl p-6 mt-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Sparkles className="w-5 h-5 text-orch-400" />
+          <h2 className="text-lg font-semibold text-white">What&apos;s New</h2>
+        </div>
+        <p className="text-sm text-gray-500">No recent updates.</p>
       </div>
     </div>
   );
