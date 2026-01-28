@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Package, Download, Copy, Check, Terminal, Clock, GitCommit, Tag, Sparkles } from 'lucide-react';
+import { Package, Download, Copy, Check, Terminal, Clock, GitCommit, Tag } from 'lucide-react';
 
 const GITHUB_REPO = 'miles-knowbl/orchestrator';
 
@@ -103,12 +103,6 @@ export default function DistributePage() {
   const version = release?.body?.match(/Version:\*{0,2}\s*([\d.]+)/)?.[1] || '0.0.0';
   const commit = release?.body?.match(/Commit:\*{0,2}\s*([a-f0-9]+)/)?.[1] || '';
   const tarball = release?.assets.find(a => a.name.endsWith('.tar.gz'));
-
-  // Parse "What's New" items from release body
-  const whatsNewMatch = release?.body?.match(/###\s*What's New\s*\n([\s\S]*?)(?=\n\s*---|\n\s*###|\n\s*##|$)/);
-  const whatsNewItems: string[] = whatsNewMatch
-    ? whatsNewMatch[1].split('\n').map(l => l.replace(/^[\s]*-\s*/, '').trim()).filter(l => l.length > 0)
-    : [];
 
   if (error) {
     return (
@@ -269,15 +263,15 @@ export default function DistributePage() {
         <p className="text-sm text-gray-600 mt-1">Already familiar? Grab the tarball directly.</p>
       </div>
 
-      {/* Version Info */}
-      <div className="bg-[#111] border border-[#222] rounded-xl p-6 mb-6">
+      {/* Latest Release */}
+      <div className="bg-[#111] border border-[#222] rounded-xl p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-white">{release.name}</h2>
           <span className="text-xs px-2.5 py-1 rounded-full bg-orch-500/10 text-orch-400 font-medium">
             Rolling Release
           </span>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div className="flex items-center gap-2 text-gray-400">
             <Tag className="w-4 h-4 text-gray-500" />
             <span className="text-sm">v{version}</span>
@@ -290,31 +284,6 @@ export default function DistributePage() {
             <GitCommit className="w-4 h-4 text-gray-500" />
             <span className="text-sm font-mono">{commit.slice(0, 12)}</span>
           </div>
-        </div>
-      </div>
-
-      {/* What's New */}
-      {whatsNewItems.length > 0 && (
-        <div className="bg-[#111] border border-[#222] rounded-xl p-6 mb-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Sparkles className="w-5 h-5 text-orch-400" />
-            <h2 className="text-lg font-semibold text-white">What&apos;s New</h2>
-          </div>
-          <ul className="space-y-2">
-            {whatsNewItems.map((item, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-gray-400">
-                <span className="text-orch-500 mt-1 shrink-0">&bull;</span>
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      <div className="bg-[#111] border border-[#222] rounded-xl p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Download className="w-5 h-5 text-blue-400" />
-          <h2 className="text-lg font-semibold text-white">Tarball</h2>
         </div>
 
         {tarball && (
