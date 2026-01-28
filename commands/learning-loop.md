@@ -1,0 +1,321 @@
+# /learning-loop Command
+
+**Iterate on the skills library.** Review past work, identify gaps, create new skills, and refine existing ones — turning execution experience into lasting improvements.
+
+## Purpose
+
+This command orchestrates continuous improvement of the skills library: analyzing recent loop executions for patterns and gaps, verifying skill effectiveness, designing new or improved skills, calibrating estimates, and persisting learnings to memory. It is the meta-cognitive loop that makes all other loops better over time.
+
+**The flow you want:** point it at recent work, say `go`, and the learning-loop produces verified skill improvements and calibrated patterns.
+
+## Usage
+
+```
+/learning-loop [--resume] [--phase=PHASE]
+```
+
+**Options:**
+- `--resume`: Resume from existing learning-state.json
+- `--phase=PHASE`: Start from specific phase (INIT | ANALYZE | IMPROVE | VALIDATE | COMPLETE)
+
+## Execution Flow
+
+### Step 1: Cold Start Detection
+
+```
+if learning-state.json exists:
+  -> Show current phase, pending gates, progress
+  -> Ask: "Resume from {phase}? [Y/n]"
+else:
+  -> Fresh start, gather learning scope
+```
+
+### Step 2: Initialize State
+
+Create `learning-state.json`:
+
+```json
+{
+  "loop": "learning-loop",
+  "version": "1.0.0",
+  "phase": "INIT",
+  "status": "active",
+  "gates": {
+    "analysis-gate": { "status": "pending", "required": true, "approvalType": "human" },
+    "improvement-gate": { "status": "pending", "required": true, "approvalType": "human" }
+  },
+  "phases": {
+    "INIT": { "status": "pending", "skills": ["requirements"] },
+    "ANALYZE": { "status": "pending", "skills": ["retrospective", "skill-verifier"] },
+    "IMPROVE": { "status": "pending", "skills": ["skill-design", "calibration-tracker"] },
+    "VALIDATE": { "status": "pending", "skills": ["memory-manager"] },
+    "COMPLETE": { "status": "pending", "skills": ["retrospective"] }
+  },
+  "started_at": "ISO-timestamp",
+  "last_updated": "ISO-timestamp"
+}
+```
+
+### Step 3: Execute Phases
+
+```
+INIT ──────► ANALYZE ──────► IMPROVE ──────► VALIDATE ──────► COMPLETE
+               │                │
+               │ [analysis-     │ [improvement-
+               │  gate]         │  gate]
+               │  human         │  human
+               ▼                ▼
+requirements  retrospective   skill-design     memory-manager   retrospective
+              skill-verifier  calibration-tracker
+```
+
+**7 skills across 5 phases, 2 human gates**
+
+### Step 4: Gate Enforcement
+
+| Gate | After Phase | Type | Blocks Until | Deliverables |
+|------|-------------|------|--------------|-------------|
+| `analysis-gate` | ANALYZE | human | User says `approved` | ANALYSIS-FINDINGS.md |
+| `improvement-gate` | IMPROVE | human | User says `approved` | SKILL.md, CHANGELOG.md |
+
+**Gate presentation (analysis-gate):**
+```
+═══════════════════════════════════════════════════════════════
+║  ANALYSIS GATE                                    [HUMAN]  ║
+║                                                             ║
+║  Deliverables:                                              ║
+║    📄 ANALYSIS-FINDINGS.md — Patterns and gaps identified   ║
+║                                                             ║
+║  Summary:                                                   ║
+║    ✓ Executions reviewed: N                                 ║
+║    ✓ Patterns identified: N                                 ║
+║    ✓ Gaps found: N                                          ║
+║    ✓ Skills verified: N                                     ║
+║                                                             ║
+║  Commands:                                                  ║
+║    approved      — Pass gate, continue to IMPROVE           ║
+║    changes: ...  — Request modifications                    ║
+║    show [file]   — Display a deliverable                    ║
+═══════════════════════════════════════════════════════════════
+```
+
+**Gate presentation (improvement-gate):**
+```
+═══════════════════════════════════════════════════════════════
+║  IMPROVEMENT GATE                                 [HUMAN]  ║
+║                                                             ║
+║  Deliverables:                                              ║
+║    📄 SKILL.md — New or updated skill definitions           ║
+║    📄 CHANGELOG.md — Skill change history                   ║
+║                                                             ║
+║  Summary:                                                   ║
+║    ✓ Skills created: N                                      ║
+║    ✓ Skills updated: N                                      ║
+║    ✓ Calibrations adjusted: N                               ║
+║                                                             ║
+║  Commands:                                                  ║
+║    approved      — Pass gate, continue to VALIDATE          ║
+║    changes: ...  — Request modifications                    ║
+║    show [file]   — Display a deliverable                    ║
+═══════════════════════════════════════════════════════════════
+```
+
+## Commands During Execution
+
+| Command | Action |
+|---------|--------|
+| `go` | Continue execution / proceed to next phase |
+| `status` | Show current phase, gate status, progress |
+| `approved` | Pass current human gate |
+| `changes: [feedback]` | Request changes at gate |
+| `pause` | Stop after current skill |
+| `skip [skill]` | Skip a skill (requires reason) |
+| `show [deliverable]` | Display a deliverable |
+| `phase [name]` | Jump to specific phase |
+
+## State Files
+
+| File | Purpose |
+|------|---------|
+| `learning-state.json` | Current phase, gate status, progress |
+| `ANALYSIS-FINDINGS.md` | Patterns, gaps, verification results |
+| `SKILL.md` | New or updated skill definitions |
+| `CHANGELOG.md` | Skill version history |
+| `RETROSPECTIVE.md` | Learning loop learnings |
+
+## Example Session
+
+```
+User: /learning-loop
+
+Learning Loop v1.0.0: Starting skills improvement cycle...
+
+  No existing learning state found.
+
+  ═══════════════════════════════════════════════════════
+  ║  READY — Learning Loop v1.0.0                       ║
+  ║                                                     ║
+  ║  Phase: INIT                                        ║
+  ║  Phases: 5                                          ║
+  ║  Gates: analysis → improvement                      ║
+  ║  Output: improved skills + calibrated patterns      ║
+  ║                                                     ║
+  ║  Say 'go' to begin.                                 ║
+  ═══════════════════════════════════════════════════════
+
+User: go
+
+══════════════════════════════════════════════════════════════
+  INIT [1/5]
+══════════════════════════════════════════════════════════════
+
+  What should we analyze for improvement?
+
+User: Review the last 3 engineering-loop executions and look for
+      patterns in the IMPLEMENT phase taking longer than expected.
+
+  ┌─ requirements
+  │  Structuring learning scope...
+  │  Scope: engineering-loop executions
+  │  Focus: IMPLEMENT phase calibration
+  │  Executions to review: 3
+  └─ ✓ requirements complete
+
+  ✓ INIT complete (1 skill)
+
+══════════════════════════════════════════════════════════════
+  ANALYZE [2/5]
+══════════════════════════════════════════════════════════════
+
+  ┌─ retrospective
+  │  Reviewing execution history...
+  │  Execution 1: IMPLEMENT took 2.3x estimate
+  │  Execution 2: IMPLEMENT took 1.8x estimate
+  │  Execution 3: IMPLEMENT took 2.1x estimate
+  │  Pattern: consistent underestimation in IMPLEMENT
+  └─ ✓ retrospective complete
+
+  ┌─ skill-verifier
+  │  Verifying skill definitions...
+  │  implement skill: missing complexity factors
+  │  test skill: adequate
+  │  verify skill: adequate
+  └─ ✓ skill-verifier complete
+
+  ✓ ANALYZE complete (2 skills, 1 deliverable)
+
+  ═══════════════════════════════════════════════════════════════
+  ║  ANALYSIS GATE                                    [HUMAN]  ║
+  ║                                                             ║
+  ║  Deliverables:                                              ║
+  ║    📄 ANALYSIS-FINDINGS.md — Patterns and gaps identified   ║
+  ║                                                             ║
+  ║  Summary:                                                   ║
+  ║    ✓ Executions reviewed: 3                                 ║
+  ║    ✓ Patterns identified: 1 (IMPLEMENT underestimation)     ║
+  ║    ✓ Gaps found: 1 (missing complexity factors)             ║
+  ║    ✓ Skills verified: 3                                     ║
+  ║                                                             ║
+  ║  Commands:                                                  ║
+  ║    approved      — Pass gate, continue to IMPROVE           ║
+  ║    changes: ...  — Request modifications                    ║
+  ║    show [file]   — Display a deliverable                    ║
+  ═══════════════════════════════════════════════════════════════
+
+User: approved
+
+  Gate passed: analysis-gate ✓
+
+══════════════════════════════════════════════════════════════
+  IMPROVE [3/5]
+══════════════════════════════════════════════════════════════
+
+  ┌─ skill-design
+  │  Updating implement skill with complexity factors...
+  │  Adding: integration complexity multiplier
+  │  Adding: dependency risk assessment
+  │  Writing SKILL.md
+  │  Writing CHANGELOG.md
+  └─ ✓ skill-design complete
+
+  ┌─ calibration-tracker
+  │  Adjusting calibration data...
+  │  IMPLEMENT base estimate: +40% adjustment
+  │  Recording pattern: brownfield integration penalty
+  └─ ✓ calibration-tracker complete
+
+  ✓ IMPROVE complete (2 skills, 2 deliverables)
+
+  ═══════════════════════════════════════════════════════════════
+  ║  IMPROVEMENT GATE                                 [HUMAN]  ║
+  ║                                                             ║
+  ║  Deliverables:                                              ║
+  ║    📄 SKILL.md — Updated implement skill                    ║
+  ║    📄 CHANGELOG.md — Version 2.1.0 changes                  ║
+  ║                                                             ║
+  ║  Summary:                                                   ║
+  ║    ✓ Skills created: 0                                      ║
+  ║    ✓ Skills updated: 1                                      ║
+  ║    ✓ Calibrations adjusted: 1                               ║
+  ║                                                             ║
+  ║  Commands:                                                  ║
+  ║    approved      — Pass gate, continue to VALIDATE          ║
+  ║    changes: ...  — Request modifications                    ║
+  ║    show [file]   — Display a deliverable                    ║
+  ═══════════════════════════════════════════════════════════════
+
+User: approved
+
+  Gate passed: improvement-gate ✓
+
+══════════════════════════════════════════════════════════════
+  VALIDATE [4/5]
+══════════════════════════════════════════════════════════════
+
+  ┌─ memory-manager
+  │  Persisting learnings to memory...
+  │  Writing pattern: brownfield-integration-penalty
+  │  Updating skill memory: implement
+  │  Updating calibration data
+  └─ ✓ memory-manager complete
+
+  ✓ VALIDATE complete (1 skill)
+
+══════════════════════════════════════════════════════════════
+  COMPLETE [5/5]
+══════════════════════════════════════════════════════════════
+
+  ┌─ retrospective
+  │  Capturing learning loop learnings...
+  │  Writing RETROSPECTIVE.md
+  └─ ✓ retrospective complete
+
+  ✓ COMPLETE complete (1 skill, 1 deliverable)
+
+╔═════════════════════════════════════════════════════════════════════╗
+║                                                                     ║
+║   LEARNING LOOP COMPLETE                                            ║
+║                                                                     ║
+╠═════════════════════════════════════════════════════════════════════╣
+║                                                                     ║
+║   PHASES                                                            ║
+║   ──────                                                            ║
+║   ✓ INIT        Learning scope defined                              ║
+║   ✓ ANALYZE     Patterns identified, skills verified                ║
+║   ✓ IMPROVE     Skills updated, calibrations adjusted               ║
+║   ✓ VALIDATE    Learnings persisted to memory                       ║
+║   ✓ COMPLETE    Retrospective captured                              ║
+║                                                                     ║
+║   GATES PASSED                                                      ║
+║   ────────────                                                      ║
+║   ✓ Analysis Review [HUMAN]                                         ║
+║   ✓ Improvement Review [HUMAN]                                      ║
+║                                                                     ║
+║   IMPROVEMENTS                                                      ║
+║   ────────────                                                      ║
+║   📄 implement skill — Added complexity factors (v2.1.0)            ║
+║   📊 Calibration — IMPLEMENT +40% base adjustment                   ║
+║   🧠 Pattern — brownfield-integration-penalty recorded              ║
+║                                                                     ║
+╚═════════════════════════════════════════════════════════════════════╝
+```
