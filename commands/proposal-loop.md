@@ -119,19 +119,23 @@ mcp__skills-library__get_skill(name: "requirements", includeReferences: true)
 
 ```
 ═══════════════════════════════════════════════════════════════
-║  CONTEXT & REQUIREMENTS REVIEW                             ║
+║  CONTEXT & REQUIREMENTS REVIEW                [HUMAN]      ║
 ║                                                             ║
-║  Validating context coverage and requirements clarity...    ║
+║  Deliverables:                                              ║
+║    📄 CONTEXT-SOURCES.md — Source registry and coverage     ║
+║    📄 RAW-CONTEXT.md — Extracted context by source          ║
+║    📄 REQUIREMENTS.md — Proposal requirements and scope     ║
 ║                                                             ║
-║  ✓ Source coverage: {N}% (threshold: 80%)                   ║
-║  ✓ Requirements documented with acceptance criteria         ║
-║  ✓ Constraints identified                                   ║
-║  ✓ Stakeholder inputs captured                              ║
+║  Summary:                                                   ║
+║    ✓ Source coverage: {N}% (threshold: 80%)                 ║
+║    ✓ Requirements documented with acceptance criteria       ║
+║    ✓ Constraints identified                                 ║
+║    ✓ Stakeholder inputs captured                            ║
 ║                                                             ║
 ║  Commands:                                                  ║
-║    approved     — Pass gate, continue to SCAFFOLD           ║
-║    changes: [x] — Request changes                           ║
-║    show [file]  — Display deliverable                       ║
+║    approved      — Pass gate, continue to SCAFFOLD          ║
+║    changes: ...  — Request modifications                    ║
+║    show [file]   — Display a deliverable                    ║
 ═══════════════════════════════════════════════════════════════
 ```
 
@@ -155,16 +159,22 @@ mcp__skills-library__get_skill(name: "context-cultivation", includeReferences: t
 
 ```
 ═══════════════════════════════════════════════════════════════
-║  INSIGHTS & PATTERNS REVIEW                                ║
+║  INSIGHTS & PATTERNS REVIEW                   [HUMAN]      ║
 ║                                                             ║
-║  ✓ Themes identified: {N}                                   ║
-║  ✓ Patterns documented: {N}                                 ║
-║  ✓ Contradictions resolved: {N}                             ║
-║  ✓ Gaps mapped: {N}                                         ║
+║  Deliverables:                                              ║
+║    📄 CULTIVATED-CONTEXT.md — Synthesized themes            ║
+║    📄 PATTERNS.md — Identified patterns and gaps            ║
+║                                                             ║
+║  Summary:                                                   ║
+║    ✓ Themes identified: {N}                                 ║
+║    ✓ Patterns documented: {N}                               ║
+║    ✓ Contradictions resolved: {N}                           ║
+║    ✓ Gaps mapped: {N}                                       ║
 ║                                                             ║
 ║  Commands:                                                  ║
-║    approved     — Pass gate, continue to IMPLEMENT          ║
-║    changes: [x] — Request changes                           ║
+║    approved      — Pass gate, continue to IMPLEMENT         ║
+║    changes: ...  — Request modifications                    ║
+║    show [file]   — Display a deliverable                    ║
 ═══════════════════════════════════════════════════════════════
 ```
 
@@ -188,16 +198,22 @@ mcp__skills-library__get_skill(name: "priority-matrix", includeReferences: true)
 
 ```
 ═══════════════════════════════════════════════════════════════
-║  PRIORITIES & STRATEGY REVIEW                              ║
+║  PRIORITIES & STRATEGY REVIEW                  [HUMAN]      ║
 ║                                                             ║
-║  ✓ Items prioritized: {N}                                   ║
-║  ✓ Scoring methodology: documented                          ║
-║  ✓ Top priorities feasible within constraints               ║
-║  ✓ Stakeholder alignment: {score}%                          ║
+║  Deliverables:                                              ║
+║    📄 PRIORITIES.md — Ranked recommendations                ║
+║    📄 MATRIX.md — Scoring methodology                       ║
+║                                                             ║
+║  Summary:                                                   ║
+║    ✓ Items prioritized: {N}                                 ║
+║    ✓ Scoring methodology: documented                        ║
+║    ✓ Top priorities feasible within constraints             ║
+║    ✓ Stakeholder alignment: {score}%                        ║
 ║                                                             ║
 ║  Commands:                                                  ║
-║    approved     — Pass gate, continue to VALIDATE           ║
-║    changes: [x] — Adjust priorities                         ║
+║    approved      — Pass gate, continue to VALIDATE          ║
+║    changes: ...  — Request modifications                    ║
+║    show [file]   — Display a deliverable                    ║
 ═══════════════════════════════════════════════════════════════
 ```
 
@@ -222,16 +238,21 @@ mcp__skills-library__get_skill(name: "content-analysis", includeReferences: true
 
 ```
 ═══════════════════════════════════════════════════════════════
-║  CONTENT QUALITY REVIEW                                    ║
+║  CONTENT QUALITY REVIEW                        [HUMAN]      ║
 ║                                                             ║
-║  ✓ Evidence coverage: {N}% of claims backed                ║
-║  ✓ Argument coherence: {score}                              ║
-║  ✓ Requirements traceability: {N}% addressed                ║
-║  ⚠ Gaps needing attention: {N}                              ║
+║  Deliverables:                                              ║
+║    📄 CONTENT-ANALYSIS.md — Quality validation results      ║
+║                                                             ║
+║  Summary:                                                   ║
+║    ✓ Evidence coverage: {N}% of claims backed               ║
+║    ✓ Argument coherence: {score}                            ║
+║    ✓ Requirements traceability: {N}% addressed              ║
+║    ⚠ Gaps needing attention: {N}                            ║
 ║                                                             ║
 ║  Commands:                                                  ║
-║    approved     — Pass gate, continue to DOCUMENT           ║
-║    changes: [x] — Address quality issues                    ║
+║    approved      — Pass gate, continue to DOCUMENT          ║
+║    changes: ...  — Request modifications                    ║
+║    show [file]   — Display a deliverable                    ║
 ═══════════════════════════════════════════════════════════════
 ```
 
@@ -255,19 +276,23 @@ mcp__skills-library__get_skill(name: "proposal-builder", includeReferences: true
 
 ```
 ═══════════════════════════════════════════════════════════════
-║  FINAL PROPOSAL REVIEW                                     ║
+║  FINAL PROPOSAL REVIEW                         [HUMAN]      ║
 ║                                                             ║
-║  ✓ Executive summary: present                               ║
-║  ✓ Problem/solution narrative: coherent                     ║
-║  ✓ Scope and timeline: defined                              ║
-║  ✓ All claims evidenced: {N}/{total}                        ║
-║  ✓ Call-to-action: compelling                               ║
-║  ✓ Word count: ~{N} words                                   ║
+║  Deliverables:                                              ║
+║    📄 PROPOSAL.md — Final proposal document                 ║
+║                                                             ║
+║  Summary:                                                   ║
+║    ✓ Executive summary: present                             ║
+║    ✓ Problem/solution narrative: coherent                   ║
+║    ✓ Scope and timeline: defined                            ║
+║    ✓ All claims evidenced: {N}/{total}                      ║
+║    ✓ Call-to-action: compelling                             ║
+║    ✓ Word count: ~{N} words                                 ║
 ║                                                             ║
 ║  Commands:                                                  ║
-║    approved     — Pass gate, finalize                       ║
-║    changes: [x] — Request edits                             ║
-║    show PROPOSAL.md — Review full document                  ║
+║    approved      — Pass gate, finalize                      ║
+║    changes: ...  — Request modifications                    ║
+║    show [file]   — Display a deliverable                    ║
 ═══════════════════════════════════════════════════════════════
 ```
 
@@ -293,39 +318,39 @@ mcp__skills-library__get_skill(name: "retrospective", includeReferences: true)
 ```
 ╔═════════════════════════════════════════════════════════════════════╗
 ║                                                                     ║
-║   PROPOSAL LOOP COMPLETE                                           ║
+║   PROPOSAL LOOP COMPLETE                                            ║
 ║                                                                     ║
 ╠═════════════════════════════════════════════════════════════════════╣
 ║                                                                     ║
-║   PHASES                                                           ║
-║   ──────                                                           ║
-║   ✓ INIT        Context gathered, requirements clarified           ║
-║   ✓ SCAFFOLD    Insights cultivated, patterns identified           ║
-║   ✓ IMPLEMENT   Priorities scored and ranked                       ║
-║   ✓ VALIDATE    Content quality verified                           ║
-║   ✓ DOCUMENT    Proposal assembled                                 ║
-║   ✓ COMPLETE    Retrospective captured                             ║
+║   PHASES                                                            ║
+║   ──────                                                            ║
+║   ✓ INIT         Context gathered                                   ║
+║   ✓ SCAFFOLD     Insights synthesized                               ║
+║   ✓ IMPLEMENT    Priorities ranked                                   ║
+║   ✓ VALIDATE     Content validated                                   ║
+║   ✓ DOCUMENT     Proposal assembled                                  ║
+║   ✓ COMPLETE     Retrospective captured                              ║
 ║                                                                     ║
-║   GATES PASSED                                                     ║
-║   ────────────                                                     ║
-║   ✓ Context & Requirements Review                                  ║
-║   ✓ Insights & Patterns Review                                     ║
-║   ✓ Priorities & Strategy Review                                   ║
-║   ✓ Content Quality Review                                         ║
-║   ✓ Final Proposal Review                                          ║
+║   GATES PASSED                                                      ║
+║   ────────────                                                      ║
+║   ✓ Context & Requirements Review [HUMAN]                            ║
+║   ✓ Insights & Patterns Review [HUMAN]                               ║
+║   ✓ Priorities & Strategy Review [HUMAN]                             ║
+║   ✓ Content Quality Review [HUMAN]                                   ║
+║   ✓ Final Proposal Review [HUMAN]                                    ║
 ║                                                                     ║
-║   DELIVERABLES                                                     ║
-║   ────────────                                                     ║
-║   📄 CONTEXT-SOURCES.md      Source registry and coverage          ║
-║   📄 RAW-CONTEXT.md          Extracted context by source           ║
-║   📄 REQUIREMENTS.md         Proposal requirements and scope       ║
-║   📄 CULTIVATED-CONTEXT.md   Synthesized themes and insights       ║
-║   📄 PATTERNS.md             Identified patterns                   ║
-║   📄 PRIORITIES.md           Ranked recommendations                ║
-║   📄 MATRIX.md               Scoring methodology                   ║
-║   📄 CONTENT-ANALYSIS.md     Quality validation results            ║
-║   📄 PROPOSAL.md             Final proposal document               ║
-║   📄 RETROSPECTIVE.md        Process learning and improvements     ║
+║   DELIVERABLES                                                      ║
+║   ────────────                                                      ║
+║   📄 CONTEXT-SOURCES.md      Source registry and coverage            ║
+║   📄 RAW-CONTEXT.md          Extracted context by source             ║
+║   📄 REQUIREMENTS.md         Proposal requirements and scope         ║
+║   📄 CULTIVATED-CONTEXT.md   Synthesized themes and insights         ║
+║   📄 PATTERNS.md             Identified patterns                     ║
+║   📄 PRIORITIES.md           Ranked recommendations                  ║
+║   📄 MATRIX.md               Scoring methodology                     ║
+║   📄 CONTENT-ANALYSIS.md     Quality validation results              ║
+║   📄 PROPOSAL.md             Final proposal document                 ║
+║   📄 RETROSPECTIVE.md        Process learning and improvements       ║
 ║                                                                     ║
 ╚═════════════════════════════════════════════════════════════════════╝
 ```
@@ -416,6 +441,295 @@ Proposal Loop: Found existing proposal state.
 
   Resume? [Y/n]:
 ```
+
+## Example Session
+
+```
+User: /proposal-loop
+
+Proposal Loop v2.0.0: Scanning directory...
+
+  No existing loop state found.
+
+  What proposal are you creating?
+
+User: A strategic partnership proposal for integrating our analytics
+      platform with Acme Corp's data infrastructure.
+
+Proposal Loop: Initializing...
+
+  ═══════════════════════════════════════════════════════
+  ║  READY — Proposal Loop v2.0.0                      ║
+  ║                                                     ║
+  ║  Phase: INIT                                        ║
+  ║  Phases: 6                                          ║
+  ║  Gates: context → synthesis → priorities             ║
+  ║         → quality → proposal                        ║
+  ║  All gates: [HUMAN]                                 ║
+  ║                                                     ║
+  ║  Say 'go' to begin.                                 ║
+  ═══════════════════════════════════════════════════════
+
+User: go
+
+══════════════════════════════════════
+  INIT                          [1/6]
+══════════════════════════════════════
+
+  ┌─ context-ingestion
+  │  Discovering context sources...
+  │  Classifying 8 documents, 3 URLs, 2 stakeholder inputs...
+  │  Extracting and verifying sources...
+  │
+  │  Output:
+  │    📄 CONTEXT-SOURCES.md — 13 sources, 92% coverage
+  │    📄 RAW-CONTEXT.md — Extracted context by source
+  └─ ✓ context-ingestion complete
+
+  ┌─ requirements
+  │  Clarifying proposal requirements...
+  │  Defining scope and acceptance criteria...
+  │
+  │  Output:
+  │    📄 REQUIREMENTS.md — 8 requirements, 5 acceptance criteria
+  └─ ✓ requirements complete
+
+  ✓ INIT complete (2 skills, 3 deliverables)
+
+  ═══════════════════════════════════════════════════════════════
+  ║  CONTEXT & REQUIREMENTS REVIEW                [HUMAN]      ║
+  ║                                                             ║
+  ║  Deliverables:                                              ║
+  ║    📄 CONTEXT-SOURCES.md — Source registry and coverage     ║
+  ║    📄 RAW-CONTEXT.md — Extracted context by source          ║
+  ║    📄 REQUIREMENTS.md — Proposal requirements and scope     ║
+  ║                                                             ║
+  ║  Summary:                                                   ║
+  ║    ✓ Source coverage: 92% (threshold: 80%)                  ║
+  ║    ✓ Requirements documented with acceptance criteria       ║
+  ║    ✓ Constraints identified                                 ║
+  ║    ✓ Stakeholder inputs captured                            ║
+  ║                                                             ║
+  ║  Commands:                                                  ║
+  ║    approved      — Pass gate, continue to SCAFFOLD          ║
+  ║    changes: ...  — Request modifications                    ║
+  ║    show [file]   — Display a deliverable                    ║
+  ═══════════════════════════════════════════════════════════════
+
+User: approved
+
+  Gate passed: context-gate ✓
+
+══════════════════════════════════════
+  SCAFFOLD                      [2/6]
+══════════════════════════════════════
+
+  ┌─ context-cultivation
+  │  Reading CONTEXT-SOURCES.md, RAW-CONTEXT.md, REQUIREMENTS.md...
+  │  Synthesizing themes and identifying patterns...
+  │  Mapping contradictions and gaps...
+  │
+  │  Output:
+  │    📄 CULTIVATED-CONTEXT.md — 5 themes, 3 insights
+  │    📄 PATTERNS.md — 6 patterns, 2 gaps identified
+  └─ ✓ context-cultivation complete
+
+  ✓ SCAFFOLD complete (1 skill, 2 deliverables)
+
+  ═══════════════════════════════════════════════════════════════
+  ║  INSIGHTS & PATTERNS REVIEW                   [HUMAN]      ║
+  ║                                                             ║
+  ║  Deliverables:                                              ║
+  ║    📄 CULTIVATED-CONTEXT.md — Synthesized themes            ║
+  ║    📄 PATTERNS.md — Identified patterns and gaps            ║
+  ║                                                             ║
+  ║  Summary:                                                   ║
+  ║    ✓ Themes identified: 5                                   ║
+  ║    ✓ Patterns documented: 6                                 ║
+  ║    ✓ Contradictions resolved: 1                             ║
+  ║    ✓ Gaps mapped: 2                                         ║
+  ║                                                             ║
+  ║  Commands:                                                  ║
+  ║    approved      — Pass gate, continue to IMPLEMENT         ║
+  ║    changes: ...  — Request modifications                    ║
+  ║    show [file]   — Display a deliverable                    ║
+  ═══════════════════════════════════════════════════════════════
+
+User: approved
+
+  Gate passed: synthesis-gate ✓
+
+══════════════════════════════════════
+  IMPLEMENT                     [3/6]
+══════════════════════════════════════
+
+  ┌─ priority-matrix
+  │  Reading CULTIVATED-CONTEXT.md, PATTERNS.md, REQUIREMENTS.md...
+  │  Scoring opportunities using weighted criteria...
+  │  Ranking by strategic value...
+  │
+  │  Output:
+  │    📄 PRIORITIES.md — 12 items ranked, top 5 highlighted
+  │    📄 MATRIX.md — Scoring methodology documented
+  └─ ✓ priority-matrix complete
+
+  ✓ IMPLEMENT complete (1 skill, 2 deliverables)
+
+  ═══════════════════════════════════════════════════════════════
+  ║  PRIORITIES & STRATEGY REVIEW                  [HUMAN]      ║
+  ║                                                             ║
+  ║  Deliverables:                                              ║
+  ║    📄 PRIORITIES.md — Ranked recommendations                ║
+  ║    📄 MATRIX.md — Scoring methodology                       ║
+  ║                                                             ║
+  ║  Summary:                                                   ║
+  ║    ✓ Items prioritized: 12                                  ║
+  ║    ✓ Scoring methodology: documented                        ║
+  ║    ✓ Top priorities feasible within constraints             ║
+  ║    ✓ Stakeholder alignment: 87%                             ║
+  ║                                                             ║
+  ║  Commands:                                                  ║
+  ║    approved      — Pass gate, continue to VALIDATE          ║
+  ║    changes: ...  — Request modifications                    ║
+  ║    show [file]   — Display a deliverable                    ║
+  ═══════════════════════════════════════════════════════════════
+
+User: approved
+
+  Gate passed: priorities-gate ✓
+
+══════════════════════════════════════
+  VALIDATE                      [4/6]
+══════════════════════════════════════
+
+  ┌─ content-analysis
+  │  Reading all prior deliverables...
+  │  Validating evidence backing for claims...
+  │  Checking argument coherence and traceability...
+  │
+  │  Output:
+  │    📄 CONTENT-ANALYSIS.md — 94% evidence coverage, 2 gaps flagged
+  └─ ✓ content-analysis complete
+
+  ✓ VALIDATE complete (1 skill, 1 deliverable)
+
+  ═══════════════════════════════════════════════════════════════
+  ║  CONTENT QUALITY REVIEW                        [HUMAN]      ║
+  ║                                                             ║
+  ║  Deliverables:                                              ║
+  ║    📄 CONTENT-ANALYSIS.md — Quality validation results      ║
+  ║                                                             ║
+  ║  Summary:                                                   ║
+  ║    ✓ Evidence coverage: 94% of claims backed                ║
+  ║    ✓ Argument coherence: strong                             ║
+  ║    ✓ Requirements traceability: 100% addressed              ║
+  ║    ⚠ Gaps needing attention: 2                              ║
+  ║                                                             ║
+  ║  Commands:                                                  ║
+  ║    approved      — Pass gate, continue to DOCUMENT          ║
+  ║    changes: ...  — Request modifications                    ║
+  ║    show [file]   — Display a deliverable                    ║
+  ═══════════════════════════════════════════════════════════════
+
+User: approved
+
+  Gate passed: quality-gate ✓
+
+══════════════════════════════════════
+  DOCUMENT                      [5/6]
+══════════════════════════════════════
+
+  ┌─ proposal-builder
+  │  Reading PRIORITIES.md, CONTENT-ANALYSIS.md, REQUIREMENTS.md...
+  │  Assembling executive summary...
+  │  Building solution narrative and scope...
+  │  Compiling timeline, pricing, and differentiation...
+  │
+  │  Output:
+  │    📄 PROPOSAL.md — Final proposal (~4,200 words)
+  └─ ✓ proposal-builder complete
+
+  ✓ DOCUMENT complete (1 skill, 1 deliverable)
+
+  ═══════════════════════════════════════════════════════════════
+  ║  FINAL PROPOSAL REVIEW                         [HUMAN]      ║
+  ║                                                             ║
+  ║  Deliverables:                                              ║
+  ║    📄 PROPOSAL.md — Final proposal document                 ║
+  ║                                                             ║
+  ║  Summary:                                                   ║
+  ║    ✓ Executive summary: present                             ║
+  ║    ✓ Problem/solution narrative: coherent                   ║
+  ║    ✓ Scope and timeline: defined                            ║
+  ║    ✓ All claims evidenced: 47/50                            ║
+  ║    ✓ Call-to-action: compelling                             ║
+  ║    ✓ Word count: ~4,200 words                               ║
+  ║                                                             ║
+  ║  Commands:                                                  ║
+  ║    approved      — Pass gate, finalize                      ║
+  ║    changes: ...  — Request modifications                    ║
+  ║    show [file]   — Display a deliverable                    ║
+  ═══════════════════════════════════════════════════════════════
+
+User: approved
+
+  Gate passed: proposal-gate ✓
+
+══════════════════════════════════════
+  COMPLETE                      [6/6]
+══════════════════════════════════════
+
+  ┌─ retrospective
+  │  Reviewing full execution across 6 phases...
+  │  Analyzing gate feedback and metrics...
+  │  Capturing improvements for skills library...
+  │
+  │  Output:
+  │    📄 RETROSPECTIVE.md — Process learning and improvements
+  └─ ✓ retrospective complete
+
+  ✓ COMPLETE complete (1 skill, 1 deliverable)
+
+╔═════════════════════════════════════════════════════════════════════╗
+║                                                                     ║
+║   PROPOSAL LOOP COMPLETE                                            ║
+║                                                                     ║
+╠═════════════════════════════════════════════════════════════════════╣
+║                                                                     ║
+║   PHASES                                                            ║
+║   ──────                                                            ║
+║   ✓ INIT         Context gathered                                   ║
+║   ✓ SCAFFOLD     Insights synthesized                               ║
+║   ✓ IMPLEMENT    Priorities ranked                                   ║
+║   ✓ VALIDATE     Content validated                                   ║
+║   ✓ DOCUMENT     Proposal assembled                                  ║
+║   ✓ COMPLETE     Retrospective captured                              ║
+║                                                                     ║
+║   GATES PASSED                                                      ║
+║   ────────────                                                      ║
+║   ✓ Context & Requirements Review [HUMAN]                            ║
+║   ✓ Insights & Patterns Review [HUMAN]                               ║
+║   ✓ Priorities & Strategy Review [HUMAN]                             ║
+║   ✓ Content Quality Review [HUMAN]                                   ║
+║   ✓ Final Proposal Review [HUMAN]                                    ║
+║                                                                     ║
+║   DELIVERABLES                                                      ║
+║   ────────────                                                      ║
+║   📄 CONTEXT-SOURCES.md      Source registry and coverage            ║
+║   📄 RAW-CONTEXT.md          Extracted context by source             ║
+║   📄 REQUIREMENTS.md         Proposal requirements and scope         ║
+║   📄 CULTIVATED-CONTEXT.md   Synthesized themes and insights         ║
+║   📄 PATTERNS.md             Identified patterns                     ║
+║   📄 PRIORITIES.md           Ranked recommendations                  ║
+║   📄 MATRIX.md               Scoring methodology                     ║
+║   📄 CONTENT-ANALYSIS.md     Quality validation results              ║
+║   📄 PROPOSAL.md             Final proposal document                 ║
+║   📄 RETROSPECTIVE.md        Process learning and improvements       ║
+║                                                                     ║
+╚═════════════════════════════════════════════════════════════════════╝
+```
+
+---
 
 ## State Files
 

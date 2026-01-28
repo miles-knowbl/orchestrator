@@ -85,31 +85,28 @@ release-planner  code-verification  git-workflow       retrospective
 **Gate presentation (readiness-gate):**
 ```
 ═══════════════════════════════════════════════════════════════
-║  READINESS GATE (auto)                                      ║
+║  READINESS GATE                                    [AUTO]  ║
 ║                                                             ║
-║  Running distribution readiness checks...                   ║
+║  Running checks...                                          ║
 ║    ✓ Build: clean compile                                   ║
 ║    ✓ Tests: all passing                                     ║
 ║    ✓ Lint: 0 errors                                         ║
-║    ✓ No uncommitted changes                                 ║
 ║                                                             ║
-║  Gate passed automatically. Continuing to SHIP.             ║
+║  All checks passed. Continuing to SHIP.                     ║
 ═══════════════════════════════════════════════════════════════
 ```
 
 **Gate presentation (distribution-gate):**
 ```
 ═══════════════════════════════════════════════════════════════
-║  DISTRIBUTION GATE (auto)                                   ║
+║  DISTRIBUTION GATE                                 [AUTO]  ║
 ║                                                             ║
-║  Verifying distribution targets...                          ║
-║    ✓ Git: pushed to origin/main                             ║
-║    ✓ CI: workflow triggered                                 ║
-║    ✓ Railway: deploy initiated                              ║
-║    ✓ Vercel: deploy initiated                               ║
-║    ✓ Release: tarball will be created by CI                 ║
+║  Running checks...                                          ║
+║    ✓ Railway: deploy confirmed                              ║
+║    ✓ Vercel: deploy confirmed                               ║
+║    ✓ GitHub Release: tarball updated                        ║
 ║                                                             ║
-║  Gate passed automatically. Continuing to COMPLETE.         ║
+║  All checks passed. Continuing to COMPLETE.                 ║
 ═══════════════════════════════════════════════════════════════
 ```
 
@@ -154,59 +151,132 @@ Distribution Loop v1.0.0: Starting distribution...
 
 User: go
 
-Distribution Loop: Starting INIT phase...
+  ══════════════════════════════════════
+    INIT                          [1/4]
+  ══════════════════════════════════════
 
-  [1/1] release-planner → Assessing changes...
-        ✓ 3 commits since last distribution
-        ✓ Version: 2.0.0 (unchanged)
-        ✓ Scope: 1 feature, 2 fixes
+  ┌─ release-planner
+  │  Assessing git log since last distribution...
+  │  Determining version and scope...
+  │
+  │  Output:
+  │    📄 release-scope.md — 3 commits, 1 feature, 2 fixes
+  └─ ✓ release-planner complete
 
-  ✓ INIT phase complete
+  ✓ INIT complete (1 skill, 1 deliverable)
 
-Distribution Loop: Starting VERIFY phase...
+  ══════════════════════════════════════
+    VERIFY                        [2/4]
+  ══════════════════════════════════════
 
-  [1/1] code-verification → Build, test, lint...
-        ✓ Build: clean
-        ✓ Tests: 42/42 passing
-        ✓ Lint: 0 errors
+  ┌─ code-verification
+  │  Running build... clean compile
+  │  Running tests... 42/42 passing
+  │  Running lint... 0 errors
+  │
+  │  Output:
+  │    📄 verification-report.md — Build, test, lint all green
+  └─ ✓ code-verification complete
 
-  ✓ VERIFY phase complete
+  ✓ VERIFY complete (1 skill, 1 deliverable)
 
-  ═══════════════════════════════════════════════════════
-  ║  READINESS GATE (auto)                              ║
-  ║    ✓ All checks passed                              ║
-  ║  Gate passed automatically. Continuing to SHIP.     ║
-  ═══════════════════════════════════════════════════════
+  ═══════════════════════════════════════════════════════════════
+  ║  READINESS GATE                                    [AUTO]  ║
+  ║                                                             ║
+  ║  Running checks...                                          ║
+  ║    ✓ Build: clean compile                                   ║
+  ║    ✓ Tests: 42/42 passing                                   ║
+  ║    ✓ Lint: 0 errors                                         ║
+  ║                                                             ║
+  ║  All checks passed. Continuing to SHIP.                     ║
+  ═══════════════════════════════════════════════════════════════
 
-Distribution Loop: Starting SHIP phase...
+  ══════════════════════════════════════
+    SHIP                          [3/4]
+  ══════════════════════════════════════
 
-  [1/3] git-workflow → Committing and pushing...
-        ✓ Committed: "feat: add distribution loop"
-        ✓ Pushed to origin/main
+  ┌─ git-workflow
+  │  Staging changes...
+  │  Committed: "feat: add distribution loop"
+  │  Pushed to origin/main
+  │
+  │  Output:
+  │    📄 git-summary.md — Commit pushed to origin/main
+  └─ ✓ git-workflow complete
 
-  [2/3] deploy → Local rebuild...
-        ✓ npm run build complete
+  ┌─ deploy
+  │  Running npm run build...
+  │  Verifying server starts cleanly...
+  │
+  │  Output:
+  │    📄 deploy-report.md — Local build verified
+  └─ ✓ deploy complete
 
-  [3/3] distribute → Verifying CI pipeline...
-        ✓ GitHub Actions workflow triggered
-        ✓ Railway deploy will run
-        ✓ Vercel deploy will run
-        ✓ Tarball release will update
+  ┌─ distribute
+  │  Verifying CI pipeline triggered...
+  │  Checking Railway deploy status...
+  │  Checking Vercel deploy status...
+  │  Checking GitHub Release tarball...
+  │
+  │  Output:
+  │    📄 distribution-manifest.md — All 4 targets confirmed
+  └─ ✓ distribute complete
 
-  ✓ SHIP phase complete
+  ✓ SHIP complete (3 skills, 3 deliverables)
 
-  ═══════════════════════════════════════════════════════
-  ║  DISTRIBUTION GATE (auto)                           ║
-  ║    ✓ All targets received update                    ║
-  ║  Gate passed automatically. Continuing to COMPLETE. ║
-  ═══════════════════════════════════════════════════════
+  ═══════════════════════════════════════════════════════════════
+  ║  DISTRIBUTION GATE                                 [AUTO]  ║
+  ║                                                             ║
+  ║  Running checks...                                          ║
+  ║    ✓ Railway: deploy confirmed                              ║
+  ║    ✓ Vercel: deploy confirmed                               ║
+  ║    ✓ GitHub Release: tarball updated                        ║
+  ║                                                             ║
+  ║  All checks passed. Continuing to COMPLETE.                 ║
+  ═══════════════════════════════════════════════════════════════
 
-Distribution Loop: Starting COMPLETE phase...
+  ══════════════════════════════════════
+    COMPLETE                      [4/4]
+  ══════════════════════════════════════
 
-  [1/1] retrospective → Summary...
-        All 4 targets synced. No issues.
+  ┌─ retrospective
+  │  Summarizing distribution results...
+  │  All 4 targets synced. No issues.
+  │
+  │  Output:
+  │    📄 retrospective.md — Distribution summary and learnings
+  └─ ✓ retrospective complete
 
-  ✓ Distribution complete
+  ✓ COMPLETE complete (1 skill, 1 deliverable)
+
+  ╔═════════════════════════════════════════════════════════════════════╗
+  ║                                                                     ║
+  ║   DISTRIBUTION LOOP COMPLETE                                        ║
+  ║                                                                     ║
+  ╠═════════════════════════════════════════════════════════════════════╣
+  ║                                                                     ║
+  ║   PHASES                                                            ║
+  ║   ──────                                                            ║
+  ║   ✓ INIT        Release scope assessed                              ║
+  ║   ✓ VERIFY      Build/test/lint all passing                         ║
+  ║   ✓ SHIP        All targets updated                                 ║
+  ║   ✓ COMPLETE    Retrospective captured                              ║
+  ║                                                                     ║
+  ║   GATES PASSED                                                      ║
+  ║   ────────────                                                      ║
+  ║   ✓ Readiness Check [AUTO]                                          ║
+  ║   ✓ Distribution Confirmation [AUTO]                                ║
+  ║                                                                     ║
+  ║   DELIVERABLES                                                      ║
+  ║   ────────────                                                      ║
+  ║   📄 release-scope.md — Release scope and version                   ║
+  ║   📄 verification-report.md — Build, test, lint results             ║
+  ║   📄 git-summary.md — Commit and push details                       ║
+  ║   📄 deploy-report.md — Local build verification                    ║
+  ║   📄 distribution-manifest.md — All target confirmations            ║
+  ║   📄 retrospective.md — Distribution summary and learnings          ║
+  ║                                                                     ║
+  ╚═════════════════════════════════════════════════════════════════════╝
 ```
 
 ## Resuming a Session

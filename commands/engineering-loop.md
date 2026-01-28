@@ -181,22 +181,28 @@ Six gates control progression:
 **Gate presentation (human):**
 ```
 ═══════════════════════════════════════════════════════════════
-║  SPEC GATE                                                  ║
+║  SPEC GATE                                     [HUMAN]     ║
 ║                                                             ║
-║  REQUIREMENTS.md and FEATURESPEC.md ready for review.       ║
+║  Deliverables:                                              ║
+║    📄 REQUIREMENTS.md — Structured requirements             ║
+║    📄 FEATURESPEC.md — 18-section feature specification     ║
+║                                                             ║
+║  Summary:                                                   ║
+║    ✓ Requirements: 14 extracted, 6 success metrics          ║
+║    ✓ Spec: 18 sections, 3 capabilities defined              ║
 ║                                                             ║
 ║  Commands:                                                  ║
-║    approved     — Pass gate, continue to SCAFFOLD           ║
-║    changes: ... — Request modifications                     ║
-║    show spec    — Display the spec                          ║
-║    show reqs    — Display requirements                      ║
+║    approved      — Pass gate, continue to SCAFFOLD          ║
+║    changes: ...  — Request modifications                    ║
+║    show spec     — Display FEATURESPEC.md                   ║
+║    show reqs     — Display REQUIREMENTS.md                  ║
 ═══════════════════════════════════════════════════════════════
 ```
 
 **Gate presentation (auto — verification-gate):**
 ```
 ═══════════════════════════════════════════════════════════════
-║  VERIFICATION GATE (auto)                                   ║
+║  VERIFICATION GATE                              [AUTO]     ║
 ║                                                             ║
 ║  Running checks...                                          ║
 ║    ✓ Build: clean compile                                   ║
@@ -204,14 +210,14 @@ Six gates control progression:
 ║    ✓ Lint: 0 errors, 0 warnings                             ║
 ║    ✓ Types: no errors                                       ║
 ║                                                             ║
-║  Gate passed automatically. Continuing to VALIDATE.         ║
+║  All checks passed. Continuing to VALIDATE.                 ║
 ═══════════════════════════════════════════════════════════════
 ```
 
 **Gate presentation (auto — verification FAILED):**
 ```
 ═══════════════════════════════════════════════════════════════
-║  VERIFICATION GATE (auto) — FAILED                          ║
+║  VERIFICATION GATE                      [AUTO] — FAILED    ║
 ║                                                             ║
 ║    ✓ Build: clean compile                                   ║
 ║    ✗ Tests: 45/47 passing (2 failures)                      ║
@@ -362,89 +368,306 @@ Engineering Loop: Analyzing codebase...
 
 User: go
 
-Engineering Loop: Starting INIT phase...
+══════════════════════════════════════
+  INIT                          [1/10]
+══════════════════════════════════════
 
-  [1/2] requirements → Analyzing requirements...
-        ✓ REQUIREMENTS.md (14 requirements, 6 success metrics)
-  [2/2] spec → Generating feature specification...
-        ✓ FEATURESPEC.md (18 sections, 3 capabilities)
+  ┌─ requirements
+  │  Analyzing project requirements...
+  │  Extracting success metrics...
+  │
+  │  Output:
+  │    📄 REQUIREMENTS.md — 14 requirements, 6 success metrics
+  └─ ✓ requirements complete
 
-  ✓ INIT phase complete
+  ┌─ spec
+  │  Reading: REQUIREMENTS.md
+  │  Generating feature specification...
+  │  Compiling 18 sections...
+  │
+  │  Output:
+  │    📄 FEATURESPEC.md — 18 sections, 3 capabilities
+  └─ ✓ spec complete
 
-  ═══════════════════════════════════════════════════════
-  ║  SPEC GATE                                          ║
-  ║                                                     ║
-  ║  REQUIREMENTS.md and FEATURESPEC.md ready.           ║
-  ║                                                     ║
-  ║  Say 'approved' to continue to SCAFFOLD.            ║
-  ═══════════════════════════════════════════════════════
+  ✓ INIT complete (2 skills, 2 deliverables)
+
+  ═══════════════════════════════════════════════════════════════
+  ║  SPEC GATE                                     [HUMAN]     ║
+  ║                                                             ║
+  ║  Deliverables:                                              ║
+  ║    📄 REQUIREMENTS.md — Structured requirements             ║
+  ║    📄 FEATURESPEC.md — 18-section feature specification     ║
+  ║                                                             ║
+  ║  Summary:                                                   ║
+  ║    ✓ Requirements: 14 extracted, 6 success metrics          ║
+  ║    ✓ Spec: 18 sections, 3 capabilities defined              ║
+  ║                                                             ║
+  ║  Commands:                                                  ║
+  ║    approved      — Pass gate, continue to SCAFFOLD          ║
+  ║    changes: ...  — Request modifications                    ║
+  ║    show spec     — Display FEATURESPEC.md                   ║
+  ║    show reqs     — Display REQUIREMENTS.md                  ║
+  ═══════════════════════════════════════════════════════════════
 
 User: approved
 
   Gate passed: spec-gate ✓
 
-Engineering Loop: Starting SCAFFOLD phase...
+══════════════════════════════════════
+  SCAFFOLD                      [2/10]
+══════════════════════════════════════
 
-  [1/2] architect → Designing architecture...
-        ✓ ARCHITECTURE.md
-  [2/2] scaffold → Creating project structure...
-        ✓ Files scaffolded
+  ┌─ architect
+  │  Designing system architecture...
+  │  Documenting decisions and trade-offs...
+  │
+  │  Output:
+  │    📄 ARCHITECTURE.md — Architecture decisions
+  └─ ✓ architect complete
 
-  ✓ SCAFFOLD phase complete
+  ┌─ scaffold
+  │  Creating project structure...
+  │  Generating boilerplate files...
+  │
+  │  Output:
+  │    📄 Project files scaffolded
+  └─ ✓ scaffold complete
 
-  ═══════════════════════════════════════════════════════
-  ║  ARCHITECTURE GATE                                  ║
-  ║                                                     ║
-  ║  ARCHITECTURE.md ready for review.                  ║
-  ║                                                     ║
-  ║  Say 'approved' to continue to IMPLEMENT.           ║
-  ═══════════════════════════════════════════════════════
+  ✓ SCAFFOLD complete (2 skills, 1 deliverable)
+
+  ═══════════════════════════════════════════════════════════════
+  ║  ARCHITECTURE GATE                               [HUMAN]   ║
+  ║                                                             ║
+  ║  Deliverables:                                              ║
+  ║    📄 ARCHITECTURE.md — Architecture decisions              ║
+  ║                                                             ║
+  ║  Summary:                                                   ║
+  ║    ✓ Architecture documented with trade-offs                ║
+  ║    ✓ Project structure scaffolded                           ║
+  ║                                                             ║
+  ║  Commands:                                                  ║
+  ║    approved      — Pass gate, continue to IMPLEMENT         ║
+  ║    changes: ...  — Request modifications                    ║
+  ║    show arch     — Display ARCHITECTURE.md                  ║
+  ═══════════════════════════════════════════════════════════════
 
 User: approved
 
   Gate passed: architecture-gate ✓
 
-Engineering Loop: Starting IMPLEMENT phase...
-  [1/3] Implementing capability: review-automation...
-  ...
+══════════════════════════════════════
+  IMPLEMENT                     [3/10]
+══════════════════════════════════════
 
-  ✓ IMPLEMENT phase complete
-  ✓ TEST phase complete (47 tests generated)
+  ┌─ implement
+  │  Implementing capability: review-automation...
+  │  Implementing capability: dashboard-views...
+  │  Implementing capability: deploy-pipeline...
+  │
+  │  Output:
+  │    📄 3 capabilities implemented
+  └─ ✓ implement complete
 
-  ═══════════════════════════════════════════════════════
-  ║  VERIFICATION GATE (auto)                           ║
-  ║                                                     ║
-  ║  Running checks...                                  ║
-  ║    ✓ Build: clean compile                           ║
-  ║    ✓ Tests: 47/47 passing                           ║
-  ║    ✓ Lint: 0 errors                                 ║
-  ║    ✓ Types: no errors                               ║
-  ║                                                     ║
-  ║  Gate passed automatically.                         ║
-  ═══════════════════════════════════════════════════════
+  ✓ IMPLEMENT complete (1 skill, 3 capabilities)
 
-Engineering Loop: Starting VALIDATE phase...
+══════════════════════════════════════
+  TEST                          [4/10]
+══════════════════════════════════════
 
-  [1/2] code-validation → Semantic validation...
-        ✓ VALIDATION.md (3 findings, 0 blockers)
-  [2/2] security-audit → Security analysis...
-        ✓ SECURITY-AUDIT.md (0 critical, 1 medium, 2 low)
+  ┌─ test-generation
+  │  Generating unit tests...
+  │  Generating integration tests...
+  │
+  │  Output:
+  │    📄 47 tests generated across 3 capabilities
+  └─ ✓ test-generation complete
 
-  ✓ VALIDATE phase complete
+  ✓ TEST complete (1 skill, 47 tests)
 
-  ═══════════════════════════════════════════════════════
-  ║  VALIDATION GATE                                    ║
-  ║                                                     ║
-  ║  VALIDATION.md and SECURITY-AUDIT.md ready.         ║
-  ║  0 blockers, 1 medium security finding.             ║
-  ║                                                     ║
-  ║  Say 'approved' to continue to DOCUMENT.            ║
-  ═══════════════════════════════════════════════════════
+══════════════════════════════════════
+  VERIFY                        [5/10]
+══════════════════════════════════════
+
+  ┌─ code-verification
+  │  Running build...
+  │  Running test suite...
+  │  Running linter...
+  │  Running type checker...
+  └─ ✓ code-verification complete
+
+  ═══════════════════════════════════════════════════════════════
+  ║  VERIFICATION GATE                              [AUTO]     ║
+  ║                                                             ║
+  ║  Running checks...                                          ║
+  ║    ✓ Build: clean compile                                   ║
+  ║    ✓ Tests: 47/47 passing                                   ║
+  ║    ✓ Lint: 0 errors                                         ║
+  ║    ✓ Types: no errors                                       ║
+  ║                                                             ║
+  ║  All checks passed. Continuing to VALIDATE.                 ║
+  ═══════════════════════════════════════════════════════════════
+
+══════════════════════════════════════
+  VALIDATE                      [6/10]
+══════════════════════════════════════
+
+  ┌─ code-validation
+  │  Running semantic validation...
+  │  Checking requirement coverage...
+  │
+  │  Output:
+  │    📄 VALIDATION.md — 3 findings, 0 blockers
+  └─ ✓ code-validation complete
+
+  ┌─ security-audit
+  │  Running security analysis...
+  │  Scanning dependencies...
+  │
+  │  Output:
+  │    📄 SECURITY-AUDIT.md — 0 critical, 1 medium, 2 low
+  └─ ✓ security-audit complete
+
+  ✓ VALIDATE complete (2 skills, 2 deliverables)
+
+  ═══════════════════════════════════════════════════════════════
+  ║  VALIDATION GATE                                 [HUMAN]   ║
+  ║                                                             ║
+  ║  Deliverables:                                              ║
+  ║    📄 VALIDATION.md — Semantic validation findings          ║
+  ║    📄 SECURITY-AUDIT.md — Security audit results            ║
+  ║                                                             ║
+  ║  Summary:                                                   ║
+  ║    ✓ Validation: 3 findings, 0 blockers                    ║
+  ║    ✓ Security: 0 critical, 1 medium, 2 low                 ║
+  ║                                                             ║
+  ║  Commands:                                                  ║
+  ║    approved      — Pass gate, continue to DOCUMENT          ║
+  ║    changes: ...  — Request modifications                    ║
+  ║    show validate — Display VALIDATION.md                    ║
+  ║    show security — Display SECURITY-AUDIT.md                ║
+  ═══════════════════════════════════════════════════════════════
 
 User: approved
 
   Gate passed: validation-gate ✓
-  ...continues through DOCUMENT → REVIEW → SHIP → COMPLETE
+
+══════════════════════════════════════
+  DOCUMENT                      [7/10]
+══════════════════════════════════════
+
+  ┌─ document
+  │  Generating documentation...
+  │  Updating README...
+  └─ ✓ Documentation complete
+
+  ✓ DOCUMENT complete (1 skill)
+
+══════════════════════════════════════
+  REVIEW                        [8/10]
+══════════════════════════════════════
+
+  ┌─ code-review
+  │  Reviewing implementation against spec...
+  │  Checking pattern compliance...
+  │
+  │  Output:
+  │    📄 CODE-REVIEW.md — Review findings
+  └─ ✓ code-review complete
+
+  ✓ REVIEW complete (1 skill, 1 deliverable)
+
+  ═══════════════════════════════════════════════════════════════
+  ║  REVIEW GATE                                     [HUMAN]   ║
+  ║                                                             ║
+  ║  Deliverables:                                              ║
+  ║    📄 CODE-REVIEW.md — Code review findings                 ║
+  ║                                                             ║
+  ║  Summary:                                                   ║
+  ║    ✓ All patterns followed, no violations                   ║
+  ║                                                             ║
+  ║  Commands:                                                  ║
+  ║    approved      — Pass gate, continue to SHIP              ║
+  ║    changes: ...  — Request modifications                    ║
+  ║    show review   — Display CODE-REVIEW.md                   ║
+  ═══════════════════════════════════════════════════════════════
+
+User: approved
+
+  Gate passed: review-gate ✓
+
+══════════════════════════════════════
+  SHIP                          [9/10]
+══════════════════════════════════════
+
+  ┌─ deploy
+  │  Checking deploy target...
+  └─ ✓ No deploy target configured
+
+  ═══════════════════════════════════════════════════════════════
+  ║  DEPLOY GATE                              [CONDITIONAL]    ║
+  ║                                                             ║
+  ║  Condition: Auto-passes if no deploy target configured.     ║
+  ║  Status: No deploy target found.                            ║
+  ║                                                             ║
+  ║  Condition met. Gate passed automatically.                  ║
+  ═══════════════════════════════════════════════════════════════
+
+  ┌─ distribute
+  │  Setting up CI/CD workflow...
+  └─ ✓ .github/workflows/distribute.yml
+
+  ✓ SHIP complete (2 skills)
+
+══════════════════════════════════════
+  COMPLETE                     [10/10]
+══════════════════════════════════════
+
+  ┌─ retrospective
+  │  Reviewing loop execution...
+  └─ ✓ RETROSPECTIVE.md
+
+  ✓ COMPLETE (1 skill, 1 deliverable)
+
+╔═════════════════════════════════════════════════════════════════════╗
+║                                                                     ║
+║   ENGINEERING LOOP COMPLETE                                         ║
+║                                                                     ║
+╠═════════════════════════════════════════════════════════════════════╣
+║                                                                     ║
+║   PHASES                                                            ║
+║   ──────                                                            ║
+║   ✓ INIT        Requirements and specification compiled             ║
+║   ✓ SCAFFOLD    Architecture designed, project scaffolded           ║
+║   ✓ IMPLEMENT   Features built per spec                             ║
+║   ✓ TEST        47 tests generated                                  ║
+║   ✓ VERIFY      Build, tests, lint all passing                      ║
+║   ✓ VALIDATE    Semantic validation + security audit passed         ║
+║   ✓ DOCUMENT    Documentation complete                              ║
+║   ✓ REVIEW      Code review approved                                ║
+║   ✓ SHIP        Deployed and distributed                            ║
+║   ✓ COMPLETE    Retrospective captured                              ║
+║                                                                     ║
+║   GATES PASSED                                                      ║
+║   ────────────                                                      ║
+║   ✓ Specification Approval [HUMAN]                                  ║
+║   ✓ Architecture Approval [HUMAN]                                   ║
+║   ✓ Verification Check [AUTO]                                       ║
+║   ✓ Validation Approval [HUMAN]                                     ║
+║   ✓ Code Review Approval [HUMAN]                                    ║
+║   ✓ Deployment Approval [CONDITIONAL]                               ║
+║                                                                     ║
+║   DELIVERABLES                                                      ║
+║   ────────────                                                      ║
+║   📄 REQUIREMENTS.md      Structured requirements                   ║
+║   📄 FEATURESPEC.md       Feature specification                     ║
+║   📄 ARCHITECTURE.md      Architecture decisions                    ║
+║   📄 VERIFICATION.md      Build/test/lint results                   ║
+║   📄 VALIDATION.md        Semantic validation findings              ║
+║   📄 SECURITY-AUDIT.md    Security audit results                    ║
+║   📄 CODE-REVIEW.md       Code review findings                      ║
+║   📄 RETROSPECTIVE.md     Loop retrospective                        ║
+║                                                                     ║
+╚═════════════════════════════════════════════════════════════════════╝
 ```
 
 ## Resuming a Session
@@ -462,12 +685,12 @@ Engineering Loop v3.0.0: Found existing loop state.
     ✓ SCAFFOLD
 
   Gates:
-    ✓ spec-gate (approved)
-    ✓ architecture-gate (approved)
-    ○ verification-gate (pending — auto)
-    ○ validation-gate (pending)
-    ○ review-gate (pending)
-    ○ deploy-gate (pending — conditional)
+    ✓ spec-gate [HUMAN] (approved)
+    ✓ architecture-gate [HUMAN] (approved)
+    ○ verification-gate [AUTO] (pending)
+    ○ validation-gate [HUMAN] (pending)
+    ○ review-gate [HUMAN] (pending)
+    ○ deploy-gate [CONDITIONAL] (pending)
 
   Progress: 3/8 capabilities implemented
 

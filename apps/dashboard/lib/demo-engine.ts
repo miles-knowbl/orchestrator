@@ -10,7 +10,7 @@ export interface LoopForDemo {
   name: string;
   version: string;
   phases: { name: string; order: number; skills: { skillId: string; required: boolean }[] }[];
-  gates: { id: string; name: string; afterPhase: string; required: boolean; approvalType: string }[];
+  gates: { id: string; name: string; afterPhase: string; required: boolean; approvalType: string; deliverables?: string[] }[];
 }
 
 export interface DemoConfig {

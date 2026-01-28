@@ -28,6 +28,15 @@
       "skillCount": 7
     },
     {
+      "id": "distribution-loop",
+      "name": "Distribution Loop",
+      "version": "1.0.0",
+      "description": "Distribution loop for keeping all targets in sync: local rebuild, Railway server, Vercel dashboard, and GitHub Releases tarball. Lean 4-phase pipeline with auto gates designed for speed.",
+      "category": "development",
+      "phaseCount": 4,
+      "skillCount": 6
+    },
+    {
       "id": "engineering-loop",
       "name": "Engineering Loop",
       "version": "3.1.0",
@@ -64,15 +73,6 @@
       "skillCount": 6
     },
     {
-      "id": "transpose-loop",
-      "name": "Transpose Loop",
-      "version": "1.0.0",
-      "description": "Architecture transposition loop: extract an existing architecture, map it to a target tech stack, and produce a production-ready feature spec. Same composition, different key.",
-      "category": "development",
-      "phaseCount": 4,
-      "skillCount": 5
-    },
-    {
       "id": "proposal-loop",
       "name": "Proposal Loop",
       "version": "2.0.0",
@@ -82,13 +82,13 @@
       "skillCount": 7
     },
     {
-      "id": "distribution-loop",
-      "name": "Distribution Loop",
+      "id": "transpose-loop",
+      "name": "Transpose Loop",
       "version": "1.0.0",
-      "description": "Distribution loop for keeping all targets in sync: local rebuild, Railway server, Vercel dashboard, and GitHub Releases tarball. Lean 4-phase pipeline with auto gates designed for speed.",
+      "description": "Architecture transposition loop: extract an existing architecture, map it to a target tech stack, and produce a production-ready feature spec. Same composition, different key.",
       "category": "development",
       "phaseCount": 4,
-      "skillCount": 6
+      "skillCount": 5
     }
   ]
 }

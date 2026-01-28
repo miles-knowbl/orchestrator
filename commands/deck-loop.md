@@ -102,25 +102,106 @@ Five gates control progression — all require human approval:
 
 | Gate | After Phase | Blocks Until | Deliverables |
 |------|-------------|--------------|-------------|
-| `context-gate` | INIT | User says `approved` | CONTEXT-SOURCES.md, RAW-CONTEXT.md |
-| `taste-gate` | SCAFFOLD | User says `approved` | taste-schema.json |
-| `composition-gate` | IMPLEMENT | User says `approved` | deck-text-schema.json, deck-image-schema.json |
-| `quality-gate` | VALIDATE | User says `approved` | CONTENT-ANALYSIS.md |
-| `render-gate` | DOCUMENT | User says `approved` | *.pptx, render-manifest.json |
+| `context-gate` | INIT | User says `approved` | CONTEXT-BRIEF.md |
+| `taste-gate` | SCAFFOLD | User says `approved` | TASTE-SCHEMA.json |
+| `composition-gate` | IMPLEMENT | User says `approved` | DECK-TEXT-SCHEMA.json, DECK-IMAGE-SCHEMA.json |
+| `quality-gate` | VALIDATE | User says `approved` | QUALITY-REVIEW.md |
+| `render-gate` | DOCUMENT | User says `approved` | output.pptx |
 
-**Gate presentation:**
+**Gate presentation (context-gate):**
 ```
 ═══════════════════════════════════════════════════════════════
-║  CONTEXT GATE                                               ║
+║  CONTEXT GATE                                  [HUMAN]     ║
 ║                                                             ║
-║  CONTEXT-SOURCES.md and RAW-CONTEXT.md ready for review.    ║
-║  8 sources processed, 3 categories covered.                 ║
+║  Deliverables:                                              ║
+║    📄 CONTEXT-BRIEF.md — Sources gathered, audience ID'd    ║
+║                                                             ║
+║  Summary:                                                   ║
+║    ✓ Sources gathered: 8                                    ║
+║    ✓ Audience identified: Executive Board                   ║
 ║                                                             ║
 ║  Commands:                                                  ║
-║    approved     — Pass gate, continue to SCAFFOLD           ║
-║    changes: ... — Request modifications                     ║
-║    show context — Display RAW-CONTEXT.md                    ║
-║    show sources — Display CONTEXT-SOURCES.md                ║
+║    approved      — Pass gate, continue to SCAFFOLD          ║
+║    changes: ...  — Request modifications                    ║
+║    show [file]   — Display a deliverable                    ║
+═══════════════════════════════════════════════════════════════
+```
+
+**Gate presentation (taste-gate):**
+```
+═══════════════════════════════════════════════════════════════
+║  TASTE GATE                                    [HUMAN]     ║
+║                                                             ║
+║  Deliverables:                                              ║
+║    📄 TASTE-SCHEMA.json — Brand palette, typography, layout ║
+║                                                             ║
+║  Summary:                                                   ║
+║    ✓ Brand palette: extracted                               ║
+║    ✓ Typography: matched                                    ║
+║    ✓ Layout rules: defined                                  ║
+║                                                             ║
+║  Commands:                                                  ║
+║    approved      — Pass gate, continue to IMPLEMENT         ║
+║    changes: ...  — Request modifications                    ║
+║    show [file]   — Display a deliverable                    ║
+═══════════════════════════════════════════════════════════════
+```
+
+**Gate presentation (composition-gate):**
+```
+═══════════════════════════════════════════════════════════════
+║  COMPOSITION GATE                              [HUMAN]     ║
+║                                                             ║
+║  Deliverables:                                              ║
+║    📄 DECK-TEXT-SCHEMA.json — Slide text and structure      ║
+║    📄 DECK-IMAGE-SCHEMA.json — Visual specs per slide       ║
+║                                                             ║
+║  Summary:                                                   ║
+║    ✓ Slides composed: 11                                    ║
+║    ✓ Narrative flow: 3-act arc                              ║
+║                                                             ║
+║  Commands:                                                  ║
+║    approved      — Pass gate, continue to VALIDATE          ║
+║    changes: ...  — Request modifications                    ║
+║    show [file]   — Display a deliverable                    ║
+═══════════════════════════════════════════════════════════════
+```
+
+**Gate presentation (quality-gate):**
+```
+═══════════════════════════════════════════════════════════════
+║  QUALITY GATE                                  [HUMAN]     ║
+║                                                             ║
+║  Deliverables:                                              ║
+║    📄 QUALITY-REVIEW.md — Content accuracy, brand check     ║
+║                                                             ║
+║  Summary:                                                   ║
+║    ✓ Content accuracy: verified                             ║
+║    ✓ Brand compliance: aligned                              ║
+║                                                             ║
+║  Commands:                                                  ║
+║    approved      — Pass gate, continue to DOCUMENT          ║
+║    changes: ...  — Request modifications                    ║
+║    show [file]   — Display a deliverable                    ║
+═══════════════════════════════════════════════════════════════
+```
+
+**Gate presentation (render-gate):**
+```
+═══════════════════════════════════════════════════════════════
+║  RENDER GATE                                   [HUMAN]     ║
+║                                                             ║
+║  Deliverables:                                              ║
+║    📄 output.pptx — Final rendered presentation             ║
+║                                                             ║
+║  Summary:                                                   ║
+║    ✓ Slide count: 11                                        ║
+║    ✓ File size: 2.4 MB                                      ║
+║                                                             ║
+║  Commands:                                                  ║
+║    approved      — Pass gate, continue to COMPLETE          ║
+║    changes: ...  — Request modifications                    ║
+║    show [file]   — Display a deliverable                    ║
 ═══════════════════════════════════════════════════════════════
 ```
 
@@ -232,91 +313,252 @@ Deck Loop: Initializing...
 
 User: go
 
-Deck Loop: Starting INIT phase...
+══════════════════════════════════════
+  INIT                           [1/6]
+══════════════════════════════════════
 
-  [1/1] context-ingestion → Gathering sources...
-        ✓ CONTEXT-SOURCES.md (4 sources cataloged)
-        ✓ RAW-CONTEXT.md (revenue data, team metrics, narrative)
+  ┌─ context-ingestion
+  │  Gathering sources...
+  │  Cataloging 4 sources across 2 categories...
+  │  Extracting facts, data, and quotes...
+  │
+  │  Output:
+  │    📄 CONTEXT-BRIEF.md — 4 sources, audience identified
+  └─ ✓ context-ingestion complete
 
-  ✓ INIT phase complete
+  ✓ INIT complete (1 skill, 1 deliverable)
 
-  ═══════════════════════════════════════════════════════
-  ║  CONTEXT GATE                                       ║
-  ║                                                     ║
-  ║  4 sources processed across 2 categories.           ║
-  ║  Key data: revenue, team performance, outlook.      ║
-  ║                                                     ║
-  ║  Say 'approved' to continue to SCAFFOLD.            ║
-  ═══════════════════════════════════════════════════════
+  ═══════════════════════════════════════════════════════════════
+  ║  CONTEXT GATE                                  [HUMAN]     ║
+  ║                                                             ║
+  ║  Deliverables:                                              ║
+  ║    📄 CONTEXT-BRIEF.md — Sources gathered, audience ID'd    ║
+  ║                                                             ║
+  ║  Summary:                                                   ║
+  ║    ✓ Sources gathered: 4                                    ║
+  ║    ✓ Audience identified: Executive Board                   ║
+  ║                                                             ║
+  ║  Commands:                                                  ║
+  ║    approved      — Pass gate, continue to SCAFFOLD          ║
+  ║    changes: ...  — Request modifications                    ║
+  ║    show [file]   — Display a deliverable                    ║
+  ═══════════════════════════════════════════════════════════════
 
 User: approved
 
   Gate passed: context-gate ✓
 
-Deck Loop: Starting SCAFFOLD phase...
+══════════════════════════════════════
+  SCAFFOLD                       [2/6]
+══════════════════════════════════════
 
-  [1/1] taste-schema → Extracting brand identity...
-        ✓ taste-schema.json
-          12 visual dimensions (confidence: 0.88)
-          8 narrative dimensions (confidence: 0.91)
-          Primary palette: #1A2B5E, #4A90D9, #F5F7FA
+  ┌─ taste-schema
+  │  Extracting brand identity...
+  │  Analyzing visual dimensions...
+  │  Analyzing narrative dimensions...
+  │
+  │  Output:
+  │    📄 TASTE-SCHEMA.json — Brand identity extracted
+  │       12 visual dimensions (confidence: 0.88)
+  │       8 narrative dimensions (confidence: 0.91)
+  │       Primary palette: #1A2B5E, #4A90D9, #F5F7FA
+  └─ ✓ taste-schema complete
 
-  ✓ SCAFFOLD phase complete
+  ✓ SCAFFOLD complete (1 skill, 1 deliverable)
 
-  ═══════════════════════════════════════════════════════
-  ║  TASTE GATE                                         ║
-  ║                                                     ║
-  ║  Brand identity extracted.                          ║
-  ║  Overall confidence: 0.89                           ║
-  ║                                                     ║
-  ║  Say 'approved' to continue to IMPLEMENT.           ║
-  ═══════════════════════════════════════════════════════
+  ═══════════════════════════════════════════════════════════════
+  ║  TASTE GATE                                    [HUMAN]     ║
+  ║                                                             ║
+  ║  Deliverables:                                              ║
+  ║    📄 TASTE-SCHEMA.json — Brand palette, typography, layout ║
+  ║                                                             ║
+  ║  Summary:                                                   ║
+  ║    ✓ Brand palette: extracted                               ║
+  ║    ✓ Typography: matched                                    ║
+  ║    ✓ Layout rules: defined                                  ║
+  ║    ✓ Overall confidence: 0.89                               ║
+  ║                                                             ║
+  ║  Commands:                                                  ║
+  ║    approved      — Pass gate, continue to IMPLEMENT         ║
+  ║    changes: ...  — Request modifications                    ║
+  ║    show [file]   — Display a deliverable                    ║
+  ═══════════════════════════════════════════════════════════════
 
 User: approved
 
   Gate passed: taste-gate ✓
 
-Deck Loop: Starting IMPLEMENT phase...
+══════════════════════════════════════
+  IMPLEMENT                      [3/6]
+══════════════════════════════════════
 
-  [1/2] deck-text-schema → Composing slides...
-        ✓ deck-text-schema.json
-          11 slides, 3-act narrative arc
-          Opening: title + agenda
-          Development: revenue, segments, team, pipeline
-          Closing: outlook + Q&A
+  ┌─ deck-text-schema
+  │  Composing slides...
+  │  Building narrative arc...
+  │  Structuring 11 slides across 3 acts...
+  │
+  │  Output:
+  │    📄 DECK-TEXT-SCHEMA.json — 11 slides, 3-act arc
+  │       Opening: title + agenda
+  │       Development: revenue, segments, team, pipeline
+  │       Closing: outlook + Q&A
+  └─ ✓ deck-text-schema complete
 
-  [2/2] deck-image-schema → Defining visuals...
-        ✓ deck-image-schema.json
-          6 text-forward slides (stat callout, list post)
-          5 image-forward slides (charts, team photos)
-          11 image generation prompts created
+  ┌─ deck-image-schema
+  │  Defining visuals per slide...
+  │  Classifying slide archetypes...
+  │  Generating image prompts...
+  │
+  │  Output:
+  │    📄 DECK-IMAGE-SCHEMA.json — 11 visual specs
+  │       6 text-forward slides (stat callout, list post)
+  │       5 image-forward slides (charts, team photos)
+  │       11 image generation prompts created
+  └─ ✓ deck-image-schema complete
 
-  ✓ IMPLEMENT phase complete
+  ✓ IMPLEMENT complete (2 skills, 2 deliverables)
 
-  ═══════════════════════════════════════════════════════
-  ║  COMPOSITION GATE                                   ║
-  ║                                                     ║
-  ║  11 slides composed with visual specs.              ║
-  ║  Narrative arc: results → analysis → outlook.       ║
-  ║                                                     ║
-  ║  Say 'approved' to continue to VALIDATE.            ║
-  ═══════════════════════════════════════════════════════
+  ═══════════════════════════════════════════════════════════════
+  ║  COMPOSITION GATE                              [HUMAN]     ║
+  ║                                                             ║
+  ║  Deliverables:                                              ║
+  ║    📄 DECK-TEXT-SCHEMA.json — Slide text and structure      ║
+  ║    📄 DECK-IMAGE-SCHEMA.json — Visual specs per slide       ║
+  ║                                                             ║
+  ║  Summary:                                                   ║
+  ║    ✓ Slides composed: 11                                    ║
+  ║    ✓ Narrative flow: 3-act arc                              ║
+  ║                                                             ║
+  ║  Commands:                                                  ║
+  ║    approved      — Pass gate, continue to VALIDATE          ║
+  ║    changes: ...  — Request modifications                    ║
+  ║    show [file]   — Display a deliverable                    ║
+  ═══════════════════════════════════════════════════════════════
 
 User: approved
 
   Gate passed: composition-gate ✓
 
-  ...continues through VALIDATE → DOCUMENT → COMPLETE
+══════════════════════════════════════
+  VALIDATE                       [4/6]
+══════════════════════════════════════
 
-  ═══════════════════════════════════════════════════════
-  ║  DECK COMPLETE                                      ║
-  ║                                                     ║
-  ║  Output: Q4-2025-Sales-Results.pptx                 ║
-  ║  Slides: 11                                         ║
-  ║  Quality: 91/100                                    ║
-  ║  Brand alignment: 0.89                              ║
-  ║  Gates passed: 5/5                                  ║
-  ═══════════════════════════════════════════════════════
+  ┌─ content-analysis
+  │  Auditing text completeness...
+  │  Checking image requirement coverage...
+  │  Verifying brand alignment...
+  │
+  │  Output:
+  │    📄 QUALITY-REVIEW.md — Quality score: 91/100
+  └─ ✓ content-analysis complete
+
+  ✓ VALIDATE complete (1 skill, 1 deliverable)
+
+  ═══════════════════════════════════════════════════════════════
+  ║  QUALITY GATE                                  [HUMAN]     ║
+  ║                                                             ║
+  ║  Deliverables:                                              ║
+  ║    📄 QUALITY-REVIEW.md — Content accuracy, brand check     ║
+  ║                                                             ║
+  ║  Summary:                                                   ║
+  ║    ✓ Content accuracy: verified                             ║
+  ║    ✓ Brand compliance: aligned                              ║
+  ║                                                             ║
+  ║  Commands:                                                  ║
+  ║    approved      — Pass gate, continue to DOCUMENT          ║
+  ║    changes: ...  — Request modifications                    ║
+  ║    show [file]   — Display a deliverable                    ║
+  ═══════════════════════════════════════════════════════════════
+
+User: approved
+
+  Gate passed: quality-gate ✓
+
+══════════════════════════════════════
+  DOCUMENT                       [5/6]
+══════════════════════════════════════
+
+  ┌─ pptx
+  │  Converting schemas to PowerPoint...
+  │  Applying CSS design system...
+  │  Placing images across 11 slides...
+  │
+  │  Output:
+  │    📄 output.pptx — 11 slides, 2.4 MB
+  └─ ✓ pptx complete
+
+  ✓ DOCUMENT complete (1 skill, 1 deliverable)
+
+  ═══════════════════════════════════════════════════════════════
+  ║  RENDER GATE                                   [HUMAN]     ║
+  ║                                                             ║
+  ║  Deliverables:                                              ║
+  ║    📄 output.pptx — Final rendered presentation             ║
+  ║                                                             ║
+  ║  Summary:                                                   ║
+  ║    ✓ Slide count: 11                                        ║
+  ║    ✓ File size: 2.4 MB                                      ║
+  ║                                                             ║
+  ║  Commands:                                                  ║
+  ║    approved      — Pass gate, continue to COMPLETE          ║
+  ║    changes: ...  — Request modifications                    ║
+  ║    show [file]   — Display a deliverable                    ║
+  ═══════════════════════════════════════════════════════════════
+
+User: approved
+
+  Gate passed: render-gate ✓
+
+══════════════════════════════════════
+  COMPLETE                       [6/6]
+══════════════════════════════════════
+
+  ┌─ retrospective
+  │  Reviewing loop execution...
+  │  Analyzing what worked and what didn't...
+  └─ ✓ RETROSPECTIVE.md
+
+  ✓ COMPLETE (1 skill, 1 deliverable)
+
+╔═════════════════════════════════════════════════════════════════════╗
+║                                                                     ║
+║   DECK LOOP COMPLETE                                                ║
+║                                                                     ║
+╠═════════════════════════════════════════════════════════════════════╣
+║                                                                     ║
+║   PHASES                                                            ║
+║   ──────                                                            ║
+║   ✓ INIT        Context gathered from 4 sources                     ║
+║   ✓ SCAFFOLD    Brand identity extracted (confidence: 0.89)         ║
+║   ✓ IMPLEMENT   11 slides composed with visual specs                ║
+║   ✓ VALIDATE    Content quality verified (91/100)                   ║
+║   ✓ DOCUMENT    PowerPoint rendered (2.4 MB)                        ║
+║   ✓ COMPLETE    Retrospective captured                              ║
+║                                                                     ║
+║   GATES PASSED                                                      ║
+║   ────────────                                                      ║
+║   ✓ Context Gate [HUMAN]                                            ║
+║   ✓ Taste Gate [HUMAN]                                              ║
+║   ✓ Composition Gate [HUMAN]                                        ║
+║   ✓ Quality Gate [HUMAN]                                            ║
+║   ✓ Render Gate [HUMAN]                                             ║
+║                                                                     ║
+║   DELIVERABLES                                                      ║
+║   ────────────                                                      ║
+║   📄 CONTEXT-BRIEF.md        Sources and audience brief             ║
+║   📄 TASTE-SCHEMA.json       Brand identity schema                  ║
+║   📄 DECK-TEXT-SCHEMA.json   Slide text and narrative arc           ║
+║   📄 DECK-IMAGE-SCHEMA.json  Visual specifications                  ║
+║   📄 QUALITY-REVIEW.md       Content quality audit                  ║
+║   📄 output.pptx             Final presentation (11 slides)         ║
+║   📄 RETROSPECTIVE.md        Loop retrospective                     ║
+║                                                                     ║
+║   OUTPUT                                                            ║
+║   ──────                                                            ║
+║   📄 Q4-2025-Sales-Results.pptx                                     ║
+║   Slides: 11  |  Quality: 91/100  |  Brand: 0.89                   ║
+║                                                                     ║
+╚═════════════════════════════════════════════════════════════════════╝
 ```
 
 ## Resuming a Session
@@ -333,18 +575,24 @@ Deck Loop v1.0.0: Found existing deck state.
     ✓ SCAFFOLD
 
   Gates:
-    ✓ context-gate (approved)
-    ✓ taste-gate (approved)
-    ○ composition-gate (pending)
-    ○ quality-gate (pending)
-    ○ render-gate (pending)
+    ✓ context-gate [HUMAN] (approved)
+    ✓ taste-gate [HUMAN] (approved)
+    ○ composition-gate [HUMAN] (pending)
+    ○ quality-gate [HUMAN] (pending)
+    ○ render-gate [HUMAN] (pending)
 
   Resume? [Y/n]:
 
 User: go
 
 Deck Loop: Resuming IMPLEMENT phase...
-  [1/2] deck-text-schema → Composing slides...
+
+══════════════════════════════════════
+  IMPLEMENT                      [3/6]
+══════════════════════════════════════
+
+  ┌─ deck-text-schema
+  │  Composing slides...
 ```
 
 ## References

@@ -89,22 +89,67 @@ document            retrospective
 | `findings-gate` | REVIEW | human | User says `approved` | ARCHITECTURE-REVIEW.md, SECURITY-AUDIT.md, PERF-ANALYSIS.md |
 | `report-gate` | DOCUMENT | human | User says `approved` | AUDIT-REPORT.md |
 
+**Gate presentation (scope-gate):**
+```
+═══════════════════════════════════════════════════════════════
+║  SCOPE GATE                                    [HUMAN]     ║
+║                                                             ║
+║  Deliverables:                                              ║
+║    📄 AUDIT-SCOPE.md — Audit boundaries and focus areas     ║
+║                                                             ║
+║  Summary:                                                   ║
+║    ✓ Scope: architecture, security, performance             ║
+║    ✓ Coverage: all modules included                         ║
+║                                                             ║
+║  Commands:                                                  ║
+║    approved      — Pass gate, continue to REVIEW            ║
+║    changes: ...  — Request modifications                    ║
+║    show scope    — Display AUDIT-SCOPE.md                   ║
+═══════════════════════════════════════════════════════════════
+```
+
 **Gate presentation (findings-gate):**
 ```
 ═══════════════════════════════════════════════════════════════
-║  FINDINGS GATE                                              ║
+║  FINDINGS GATE                                 [HUMAN]     ║
 ║                                                             ║
-║  3 review deliverables ready:                               ║
-║    ARCHITECTURE-REVIEW.md — 5 findings (1 critical)         ║
-║    SECURITY-AUDIT.md — 3 findings (0 critical)              ║
-║    PERF-ANALYSIS.md — 4 findings (2 high)                   ║
+║  Deliverables:                                              ║
+║    📄 ARCHITECTURE-REVIEW.md — Architecture findings        ║
+║    📄 SECURITY-AUDIT.md — Security posture assessment       ║
+║    📄 PERF-ANALYSIS.md — Performance analysis               ║
+║                                                             ║
+║  Summary:                                                   ║
+║    ✓ Architecture: 5 findings (1 critical, 2 high)          ║
+║    ✓ Security: 3 findings (0 critical, 1 medium)            ║
+║    ✓ Performance: 4 findings (2 high, 2 medium)             ║
+║    ✓ Total: 12 findings across 3 domains                    ║
 ║                                                             ║
 ║  Commands:                                                  ║
-║    approved     — Pass gate, continue to VALIDATE           ║
-║    changes: ... — Request deeper analysis on specific area   ║
-║    show arch    — Display ARCHITECTURE-REVIEW.md            ║
+║    approved      — Pass gate, continue to VALIDATE          ║
+║    changes: ...  — Request deeper analysis on specific area  ║
+║    show arch     — Display ARCHITECTURE-REVIEW.md           ║
 ║    show security — Display SECURITY-AUDIT.md                ║
-║    show perf    — Display PERF-ANALYSIS.md                  ║
+║    show perf     — Display PERF-ANALYSIS.md                 ║
+═══════════════════════════════════════════════════════════════
+```
+
+**Gate presentation (report-gate):**
+```
+═══════════════════════════════════════════════════════════════
+║  REPORT GATE                                   [HUMAN]     ║
+║                                                             ║
+║  Deliverables:                                              ║
+║    📄 AUDIT-REPORT.md — Consolidated audit report           ║
+║                                                             ║
+║  Summary:                                                   ║
+║    ✓ Executive summary compiled                             ║
+║    ✓ Findings prioritized by severity                       ║
+║    ✓ Recommendations with effort estimates                  ║
+║                                                             ║
+║  Commands:                                                  ║
+║    approved      — Pass gate, continue to COMPLETE          ║
+║    changes: ...  — Request modifications                    ║
+║    show report   — Display AUDIT-REPORT.md                  ║
 ═══════════════════════════════════════════════════════════════
 ```
 
@@ -155,49 +200,194 @@ Audit Loop v1.0.0: Starting system audit...
 
 User: go
 
-Audit Loop: Starting INIT phase...
+══════════════════════════════════════
+  INIT                           [1/5]
+══════════════════════════════════════
 
-  [1/1] requirements → Defining audit scope...
-        ✓ AUDIT-SCOPE.md (architecture, security, performance)
+  ┌─ requirements
+  │  Defining audit scope...
+  │  Identifying evaluation criteria...
+  │
+  │  Output:
+  │    📄 AUDIT-SCOPE.md — architecture, security, performance
+  └─ ✓ requirements complete
 
-  ✓ INIT phase complete
+  ✓ INIT complete (1 skill, 1 deliverable)
 
-  ═══════════════════════════════════════════════════════
-  ║  SCOPE GATE                                         ║
-  ║                                                     ║
-  ║  AUDIT-SCOPE.md ready for review.                   ║
-  ║  Coverage: architecture, security, performance.     ║
-  ║                                                     ║
-  ║  Say 'approved' to continue to REVIEW.              ║
-  ═══════════════════════════════════════════════════════
+  ═══════════════════════════════════════════════════════════════
+  ║  SCOPE GATE                                    [HUMAN]     ║
+  ║                                                             ║
+  ║  Deliverables:                                              ║
+  ║    📄 AUDIT-SCOPE.md — Audit boundaries and focus areas     ║
+  ║                                                             ║
+  ║  Summary:                                                   ║
+  ║    ✓ Scope: architecture, security, performance             ║
+  ║    ✓ Coverage: all modules included                         ║
+  ║                                                             ║
+  ║  Commands:                                                  ║
+  ║    approved      — Pass gate, continue to REVIEW            ║
+  ║    changes: ...  — Request modifications                    ║
+  ║    show scope    — Display AUDIT-SCOPE.md                   ║
+  ═══════════════════════════════════════════════════════════════
 
 User: approved
 
   Gate passed: scope-gate ✓
 
-Audit Loop: Starting REVIEW phase...
+══════════════════════════════════════
+  REVIEW                         [2/5]
+══════════════════════════════════════
 
-  [1/3] architecture-review → Analyzing architecture...
-        ✓ ARCHITECTURE-REVIEW.md (5 findings)
-  [2/3] security-audit → Assessing security posture...
-        ✓ SECURITY-AUDIT.md (3 findings)
-  [3/3] perf-analysis → Analyzing performance...
-        ✓ PERF-ANALYSIS.md (4 findings)
+  ┌─ architecture-review
+  │  Analyzing architecture patterns...
+  │  Evaluating component boundaries...
+  │
+  │  Output:
+  │    📄 ARCHITECTURE-REVIEW.md — 5 findings (1 critical)
+  └─ ✓ architecture-review complete
 
-  ✓ REVIEW phase complete
+  ┌─ security-audit
+  │  Assessing security posture...
+  │  Scanning for vulnerabilities...
+  │
+  │  Output:
+  │    📄 SECURITY-AUDIT.md — 3 findings (0 critical)
+  └─ ✓ security-audit complete
 
-  ═══════════════════════════════════════════════════════
-  ║  FINDINGS GATE                                      ║
-  ║                                                     ║
-  ║  12 total findings across 3 domains.                ║
-  ║  1 critical, 2 high, 5 medium, 4 low.              ║
-  ║                                                     ║
-  ║  Say 'approved' to continue to VALIDATE.            ║
-  ═══════════════════════════════════════════════════════
+  ┌─ perf-analysis
+  │  Analyzing performance characteristics...
+  │  Identifying bottlenecks...
+  │
+  │  Output:
+  │    📄 PERF-ANALYSIS.md — 4 findings (2 high)
+  └─ ✓ perf-analysis complete
+
+  ✓ REVIEW complete (3 skills, 3 deliverables)
+
+  ═══════════════════════════════════════════════════════════════
+  ║  FINDINGS GATE                                 [HUMAN]     ║
+  ║                                                             ║
+  ║  Deliverables:                                              ║
+  ║    📄 ARCHITECTURE-REVIEW.md — Architecture findings        ║
+  ║    📄 SECURITY-AUDIT.md — Security posture assessment       ║
+  ║    📄 PERF-ANALYSIS.md — Performance analysis               ║
+  ║                                                             ║
+  ║  Summary:                                                   ║
+  ║    ✓ Architecture: 5 findings (1 critical, 2 high)          ║
+  ║    ✓ Security: 3 findings (0 critical, 1 medium)            ║
+  ║    ✓ Performance: 4 findings (2 high, 2 medium)             ║
+  ║    ✓ Total: 12 findings across 3 domains                    ║
+  ║                                                             ║
+  ║  Commands:                                                  ║
+  ║    approved      — Pass gate, continue to VALIDATE          ║
+  ║    changes: ...  — Request deeper analysis on specific area  ║
+  ║    show arch     — Display ARCHITECTURE-REVIEW.md           ║
+  ║    show security — Display SECURITY-AUDIT.md                ║
+  ║    show perf     — Display PERF-ANALYSIS.md                 ║
+  ═══════════════════════════════════════════════════════════════
 
 User: approved
 
   Gate passed: findings-gate ✓
 
-  ...continues through VALIDATE → DOCUMENT → COMPLETE
+══════════════════════════════════════
+  VALIDATE                       [3/5]
+══════════════════════════════════════
+
+  ┌─ integration-test
+  │  Running integration checks...
+  │  Verifying cross-module interactions...
+  │
+  │  Output:
+  │    📄 Integration tests passed
+  └─ ✓ integration-test complete
+
+  ┌─ code-verification
+  │  Verifying findings against codebase...
+  │  Confirming severity classifications...
+  │
+  │  Output:
+  │    📄 All findings verified
+  └─ ✓ code-verification complete
+
+  ✓ VALIDATE complete (2 skills, 0 new deliverables)
+
+══════════════════════════════════════
+  DOCUMENT                       [4/5]
+══════════════════════════════════════
+
+  ┌─ document
+  │  Compiling audit report...
+  │  Writing executive summary...
+  │  Prioritizing recommendations...
+  │
+  │  Output:
+  │    📄 AUDIT-REPORT.md — Consolidated report with prioritized findings
+  └─ ✓ document complete
+
+  ✓ DOCUMENT complete (1 skill, 1 deliverable)
+
+  ═══════════════════════════════════════════════════════════════
+  ║  REPORT GATE                                   [HUMAN]     ║
+  ║                                                             ║
+  ║  Deliverables:                                              ║
+  ║    📄 AUDIT-REPORT.md — Consolidated audit report           ║
+  ║                                                             ║
+  ║  Summary:                                                   ║
+  ║    ✓ Executive summary compiled                             ║
+  ║    ✓ Findings prioritized by severity                       ║
+  ║    ✓ Recommendations with effort estimates                  ║
+  ║                                                             ║
+  ║  Commands:                                                  ║
+  ║    approved      — Pass gate, continue to COMPLETE          ║
+  ║    changes: ...  — Request modifications                    ║
+  ║    show report   — Display AUDIT-REPORT.md                  ║
+  ═══════════════════════════════════════════════════════════════
+
+User: approved
+
+  Gate passed: report-gate ✓
+
+══════════════════════════════════════
+  COMPLETE                       [5/5]
+══════════════════════════════════════
+
+  ┌─ retrospective
+  │  Reviewing audit execution...
+  │  Capturing learnings...
+  │
+  │  Output:
+  │    📄 RETROSPECTIVE.md — Audit learnings
+  └─ ✓ retrospective complete
+
+  ✓ COMPLETE (1 skill, 1 deliverable)
+
+╔═════════════════════════════════════════════════════════════════════╗
+║                                                                     ║
+║   AUDIT LOOP COMPLETE                                               ║
+║                                                                     ║
+╠═════════════════════════════════════════════════════════════════════╣
+║                                                                     ║
+║   PHASES                                                            ║
+║   ──────                                                            ║
+║   ✓ INIT        Audit scope defined                                 ║
+║   ✓ REVIEW      Architecture, security, performance reviewed        ║
+║   ✓ VALIDATE    Findings verified                                   ║
+║   ✓ DOCUMENT    Audit report compiled                               ║
+║   ✓ COMPLETE    Retrospective captured                              ║
+║                                                                     ║
+║   GATES PASSED                                                      ║
+║   ────────────                                                      ║
+║   ✓ Scope Review [HUMAN]                                            ║
+║   ✓ Findings Review [HUMAN]                                         ║
+║   ✓ Report Review [HUMAN]                                           ║
+║                                                                     ║
+║   DELIVERABLES                                                      ║
+║   ────────────                                                      ║
+║   📄 AUDIT-SCOPE.md       Scope and evaluation criteria             ║
+║   📄 FINDINGS.md          Categorized findings by severity          ║
+║   📄 AUDIT-REPORT.md      Consolidated audit report                 ║
+║   📄 RETROSPECTIVE.md     Audit learnings                           ║
+║                                                                     ║
+╚═════════════════════════════════════════════════════════════════════╝
 ```

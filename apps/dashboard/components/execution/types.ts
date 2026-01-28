@@ -10,6 +10,15 @@ export interface LogEntry {
   details?: Record<string, unknown>;
 }
 
+export interface GateDefinition {
+  id: string;
+  name: string;
+  afterPhase: string;
+  required: boolean;
+  approvalType: 'human' | 'auto' | 'conditional';
+  deliverables?: string[];
+}
+
 export interface Execution {
   id: string;
   loopId: string;

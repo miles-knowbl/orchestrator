@@ -95,11 +95,15 @@ code-verification  code-review         retrospective
 **Gate presentation (repro-gate):**
 ```
 ═══════════════════════════════════════════════════════════════
-║  REPRO GATE                                                 ║
+║  REPRO GATE                                    [HUMAN]     ║
 ║                                                             ║
-║  BUG-REPRODUCTION.md ready for review.                      ║
-║  Status: reproduced consistently (3/3 attempts)             ║
-║  Environment: Node 20.x, macOS, SQLite 3.42                ║
+║  Deliverables:                                              ║
+║    📄 BUG-REPRODUCTION.md — Reproduction steps and evidence ║
+║                                                             ║
+║  Summary:                                                   ║
+║    ✓ Reproduced: 3/3 attempts                               ║
+║    ✓ Environment: Node 20.x, macOS, SQLite 3.42            ║
+║    ✓ Trigger identified                                     ║
 ║                                                             ║
 ║  Commands:                                                  ║
 ║    approved     — Pass gate, continue to SCAFFOLD           ║
@@ -155,39 +159,100 @@ Bugfix Loop v1.0.0: Starting systematic bug fix...
 
 User: go
 
-Bugfix Loop: Starting INIT phase...
+══════════════════════════════════════
+  INIT                           [1/7]
+══════════════════════════════════════
 
-  [1/1] bug-reproducer → Describe the bug.
+  ┌─ bug-reproducer
+  │  Gathering bug report details...
 
 User: Users report 500 error when submitting forms with file attachments
       larger than 5MB. Started after last deploy. Error: "PayloadTooLargeError".
 
-  [1/1] bug-reproducer → Reproducing...
-        ✓ BUG-REPRODUCTION.md
-          Reproduced: 3/3 attempts with 6MB file upload
-          Error: PayloadTooLargeError at express body-parser
-          Not reproducible with files < 5MB
+  │  Attempting reproduction (attempt 1/3)...
+  │  Attempting reproduction (attempt 2/3)...
+  │  Attempting reproduction (attempt 3/3)...
+  │
+  │  Output:
+  │    📄 BUG-REPRODUCTION.md — 3/3 reproduced, trigger: file > 5MB
+  └─ ✓ bug-reproducer complete
 
-  ✓ INIT phase complete
+  ✓ INIT complete (1 skill, 1 deliverable)
 
-  ═══════════════════════════════════════════════════════
-  ║  REPRO GATE                                         ║
-  ║                                                     ║
-  ║  Bug reproduced consistently.                       ║
-  ║  Trigger: file upload > 5MB                         ║
-  ║                                                     ║
-  ║  Say 'approved' to continue to SCAFFOLD.            ║
-  ═══════════════════════════════════════════════════════
+  ═══════════════════════════════════════════════════════════════
+  ║  REPRO GATE                                    [HUMAN]     ║
+  ║                                                             ║
+  ║  Deliverables:                                              ║
+  ║    📄 BUG-REPRODUCTION.md — Reproduction steps              ║
+  ║                                                             ║
+  ║  Summary:                                                   ║
+  ║    ✓ Reproduced: 3/3 attempts with 6MB upload              ║
+  ║    ✓ Trigger: file upload > 5MB                             ║
+  ║    ✓ Error: PayloadTooLargeError at body-parser             ║
+  ║                                                             ║
+  ║  Commands:                                                  ║
+  ║    approved      — Pass gate, continue to SCAFFOLD          ║
+  ║    changes: ...  — Adjust reproduction steps                ║
+  ║    show repro    — Display BUG-REPRODUCTION.md              ║
+  ═══════════════════════════════════════════════════════════════
 
 User: approved
 
   Gate passed: repro-gate ✓
 
-Bugfix Loop: Starting SCAFFOLD phase...
-  [1/2] debug-assist → Tracing error path...
-  [2/2] root-cause-analysis → Identifying root cause...
-        ✓ ROOT-CAUSE.md
-          Cause: body-parser limit reduced from 50mb to default 100kb
-          in config refactor (commit abc123)
+══════════════════════════════════════
+  SCAFFOLD                       [2/7]
+══════════════════════════════════════
+
+  ┌─ debug-assist
+  │  Reading: BUG-REPRODUCTION.md
+  │  Tracing error path through codebase...
+  │  Identifying suspect components...
+  └─ ✓ debug-assist complete
+
+  ┌─ root-cause-analysis
+  │  Reading: BUG-REPRODUCTION.md
+  │  Analyzing debug traces...
+  │  Identifying root cause...
+  │
+  │  Output:
+  │    📄 ROOT-CAUSE.md — body-parser limit reduced in config refactor
+  └─ ✓ root-cause-analysis complete
+
+  ✓ SCAFFOLD complete (2 skills, 1 deliverable)
+
   ...
+
+╔═════════════════════════════════════════════════════════════════════╗
+║                                                                     ║
+║   BUGFIX LOOP COMPLETE                                              ║
+║                                                                     ║
+╠═════════════════════════════════════════════════════════════════════╣
+║                                                                     ║
+║   PHASES                                                            ║
+║   ──────                                                            ║
+║   ✓ INIT        Bug reproduced consistently                        ║
+║   ✓ SCAFFOLD    Root cause identified                               ║
+║   ✓ IMPLEMENT   Fix applied                                        ║
+║   ✓ TEST        Regression tests generated                          ║
+║   ✓ VERIFY      Build, tests, lint all passing                      ║
+║   ✓ REVIEW      Code review approved                                ║
+║   ✓ COMPLETE    Retrospective captured                              ║
+║                                                                     ║
+║   GATES PASSED                                                      ║
+║   ────────────                                                      ║
+║   ✓ Reproduction Confirmation [HUMAN]                               ║
+║   ✓ Diagnosis Approval [HUMAN]                                      ║
+║   ✓ Verification Check [AUTO]                                       ║
+║   ✓ Code Review Approval [HUMAN]                                    ║
+║                                                                     ║
+║   DELIVERABLES                                                      ║
+║   ────────────                                                      ║
+║   📄 BUG-REPRODUCTION.md    Reproduction steps and evidence         ║
+║   📄 ROOT-CAUSE.md          Diagnosis with debug traces             ║
+║   📄 VERIFICATION.md        Build/test/lint results                  ║
+║   📄 CODE-REVIEW.md         Fix quality review                      ║
+║   📄 RETROSPECTIVE.md       Learnings and prevention                ║
+║                                                                     ║
+╚═════════════════════════════════════════════════════════════════════╝
 ```

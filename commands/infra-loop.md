@@ -86,21 +86,44 @@ distribute
 
 | Gate | After Phase | Type | Blocks Until | Deliverables |
 |------|-------------|------|--------------|-------------|
-| `infra-gate` | SCAFFOLD | human | User says `approved` | INFRASTRUCTURE-PLAN.md |
-| `deploy-gate` | SHIP | human | User says `approved` | Deploy artifacts, CI/CD config |
+| `infra-gate` | SCAFFOLD | human | User says `approved` | INFRA-PLAN.md |
+| `deploy-gate` | SHIP | human | User says `approved` | DEPLOY-REPORT.md |
 
-**Gate presentation:**
+**Gate presentation (infra-gate):**
 ```
 ═══════════════════════════════════════════════════════════════
-║  INFRA GATE                                                 ║
+║  INFRA GATE                                    [HUMAN]     ║
 ║                                                             ║
-║  INFRASTRUCTURE-PLAN.md ready for review.                   ║
-║  Covers: dev environment, containers, database, services.   ║
+║  Deliverables:                                              ║
+║    📄 INFRA-PLAN.md — Infrastructure architecture plan      ║
+║                                                             ║
+║  Summary:                                                   ║
+║    ✓ Services provisioned: Docker, database, CI/CD          ║
+║    ✓ Environments configured: dev, staging, production      ║
 ║                                                             ║
 ║  Commands:                                                  ║
-║    approved     — Pass gate, continue to IMPLEMENT          ║
-║    changes: ... — Request modifications                     ║
-║    show plan    — Display INFRASTRUCTURE-PLAN.md            ║
+║    approved      — Pass gate, continue to IMPLEMENT         ║
+║    changes: ...  — Request modifications                    ║
+║    show [file]   — Display a deliverable                    ║
+═══════════════════════════════════════════════════════════════
+```
+
+**Gate presentation (deploy-gate):**
+```
+═══════════════════════════════════════════════════════════════
+║  DEPLOY GATE                                   [HUMAN]     ║
+║                                                             ║
+║  Deliverables:                                              ║
+║    📄 DEPLOY-REPORT.md — Deployment verification report     ║
+║                                                             ║
+║  Summary:                                                   ║
+║    ✓ Deployment status: all targets healthy                 ║
+║    ✓ CI/CD pipeline: distribute.yml operational             ║
+║                                                             ║
+║  Commands:                                                  ║
+║    approved      — Pass gate, continue to COMPLETE          ║
+║    changes: ...  — Request modifications                    ║
+║    show [file]   — Display a deliverable                    ║
 ═══════════════════════════════════════════════════════════════
 ```
 
@@ -150,35 +173,179 @@ Infra Loop v1.0.0: Starting infrastructure provisioning...
 
 User: go
 
-Infra Loop: Starting INIT phase...
+══════════════════════════════════════
+  INIT                           [1/5]
+══════════════════════════════════════
 
-  [1/1] requirements → Gathering infrastructure requirements...
-        ✓ REQUIREMENTS.md (database, Docker, CI/CD, dev environment)
+  ┌─ requirements
+  │  Gathering infrastructure requirements...
+  │  Analyzing database, Docker, CI/CD, dev environment needs...
+  │
+  │  Output:
+  │    📄 REQUIREMENTS.md — Infrastructure requirements captured
+  └─ ✓ requirements complete
 
-  ✓ INIT phase complete
+  ✓ INIT complete (1 skill, 1 deliverable)
 
-Infra Loop: Starting SCAFFOLD phase...
+══════════════════════════════════════
+  SCAFFOLD                       [2/5]
+══════════════════════════════════════
 
-  [1/2] scaffold → Creating project structure...
-        ✓ Directory structure scaffolded
-  [2/2] infra-devenv → Configuring dev environment...
-        ✓ Dev environment configured
+  ┌─ scaffold
+  │  Creating project structure...
+  │  Generating directory layout and config files...
+  │
+  │  Output:
+  │    📄 Directory structure scaffolded
+  └─ ✓ scaffold complete
 
-  ✓ SCAFFOLD phase complete
+  ┌─ infra-devenv
+  │  Configuring dev environment...
+  │  Setting up local tooling and environment variables...
+  │
+  │  Output:
+  │    📄 Dev environment configured
+  └─ ✓ infra-devenv complete
 
-  ═══════════════════════════════════════════════════════
-  ║  INFRA GATE                                         ║
-  ║                                                     ║
-  ║  INFRASTRUCTURE-PLAN.md ready for review.            ║
-  ║                                                     ║
-  ║  Say 'approved' to continue to IMPLEMENT.           ║
-  ═══════════════════════════════════════════════════════
+  ✓ SCAFFOLD complete (2 skills, 1 deliverable)
+
+  ═══════════════════════════════════════════════════════════════
+  ║  INFRA GATE                                    [HUMAN]     ║
+  ║                                                             ║
+  ║  Deliverables:                                              ║
+  ║    📄 INFRA-PLAN.md — Infrastructure architecture plan      ║
+  ║                                                             ║
+  ║  Summary:                                                   ║
+  ║    ✓ Services provisioned: Docker, database, CI/CD          ║
+  ║    ✓ Environments configured: dev, staging, production      ║
+  ║                                                             ║
+  ║  Commands:                                                  ║
+  ║    approved      — Pass gate, continue to IMPLEMENT         ║
+  ║    changes: ...  — Request modifications                    ║
+  ║    show [file]   — Display a deliverable                    ║
+  ═══════════════════════════════════════════════════════════════
 
 User: approved
 
   Gate passed: infra-gate ✓
 
-Infra Loop: Starting IMPLEMENT phase...
-  [1/4] infra-docker → Building container definitions...
-  ...
+══════════════════════════════════════
+  IMPLEMENT                      [3/5]
+══════════════════════════════════════
+
+  ┌─ infra-docker
+  │  Building container definitions...
+  │  Creating Dockerfile and docker-compose.yml...
+  │
+  │  Output:
+  │    📄 Docker configuration created
+  └─ ✓ infra-docker complete
+
+  ┌─ infra-database
+  │  Provisioning database...
+  │  Setting up schemas, migrations, connection pooling...
+  │
+  │  Output:
+  │    📄 Database provisioned and configured
+  └─ ✓ infra-database complete
+
+  ┌─ infra-monorepo
+  │  Configuring monorepo structure...
+  │  Setting up workspaces and shared dependencies...
+  │
+  │  Output:
+  │    📄 Monorepo workspace configured
+  └─ ✓ infra-monorepo complete
+
+  ┌─ infra-services
+  │  Configuring services...
+  │  Setting up service discovery and networking...
+  │
+  │  Output:
+  │    📄 Services configured and connected
+  └─ ✓ infra-services complete
+
+  ✓ IMPLEMENT complete (4 skills, 4 deliverables)
+
+══════════════════════════════════════
+  SHIP                           [4/5]
+══════════════════════════════════════
+
+  ┌─ deploy
+  │  Deploying to target environments...
+  │  Verifying deployment health...
+  │
+  │  Output:
+  │    📄 DEPLOY-REPORT.md — Deployment verification
+  └─ ✓ deploy complete
+
+  ┌─ distribute
+  │  Setting up CI/CD workflow...
+  │
+  │  Output:
+  │    📄 .github/workflows/distribute.yml
+  └─ ✓ distribute complete
+
+  ✓ SHIP complete (2 skills, 2 deliverables)
+
+  ═══════════════════════════════════════════════════════════════
+  ║  DEPLOY GATE                                   [HUMAN]     ║
+  ║                                                             ║
+  ║  Deliverables:                                              ║
+  ║    📄 DEPLOY-REPORT.md — Deployment verification report     ║
+  ║                                                             ║
+  ║  Summary:                                                   ║
+  ║    ✓ Deployment status: all targets healthy                 ║
+  ║    ✓ CI/CD pipeline: distribute.yml operational             ║
+  ║                                                             ║
+  ║  Commands:                                                  ║
+  ║    approved      — Pass gate, continue to COMPLETE          ║
+  ║    changes: ...  — Request modifications                    ║
+  ║    show [file]   — Display a deliverable                    ║
+  ═══════════════════════════════════════════════════════════════
+
+User: approved
+
+  Gate passed: deploy-gate ✓
+
+══════════════════════════════════════
+  COMPLETE                       [5/5]
+══════════════════════════════════════
+
+  ┌─ retrospective
+  │  Reviewing loop execution...
+  │  Capturing infrastructure learnings...
+  │
+  │  Output:
+  │    📄 RETROSPECTIVE.md — Infrastructure learnings
+  └─ ✓ retrospective complete
+
+  ✓ COMPLETE (1 skill, 1 deliverable)
+
+╔═════════════════════════════════════════════════════════════════════╗
+║                                                                     ║
+║   INFRA LOOP COMPLETE                                               ║
+║                                                                     ║
+╠═════════════════════════════════════════════════════════════════════╣
+║                                                                     ║
+║   PHASES                                                            ║
+║   ──────                                                            ║
+║   ✓ INIT        Requirements gathered                               ║
+║   ✓ SCAFFOLD    Dev environment and scaffold set up                 ║
+║   ✓ IMPLEMENT   Docker, database, monorepo, services configured    ║
+║   ✓ SHIP        Deployed and distributed                            ║
+║   ✓ COMPLETE    Retrospective captured                              ║
+║                                                                     ║
+║   GATES PASSED                                                      ║
+║   ────────────                                                      ║
+║   ✓ Infrastructure Review [HUMAN]                                   ║
+║   ✓ Deployment Review [HUMAN]                                       ║
+║                                                                     ║
+║   DELIVERABLES                                                      ║
+║   ────────────                                                      ║
+║   📄 INFRA-PLAN.md        Infrastructure architecture               ║
+║   📄 DEPLOY-REPORT.md     Deployment verification                   ║
+║   📄 RETROSPECTIVE.md     Infrastructure learnings                  ║
+║                                                                     ║
+╚═════════════════════════════════════════════════════════════════════╝
 ```

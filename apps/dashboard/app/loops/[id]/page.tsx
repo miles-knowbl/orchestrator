@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { ArrowLeft, Layers, Play, Zap, Shield, Settings, BookOpen, WifiOff, FlaskConical } from 'lucide-react';
+import { ArrowLeft, Layers, Play, Zap, Shield, Settings, BookOpen, WifiOff, FlaskConical, FileText } from 'lucide-react';
+import { getApprovalTypeConfig } from '@/lib/gate-utils';
 import { Prose } from '@/components/Prose';
 import { fetchWithFallback } from '@/lib/api';
 
@@ -102,21 +103,58 @@ function PhaseTimeline({ phases, gates }: { phases: LoopPhase[]; gates: LoopGate
           </div>
 
           {/* Gates after this phase */}
-          {gatesByPhase[phase.name]?.map((gate) => (
-            <div key={gate.id} className="flex items-center gap-2 py-2 px-4">
-              <div className="flex-1 border-t border-dashed border-[#333]" />
-              <div className="flex items-center gap-2 bg-[#161616] border border-[#333] rounded-lg px-3 py-1.5">
-                <Shield className="w-3 h-3 text-yellow-500" />
-                <span className="text-xs text-gray-400">{gate.name}</span>
-                {gate.deliverables && gate.deliverables.length > 0 && (
-                  <span className="text-xs text-gray-600">
-                    ({gate.deliverables.length} deliverables)
-                  </span>
-                )}
+          {gatesByPhase[phase.name]?.map((gate) => {
+            const approvalConfig = getApprovalTypeConfig(gate.approvalType);
+            const ApprovalIcon = approvalConfig.icon;
+            return (
+              <div key={gate.id} className="relative py-2 px-4">
+                {/* Connector lines */}
+                <div className="absolute left-1/2 top-0 w-px h-2 bg-[#333]" />
+                <div className="absolute left-1/2 bottom-0 w-px h-2 bg-[#333]" />
+
+                {/* Gate card */}
+                <div className={`mx-auto max-w-md border rounded-xl overflow-hidden ${approvalConfig.bgClass} ${approvalConfig.borderClass}`}>
+                  <div className="px-4 py-3 flex items-center gap-3">
+                    <div
+                      className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border ${approvalConfig.bgClass} ${approvalConfig.borderClass}`}
+                    >
+                      <ApprovalIcon className={`w-4 h-4 ${approvalConfig.iconClass}`} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-white truncate">
+                          {gate.name}
+                        </span>
+                        {gate.required ? (
+                          <span className="text-xs text-red-400/70 shrink-0">Required</span>
+                        ) : (
+                          <span className="text-xs text-gray-500 shrink-0">Optional</span>
+                        )}
+                      </div>
+                      <span className={`text-xs ${approvalConfig.textClass}`}>
+                        {approvalConfig.label}
+                      </span>
+                    </div>
+                  </div>
+                  {gate.deliverables && gate.deliverables.length > 0 && (
+                    <div className="px-4 pb-3 border-t border-[#222]/50">
+                      <div className="flex flex-wrap gap-1.5 mt-2">
+                        {gate.deliverables.map((d) => (
+                          <span
+                            key={d}
+                            className="inline-flex items-center gap-1 text-xs bg-[#0a0a0a]/50 border border-[#333] px-2 py-0.5 rounded-md"
+                          >
+                            <FileText className="w-3 h-3 text-gray-500" />
+                            <span className="text-gray-400">{d}</span>
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="flex-1 border-t border-dashed border-[#333]" />
-            </div>
-          ))}
+            );
+          })}
         </div>
       ))}
     </div>

@@ -76,20 +76,43 @@ requirements     loop-composer        loop-to-slash-command   retrospective
 | `design-gate` | INIT | human | User says `approved` | LOOP-REQUIREMENTS.md |
 | `composition-gate` | SCAFFOLD | human | User says `approved` | loop.json, SKILL.md files |
 
+**Gate presentation (design-gate):**
+```
+═══════════════════════════════════════════════════════════════
+║  DESIGN GATE                                      [HUMAN]  ║
+║                                                             ║
+║  Deliverables:                                              ║
+║    📄 LOOP-REQUIREMENTS.md — Loop specification             ║
+║                                                             ║
+║  Summary:                                                   ║
+║    ✓ Phases defined: N                                      ║
+║    ✓ Skills identified: N                                   ║
+║    ✓ Gates planned: N                                       ║
+║                                                             ║
+║  Commands:                                                  ║
+║    approved      — Pass gate, continue to SCAFFOLD          ║
+║    changes: ...  — Request modifications                    ║
+║    show [file]   — Display a deliverable                    ║
+═══════════════════════════════════════════════════════════════
+```
+
 **Gate presentation (composition-gate):**
 ```
 ═══════════════════════════════════════════════════════════════
-║  COMPOSITION GATE                                           ║
+║  COMPOSITION GATE                                 [HUMAN]  ║
 ║                                                             ║
-║  Loop composition ready for review:                         ║
-║    loop.json — 6 phases, 3 gates, 8 skills                 ║
-║    4 SKILL.md files generated                               ║
+║  Deliverables:                                              ║
+║    📄 loop.json — Loop definition                           ║
+║    📄 SKILL.md files — Skill definitions                    ║
+║                                                             ║
+║  Summary:                                                   ║
+║    ✓ Skills created: N                                      ║
+║    ✓ Loop validated: yes                                    ║
 ║                                                             ║
 ║  Commands:                                                  ║
-║    approved     — Pass gate, continue to DOCUMENT           ║
-║    changes: ... — Adjust loop composition                   ║
-║    show loop    — Display loop.json                         ║
-║    show skills  — List generated SKILL.md files             ║
+║    approved      — Pass gate, continue to DOCUMENT          ║
+║    changes: ...  — Request modifications                    ║
+║    show [file]   — Display a deliverable                    ║
 ═══════════════════════════════════════════════════════════════
 ```
 
@@ -139,35 +162,137 @@ Meta Loop v1.0.0: Starting loop authorship...
 
 User: go
 
-Meta Loop: Starting INIT phase...
+══════════════════════════════════════════════════════════════
+  INIT [1/4]
+══════════════════════════════════════════════════════════════
 
-  [1/1] requirements → What loop do you need?
+  What loop do you need?
 
 User: I need a data pipeline loop that ingests, transforms, validates,
       and publishes datasets with quality checks.
 
-  [1/1] requirements → Structuring loop requirements...
-        ✓ LOOP-REQUIREMENTS.md
-          Domain: data engineering
-          Phases: 6 (INIT → INGEST → TRANSFORM → VALIDATE → PUBLISH → COMPLETE)
-          Gates: 3 (schema-gate, quality-gate, publish-gate)
+  ┌─ requirements
+  │  Structuring loop requirements...
+  │  Writing LOOP-REQUIREMENTS.md
+  │    Domain: data engineering
+  │    Phases: 6 (INIT → INGEST → TRANSFORM → VALIDATE → PUBLISH → COMPLETE)
+  │    Gates: 3 (schema-gate, quality-gate, publish-gate)
+  └─ ✓ requirements complete
 
-  ✓ INIT phase complete
+  ✓ INIT complete (1 skill, 1 deliverable)
 
-  ═══════════════════════════════════════════════════════
-  ║  DESIGN GATE                                        ║
-  ║                                                     ║
-  ║  LOOP-REQUIREMENTS.md ready for review.             ║
-  ║  Proposed: 6 phases, 3 gates, 7 skills.             ║
-  ║                                                     ║
-  ║  Say 'approved' to continue to SCAFFOLD.            ║
-  ═══════════════════════════════════════════════════════
+  ═══════════════════════════════════════════════════════════════
+  ║  DESIGN GATE                                      [HUMAN]  ║
+  ║                                                             ║
+  ║  Deliverables:                                              ║
+  ║    📄 LOOP-REQUIREMENTS.md — Loop specification             ║
+  ║                                                             ║
+  ║  Summary:                                                   ║
+  ║    ✓ Phases defined: 6                                      ║
+  ║    ✓ Skills identified: 7                                   ║
+  ║    ✓ Gates planned: 3                                       ║
+  ║                                                             ║
+  ║  Commands:                                                  ║
+  ║    approved      — Pass gate, continue to SCAFFOLD          ║
+  ║    changes: ...  — Request modifications                    ║
+  ║    show [file]   — Display a deliverable                    ║
+  ═══════════════════════════════════════════════════════════════
 
 User: approved
 
   Gate passed: design-gate ✓
 
-Meta Loop: Starting SCAFFOLD phase...
-  [1/2] loop-composer → Composing loop definition...
-  ...
+══════════════════════════════════════════════════════════════
+  SCAFFOLD [2/4]
+══════════════════════════════════════════════════════════════
+
+  ┌─ loop-composer
+  │  Composing loop definition from requirements...
+  │  Writing loop.json (6 phases, 3 gates, 7 skills)
+  └─ ✓ loop-composer complete
+
+  ┌─ skill-design
+  │  Generating SKILL.md for each skill...
+  │  Writing skills/ingest/SKILL.md
+  │  Writing skills/transform/SKILL.md
+  │  Writing skills/validate/SKILL.md
+  │  Writing skills/publish/SKILL.md
+  └─ ✓ skill-design complete
+
+  ✓ SCAFFOLD complete (2 skills, 5 deliverables)
+
+  ═══════════════════════════════════════════════════════════════
+  ║  COMPOSITION GATE                                 [HUMAN]  ║
+  ║                                                             ║
+  ║  Deliverables:                                              ║
+  ║    📄 loop.json — Loop definition                           ║
+  ║    📄 SKILL.md files — Skill definitions                    ║
+  ║                                                             ║
+  ║  Summary:                                                   ║
+  ║    ✓ Skills created: 4                                      ║
+  ║    ✓ Loop validated: yes                                    ║
+  ║                                                             ║
+  ║  Commands:                                                  ║
+  ║    approved      — Pass gate, continue to DOCUMENT          ║
+  ║    changes: ...  — Request modifications                    ║
+  ║    show [file]   — Display a deliverable                    ║
+  ═══════════════════════════════════════════════════════════════
+
+User: approved
+
+  Gate passed: composition-gate ✓
+
+══════════════════════════════════════════════════════════════
+  DOCUMENT [3/4]
+══════════════════════════════════════════════════════════════
+
+  ┌─ loop-to-slash-command
+  │  Generating slash command from loop definition...
+  │  Writing commands/data-pipeline-loop.md
+  └─ ✓ loop-to-slash-command complete
+
+  ┌─ document
+  │  Writing LOOP.md documentation...
+  └─ ✓ document complete
+
+  ✓ DOCUMENT complete (2 skills, 2 deliverables)
+
+══════════════════════════════════════════════════════════════
+  COMPLETE [4/4]
+══════════════════════════════════════════════════════════════
+
+  ┌─ retrospective
+  │  Capturing loop creation learnings...
+  │  Writing RETROSPECTIVE.md
+  └─ ✓ retrospective complete
+
+  ✓ COMPLETE complete (1 skill, 1 deliverable)
+
+╔═════════════════════════════════════════════════════════════════════╗
+║                                                                     ║
+║   META LOOP COMPLETE                                                ║
+║                                                                     ║
+╠═════════════════════════════════════════════════════════════════════╣
+║                                                                     ║
+║   PHASES                                                            ║
+║   ──────                                                            ║
+║   ✓ INIT        Loop requirements defined                           ║
+║   ✓ SCAFFOLD    Loop composed, skills designed                      ║
+║   ✓ DOCUMENT    Slash command and docs generated                    ║
+║   ✓ COMPLETE    Retrospective captured                              ║
+║                                                                     ║
+║   GATES PASSED                                                      ║
+║   ────────────                                                      ║
+║   ✓ Design Review [HUMAN]                                           ║
+║   ✓ Composition Review [HUMAN]                                      ║
+║                                                                     ║
+║   DELIVERABLES                                                      ║
+║   ────────────                                                      ║
+║   📄 LOOP-REQUIREMENTS.md   Loop specification                      ║
+║   📄 loop.json               Loop definition                        ║
+║   📄 SKILL.md files          Skill definitions                      ║
+║   📄 {loop-id}.md            Slash command file                     ║
+║   📄 RETROSPECTIVE.md        Loop creation learnings                ║
+║                                                                     ║
+╚═════════════════════════════════════════════════════════════════════╝
 ```

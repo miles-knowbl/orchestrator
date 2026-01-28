@@ -90,38 +90,65 @@ ARCHITECTURE.md    STACK-MAP.md     FEATURESPEC.md
 
 **Gate presentation (arch-gate):**
 ```
-===============================================================
-|  ARCHITECTURE GATE                                           |
-|                                                              |
-|  ARCHITECTURE.md ready for review:                           |
-|    12 components extracted                                   |
-|    8 data flows traced                                       |
-|    5 API surfaces documented                                 |
-|    Confidence: 9 High, 2 Medium, 1 Low                      |
-|                                                              |
-|  Commands:                                                   |
-|    approved      - Architecture is accurate, continue to MAP |
-|    changes: ...  - Request corrections                       |
-|    show architecture - Display ARCHITECTURE.md               |
-===============================================================
+═══════════════════════════════════════════════════════════════
+║  ARCHITECTURE GATE                             [HUMAN]     ║
+║                                                             ║
+║  Deliverables:                                              ║
+║    📄 ARCHITECTURE.md — Extracted source architecture       ║
+║                                                             ║
+║  Summary:                                                   ║
+║    ✓ Components: 12 extracted                               ║
+║    ✓ Data flows: 8 traced                                   ║
+║    ✓ API surfaces: 5 documented                             ║
+║    ✓ Confidence: 9 High, 2 Medium, 1 Low                   ║
+║                                                             ║
+║  Commands:                                                  ║
+║    approved      — Architecture is accurate, continue to MAP║
+║    changes: ...  — Request corrections                      ║
+║    show architecture — Display ARCHITECTURE.md              ║
+═══════════════════════════════════════════════════════════════
 ```
 
 **Gate presentation (map-gate):**
 ```
-===============================================================
-|  MAPPING GATE                                                |
-|                                                              |
-|  STACK-MAP.md and ADRs ready for review:                     |
-|    18 concepts mapped                                        |
-|    14 High confidence, 3 Medium, 1 Low                       |
-|    2 gaps identified with library recommendations            |
-|    3 ADRs created for key decisions                          |
-|                                                              |
-|  Commands:                                                   |
-|    approved      - Mapping is sound, continue to SPEC        |
-|    changes: ...  - Request corrections                       |
-|    show stack-map - Display STACK-MAP.md                     |
-===============================================================
+═══════════════════════════════════════════════════════════════
+║  MAPPING GATE                                  [HUMAN]     ║
+║                                                             ║
+║  Deliverables:                                              ║
+║    📄 STACK-MAP.md — Concept-to-stack mapping               ║
+║    📄 docs/adr/*.md — Architecture Decision Records         ║
+║                                                             ║
+║  Summary:                                                   ║
+║    ✓ Concepts mapped: 18                                    ║
+║    ✓ Confidence: 14 High, 3 Medium, 1 Low                  ║
+║    ✓ Gaps identified: 2 (with library recommendations)      ║
+║    ✓ ADRs created: 3                                        ║
+║                                                             ║
+║  Commands:                                                  ║
+║    approved      — Mapping is sound, continue to SPEC       ║
+║    changes: ...  — Request corrections                      ║
+║    show stack-map — Display STACK-MAP.md                    ║
+═══════════════════════════════════════════════════════════════
+```
+
+**Gate presentation (spec-gate):**
+```
+═══════════════════════════════════════════════════════════════
+║  SPEC GATE                                     [HUMAN]     ║
+║                                                             ║
+║  Deliverables:                                              ║
+║    📄 FEATURESPEC.md — Full 18-section feature spec         ║
+║                                                             ║
+║  Summary:                                                   ║
+║    ✓ Sections: 18 complete                                  ║
+║    ✓ Architecture coverage: 100%                            ║
+║    ✓ Stack mapping integrated                               ║
+║                                                             ║
+║  Commands:                                                  ║
+║    approved      — Spec is complete, continue to COMPLETE   ║
+║    changes: ...  — Request corrections                      ║
+║    show spec     — Display FEATURESPEC.md                   ║
+═══════════════════════════════════════════════════════════════
 ```
 
 ## Commands During Execution
@@ -157,47 +184,64 @@ Transpose Loop v1.0.0: Starting architecture transposition...
 
   No existing transpose state found.
 
-  ===============================================================
-  |  READY - Transpose Loop v1.0.0                              |
-  |                                                              |
-  |  Phase: EXTRACT                                              |
-  |  Phases: 4                                                   |
-  |  Gates: arch(human) -> map(human) -> spec(human)             |
-  |                                                              |
-  |  I need two things:                                          |
-  |    1. Source: codebase, docs, or description of the system   |
-  |    2. Target: the tech stack to transpose into               |
-  |                                                              |
-  |  Say 'go' to begin.                                          |
-  ===============================================================
+  ═══════════════════════════════════════════════════════════════
+  ║  READY — Transpose Loop v1.0.0                             ║
+  ║                                                             ║
+  ║  Phase: EXTRACT                                             ║
+  ║  Phases: 4                                                  ║
+  ║  Gates: arch [HUMAN] → map [HUMAN] → spec [HUMAN]          ║
+  ║                                                             ║
+  ║  I need two things:                                         ║
+  ║    1. Source: codebase, docs, or description of the system  ║
+  ║    2. Target: the tech stack to transpose into              ║
+  ║                                                             ║
+  ║  Say 'go' to begin.                                         ║
+  ═══════════════════════════════════════════════════════════════
 
 User: Source is the Express + Sequelize + PostgreSQL API in ~/projects/old-api.
       Target stack: Next.js 14 App Router + Prisma + PostgreSQL + tRPC.
 
 Transpose Loop: Starting EXTRACT phase...
 
-  [1/1] architecture-extractor -> Analyzing ~/projects/old-api...
-        Surveying source material...
-        Mapping components...
-        Tracing data flows...
-        Extracting data model...
-        Identifying interfaces...
+══════════════════════════════════════
+  EXTRACT                        [1/4]
+══════════════════════════════════════
 
-        ARCHITECTURE.md
-          12 components (3 services, 5 modules, 4 external)
-          8 data flows traced
-          24 entities extracted
-          5 API surfaces (REST)
-          Confidence: 9 High, 2 Medium, 1 Low
+  ┌─ architecture-extractor
+  │  Surveying source material...
+  │  Mapping components...
+  │  Tracing data flows...
+  │  Extracting data model...
+  │  Identifying interfaces...
+  │
+  │  Output:
+  │    📄 ARCHITECTURE.md
+  │      12 components (3 services, 5 modules, 4 external)
+  │      8 data flows traced
+  │      24 entities extracted
+  │      5 API surfaces (REST)
+  │      Confidence: 9 High, 2 Medium, 1 Low
+  └─ ✓ architecture-extractor complete
 
-  EXTRACT phase complete
+  ✓ EXTRACT complete (1 skill, 1 deliverable)
 
-  ===============================================================
-  |  ARCHITECTURE GATE                                           |
-  |                                                              |
-  |  ARCHITECTURE.md ready for review.                           |
-  |  Say 'approved' to continue to MAP.                          |
-  ===============================================================
+  ═══════════════════════════════════════════════════════════════
+  ║  ARCHITECTURE GATE                             [HUMAN]     ║
+  ║                                                             ║
+  ║  Deliverables:                                              ║
+  ║    📄 ARCHITECTURE.md — Extracted source architecture       ║
+  ║                                                             ║
+  ║  Summary:                                                   ║
+  ║    ✓ Components: 12 extracted                               ║
+  ║    ✓ Data flows: 8 traced                                   ║
+  ║    ✓ API surfaces: 5 documented                             ║
+  ║    ✓ Confidence: 9 High, 2 Medium, 1 Low                   ║
+  ║                                                             ║
+  ║  Commands:                                                  ║
+  ║    approved      — Architecture is accurate, continue to MAP║
+  ║    changes: ...  — Request corrections                      ║
+  ║    show architecture — Display ARCHITECTURE.md              ║
+  ═══════════════════════════════════════════════════════════════
 
 User: approved
 
@@ -205,26 +249,51 @@ User: approved
 
 Transpose Loop: Starting MAP phase...
 
-  [1/2] stack-analyzer -> Mapping architecture to Next.js + Prisma + tRPC...
-        18 concepts mapped (14 High, 3 Medium, 1 Low)
-        2 gaps: background jobs, WebSocket notifications
-        Recommended: Inngest for jobs, SSE for notifications
+══════════════════════════════════════
+  MAP                            [2/4]
+══════════════════════════════════════
 
-        STACK-MAP.md
+  ┌─ stack-analyzer
+  │  Reading: ARCHITECTURE.md
+  │  Inventorying target stack (Next.js + Prisma + tRPC)...
+  │  Mapping 18 architectural concepts...
+  │  Identifying gaps and library recommendations...
+  │
+  │  Output:
+  │    📄 STACK-MAP.md — 18 concepts mapped (14 High, 3 Medium, 1 Low)
+  └─ ✓ stack-analyzer complete
 
-  [2/2] architect -> Reviewing mapping, creating ADRs...
-        ADR-001: Replace REST with tRPC
-        ADR-002: Server Components for data fetching
-        ADR-003: Inngest for background job replacement
+  ┌─ architect
+  │  Reading: ARCHITECTURE.md, STACK-MAP.md
+  │  Reviewing mapping decisions...
+  │  Creating ADRs for key decisions...
+  │
+  │  Output:
+  │    📄 ADR-001: Replace REST with tRPC
+  │    📄 ADR-002: Server Components for data fetching
+  │    📄 ADR-003: Inngest for background job replacement
+  └─ ✓ architect complete
 
-  MAP phase complete
+  ✓ MAP complete (2 skills, 4 deliverables)
 
-  ===============================================================
-  |  MAPPING GATE                                                |
-  |                                                              |
-  |  STACK-MAP.md + 3 ADRs ready for review.                    |
-  |  Say 'approved' to continue to SPEC.                         |
-  ===============================================================
+  ═══════════════════════════════════════════════════════════════
+  ║  MAPPING GATE                                  [HUMAN]     ║
+  ║                                                             ║
+  ║  Deliverables:                                              ║
+  ║    📄 STACK-MAP.md — Concept-to-stack mapping               ║
+  ║    📄 docs/adr/*.md — Architecture Decision Records         ║
+  ║                                                             ║
+  ║  Summary:                                                   ║
+  ║    ✓ Concepts mapped: 18                                    ║
+  ║    ✓ Confidence: 14 High, 3 Medium, 1 Low                  ║
+  ║    ✓ Gaps identified: 2 (with library recommendations)      ║
+  ║    ✓ ADRs created: 3                                        ║
+  ║                                                             ║
+  ║  Commands:                                                  ║
+  ║    approved      — Mapping is sound, continue to SPEC       ║
+  ║    changes: ...  — Request corrections                      ║
+  ║    show stack-map — Display STACK-MAP.md                    ║
+  ═══════════════════════════════════════════════════════════════
 
 User: approved
 
@@ -232,8 +301,71 @@ User: approved
 
 Transpose Loop: Starting SPEC phase...
 
-  [1/1] spec -> Compiling FEATURESPEC.md from architecture + stack map...
-        ...
+══════════════════════════════════════
+  SPEC                           [3/4]
+══════════════════════════════════════
+
+  ┌─ spec
+  │  Reading: ARCHITECTURE.md, STACK-MAP.md, docs/adr/*.md
+  │  Compiling full 18-section feature specification...
+  │
+  │  Output:
+  │    📄 FEATURESPEC.md — 18 sections, 1500+ lines
+  └─ ✓ spec complete
+
+  ✓ SPEC complete (1 skill, 1 deliverable)
+
+  ═══════════════════════════════════════════════════════════════
+  ║  SPEC GATE                                     [HUMAN]     ║
+  ║                                                             ║
+  ║  Deliverables:                                              ║
+  ║    📄 FEATURESPEC.md — Full 18-section feature spec         ║
+  ║                                                             ║
+  ║  Summary:                                                   ║
+  ║    ✓ Sections: 18 complete                                  ║
+  ║    ✓ Architecture coverage: 100%                            ║
+  ║    ✓ Stack mapping integrated                               ║
+  ║                                                             ║
+  ║  Commands:                                                  ║
+  ║    approved      — Spec is complete, continue to COMPLETE   ║
+  ║    changes: ...  — Request corrections                      ║
+  ║    show spec     — Display FEATURESPEC.md                   ║
+  ═══════════════════════════════════════════════════════════════
+
+User: approved
+
+  Gate passed: spec-gate
+
+╔═════════════════════════════════════════════════════════════════════╗
+║                                                                     ║
+║   TRANSPOSE LOOP COMPLETE                                           ║
+║                                                                     ║
+╠═════════════════════════════════════════════════════════════════════╣
+║                                                                     ║
+║   PHASES                                                            ║
+║   ──────                                                            ║
+║   ✓ EXTRACT     Architecture reverse-engineered                     ║
+║   ✓ MAP         Stack mapping and ADRs produced                     ║
+║   ✓ SPEC        Feature specification compiled                      ║
+║   ✓ COMPLETE    Retrospective captured                              ║
+║                                                                     ║
+║   GATES PASSED                                                      ║
+║   ────────────                                                      ║
+║   ✓ Architecture Extraction Review [HUMAN]                          ║
+║   ✓ Stack Mapping Review [HUMAN]                                    ║
+║   ✓ Feature Spec Review [HUMAN]                                     ║
+║                                                                     ║
+║   DELIVERABLES                                                      ║
+║   ────────────                                                      ║
+║   📄 ARCHITECTURE.md      Extracted source architecture             ║
+║   📄 STACK-MAP.md         Concept-to-stack mapping                  ║
+║   📄 docs/adr/*.md        Architecture Decision Records             ║
+║   📄 FEATURESPEC.md       Production-ready feature spec             ║
+║   📄 RETROSPECTIVE.md     Loop learnings                            ║
+║                                                                     ║
+║   Ready for: /engineering-loop with FEATURESPEC.md                  ║
+║                                                                     ║
+╚═════════════════════════════════════════════════════════════════════╝
 ```
 
 ## Resuming a Session
@@ -244,14 +376,14 @@ User: /transpose-loop --resume
 Transpose Loop v1.0.0: Resuming...
 
   Found transpose-state.json
-  +----------+--------------+---------+
-  | Phase    | Status       | Skills  |
-  +----------+--------------+---------+
-  | EXTRACT  | complete     | 1/1     |
-  | MAP      | active       | 1/2     |
-  | SPEC     | pending      | 0/1     |
-  | COMPLETE | pending      | 0/1     |
-  +----------+--------------+---------+
+  ┌──────────┬──────────────┬─────────┐
+  │ Phase    │ Status       │ Skills  │
+  ├──────────┼──────────────┼─────────┤
+  │ EXTRACT  │ ✓ complete   │ 1/1     │
+  │ MAP      │ ▶ active     │ 1/2     │
+  │ SPEC     │ ○ pending    │ 0/1     │
+  │ COMPLETE │ ○ pending    │ 0/1     │
+  └──────────┴──────────────┴─────────┘
 
   Resume from MAP phase? [Y/n]
 

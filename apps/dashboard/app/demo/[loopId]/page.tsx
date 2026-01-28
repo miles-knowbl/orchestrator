@@ -10,6 +10,7 @@ import { useDemoExecution } from '@/lib/demo-engine';
 import type { LoopForDemo, DemoConfig } from '@/lib/demo-engine';
 import { PhaseTimeline } from '@/components/execution/PhaseTimeline';
 import { GateStatus } from '@/components/execution/GateStatus';
+import type { GateDefinition } from '@/components/execution/types';
 import { LogViewer } from '@/components/execution/LogViewer';
 
 // ---------------------------------------------------------------------------
@@ -260,6 +261,7 @@ function DemoExecutionView({
           />
           <GateStatus
             gates={execution.gates}
+            gateDefinitions={loop.gates as GateDefinition[]}
             executionStatus={waitingForGate ? 'blocked' : execution.status}
             onApprove={approveGate}
             onReject={rejectGate}

@@ -9,6 +9,14 @@
       "category": "core"
     },
     {
+      "id": "architecture-extractor",
+      "name": "architecture-extractor",
+      "version": "1.0.0",
+      "description": "Analyze a source system — codebase, documentation, diagrams, or verbal description — and extract a clean, structured architecture document. Reverse-engineers components, data flows, interfaces, patter",
+      "phase": "EXTRACT",
+      "category": "specialized"
+    },
+    {
       "id": "architecture-review",
       "name": "architecture-review",
       "version": "1.0.0",
@@ -479,6 +487,14 @@
       "description": "Compile requirements into production-ready technical specifications. Transforms requirements documents into comprehensive 18-section FeatureSpecs (~2000+ lines) with full code, SQL migrations, UI comp",
       "phase": "INIT",
       "category": "core"
+    },
+    {
+      "id": "stack-analyzer",
+      "name": "stack-analyzer",
+      "version": "1.0.0",
+      "description": "Evaluate a target tech stack and map architectural concepts to stack-specific idioms, patterns, and libraries. Produces STACK-MAP.md with concept mapping, gap analysis, and risk assessment. Bridges th",
+      "phase": "MAP",
+      "category": "specialized"
     },
     {
       "id": "test-generation",
