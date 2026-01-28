@@ -245,6 +245,8 @@ export default function DistributePage() {
                       <div><code className="text-orch-400">/audit-loop</code> <span className="text-gray-500">— system audits</span></div>
                       <div><code className="text-orch-400">/deck-loop</code> <span className="text-gray-500">— slide decks</span></div>
                       <div><code className="text-orch-400">/meta-loop</code> <span className="text-gray-500">— create new loops</span></div>
+                      <div><code className="text-orch-400">/learning-loop</code> <span className="text-gray-500">— improve skills</span></div>
+                      <div><code className="text-orch-400">/orchestrator</code> <span className="text-gray-500">— compose new loops</span></div>
                     </div>
                   </div>
                 </div>
