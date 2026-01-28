@@ -1,12 +1,12 @@
 # /engineering-loop Command
 
-**Recommended default for implementation tasks.** Full engineering loop with phases, gates, and systems. Show up. Say go.
+**Recommended default for implementation tasks.** Full engineering loop with dream state planning, system decomposition, and iterative execution. Show up. Say go.
 
 ## Purpose
 
-This command is the **single entry point** for the engineering loop. It handles everything: mode detection, scope discovery, and execution of all 10 phases with enforced quality gates.
+This command is the **single entry point** for the engineering loop. It starts by understanding your **dream state** (end vision), then decomposes it into **systems** that ladder up to that vision. Each pass through the loop completes one system.
 
-**The flow you want:** arrive in any directory, invoke `/engineering-loop`, say `go`, and watch the loop execute.
+**The flow you want:** arrive in any directory, invoke `/engineering-loop`, describe your dream state, and watch the loop build each system until the vision is realized.
 
 Works for all project types:
 - **Greenfield** — Empty directory, build from scratch
@@ -32,14 +32,37 @@ Works for all project types:
 When invoked, immediately check for existing state:
 
 ```
-if loop-state.json exists:
+if system-queue.json exists:
+  → Show dream state summary, systems completed/remaining
+  → Show current system and phase
+  → Ask: "Resume {current-system} from {phase}? [Y/n]"
+elif loop-state.json exists:
   → Show current phase, pending gates, progress
   → Ask: "Resume from {phase}? [Y/n]"
 else:
-  → Fresh start, proceed to mode detection
+  → Fresh start, proceed to dream state discovery
 ```
 
-### Step 2: Mode Detection
+### Step 2: Dream State Discovery (New Domains)
+
+For fresh starts without an existing system-queue.json, invoke the **entry-portal** skill:
+
+1. **Ask for dream state**: "What's your end vision? What are you trying to build?"
+2. **Clarify requirements**: Use clarifying questions until the vision is clear
+3. **Decompose into systems**: Break the dream state into implementable systems
+4. **Create dependency graph**: Order systems by dependencies
+5. **Generate system queue**: `system-queue.json` with all systems and build order
+
+**Output:**
+- `dream-state.md` — Vision document
+- `system-queue.json` — Systems to build, ordered by dependencies
+- `config.json` — Autonomy configuration
+
+**First system**: The queue's first ready system becomes the current system for this loop pass.
+
+→ See `skills/entry-portal/SKILL.md` for full entry-portal skill details.
+
+### Step 3: Mode Detection
 
 Analyze the directory to classify the project:
 
@@ -56,7 +79,7 @@ Has >10k LOC or CI/CD configured? → brownfield-enterprise
 Otherwise → brownfield-polish
 ```
 
-### Step 3: Scope Discovery (Brownfield Only)
+### Step 4: Scope Discovery (Brownfield Only)
 
 For brownfield modes, discover what needs to be built:
 
@@ -71,7 +94,7 @@ For brownfield modes, discover what needs to be built:
 
 **Output: `SCOPE-DISCOVERY.md`** with prioritized systems to build.
 
-### Step 4: Codebase Analysis (Brownfield Only)
+### Step 5: Codebase Analysis (Brownfield Only)
 
 For brownfield modes, create `CODEBASE-ANALYSIS.md`:
 - Tech stack, frameworks, dependencies
@@ -79,17 +102,30 @@ For brownfield modes, create `CODEBASE-ANALYSIS.md`:
 - Testing framework, lint rules, type system
 - Existing conventions to follow
 
-### Step 5: Initialize Loop State
+### Step 6: Initialize Loop State
 
 Create `loop-state.json`:
 
 ```json
 {
   "loop": "engineering-loop",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "mode": "brownfield-polish",
   "phase": "INIT",
   "status": "active",
+
+  "dreamState": {
+    "path": "./dream-state.md",
+    "vision": "Brief summary of the end vision"
+  },
+  "systemQueue": {
+    "path": "./system-queue.json",
+    "currentSystem": "sys-002",
+    "systemsCompleted": ["sys-001"],
+    "systemsRemaining": ["sys-003", "sys-004"],
+    "totalSystems": 4
+  },
+
   "gates": {
     "spec-gate": { "status": "pending", "required": true, "approvalType": "human" },
     "architecture-gate": { "status": "pending", "required": true, "approvalType": "human" },
@@ -99,7 +135,7 @@ Create `loop-state.json`:
     "deploy-gate": { "status": "pending", "required": false, "approvalType": "conditional" }
   },
   "phases": {
-    "INIT": { "status": "pending", "skills": ["requirements", "spec"] },
+    "INIT": { "status": "pending", "skills": ["entry-portal", "requirements", "spec"] },
     "SCAFFOLD": { "status": "pending", "skills": ["architect", "scaffold"] },
     "IMPLEMENT": { "status": "pending", "skills": ["implement"] },
     "TEST": { "status": "pending", "skills": ["test-generation"] },
@@ -115,7 +151,9 @@ Create `loop-state.json`:
 }
 ```
 
-### Step 6: Execute Phases
+**Note:** On subsequent systems (after first), `entry-portal` is skipped since the system queue already exists.
+
+### Step 7: Execute Phases
 
 Run through all 10 phases. Each phase invokes its assigned skills:
 
@@ -125,8 +163,11 @@ INIT ──────────► SCAFFOLD ──────────�
   │ [spec-gate]    │ [architecture-gate]                      │
   │  human         │  human                                   │
   ▼                ▼                                          ▼
-requirements     architect              implement         test-generation
-spec             scaffold               (per feature)     (per feature)
+entry-portal*    architect              implement         test-generation
+requirements     scaffold               (per feature)     (per feature)
+spec
+
+*entry-portal runs only on first system; skipped on subsequent systems
 
   ▼                ▼                      ▼                   ▼
 
@@ -149,7 +190,9 @@ deploy            retrospective
 distribute
 ```
 
-**13 skills across 10 phases, 6 gates (4 human, 1 auto, 1 conditional)**
+**14 skills across 10 phases, 6 gates (4 human, 1 auto, 1 conditional)**
+
+*entry-portal is conditional — runs only on first system when no system-queue.json exists*
 
 ### Distribute Skill (MCP)
 
@@ -160,7 +203,7 @@ The `distribute` skill manages CI/CD automation:
 
 Flow: deploy → distribute (setup CI/CD) → git-workflow (merge) → distribute.yml (auto-triggered)
 
-### Step 7: Gate Enforcement
+### Step 8: Gate Enforcement
 
 Six gates control progression:
 
@@ -232,13 +275,45 @@ Six gates control progression:
 ═══════════════════════════════════════════════════════════════
 ```
 
-### Step 8: Loop Completion
+### Step 9: System Completion & Iteration
 
-After COMPLETE phase:
+After COMPLETE phase for the current system:
+
 1. Run retrospective skill → RETROSPECTIVE.md
 2. Update calibration metrics
-3. Present summary with deliverables produced, gates passed, and key metrics
-4. Check if scope requires additional loops
+3. Mark current system as `complete` in system-queue.json
+4. **Check for next system**:
+
+```
+if systemsRemaining > 0:
+  → Find next ready system (dependencies met)
+  → Update currentSystem in loop-state.json
+  → Reset phases to pending (except entry-portal which stays complete)
+  → Show: "System {name} complete. Next: {next-system}. Say 'go' to continue."
+else:
+  → All systems complete
+  → Show: "DREAM STATE ACHIEVED 🎯"
+  → Present full summary across all systems
+```
+
+**Iteration flow:**
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     ENGINEERING LOOP ITERATION                   │
+│                                                                 │
+│  System 1          System 2          System 3          Dream    │
+│  ┌──────┐          ┌──────┐          ┌──────┐          State    │
+│  │ INIT │ ──────►  │ INIT │ ──────►  │ INIT │ ──────►  ✓       │
+│  │ ...  │          │ ...  │          │ ...  │                   │
+│  │ SHIP │          │ SHIP │          │ SHIP │                   │
+│  └──────┘          └──────┘          └──────┘                   │
+│     │                 │                 │                       │
+│     ▼                 ▼                 ▼                       │
+│  complete          complete          complete                   │
+│  in queue          in queue          in queue                   │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
 
 ## Commands During Execution
 
@@ -302,11 +377,14 @@ At each gate, verify:
 
 | File | Purpose |
 |------|---------|
+| `dream-state.md` | Vision document — the end goal |
+| `system-queue.json` | Systems to build, dependencies, status |
+| `config.json` | Autonomy configuration for the domain |
 | `loop-state.json` | Current phase, gate status, progress |
 | `SCOPE-DISCOVERY.md` | Gap analysis and system queue (brownfield) |
 | `CODEBASE-ANALYSIS.md` | Discovered patterns (brownfield) |
-| `REQUIREMENTS.md` | Structured requirements |
-| `FEATURESPEC.md` | Feature specification |
+| `REQUIREMENTS.md` | Structured requirements (per system) |
+| `FEATURESPEC.md` | Feature specification (per system) |
 | `ARCHITECTURE.md` | Architecture decisions |
 | `VERIFICATION.md` | Build/test/lint results |
 | `VALIDATION.md` | Semantic validation findings |

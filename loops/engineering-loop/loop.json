@@ -1,16 +1,19 @@
 {
   "id": "engineering-loop",
   "name": "Engineering Loop",
-  "version": "3.1.0",
-  "description": "Complete engineering loop for building production-quality software. Takes requirements through specification, architecture, implementation, testing, verification, validation, documentation, review, and deployment with enforced quality gates.",
+  "version": "4.0.0",
+  "description": "Dream state-driven engineering loop. Starts by defining your end vision, decomposes it into systems, then iterates through each system until the dream state is achieved.",
+  "iterative": true,
   "phases": [
     {
       "name": "INIT",
       "skills": [
+        "entry-portal",
         "requirements",
         "spec"
       ],
-      "required": true
+      "required": true,
+      "notes": "entry-portal runs only on first system when no system-queue.json exists"
     },
     {
       "name": "SCAFFOLD",
@@ -163,6 +166,11 @@
     }
   },
   "skillUI": {
+    "entry-portal": {
+      "displayName": "Dream State & Systems",
+      "icon": "sparkles",
+      "outputDisplay": "markdown"
+    },
     "requirements": {
       "displayName": "Requirements Analysis",
       "icon": "clipboard-list",
@@ -242,6 +250,7 @@
       "production"
     ],
     "changelog": {
+      "4.0.0": "Dream state-driven iterative loop. Add entry-portal skill to INIT for dream state definition and system decomposition. Loop now iterates through multiple systems until dream state is achieved.",
       "3.1.0": "Add distribute skill to SHIP phase alongside deploy, 13 skills total",
       "3.0.0": "Add VALIDATE phase, requirements skill in INIT, replace loop-controller with retrospective, all phases required, 6 gates (verification-gate auto, validation-gate human), full skillUI for all 12 skills",
       "2.0.0": "Initial 9-phase loop with 4 gates"

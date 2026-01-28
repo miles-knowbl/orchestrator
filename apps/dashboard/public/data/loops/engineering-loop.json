@@ -1,8 +1,8 @@
 {
   "id": "engineering-loop",
   "name": "Engineering Loop",
-  "version": "3.1.0",
-  "description": "Complete engineering loop for building production-quality software. Takes requirements through specification, architecture, implementation, testing, verification, validation, documentation, review, and deployment with enforced quality gates.",
+  "version": "4.0.0",
+  "description": "Dream state-driven engineering loop. Starts by defining your end vision, decomposes it into systems, then iterates through each system until the dream state is achieved. Each pass completes one major architectural component.",
   "category": "development",
   "content": "# Engineering Loop\n\nComplete engineering loop for building production-quality software.\n\n## Overview\n\nThe engineering loop takes requirements through the full software development lifecycle:\n\n1. **INIT** - Compile requirements into a comprehensive FeatureSpec\n2. **SCAFFOLD** - Design architecture and set up project structure\n3. **IMPLEMENT** - Build the features according to spec\n4. **TEST** - Generate comprehensive test coverage\n5. **VERIFY** - Verify code quality and correctness\n6. **DOCUMENT** - Create documentation\n7. **REVIEW** - Code review and refinement\n8. **SHIP** - Deploy to production\n9. **COMPLETE** - Handoff and retrospective\n\n## Gates\n\n| Gate | After Phase | Required | Deliverable |\n|------|-------------|----------|-------------|\n| Specification | INIT | Yes | FEATURESPEC.md |\n| Architecture | SCAFFOLD | Yes | ARCHITECTURE.md |\n| Code Review | REVIEW | Yes | CODE-REVIEW.md |\n| Deployment | SHIP | No | - |\n\n## When to Use\n\n- New feature development\n- Greenfield projects\n- Major refactoring efforts\n- Any work requiring full engineering rigor\n\n## Mode Support\n\n- **Greenfield**: Full loop, all phases required\n- **Brownfield-Polish**: May skip SCAFFOLD, focus on IMPLEMENT → VERIFY\n- **Brownfield-Enterprise**: Minimal changes, extensive review gates\n",
   "phases": [
@@ -11,14 +11,20 @@
       "order": 0,
       "skills": [
         {
+          "skillId": "entry-portal",
+          "required": false,
+          "order": 0,
+          "condition": "first-system-only"
+        },
+        {
           "skillId": "requirements",
           "required": true,
-          "order": 0
+          "order": 1
         },
         {
           "skillId": "spec",
           "required": true,
-          "order": 1
+          "order": 2
         }
       ],
       "required": true
@@ -211,7 +217,8 @@
   ],
   "defaultMode": "greenfield",
   "defaultAutonomy": "supervised",
-  "skillCount": 14,
+  "skillCount": 15,
   "phaseCount": 10,
+  "iterative": true,
   "author": "Orchestrator"
 }
