@@ -1,0 +1,128 @@
+{
+  "id": "transpose-loop",
+  "name": "Transpose Loop",
+  "version": "1.0.0",
+  "description": "Architecture transposition loop: extract an existing architecture, map it to a target tech stack, and produce a production-ready feature spec. Same composition, different key.",
+  "phases": [
+    {
+      "name": "EXTRACT",
+      "skills": [
+        "architecture-extractor"
+      ],
+      "required": true
+    },
+    {
+      "name": "MAP",
+      "skills": [
+        "stack-analyzer",
+        "architect"
+      ],
+      "required": true
+    },
+    {
+      "name": "SPEC",
+      "skills": [
+        "spec"
+      ],
+      "required": true
+    },
+    {
+      "name": "COMPLETE",
+      "skills": [
+        "retrospective"
+      ],
+      "required": true
+    }
+  ],
+  "gates": [
+    {
+      "id": "arch-gate",
+      "name": "Architecture Extraction Review",
+      "afterPhase": "EXTRACT",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": [
+        "ARCHITECTURE.md"
+      ]
+    },
+    {
+      "id": "map-gate",
+      "name": "Stack Mapping Review",
+      "afterPhase": "MAP",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": [
+        "STACK-MAP.md"
+      ]
+    },
+    {
+      "id": "spec-gate",
+      "name": "Feature Spec Review",
+      "afterPhase": "SPEC",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": [
+        "FEATURESPEC.md"
+      ]
+    }
+  ],
+  "defaults": {
+    "mode": "greenfield",
+    "autonomy": "supervised"
+  },
+  "ui": {
+    "theme": "release",
+    "layout": "chat-focused",
+    "features": {
+      "skillBrowser": true,
+      "deliverableViewer": true,
+      "gateApprovalUI": true,
+      "progressTimeline": true,
+      "metricsPanel": true
+    },
+    "branding": {
+      "title": "Transpose Loop",
+      "subtitle": "Same architecture, different stack"
+    }
+  },
+  "skillUI": {
+    "architecture-extractor": {
+      "displayName": "Architecture Extractor",
+      "icon": "search",
+      "outputDisplay": "markdown"
+    },
+    "stack-analyzer": {
+      "displayName": "Stack Analyzer",
+      "icon": "layers",
+      "outputDisplay": "markdown"
+    },
+    "architect": {
+      "displayName": "Architect",
+      "icon": "layout",
+      "outputDisplay": "markdown"
+    },
+    "spec": {
+      "displayName": "Spec Compiler",
+      "icon": "file-text",
+      "outputDisplay": "markdown"
+    },
+    "retrospective": {
+      "displayName": "Retrospective",
+      "icon": "refresh",
+      "outputDisplay": "markdown"
+    }
+  },
+  "metadata": {
+    "author": "Orchestrator",
+    "tags": [
+      "transposition",
+      "architecture",
+      "porting",
+      "spec-generation"
+    ],
+    "changelog": {
+      "1.0.0": "Initial release — replaces migration-loop with architecture transposition pipeline"
+    },
+    "category": "development"
+  }
+}

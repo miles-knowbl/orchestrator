@@ -3,7 +3,7 @@
   "name": "Distribution Loop",
   "version": "1.0.0",
   "description": "Distribution loop for keeping all targets in sync: local rebuild, Railway server, Vercel dashboard, and GitHub Releases tarball. Lean 4-phase pipeline with auto gates designed for speed.",
-  "category": "operations",
+  "category": "development",
   "phases": [
     {
       "name": "INIT",

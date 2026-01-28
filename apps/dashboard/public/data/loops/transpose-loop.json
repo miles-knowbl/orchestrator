@@ -1,0 +1,99 @@
+{
+  "id": "transpose-loop",
+  "name": "Transpose Loop",
+  "version": "1.0.0",
+  "description": "Architecture transposition loop: extract an existing architecture, map it to a target tech stack, and produce a production-ready feature spec. Same composition, different key.",
+  "category": "development",
+  "phases": [
+    {
+      "name": "EXTRACT",
+      "order": 0,
+      "skills": [
+        {
+          "skillId": "architecture-extractor",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "MAP",
+      "order": 1,
+      "skills": [
+        {
+          "skillId": "stack-analyzer",
+          "required": true,
+          "order": 0
+        },
+        {
+          "skillId": "architect",
+          "required": true,
+          "order": 1
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "SPEC",
+      "order": 2,
+      "skills": [
+        {
+          "skillId": "spec",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "COMPLETE",
+      "order": 3,
+      "skills": [
+        {
+          "skillId": "retrospective",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    }
+  ],
+  "gates": [
+    {
+      "id": "arch-gate",
+      "name": "Architecture Extraction Review",
+      "afterPhase": "EXTRACT",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": [
+        "ARCHITECTURE.md"
+      ]
+    },
+    {
+      "id": "map-gate",
+      "name": "Stack Mapping Review",
+      "afterPhase": "MAP",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": [
+        "STACK-MAP.md"
+      ]
+    },
+    {
+      "id": "spec-gate",
+      "name": "Feature Spec Review",
+      "afterPhase": "SPEC",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": [
+        "FEATURESPEC.md"
+      ]
+    }
+  ],
+  "defaultMode": "greenfield",
+  "defaultAutonomy": "supervised",
+  "skillCount": 5,
+  "phaseCount": 4,
+  "author": "Orchestrator"
+}

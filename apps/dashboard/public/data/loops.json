@@ -64,13 +64,13 @@
       "skillCount": 6
     },
     {
-      "id": "migration-loop",
-      "name": "Migration Loop",
+      "id": "transpose-loop",
+      "name": "Transpose Loop",
       "version": "1.0.0",
-      "description": "Migration loop for moving between technologies with rollback safety. Takes migration planning through architecture, implementation, testing, verification, validation, review, and deployment with enfor",
+      "description": "Architecture transposition loop: extract an existing architecture, map it to a target tech stack, and produce a production-ready feature spec. Same composition, different key.",
       "category": "development",
-      "phaseCount": 9,
-      "skillCount": 11
+      "phaseCount": 4,
+      "skillCount": 5
     },
     {
       "id": "proposal-loop",
@@ -86,7 +86,7 @@
       "name": "Distribution Loop",
       "version": "1.0.0",
       "description": "Distribution loop for keeping all targets in sync: local rebuild, Railway server, Vercel dashboard, and GitHub Releases tarball. Lean 4-phase pipeline with auto gates designed for speed.",
-      "category": "operations",
+      "category": "development",
       "phaseCount": 4,
       "skillCount": 6
     }

@@ -43,7 +43,7 @@ The installer sets up 9 slash commands. Try one:
 | `/bugfix-loop` | Systematic bug fixing with reproduction and regression tests |
 | `/distribution-loop` | Distribute to all targets (local, Railway, Vercel, GitHub Releases) |
 | `/proposal-loop` | Create evidence-backed proposals |
-| `/migration-loop` | Technology migrations with rollback safety |
+| `/transpose-loop` | Transpose architecture to a new tech stack, produce a feature spec |
 | `/infra-loop` | Infrastructure provisioning (CI/CD, databases) |
 | `/audit-loop` | Read-only system audit with prioritized findings |
 | `/deck-loop` | Generate slide decks from context and brand assets |

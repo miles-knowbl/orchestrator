@@ -240,7 +240,7 @@ export default function DistributePage() {
                       <div><code className="text-orch-400">/bugfix-loop</code> <span className="text-gray-500">— fix bugs</span></div>
                       <div><code className="text-orch-400">/distribution-loop</code> <span className="text-gray-500">— distribute to all targets</span></div>
                       <div><code className="text-orch-400">/proposal-loop</code> <span className="text-gray-500">— write proposals</span></div>
-                      <div><code className="text-orch-400">/migration-loop</code> <span className="text-gray-500">— tech migrations</span></div>
+                      <div><code className="text-orch-400">/transpose-loop</code> <span className="text-gray-500">— transpose architecture</span></div>
                       <div><code className="text-orch-400">/infra-loop</code> <span className="text-gray-500">— infrastructure</span></div>
                       <div><code className="text-orch-400">/audit-loop</code> <span className="text-gray-500">— system audits</span></div>
                       <div><code className="text-orch-400">/deck-loop</code> <span className="text-gray-500">— slide decks</span></div>

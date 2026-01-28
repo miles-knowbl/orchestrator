@@ -117,6 +117,6 @@
     "changelog": {
       "1.0.0": "Initial release — replaces release-loop with lean 4-phase distribution pipeline"
     },
-    "category": "operations"
+    "category": "development"
   }
 }
