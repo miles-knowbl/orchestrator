@@ -26,7 +26,7 @@ The following sections are required for every slash command file. Optional secti
 ## Skill Invocation Sequence                 <- Section 9: Skills
 ## Hook Integration (optional)               <- Section 10: Hooks
 ## References                                <- Section 11: References
-## Harness Update Protocol (optional)        <- Section 12: Updates
+## Loop Update Protocol (optional)             <- Section 12: Updates
 ```
 
 ## Section 1: Title and Tagline
@@ -173,7 +173,7 @@ Must show a realistic invocation walkthrough covering at minimum:
 - Gate approval
 - Next phase starting
 
-Use code fences for the entire session. Include `User:` and `{Harness}:` labels.
+Use code fences for the entire session. Include `User:` and `{Loop}:` labels.
 
 ## Section 8: Resuming a Session
 

@@ -35,7 +35,7 @@ The unified entry point for autonomous development.
 
 | Reference | When Needed |
 |-----------|-------------|
-| `../engineering-harness/references/loop-phases.md` | When executing engineering loop phases |
+| `../loop-controller/references/loop-phases.md` | When executing engineering loop phases |
 | `loop-state-template.md` | When initializing or resuming orchestration |
 | `failure-taxonomy.md` | When handling failures systematically |
 | `ui-ux-verification.md` | When in brownfield-polish mode |
@@ -470,7 +470,7 @@ Begin execution.
 
 Run the engineering loop with mode-aware behavior.
 
-→ See `../engineering-harness/references/loop-phases.md` for detailed phase guidance (SCAFFOLD → IMPLEMENT → TEST → VERIFY → VALIDATE → DOCUMENT → REVIEW → SHIP), including rework patterns, phase checklists, and brownfield adaptations.
+→ See `../loop-controller/references/loop-phases.md` for detailed phase guidance (SCAFFOLD → IMPLEMENT → TEST → VERIFY → VALIDATE → DOCUMENT → REVIEW → SHIP), including rework patterns, phase checklists, and brownfield adaptations.
 
 ### Mode-Aware Skill Invocation
 

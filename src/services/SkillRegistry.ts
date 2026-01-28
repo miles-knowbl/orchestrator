@@ -39,7 +39,7 @@ const INFRA_SKILLS = [
 ];
 
 const SPECIALIZED_SKILLS = [
-  'frontend-design', 'engineering-harness', 'taste-schema', 'deck-image-schema', 'deck-text-schema',
+  'frontend-design', 'engineering-loop', 'taste-schema', 'deck-image-schema', 'deck-text-schema',
 ];
 
 export interface SkillRegistryOptions {

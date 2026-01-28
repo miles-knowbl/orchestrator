@@ -1,4 +1,4 @@
-# /engineering-harness Command
+# /engineering-loop Command
 
 **Recommended default for implementation tasks.** Full engineering loop with phases, gates, and systems. Show up. Say go.
 
@@ -6,7 +6,7 @@
 
 This command is the **single entry point** for the engineering loop. It handles everything: mode detection, scope discovery, and execution of all 10 phases with enforced quality gates.
 
-**The flow you want:** arrive in any directory, invoke `/engineering-harness`, say `go`, and watch the loop execute.
+**The flow you want:** arrive in any directory, invoke `/engineering-loop`, say `go`, and watch the loop execute.
 
 Works for all project types:
 - **Greenfield** — Empty directory, build from scratch
@@ -16,7 +16,7 @@ Works for all project types:
 ## Usage
 
 ```
-/engineering-harness [--mode=MODE] [--resume] [--phase=PHASE] [--skip-analysis]
+/engineering-loop [--mode=MODE] [--resume] [--phase=PHASE] [--skip-analysis]
 ```
 
 **Options:**
@@ -311,9 +311,9 @@ At each gate, verify:
 ## Example Session
 
 ```
-User: /engineering-harness
+User: /engineering-loop
 
-Engineering Harness v3.0.0: Scanning directory...
+Engineering Loop v3.0.0: Scanning directory...
 
   No existing loop state found.
 
@@ -330,7 +330,7 @@ Engineering Harness v3.0.0: Scanning directory...
 
 User: y
 
-Engineering Harness: Discovering scope...
+Engineering Loop: Discovering scope...
 
   Gap Analysis:
     ❌ Deployment (critical) — No CI/CD, no Docker
@@ -339,7 +339,7 @@ Engineering Harness: Discovering scope...
 
   ✓ SCOPE-DISCOVERY.md created (3 systems, 2 loops estimated)
 
-Engineering Harness: Analyzing codebase...
+Engineering Loop: Analyzing codebase...
 
   ✓ CODEBASE-ANALYSIS.md created
     Tech: SvelteKit + TypeScript + SQLite
@@ -362,7 +362,7 @@ Engineering Harness: Analyzing codebase...
 
 User: go
 
-Engineering Harness: Starting INIT phase...
+Engineering Loop: Starting INIT phase...
 
   [1/2] requirements → Analyzing requirements...
         ✓ REQUIREMENTS.md (14 requirements, 6 success metrics)
@@ -383,7 +383,7 @@ User: approved
 
   Gate passed: spec-gate ✓
 
-Engineering Harness: Starting SCAFFOLD phase...
+Engineering Loop: Starting SCAFFOLD phase...
 
   [1/2] architect → Designing architecture...
         ✓ ARCHITECTURE.md
@@ -404,7 +404,7 @@ User: approved
 
   Gate passed: architecture-gate ✓
 
-Engineering Harness: Starting IMPLEMENT phase...
+Engineering Loop: Starting IMPLEMENT phase...
   [1/3] Implementing capability: review-automation...
   ...
 
@@ -423,7 +423,7 @@ Engineering Harness: Starting IMPLEMENT phase...
   ║  Gate passed automatically.                         ║
   ═══════════════════════════════════════════════════════
 
-Engineering Harness: Starting VALIDATE phase...
+Engineering Loop: Starting VALIDATE phase...
 
   [1/2] code-validation → Semantic validation...
         ✓ VALIDATION.md (3 findings, 0 blockers)
@@ -450,9 +450,9 @@ User: approved
 ## Resuming a Session
 
 ```
-User: /engineering-harness
+User: /engineering-loop
 
-Engineering Harness v3.0.0: Found existing loop state.
+Engineering Loop v3.0.0: Found existing loop state.
 
   Mode: brownfield-polish
   Phase: IMPLEMENT (in progress)
@@ -475,7 +475,7 @@ Engineering Harness v3.0.0: Found existing loop state.
 
 User: go
 
-Engineering Harness: Resuming IMPLEMENT phase...
+Engineering Loop: Resuming IMPLEMENT phase...
   [4/8] Implementing capability: asset-management...
 ```
 
@@ -502,16 +502,16 @@ Available references (8 total):
 
 ---
 
-## Harness Update Protocol
+## Loop Update Protocol
 
-**CRITICAL: The engineering harness is configured at the USER LEVEL, not project level.**
+**CRITICAL: The engineering loop is configured at the USER LEVEL, not project level.**
 
 ### Architecture Tiers
 
 ```
 ~/.claude/                          ← USER LEVEL (canonical)
 ├── CLAUDE.md                       ← Global instructions
-├── commands/engineering-harness.md     ← This file (harness definition)
+├── commands/engineering-loop.md     ← This file (loop definition)
 ├── hooks.json                      ← User-level hooks config
 └── hooks/*.sh                      ← User-level hook scripts
 
@@ -529,13 +529,13 @@ skills-library-mcp/                 ← SKILL DEFINITIONS
 |-------------|----------|--------|
 | Hook logic | `~/.claude/hooks/` | Applies to ALL projects |
 | Hook registration | `~/.claude/hooks.json` | User-level config |
-| Harness behavior | `~/.claude/commands/engineering-harness.md` | Single source of truth |
+| Loop behavior | `~/.claude/commands/engineering-loop.md` | Single source of truth |
 | Skill definitions | `skills-library-mcp/skills/` | MCP-served |
 | Project overrides | `{project}/.claude/` | That project only |
 
 ### Anti-Pattern
 
-Making harness improvements in `{project}/.claude/` without also updating `~/.claude/`. Changes made only at project level:
+Making loop improvements in `{project}/.claude/` without also updating `~/.claude/`. Changes made only at project level:
 - Won't propagate to other projects
 - Will be lost when starting new projects
 - Create version drift between projects

@@ -108,15 +108,20 @@ restartPolicyType = "on_failure"
 
 ## Dual Platform Setup
 
-Some projects deploy to both platforms:
+Some projects deploy to both platforms (e.g., dashboard on Vercel, API on Railway):
 
 | Component | Platform | Example |
 |-----------|----------|---------|
-| Documentation site | Vercel | `docs.myproject.com` |
+| Dashboard / docs site | Vercel | `dashboard.myproject.com` |
 | API server | Railway | `api.myproject.com` |
 | MCP server | Railway | `mcp.myproject.com` |
 
-In this case, configure both sets of secrets and set `DEPLOY_PLATFORM` to `railway` (the primary), then add a separate Vercel project for the docs site.
+To enable dual-platform deployment:
+
+1. Configure **both** sets of GitHub secrets (Vercel + Railway)
+2. Do **not** set a `DEPLOY_PLATFORM` variable
+3. Remove any `if` conditionals from deploy jobs — both run unconditionally
+4. Each job gracefully skips if its secrets are missing
 
 ## Environment Variables
 

@@ -1,51 +1,69 @@
 {
-  "version": "1.0.0",
-  "releaseDate": "2026-01-25",
+  "version": "2.0.0",
+  "releaseDate": "2026-01-27",
   "description": "Orchestrator skills library - comprehensive skill definitions for AI-driven software development workflows",
   "skills": {
-    "total": 17,
+    "total": 62,
     "core": [
-      "spec",
-      "architect",
-      "scaffold",
-      "implement",
-      "test-generation",
-      "code-verification",
-      "code-review",
-      "deploy",
-      "document",
-      "error-handling"
+      "entry-portal", "requirements", "spec", "estimation", "triage",
+      "memory-manager", "architect", "architecture-review", "scaffold",
+      "git-workflow", "implement", "test-generation", "code-verification",
+      "debug-assist", "code-validation", "integration-test", "security-audit",
+      "perf-analysis", "document", "code-review", "refactor", "deploy", "distribute"
     ],
     "meta": [
-      "loop-controller",
-      "content-analysis",
-      "metadata-extraction"
+      "loop-controller", "skill-verifier", "journey-tracer", "retrospective",
+      "calibration-tracker", "coordination-protocol", "portability",
+      "manifest-manager", "roadmap-tracker", "loop-composer",
+      "loop-to-slash-command", "skill-design", "orchestrator"
+    ],
+    "infra": [
+      "infra-database", "infra-docker", "infra-services", "infra-devenv", "infra-monorepo"
     ],
     "specialized": [
-      "context-ingestion",
-      "context-cultivation",
-      "priority-matrix",
-      "proposal-builder"
+      "frontend-design", "deck-image-schema", "deck-text-schema",
+      "content-analysis", "context-cultivation", "context-ingestion",
+      "metadata-extraction", "priority-matrix", "proposal-builder",
+      "migration-planner", "incident-triage", "release-planner", "release-notes"
+    ],
+    "operations": [
+      "bug-reproducer", "changelog-generator", "compatibility-checker",
+      "error-handling", "mitigation", "postmortem", "rollback-validator",
+      "root-cause-analysis"
     ]
   },
-  "phases": {
-    "INIT": ["spec", "architect", "context-ingestion", "context-cultivation", "priority-matrix"],
-    "SCAFFOLD": ["scaffold", "proposal-builder"],
-    "IMPLEMENT": ["implement", "error-handling"],
-    "TEST": ["test-generation"],
-    "VERIFY": ["code-verification"],
-    "VALIDATE": [],
-    "DOCUMENT": ["document"],
-    "REVIEW": ["code-review"],
-    "SHIP": ["deploy"],
-    "META": ["loop-controller", "content-analysis", "metadata-extraction"]
+  "loops": {
+    "total": 10,
+    "list": [
+      "engineering-loop",
+      "proposal-loop",
+      "bugfix-loop",
+      "distribution-loop",
+      "audit-loop",
+      "migration-loop",
+      "deck-loop",
+      "infrastructure-loop",
+      "learning-loop",
+      "loop-composer"
+    ]
   },
   "compatibility": {
     "minMcpVersion": "1.0.0",
     "recommendedMcpVersion": "2.1.0",
-    "claudeModels": ["claude-3-opus", "claude-3-sonnet", "claude-3-haiku", "claude-opus-4-5"]
+    "claudeModels": ["claude-opus-4-5", "claude-sonnet-4", "claude-3-opus", "claude-3-sonnet", "claude-3-haiku"]
   },
   "changelog": [
+    {
+      "version": "2.0.0",
+      "date": "2026-01-27",
+      "type": "major",
+      "changes": [
+        "Updated to 62 skills across 5 categories",
+        "Added 10 loop definitions",
+        "Renamed harness commands to loop commands",
+        "Removed Docker distribution"
+      ]
+    },
     {
       "version": "1.0.0",
       "date": "2026-01-25",

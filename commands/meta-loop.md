@@ -1,4 +1,4 @@
-# /meta-harness Command
+# /meta-loop Command
 
 **Single entry point for loop authorship.** Design, compose, and publish new loops and skills — the loop that creates loops.
 
@@ -6,12 +6,12 @@
 
 This command orchestrates the creation of new loops and skills for the skills library: gathering requirements for the new loop, composing its phases and gates, designing individual skills, generating slash command documentation, and publishing. It is self-referential by design — it follows the same patterns it creates.
 
-**The flow you want:** describe the loop you need, say `go`, and the meta-harness produces a fully documented, publishable loop definition.
+**The flow you want:** describe the loop you need, say `go`, and the meta-loop produces a fully documented, publishable loop definition.
 
 ## Usage
 
 ```
-/meta-harness [--resume] [--phase=PHASE]
+/meta-loop [--resume] [--phase=PHASE]
 ```
 
 **Options:**
@@ -114,15 +114,15 @@ requirements     loop-composer        loop-to-slash-command   retrospective
 | `LOOP-REQUIREMENTS.md` | Requirements for the new loop |
 | `loop.json` | Loop definition (phases, gates, skills) |
 | `skills/*/SKILL.md` | Individual skill definitions |
-| `commands/{name}-harness.md` | Generated slash command file |
+| `commands/{name}-loop.md` | Generated slash command file |
 | `RETROSPECTIVE.md` | Loop learnings |
 
 ## Example Session
 
 ```
-User: /meta-harness
+User: /meta-loop
 
-Meta Harness v1.0.0: Starting loop authorship...
+Meta Loop v1.0.0: Starting loop authorship...
 
   No existing meta state found.
 
@@ -139,7 +139,7 @@ Meta Harness v1.0.0: Starting loop authorship...
 
 User: go
 
-Meta Harness: Starting INIT phase...
+Meta Loop: Starting INIT phase...
 
   [1/1] requirements → What loop do you need?
 
@@ -167,7 +167,7 @@ User: approved
 
   Gate passed: design-gate ✓
 
-Meta Harness: Starting SCAFFOLD phase...
+Meta Loop: Starting SCAFFOLD phase...
   [1/2] loop-composer → Composing loop definition...
   ...
 ```

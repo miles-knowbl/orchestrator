@@ -1,4 +1,4 @@
-# /bugfix-harness Command
+# /bugfix-loop Command
 
 **Single entry point for systematic bug fixing.** From reproduction to verified fix with regression protection through a structured 7-phase pipeline.
 
@@ -11,7 +11,7 @@ This command orchestrates the complete bug resolution workflow: reproducing the 
 ## Usage
 
 ```
-/bugfix-harness [--resume] [--phase=PHASE]
+/bugfix-loop [--resume] [--phase=PHASE]
 ```
 
 **Options:**
@@ -135,9 +135,9 @@ code-verification  code-review         retrospective
 ## Example Session
 
 ```
-User: /bugfix-harness
+User: /bugfix-loop
 
-Bugfix Harness v1.0.0: Starting systematic bug fix...
+Bugfix Loop v1.0.0: Starting systematic bug fix...
 
   No existing bugfix state found.
 
@@ -155,7 +155,7 @@ Bugfix Harness v1.0.0: Starting systematic bug fix...
 
 User: go
 
-Bugfix Harness: Starting INIT phase...
+Bugfix Loop: Starting INIT phase...
 
   [1/1] bug-reproducer → Describe the bug.
 
@@ -183,7 +183,7 @@ User: approved
 
   Gate passed: repro-gate ✓
 
-Bugfix Harness: Starting SCAFFOLD phase...
+Bugfix Loop: Starting SCAFFOLD phase...
   [1/2] debug-assist → Tracing error path...
   [2/2] root-cause-analysis → Identifying root cause...
         ✓ ROOT-CAUSE.md

@@ -4,43 +4,41 @@ Rules and algorithms for deriving command names, file names, flags, and identifi
 
 ## Command Name Derivation
 
-The command name is derived mechanically from the loop ID:
+The command name IS the loop ID. No transformation needed.
 
 ```
 Algorithm:
 1. Take $.id from loop.json (e.g., "engineering-loop")
-2. Strip the "-loop" suffix if present (e.g., "engineering")
-3. Map domain to harness name (e.g., "engineering-harness")
-4. If no "-loop" suffix, use full ID + "-harness"
+2. Use it directly as the command name
 ```
 
 ### Derivation Table
 
-| Loop ID | Strip Suffix | Domain | Command Name |
-|---------|-------------|--------|-------------|
-| `engineering-loop` | `engineering` | `engineering` | `engineering-harness` |
-| `proposal-loop` | `proposal` | `proposal` | `proposal-harness` |
-| `content-pipeline` | (no suffix) | `content-pipeline` | `content-pipeline-harness` |
-| `review-loop` | `review` | `review` | `review-harness` |
-| `sales` | (no suffix) | `sales` | `sales-harness` |
+| Loop ID | Command Name |
+|---------|-------------|
+| `engineering-loop` | `engineering-loop` |
+| `proposal-loop` | `proposal-loop` |
+| `content-pipeline` | `content-pipeline` |
+| `review-loop` | `review-loop` |
+| `sales` | `sales` |
 
-All loops use direct domain mapping.
+All loops use the loop ID directly as the command name.
 
-### Domain Override
+### Display Override
 
-If `$.ui.branding.title` exists and differs from the mechanical name, use it for display purposes only. The file name always follows the mechanical convention:
+If `$.ui.branding.title` exists and differs from the loop ID, use it for display purposes only. The file name always follows the loop ID convention:
 
 | Branding Title | File Name | Display Name |
 |---------------|-----------|-------------|
-| "Engineering Harness" | `engineering-harness.md` | "Engineering Harness" |
-| "Proposal Builder" | `proposal-harness.md` | "Proposal Builder" |
-| "Sales Pipeline" | `sales-harness.md` | "Sales Pipeline" |
+| "Engineering Loop" | `engineering-loop.md` | "Engineering Loop" |
+| "Proposal Builder" | `proposal-loop.md` | "Proposal Builder" |
+| "Sales Pipeline" | `sales.md` | "Sales Pipeline" |
 
 ## File Name Conventions
 
 | File Type | Convention | Example |
 |-----------|-----------|---------|
-| Command file | `{command-name}.md` | `proposal-harness.md` |
+| Command file | `{loop-id}.md` | `proposal-loop.md` |
 | State file | `{domain}-state.json` | `proposal-state.json` |
 | Deliverable | `UPPER-CASE.md` | `FEATURESPEC.md` |
 | Config | `lowercase-kebab.json` | `loop-state.json` |
@@ -48,13 +46,14 @@ If `$.ui.branding.title` exists and differs from the mechanical name, use it for
 
 ### State File Naming
 
-The state file name uses the domain (not the command name):
+The state file name uses the domain (loop ID minus `-loop` suffix, if present):
 
 ```
 Algorithm:
-1. Take the domain from command name derivation
-2. Append "-state.json"
-3. Special case: engineering-loop uses "loop-state.json" (legacy)
+1. Take $.id from loop.json
+2. Strip "-loop" suffix if present to get the domain
+3. Append "-state.json"
+4. Special case: engineering-loop uses "loop-state.json" (legacy)
 ```
 
 | Loop ID | Domain | State File |
@@ -115,10 +114,10 @@ When a derived command name conflicts with an existing command:
 
 | Conflict Type | Resolution |
 |--------------|-----------|
-| Same name, different loop | Append loop version: `review-v2-harness` |
+| Same name, different loop | Append loop version: `review-loop-v2` |
 | Same name, same loop (update) | Overwrite with confirmation |
-| Name too long (>30 chars) | Use abbreviation: `content-pipeline-harness` -> `cp-harness` |
-| Reserved name collision | Prefix with `custom-`: `custom-review-harness` |
+| Name too long (>30 chars) | Use abbreviation: `content-pipeline` -> `cp-loop` |
+| Reserved name collision | Prefix with `custom-`: `custom-review-loop` |
 
 ### Checking for Conflicts
 
@@ -133,10 +132,10 @@ ls ~/.claude/commands/{proposed-name}.md 2>/dev/null && echo "CONFLICT" || echo 
 ## Quick Reference
 
 ```markdown
-Command name:  {loop-id minus "-loop"}-harness
-Command file:  ~/.claude/commands/{command-name}.md
-State file:    {domain}-state.json
-H1 title:      /{command-name} Command
+Command name:  {loop-id} (used directly, no transformation)
+Command file:  ~/.claude/commands/{loop-id}.md
+State file:    {domain}-state.json (domain = loop ID minus "-loop" suffix)
+H1 title:      /{loop-id} Command
 Phase values:  UPPER_CASE from $.phases[*].name
 Gate IDs:      lowercase-kebab from $.gates[*].id
 Deliverables:  UPPER-CASE.md from $.gates[*].deliverables

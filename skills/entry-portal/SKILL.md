@@ -43,7 +43,7 @@ Transform fuzzy ideas into actionable specifications.
 
 | Deliverable | Location | Condition |
 |-------------|----------|-----------|
-| `dream-state.md` | `../{domain}/` | New domain only (sibling to harness) |
+| `dream-state.md` | `../{domain}/` | New domain only (sibling to loop command) |
 | `config.json` | `../{domain}/` | New domain (autonomy config) |
 | `system-queue.json` | `../{domain}/` | Always (create or update) |
 | `loop-state.json` | `../{domain}/` | Always (tracks loop state) |

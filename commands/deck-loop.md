@@ -1,4 +1,4 @@
-# /deck-harness Command
+# /deck-loop Command
 
 **Single entry point for presentation creation.** Transforms discovery context and brand assets into polished slide decks through a structured 6-phase pipeline.
 
@@ -11,7 +11,7 @@ This command orchestrates the complete deck generation workflow: gathering conte
 ## Usage
 
 ```
-/deck-harness [--resume] [--phase=PHASE]
+/deck-loop [--resume] [--phase=PHASE]
 ```
 
 **Options:**
@@ -20,7 +20,7 @@ This command orchestrates the complete deck generation workflow: gathering conte
 
 ## Input Discovery
 
-When invoked, the harness gathers:
+When invoked, the loop gathers:
 
 | Input | Required | Example |
 |-------|----------|---------|
@@ -203,9 +203,9 @@ After COMPLETE phase:
 ## Example Session
 
 ```
-User: /deck-harness
+User: /deck-loop
 
-Deck Harness v1.0.0: Starting deck generation...
+Deck Loop v1.0.0: Starting deck generation...
 
   No existing deck state found.
 
@@ -216,7 +216,7 @@ User: Q4 2025 sales results presentation for the executive board.
       Source data in /data/q4-results.xlsx and /docs/q4-narrative.md.
       10-12 slides, professional tone.
 
-Deck Harness: Initializing...
+Deck Loop: Initializing...
 
   ═══════════════════════════════════════════════════════
   ║  READY — Deck Loop v1.0.0                          ║
@@ -232,7 +232,7 @@ Deck Harness: Initializing...
 
 User: go
 
-Deck Harness: Starting INIT phase...
+Deck Loop: Starting INIT phase...
 
   [1/1] context-ingestion → Gathering sources...
         ✓ CONTEXT-SOURCES.md (4 sources cataloged)
@@ -253,7 +253,7 @@ User: approved
 
   Gate passed: context-gate ✓
 
-Deck Harness: Starting SCAFFOLD phase...
+Deck Loop: Starting SCAFFOLD phase...
 
   [1/1] taste-schema → Extracting brand identity...
         ✓ taste-schema.json
@@ -276,7 +276,7 @@ User: approved
 
   Gate passed: taste-gate ✓
 
-Deck Harness: Starting IMPLEMENT phase...
+Deck Loop: Starting IMPLEMENT phase...
 
   [1/2] deck-text-schema → Composing slides...
         ✓ deck-text-schema.json
@@ -322,9 +322,9 @@ User: approved
 ## Resuming a Session
 
 ```
-User: /deck-harness
+User: /deck-loop
 
-Deck Harness v1.0.0: Found existing deck state.
+Deck Loop v1.0.0: Found existing deck state.
 
   Phase: IMPLEMENT (in progress)
 
@@ -343,7 +343,7 @@ Deck Harness v1.0.0: Found existing deck state.
 
 User: go
 
-Deck Harness: Resuming IMPLEMENT phase...
+Deck Loop: Resuming IMPLEMENT phase...
   [1/2] deck-text-schema → Composing slides...
 ```
 

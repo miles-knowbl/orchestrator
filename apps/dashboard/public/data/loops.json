@@ -82,13 +82,13 @@
       "skillCount": 7
     },
     {
-      "id": "release-loop",
-      "name": "Release Loop",
+      "id": "distribution-loop",
+      "name": "Distribution Loop",
       "version": "1.0.0",
-      "description": "Release loop for versioning, documenting, and distributing releases. Takes release planning through readiness validation, changelog generation, and deployment with enforced quality gates.",
-      "category": "development",
-      "phaseCount": 5,
-      "skillCount": 9
+      "description": "Distribution loop for keeping all targets in sync: local rebuild, Railway server, Vercel dashboard, and GitHub Releases tarball. Lean 4-phase pipeline with auto gates designed for speed.",
+      "category": "operations",
+      "phaseCount": 4,
+      "skillCount": 6
     }
   ]
 }

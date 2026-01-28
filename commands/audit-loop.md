@@ -1,4 +1,4 @@
-# /audit-harness Command
+# /audit-loop Command
 
 **Single entry point for system audits.** Evaluates existing systems for architecture, security, and performance — produces findings, not fixes.
 
@@ -11,7 +11,7 @@ This command orchestrates a comprehensive system audit: scoping the evaluation, 
 ## Usage
 
 ```
-/audit-harness [--resume] [--phase=PHASE]
+/audit-loop [--resume] [--phase=PHASE]
 ```
 
 **Options:**
@@ -136,9 +136,9 @@ document            retrospective
 ## Example Session
 
 ```
-User: /audit-harness
+User: /audit-loop
 
-Audit Harness v1.0.0: Starting system audit...
+Audit Loop v1.0.0: Starting system audit...
 
   No existing audit state found.
 
@@ -155,7 +155,7 @@ Audit Harness v1.0.0: Starting system audit...
 
 User: go
 
-Audit Harness: Starting INIT phase...
+Audit Loop: Starting INIT phase...
 
   [1/1] requirements → Defining audit scope...
         ✓ AUDIT-SCOPE.md (architecture, security, performance)
@@ -175,7 +175,7 @@ User: approved
 
   Gate passed: scope-gate ✓
 
-Audit Harness: Starting REVIEW phase...
+Audit Loop: Starting REVIEW phase...
 
   [1/3] architecture-review → Analyzing architecture...
         ✓ ARCHITECTURE-REVIEW.md (5 findings)

@@ -1,0 +1,90 @@
+{
+  "id": "distribution-loop",
+  "name": "Distribution Loop",
+  "version": "1.0.0",
+  "description": "Distribution loop for keeping all targets in sync: local rebuild, Railway server, Vercel dashboard, and GitHub Releases tarball. Lean 4-phase pipeline with auto gates designed for speed.",
+  "category": "operations",
+  "phases": [
+    {
+      "name": "INIT",
+      "order": 0,
+      "skills": [
+        {
+          "skillId": "release-planner",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "VERIFY",
+      "order": 1,
+      "skills": [
+        {
+          "skillId": "code-verification",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "SHIP",
+      "order": 2,
+      "skills": [
+        {
+          "skillId": "git-workflow",
+          "required": true,
+          "order": 0
+        },
+        {
+          "skillId": "deploy",
+          "required": true,
+          "order": 1
+        },
+        {
+          "skillId": "distribute",
+          "required": true,
+          "order": 2
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "COMPLETE",
+      "order": 3,
+      "skills": [
+        {
+          "skillId": "retrospective",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    }
+  ],
+  "gates": [
+    {
+      "id": "readiness-gate",
+      "name": "Readiness Check",
+      "afterPhase": "VERIFY",
+      "required": true,
+      "approvalType": "auto",
+      "deliverables": []
+    },
+    {
+      "id": "distribution-gate",
+      "name": "Distribution Check",
+      "afterPhase": "SHIP",
+      "required": true,
+      "approvalType": "auto",
+      "deliverables": []
+    }
+  ],
+  "defaultMode": "greenfield",
+  "defaultAutonomy": "autonomous",
+  "skillCount": 6,
+  "phaseCount": 4,
+  "author": "Orchestrator"
+}

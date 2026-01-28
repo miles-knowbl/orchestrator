@@ -1,10 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Package, Download, Copy, Check, Container, Terminal, Clock, GitCommit, Tag, Sparkles } from 'lucide-react';
+import { Package, Download, Copy, Check, Terminal, Clock, GitCommit, Tag, Sparkles } from 'lucide-react';
 
 const GITHUB_REPO = 'miles-knowbl/orchestrator';
-const DOCKER_IMAGE = `ghcr.io/${GITHUB_REPO}`;
 
 interface ReleaseData {
   name: string;
@@ -237,17 +236,15 @@ export default function DistributePage() {
                   <div className="mt-3 bg-[#0a0a0a] border border-[#222] rounded-lg px-4 py-3">
                     <p className="text-xs text-gray-500 mb-2">Slash commands (installed automatically):</p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5 text-sm">
-                      <div><code className="text-orch-400">/engineering-harness</code> <span className="text-gray-500">— build anything</span></div>
-                      <div><code className="text-orch-400">/bugfix-harness</code> <span className="text-gray-500">— fix bugs</span></div>
-                      <div><code className="text-orch-400">/refactor-harness</code> <span className="text-gray-500">— safe refactoring</span></div>
-                      <div><code className="text-orch-400">/release-harness</code> <span className="text-gray-500">— ship releases</span></div>
-                      <div><code className="text-orch-400">/proposal-harness</code> <span className="text-gray-500">— write proposals</span></div>
-                      <div><code className="text-orch-400">/incident-harness</code> <span className="text-gray-500">— incident response</span></div>
-                      <div><code className="text-orch-400">/migration-harness</code> <span className="text-gray-500">— tech migrations</span></div>
-                      <div><code className="text-orch-400">/infra-harness</code> <span className="text-gray-500">— infrastructure</span></div>
-                      <div><code className="text-orch-400">/audit-harness</code> <span className="text-gray-500">— system audits</span></div>
-                      <div><code className="text-orch-400">/deck-harness</code> <span className="text-gray-500">— slide decks</span></div>
-                      <div><code className="text-orch-400">/meta-harness</code> <span className="text-gray-500">— create new loops</span></div>
+                      <div><code className="text-orch-400">/engineering-loop</code> <span className="text-gray-500">— build anything</span></div>
+                      <div><code className="text-orch-400">/bugfix-loop</code> <span className="text-gray-500">— fix bugs</span></div>
+                      <div><code className="text-orch-400">/distribution-loop</code> <span className="text-gray-500">— distribute to all targets</span></div>
+                      <div><code className="text-orch-400">/proposal-loop</code> <span className="text-gray-500">— write proposals</span></div>
+                      <div><code className="text-orch-400">/migration-loop</code> <span className="text-gray-500">— tech migrations</span></div>
+                      <div><code className="text-orch-400">/infra-loop</code> <span className="text-gray-500">— infrastructure</span></div>
+                      <div><code className="text-orch-400">/audit-loop</code> <span className="text-gray-500">— system audits</span></div>
+                      <div><code className="text-orch-400">/deck-loop</code> <span className="text-gray-500">— slide decks</span></div>
+                      <div><code className="text-orch-400">/meta-loop</code> <span className="text-gray-500">— create new loops</span></div>
                     </div>
                   </div>
                 </div>
@@ -268,7 +265,7 @@ export default function DistributePage() {
       {/* Alternative Install Methods */}
       <div className="mt-10 mb-2">
         <h2 className="text-lg font-semibold text-gray-400">Alternative Install Methods</h2>
-        <p className="text-sm text-gray-600 mt-1">Already familiar? Grab the tarball or Docker image directly.</p>
+        <p className="text-sm text-gray-600 mt-1">Already familiar? Grab the tarball directly.</p>
       </div>
 
       {/* Version Info */}
@@ -313,57 +310,34 @@ export default function DistributePage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Download Tarball */}
-        <div className="bg-[#111] border border-[#222] rounded-xl p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Download className="w-5 h-5 text-blue-400" />
-            <h2 className="text-lg font-semibold text-white">Tarball</h2>
-          </div>
+      <div className="bg-[#111] border border-[#222] rounded-xl p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Download className="w-5 h-5 text-blue-400" />
+          <h2 className="text-lg font-semibold text-white">Tarball</h2>
+        </div>
 
-          {tarball && (
-            <a
-              href={tarball.browser_download_url}
-              className="flex items-center justify-between bg-orch-600 hover:bg-orch-500 text-white rounded-lg px-4 py-3 transition-colors mb-4"
-            >
-              <div className="flex items-center gap-2">
-                <Download className="w-4 h-4" />
-                <span className="text-sm font-medium">{tarball.name}</span>
-              </div>
-              <span className="text-sm text-orch-200">{formatBytes(tarball.size)}</span>
-            </a>
-          )}
-
-          {checksum && (
-            <div>
-              <p className="text-xs text-gray-500 mb-1.5">SHA-256 checksum</p>
-              <div className="flex items-center justify-between bg-[#0a0a0a] border border-[#222] rounded-lg px-4 py-3">
-                <code className="text-xs text-gray-400 font-mono truncate mr-2">{checksum}</code>
-                <CopyButton text={checksum} />
-              </div>
+        {tarball && (
+          <a
+            href={tarball.browser_download_url}
+            className="flex items-center justify-between bg-orch-600 hover:bg-orch-500 text-white rounded-lg px-4 py-3 transition-colors mb-4"
+          >
+            <div className="flex items-center gap-2">
+              <Download className="w-4 h-4" />
+              <span className="text-sm font-medium">{tarball.name}</span>
             </div>
-          )}
-        </div>
+            <span className="text-sm text-orch-200">{formatBytes(tarball.size)}</span>
+          </a>
+        )}
 
-        {/* Docker */}
-        <div className="bg-[#111] border border-[#222] rounded-xl p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Container className="w-5 h-5 text-purple-400" />
-            <h2 className="text-lg font-semibold text-white">Docker</h2>
+        {checksum && (
+          <div>
+            <p className="text-xs text-gray-500 mb-1.5">SHA-256 checksum</p>
+            <div className="flex items-center justify-between bg-[#0a0a0a] border border-[#222] rounded-lg px-4 py-3">
+              <code className="text-xs text-gray-400 font-mono truncate mr-2">{checksum}</code>
+              <CopyButton text={checksum} />
+            </div>
           </div>
-
-          <CodeBlock
-            label="Pull the latest image (any terminal)"
-            command={`docker pull ${DOCKER_IMAGE}:latest`}
-          />
-
-          <div className="mt-4">
-            <CodeBlock
-              label="Run the server (any terminal — leave running)"
-              command={`docker run -p 3002:3002 ${DOCKER_IMAGE}:latest`}
-            />
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

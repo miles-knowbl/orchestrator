@@ -1,4 +1,4 @@
-# /proposal-harness Command
+# /proposal-loop Command
 
 Orchestrate the full proposal creation loop with 6 phases, 5 quality gates, and 7 skills. Produces a polished, evidence-backed proposal document.
 
@@ -6,12 +6,12 @@ Orchestrate the full proposal creation loop with 6 phases, 5 quality gates, and 
 
 This command is the **single entry point** for the proposal loop. It handles everything: state detection, context gathering, insight cultivation, priority analysis, content validation, and final assembly — with enforced human-in-the-loop gates at every transition.
 
-**The flow you want:** Receive a proposal request, invoke `/proposal-harness`, provide context, and walk through all gates to a finished proposal.
+**The flow you want:** Receive a proposal request, invoke `/proposal-loop`, provide context, and walk through all gates to a finished proposal.
 
 ## Usage
 
 ```
-/proposal-harness [--resume] [--phase=PHASE] [--skip-gate=GATE]
+/proposal-loop [--resume] [--phase=PHASE] [--skip-gate=GATE]
 ```
 
 **Options:**
@@ -393,9 +393,9 @@ Phase 6 — COMPLETE:
 ## Resuming a Session
 
 ```
-User: /proposal-harness
+User: /proposal-loop
 
-Proposal Harness: Found existing proposal state.
+Proposal Loop: Found existing proposal state.
 
   Loop: proposal-loop v2.0.0
   Phase: IMPLEMENT (in progress)

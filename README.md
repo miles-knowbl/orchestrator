@@ -41,7 +41,7 @@ The installer sets up 9 slash commands. Try one:
 |---------|-------------|
 | `/engineering-loop` | **Full engineering loop** — build anything from scratch or extend existing code |
 | `/bugfix-loop` | Systematic bug fixing with reproduction and regression tests |
-| `/release-loop` | Version, validate, document, and ship releases |
+| `/distribution-loop` | Distribute to all targets (local, Railway, Vercel, GitHub Releases) |
 | `/proposal-loop` | Create evidence-backed proposals |
 | `/migration-loop` | Technology migrations with rollback safety |
 | `/infra-loop` | Infrastructure provisioning (CI/CD, databases) |

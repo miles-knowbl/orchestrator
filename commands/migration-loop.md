@@ -1,17 +1,17 @@
-# /migration-harness Command
+# /migration-loop Command
 
 **Single entry point for technology migrations.** Move between frameworks, databases, or architectures with rollback safety through a structured 9-phase pipeline.
 
 ## Purpose
 
-This command orchestrates high-risk technology transitions: planning the migration path, checking compatibility, implementing changes, validating rollback capability, and deploying with confidence. Migrations are the highest-risk engineering operation — this loop has the most gates of any harness (6) to match.
+This command orchestrates high-risk technology transitions: planning the migration path, checking compatibility, implementing changes, validating rollback capability, and deploying with confidence. Migrations are the highest-risk engineering operation — this loop has the most gates of any loop (6) to match.
 
 **The flow you want:** define your migration (e.g., "Postgres to CockroachDB"), say `go`, and the loop handles planning, compatibility, implementation, rollback validation, and deployment.
 
 ## Usage
 
 ```
-/migration-harness [--resume] [--phase=PHASE]
+/migration-loop [--resume] [--phase=PHASE]
 ```
 
 **Options:**
@@ -150,9 +150,9 @@ retrospective
 ## Example Session
 
 ```
-User: /migration-harness
+User: /migration-loop
 
-Migration Harness v1.0.0: Starting technology migration...
+Migration Loop v1.0.0: Starting technology migration...
 
   No existing migration state found.
 
@@ -170,7 +170,7 @@ Migration Harness v1.0.0: Starting technology migration...
 
 User: go
 
-Migration Harness: Starting INIT phase...
+Migration Loop: Starting INIT phase...
 
   [1/1] migration-planner → What are you migrating?
 
@@ -201,7 +201,7 @@ User: approved
 
   Gate passed: plan-gate ✓
 
-Migration Harness: Starting SCAFFOLD phase...
+Migration Loop: Starting SCAFFOLD phase...
   [1/2] architect → Designing target architecture...
   [2/2] compatibility-checker → Checking middleware compatibility...
   ...

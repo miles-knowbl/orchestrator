@@ -1,4 +1,4 @@
-# /infra-harness Command
+# /infra-loop Command
 
 **Single entry point for infrastructure provisioning.** Sets up dev environments, databases, containers, and CI/CD pipelines through a structured 5-phase pipeline.
 
@@ -11,7 +11,7 @@ This command orchestrates the complete infrastructure setup workflow: gathering 
 ## Usage
 
 ```
-/infra-harness [--resume] [--phase=PHASE]
+/infra-loop [--resume] [--phase=PHASE]
 ```
 
 **Options:**
@@ -132,9 +132,9 @@ distribute
 ## Example Session
 
 ```
-User: /infra-harness
+User: /infra-loop
 
-Infra Harness v1.0.0: Starting infrastructure provisioning...
+Infra Loop v1.0.0: Starting infrastructure provisioning...
 
   No existing infra state found.
 
@@ -150,14 +150,14 @@ Infra Harness v1.0.0: Starting infrastructure provisioning...
 
 User: go
 
-Infra Harness: Starting INIT phase...
+Infra Loop: Starting INIT phase...
 
   [1/1] requirements → Gathering infrastructure requirements...
         ✓ REQUIREMENTS.md (database, Docker, CI/CD, dev environment)
 
   ✓ INIT phase complete
 
-Infra Harness: Starting SCAFFOLD phase...
+Infra Loop: Starting SCAFFOLD phase...
 
   [1/2] scaffold → Creating project structure...
         ✓ Directory structure scaffolded
@@ -178,7 +178,7 @@ User: approved
 
   Gate passed: infra-gate ✓
 
-Infra Harness: Starting IMPLEMENT phase...
+Infra Loop: Starting IMPLEMENT phase...
   [1/4] infra-docker → Building container definitions...
   ...
 ```

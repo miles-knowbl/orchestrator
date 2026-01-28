@@ -225,6 +225,12 @@ The distribution pipeline uses a **rolling "latest" release** — a single GitHu
 | `scaffold` | Scaffold may create initial project structure; distribute adds CI/CD on top |
 | `security-audit` | Audit may flag secrets management or pipeline security |
 
+## Slash Command
+
+The `distribute` **skill** sets up the CI/CD pipeline — it is used during the SHIP phase of the engineering-loop or distribution-loop.
+
+The `/distribution-loop` **command** runs the full distribution workflow: assess changes, verify readiness, commit/push, and confirm all targets received the update. Use the command when you want to distribute; use the skill when you want to configure the pipeline.
+
 ## Key Principles
 
 **Automate the path from merge to production.** No manual steps between PR merge and deployment.

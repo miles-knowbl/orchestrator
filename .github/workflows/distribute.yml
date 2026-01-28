@@ -6,7 +6,6 @@ on:
 
 permissions:
   contents: write
-  packages: write
 
 jobs:
   build:
@@ -47,9 +46,15 @@ jobs:
       - name: Install Railway CLI
         run: npm i -g @railway/cli
       - name: Deploy
-        run: railway up -d --service eloquent-essence
+        run: |
+          if [ -n "$RAILWAY_SERVICE" ]; then
+            railway up -d --service "$RAILWAY_SERVICE"
+          else
+            railway up -d
+          fi
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_SERVICE: ${{ secrets.RAILWAY_SERVICE }}
 
   release:
     needs: build
@@ -137,32 +142,3 @@ jobs:
             --title "Latest (v${VERSION})" \
             --notes-file /tmp/release-notes.md \
             "$TARBALL" checksums.txt
-
-  docker:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Check for Dockerfile
-        id: check
-        run: |
-          if [ -f Dockerfile ]; then
-            echo "exists=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "exists=false" >> "$GITHUB_OUTPUT"
-            echo "No Dockerfile found, skipping Docker build"
-          fi
-      - name: Log in to GHCR
-        if: steps.check.outputs.exists == 'true'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build and push
-        if: steps.check.outputs.exists == 'true'
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: ghcr.io/${{ github.repository }}:latest

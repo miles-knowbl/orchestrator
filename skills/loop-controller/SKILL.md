@@ -10,7 +10,7 @@ tags: [meta, orchestration, control]
 
 # Loop Controller
 
-The execution brain of the agentic harness.
+The execution brain of the agentic loop.
 
 ## When to Use
 

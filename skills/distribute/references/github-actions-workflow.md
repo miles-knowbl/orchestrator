@@ -13,7 +13,6 @@ on:
 
 permissions:
   contents: write
-  packages: write
 
 jobs:
   test:
@@ -30,7 +29,6 @@ jobs:
   deploy-vercel:
     needs: test
     runs-on: ubuntu-latest
-    if: ${{ vars.DEPLOY_PLATFORM == 'vercel' }}
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -49,15 +47,20 @@ jobs:
   deploy-railway:
     needs: test
     runs-on: ubuntu-latest
-    if: ${{ vars.DEPLOY_PLATFORM == 'railway' }}
     steps:
       - uses: actions/checkout@v4
       - name: Install Railway CLI
         run: npm i -g @railway/cli
       - name: Deploy
-        run: railway up --service ${{ secrets.RAILWAY_SERVICE || '' }}
+        run: |
+          if [ -n "$RAILWAY_SERVICE" ]; then
+            railway up -d --service "$RAILWAY_SERVICE"
+          else
+            railway up -d
+          fi
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_SERVICE: ${{ secrets.RAILWAY_SERVICE }}
 
   release:
     needs: test
@@ -112,25 +115,6 @@ jobs:
           **Commit:** ${{ github.sha }}
           **Date:** $(date -u +%Y-%m-%dT%H:%M:%SZ)" \
             "$TARBALL" checksums.txt
-
-  docker:
-    needs: test
-    runs-on: ubuntu-latest
-    if: ${{ hashFiles('Dockerfile') != '' }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Log in to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build and push
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: ghcr.io/${{ github.repository }}:latest
 ```
 
 ## Workflow Structure
@@ -138,10 +122,9 @@ jobs:
 | Job | Depends On | Condition | Purpose |
 |-----|-----------|-----------|---------|
 | `test` | — | Always | Run test suite as gate |
-| `deploy-vercel` | test | `DEPLOY_PLATFORM == 'vercel'` | Deploy to Vercel |
-| `deploy-railway` | test | `DEPLOY_PLATFORM == 'railway'` | Deploy to Railway |
+| `deploy-vercel` | test | Always (skips gracefully if secrets missing) | Deploy to Vercel |
+| `deploy-railway` | test | Always (skips gracefully if secrets missing) | Deploy to Railway |
 | `release` | test | Always | Create tarball + rolling release |
-| `docker` | test | Dockerfile exists | Build and push to GHCR |
 
 ## Required Secrets
 
@@ -151,13 +134,37 @@ jobs:
 | `VERCEL_ORG_ID` | Vercel | `gh secret set VERCEL_ORG_ID` |
 | `VERCEL_PROJECT_ID` | Vercel | `gh secret set VERCEL_PROJECT_ID` |
 | `RAILWAY_TOKEN` | Railway | `gh secret set RAILWAY_TOKEN` |
+| `RAILWAY_SERVICE` | Railway | `gh secret set RAILWAY_SERVICE` (optional, for multi-service projects) |
 | `GITHUB_TOKEN` | GitHub | Automatic (provided by Actions) |
 
-## Repository Variables
+## Dual Platform Workflow
 
-| Variable | Values | Purpose |
-|----------|--------|---------|
-| `DEPLOY_PLATFORM` | `vercel` or `railway` | Required for platform deploy jobs to run |
+When a project deploys to **both** Vercel and Railway (e.g., dashboard on Vercel, API server on Railway), both deploy jobs run unconditionally. Do **not** use `if` conditionals or `DEPLOY_PLATFORM` — simply configure both sets of secrets.
+
+### Deployment Modes
+
+| Mode | Vercel Secrets | Railway Secrets | Result |
+|------|---------------|-----------------|--------|
+| Vercel only | Configured | Not configured | Vercel deploys, Railway skips |
+| Railway only | Not configured | Configured | Railway deploys, Vercel skips |
+| Dual platform | Configured | Configured | Both deploy |
+
+### Railway Service Selection
+
+When deploying to Railway, the service name is optional. Use `RAILWAY_SERVICE` for multi-service projects:
+
+```yaml
+- name: Deploy
+  run: |
+    if [ -n "$RAILWAY_SERVICE" ]; then
+      railway up -d --service "$RAILWAY_SERVICE"
+    else
+      railway up -d
+    fi
+  env:
+    RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+    RAILWAY_SERVICE: ${{ secrets.RAILWAY_SERVICE }}
+```
 
 ## Customization Points
 

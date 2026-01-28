@@ -19,7 +19,7 @@ Generate Claude Code slash command `.md` files from loop definitions.
 - **Porting a loop to a new environment** --- The loop exists but lacks a Claude Code slash command for invocation
 - **Standardizing command format across loops** --- Multiple loops exist with inconsistent command files and you need uniform structure
 - **Auditing command-to-loop alignment** --- Verifying that an existing slash command accurately reflects its loop.json source of truth
-- When you say: "generate the slash command", "create the harness command", "make this loop executable", "update the command file", "turn this loop into a CLI command"
+- When you say: "generate the slash command", "create the loop command", "make this loop executable", "update the command file", "turn this loop into a CLI command"
 
 ## Reference Requirements
 
@@ -44,7 +44,7 @@ Generate Claude Code slash command `.md` files from loop definitions.
 
 | Deliverable | Location | Condition |
 |-------------|----------|-----------|
-| `{name}-harness.md` | `~/.claude/commands/` | Always --- the primary slash command file |
+| `{loop-id}.md` | `~/.claude/commands/` | Always --- the primary slash command file |
 | `{name}-state.json` schema | Documented within the command `.md` | Always --- the state file structure for the generated loop |
 | Generation report | Stdout / conversation | Always --- summary of phases mapped, gates configured, skills integrated |
 
@@ -150,10 +150,10 @@ Derive all names from the loop ID using consistent conventions. Naming is mechan
 
 | Element | Convention | Example |
 |---------|-----------|---------|
-| **Command name** | `{domain}-harness` (domain = loop ID minus `-loop`) | `proposal-harness` |
-| **Command file** | `{command-name}.md` | `proposal-harness.md` |
+| **Command name** | Loop ID directly (e.g., `engineering-loop`) | `proposal-loop` |
+| **Command file** | `{loop-id}.md` | `proposal-loop.md` |
 | **State file** | `{domain}-state.json` | `proposal-state.json` |
-| **H1 title** | `/{command-name} Command` | `/proposal-harness Command` |
+| **H1 title** | `/{loop-id} Command` | `/proposal-loop Command` |
 
 ### Flag Derivation
 
@@ -433,7 +433,7 @@ For simple loops (4 or fewer phases, no complex modes). ~150-200 lines. Includes
 
 ### Full Format
 
-For complex loops (5+ phases, multiple modes, conditional gates). ~350-500 lines. Adds: mode-specific behavior, codebase analysis steps, detailed example session, resume example, hook integration, and harness update protocol.
+For complex loops (5+ phases, multiple modes, conditional gates). ~350-500 lines. Adds: mode-specific behavior, codebase analysis steps, detailed example session, resume example, hook integration, and loop update protocol.
 
 ```markdown
 # /{command-name} Command
@@ -442,20 +442,20 @@ For complex loops (5+ phases, multiple modes, conditional gates). ~350-500 lines
 ## Purpose | ## Usage | ## Execution Flow (with mode detection, scope discovery)
 ## Mode-Specific Behavior | ## Commands | ## State Files
 ## Example Session | ## Resuming a Session | ## Skill Invocation Sequence
-## Hook Integration | ## References | ## Harness Update Protocol
+## Hook Integration | ## References | ## Loop Update Protocol
 ```
 
 ## Common Patterns
 
 ### Simple Linear Loop
 
-Sequential phases, no mode detection, all-human gates. The proposal-harness is the canonical example.
+Sequential phases, no mode detection, all-human gates. The proposal-loop command is the canonical example.
 
 **Use when:** Loop has 3-6 phases, all gates are human-approval, single mode. Generate using Quick Format.
 
 ### Multi-Mode Engineering Loop
 
-Mode detection, conditional phases, mixed gate types, extensive skill trees. The engineering-harness is the canonical example.
+Mode detection, conditional phases, mixed gate types, extensive skill trees. The engineering-loop command is the canonical example.
 
 **Use when:** Loop has 7+ phases, mode detection, conditional gates/phases. Generate using Full Format.
 
@@ -504,4 +504,4 @@ Brand-new loop needs everything: command file, state schema, documentation. Full
 - `references/naming-conventions.md`: Naming rules for commands, flags, state files, and deliverables with derivation algorithms and conflict resolution
 - `references/state-schema.md`: State file structure for loop execution: phase tracking, gate statuses, deliverable paths, timestamps, and resume logic
 - `references/gate-prompts.md`: Templates for gate approval prompts, deliverable checklists, skip-with-reason logic, and gate type handling
-- `references/existing-commands.md`: Analysis of engineering-harness.md and proposal-harness.md as reference implementations with extracted patterns
+- `references/existing-commands.md`: Analysis of engineering-loop.md and proposal-loop.md as reference implementations with extracted patterns
