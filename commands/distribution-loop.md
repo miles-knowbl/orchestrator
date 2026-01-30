@@ -167,6 +167,12 @@ User: go
   │  Assessing git log since last distribution...
   │  Determining version and scope...
   │
+  │  Current: 0.7.0 → Shipping: 1 feature, 2 fixes
+  │  Proposed: 0.8.0 (minor bump for new feature)
+  │
+  │  Bump version? [Y/n/specify]: y
+  │  ✓ package.json updated: 0.7.0 → 0.8.0
+  │
   │  Output:
   │    📄 release-scope.md — 3 commits, 1 feature, 2 fixes
   └─ ✓ release-planner complete
@@ -318,6 +324,8 @@ Distribution Loop: Resuming SHIP phase...
 1. release-planner (INIT)
    +-- Assess git log since last distribution
    +-- Determine version and scope
+   +-- Bump package.json version if shipping new features
+   +-- Verify version alignment (package.json → server → release)
 
 2. code-verification (VERIFY)
    +-- Run: npm run build
@@ -349,6 +357,42 @@ Distribution Loop: Resuming SHIP phase...
    +-- Summarize distribution results
    +-- Record any issues for next run
 ```
+
+## Version Alignment
+
+The distribution loop ensures version stays aligned across all surfaces:
+
+```
+package.json (single source of truth)
+     │
+     ├─→ src/version.ts reads at runtime
+     │   ├─→ MCP server metadata
+     │   ├─→ /health endpoint
+     │   └─→ Startup banner
+     │
+     └─→ GitHub Actions reads on push
+         └─→ Release body: "Version: X.Y.Z"
+             └─→ /distribute page parses and displays
+```
+
+### Version Bump Rules
+
+| Change Type | Bump | Example |
+|-------------|------|---------|
+| Breaking change | Major | 0.7.0 → 1.0.0 |
+| New feature | Minor | 0.7.0 → 0.8.0 |
+| Bug fix only | Patch | 0.7.0 → 0.7.1 |
+| No code changes | None | Stay at 0.7.0 |
+
+### During INIT Phase
+
+The release-planner skill will:
+1. Analyze commits since last release
+2. Propose appropriate version bump
+3. Ask for confirmation (or accept custom version)
+4. Update package.json before proceeding
+
+This ensures the version in the release matches the shipped features.
 
 ## Slash Command Sync
 
