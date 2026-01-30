@@ -37,9 +37,17 @@ Create `infra-state.json`:
 ```json
 {
   "loop": "infra-loop",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "phase": "INIT",
   "status": "active",
+
+  "context": {
+    "tier": "system",
+    "organization": "personal",
+    "system": "my-infra",
+    "module": null
+  },
+
   "gates": {
     "infra-gate": { "status": "pending", "required": true, "approvalType": "human" },
     "deploy-gate": { "status": "pending", "required": true, "approvalType": "human" }
@@ -348,4 +356,91 @@ User: approved
 ║   📄 RETROSPECTIVE.md     Infrastructure learnings                  ║
 ║                                                                     ║
 ╚═════════════════════════════════════════════════════════════════════╝
+```
+
+---
+
+## Clarification Protocol
+
+This loop follows the **Deep Context Protocol**. Before proceeding past INIT:
+
+1. **Probe relentlessly** — Ask 5-10+ questions about infrastructure requirements
+2. **Surface assumptions** — "I'm assuming you need X database — correct?"
+3. **Gather constraints** — Cloud provider? Budget? Compliance? Scale requirements?
+4. **Don't stop early** — Keep asking until all infrastructure decisions are clear
+
+At every phase transition and gate, pause to ask:
+- "Does this infrastructure plan match your needs?"
+- "Any services or configurations I'm missing?"
+- "Ready to proceed with provisioning?"
+
+See `commands/_shared/clarification-protocol.md` for detailed guidance.
+
+---
+
+## Context Hierarchy
+
+This loop operates within the **Organization → System → Module** hierarchy:
+
+| Tier | Scope | Dream State Location |
+|------|-------|---------------------|
+| **Organization** | All systems across workspace | `~/.claude/DREAM-STATE.md` |
+| **System** | This repository/application | `{repo}/.claude/DREAM-STATE.md` |
+| **Module** | Specific concern within system | `{repo}/{path}/.claude/DREAM-STATE.md` or inline |
+
+### Context Loading (Automatic on Init)
+
+When this loop initializes, it automatically loads:
+
+```
+1. Organization Dream State (~/.claude/DREAM-STATE.md)
+   └── Org-wide vision, active systems, master checklist
+
+2. System Dream State ({repo}/.claude/DREAM-STATE.md)
+   └── System vision, modules, progress checklist
+
+3. Recent Runs (auto-injected via query_runs)
+   └── Last 3-5 relevant runs for context continuity
+
+4. Memory (patterns, calibration)
+   └── Learned patterns from all applicable tiers
+```
+
+---
+
+## On Completion
+
+When this loop reaches COMPLETE phase and finishes:
+
+### 1. Archive Run
+
+**Location:** `~/.claude/runs/{year-month}/{system}-infra-loop-{timestamp}.json`
+
+**Contents:** Full state + summary including:
+- Infrastructure requirements
+- Services provisioned
+- Gates passed
+- Deployment status
+
+### 2. Update Dream State
+
+At the System level (`{repo}/.claude/DREAM-STATE.md`):
+- Update "Recent Completions" section
+- Note infrastructure changes
+
+### 3. Prune Active State
+
+**Delete:** `infra-state.json` from working directory.
+
+**Result:** Next `/infra-loop` invocation starts fresh with context gathering.
+
+### 4. Completion Message
+
+```
+══════════════════════════════════════════════════════════════
+  Run archived: ~/.claude/runs/2025-01/myinfra-infra-loop-29T14-30.json
+  Dream State updated: .claude/DREAM-STATE.md
+
+  Next invocation will start fresh.
+══════════════════════════════════════════════════════════════
 ```

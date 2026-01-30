@@ -1,0 +1,23 @@
+{
+  "display": {
+    "name": "Smoke Test",
+    "icon": "flame",
+    "description": "Verifies critical features work by calling live endpoints",
+    "category": "core"
+  },
+  "inputs": {
+    "context": [
+      { "type": "environment", "required": true },
+      { "type": "endpoints", "required": true }
+    ]
+  },
+  "output": {
+    "type": "markdown",
+    "deliverables": ["SMOKE-TEST.md"]
+  },
+  "execution": {
+    "autoExecute": true,
+    "confirmationRequired": false,
+    "progressIndicator": "spinner"
+  }
+}

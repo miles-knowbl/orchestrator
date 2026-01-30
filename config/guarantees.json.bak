@@ -1,0 +1,438 @@
+{
+  "version": "1.0.0",
+  "skills": {
+    "requirements": {
+      "skillId": "requirements",
+      "guarantees": [
+        {
+          "id": "GUA-REQ-001",
+          "name": "Requirements document created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              { "pattern": "REQUIREMENTS.md", "minCount": 1 }
+            ]
+          }
+        },
+        {
+          "id": "GUA-REQ-002",
+          "name": "Requirements has required sections",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "REQUIREMENTS.md",
+                "sections": ["## Functional Requirements", "## Non-Functional Requirements"],
+                "minLines": 50
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "spec": {
+      "skillId": "spec",
+      "guarantees": [
+        {
+          "id": "GUA-SPEC-001",
+          "name": "FeatureSpec document created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              { "pattern": "FEATURESPEC.md", "minCount": 1 }
+            ]
+          }
+        },
+        {
+          "id": "GUA-SPEC-002",
+          "name": "FeatureSpec has required sections",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "FEATURESPEC.md",
+                "sections": [
+                  "## Feature Overview",
+                  "## Architecture Overview",
+                  "## Test Scenarios"
+                ],
+                "minLines": 200
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "architect": {
+      "skillId": "architect",
+      "guarantees": [
+        {
+          "id": "GUA-ARCH-001",
+          "name": "Architecture document created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              { "pattern": "ARCHITECTURE.md", "minCount": 1 }
+            ]
+          }
+        },
+        {
+          "id": "GUA-ARCH-002",
+          "name": "Architecture has required sections",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "ARCHITECTURE.md",
+                "sections": [
+                  "## System Overview",
+                  "## Components"
+                ],
+                "minLines": 100
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "scaffold": {
+      "skillId": "scaffold",
+      "guarantees": [
+        {
+          "id": "GUA-SCAF-001",
+          "name": "Project structure created",
+          "type": "deliverable",
+          "required": true,
+          "condition": "mode === 'greenfield'",
+          "validation": {
+            "files": [
+              { "pattern": "package.json", "minCount": 1 }
+            ]
+          }
+        }
+      ]
+    },
+    "implement": {
+      "skillId": "implement",
+      "guarantees": [
+        {
+          "id": "GUA-IMPL-001",
+          "name": "Source files created or modified",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              { "pattern": "src/**/*.{ts,tsx,js,jsx}", "minCount": 1 }
+            ]
+          }
+        },
+        {
+          "id": "GUA-IMPL-002",
+          "name": "Implementation steps executed",
+          "type": "step_proof",
+          "required": true,
+          "validation": {
+            "proofType": "artifact",
+            "proofPattern": "implement-PROOF.json"
+          }
+        }
+      ]
+    },
+    "test-generation": {
+      "skillId": "test-generation",
+      "guarantees": [
+        {
+          "id": "GUA-TEST-001",
+          "name": "Test files created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              { "pattern": "**/*.{test,spec}.{ts,tsx,js,jsx}", "minCount": 1 }
+            ]
+          }
+        },
+        {
+          "id": "GUA-TEST-002",
+          "name": "Tests pass",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "test_pass_rate",
+                "operator": "eq",
+                "value": 1.0,
+                "source": "command",
+                "path": "npm test"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "code-verification": {
+      "skillId": "code-verification",
+      "guarantees": [
+        {
+          "id": "GUA-VER-001",
+          "name": "Verification report created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              { "pattern": "VERIFICATION.md", "minCount": 1 }
+            ]
+          }
+        },
+        {
+          "id": "GUA-VER-002",
+          "name": "All verification categories pass",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1.0,
+                "source": "file",
+                "path": "VERIFICATION.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "code-validation": {
+      "skillId": "code-validation",
+      "guarantees": [
+        {
+          "id": "GUA-VAL-001",
+          "name": "Validation report created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              { "pattern": "VALIDATION.md", "minCount": 1 }
+            ]
+          }
+        }
+      ]
+    },
+    "security-audit": {
+      "skillId": "security-audit",
+      "guarantees": [
+        {
+          "id": "GUA-SEC-001",
+          "name": "Security audit report created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              { "pattern": "SECURITY-AUDIT.md", "minCount": 1 }
+            ]
+          }
+        },
+        {
+          "id": "GUA-SEC-002",
+          "name": "No critical security issues",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "critical_issues",
+                "operator": "eq",
+                "value": 0,
+                "source": "file",
+                "path": "SECURITY-AUDIT.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "code-review": {
+      "skillId": "code-review",
+      "guarantees": [
+        {
+          "id": "GUA-REV-001",
+          "name": "Code review document created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              { "pattern": "CODE-REVIEW.md", "minCount": 1 }
+            ]
+          }
+        }
+      ]
+    },
+    "document": {
+      "skillId": "document",
+      "guarantees": [
+        {
+          "id": "GUA-DOC-001",
+          "name": "Documentation created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              { "pattern": "README.md", "minCount": 1 }
+            ]
+          }
+        }
+      ]
+    },
+    "deploy": {
+      "skillId": "deploy",
+      "guarantees": [
+        {
+          "id": "GUA-DEP-001",
+          "name": "Deployment steps executed",
+          "type": "step_proof",
+          "required": false,
+          "condition": "deployTarget !== undefined",
+          "validation": {
+            "proofType": "artifact",
+            "proofPattern": "deploy-PROOF.json"
+          }
+        }
+      ]
+    }
+  },
+  "loops": {
+    "engineering-loop": {
+      "loopId": "engineering-loop",
+      "phaseGuarantees": {
+        "INIT": [
+          {
+            "id": "GUA-ENG-INIT-001",
+            "name": "Requirements and spec documented",
+            "type": "deliverable",
+            "required": true,
+            "validation": {
+              "files": [
+                { "pattern": "REQUIREMENTS.md", "minCount": 1 },
+                { "pattern": "FEATURESPEC.md", "minCount": 1 }
+              ]
+            }
+          }
+        ],
+        "VERIFY": [
+          {
+            "id": "GUA-ENG-VER-001",
+            "name": "Build compiles without errors",
+            "type": "quality",
+            "required": true,
+            "validation": {
+              "qualityThresholds": [
+                {
+                  "metric": "build_success",
+                  "operator": "eq",
+                  "value": 1,
+                  "source": "command",
+                  "path": "npm run build"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "gateGuarantees": {
+        "spec-gate": [
+          {
+            "id": "GUA-GATE-SPEC-001",
+            "name": "Spec gate deliverables exist",
+            "type": "deliverable",
+            "required": true,
+            "validation": {
+              "files": [
+                { "pattern": "REQUIREMENTS.md", "minCount": 1 },
+                { "pattern": "FEATURESPEC.md", "minCount": 1 }
+              ]
+            }
+          }
+        ],
+        "architecture-gate": [
+          {
+            "id": "GUA-GATE-ARCH-001",
+            "name": "Architecture gate deliverables exist",
+            "type": "deliverable",
+            "required": true,
+            "validation": {
+              "files": [
+                { "pattern": "ARCHITECTURE.md", "minCount": 1 }
+              ]
+            }
+          }
+        ],
+        "verification-gate": [
+          {
+            "id": "GUA-GATE-VER-001",
+            "name": "Verification gate deliverables exist",
+            "type": "deliverable",
+            "required": true,
+            "validation": {
+              "files": [
+                { "pattern": "VERIFICATION.md", "minCount": 1 }
+              ]
+            }
+          },
+          {
+            "id": "GUA-GATE-VER-002",
+            "name": "Verification passes",
+            "type": "quality",
+            "required": true,
+            "validation": {
+              "qualityThresholds": [
+                {
+                  "metric": "verification_pass_rate",
+                  "operator": "eq",
+                  "value": 1.0,
+                  "source": "file",
+                  "path": "VERIFICATION.md"
+                }
+              ]
+            }
+          }
+        ],
+        "validation-gate": [
+          {
+            "id": "GUA-GATE-VAL-001",
+            "name": "Validation gate deliverables exist",
+            "type": "deliverable",
+            "required": true,
+            "validation": {
+              "files": [
+                { "pattern": "VALIDATION.md", "minCount": 1 },
+                { "pattern": "SECURITY-AUDIT.md", "minCount": 1 }
+              ]
+            }
+          }
+        ],
+        "review-gate": [
+          {
+            "id": "GUA-GATE-REV-001",
+            "name": "Review gate deliverables exist",
+            "type": "deliverable",
+            "required": true,
+            "validation": {
+              "files": [
+                { "pattern": "CODE-REVIEW.md", "minCount": 1 }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "phases": {}
+}

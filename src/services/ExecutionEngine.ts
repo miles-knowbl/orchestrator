@@ -7,6 +7,8 @@ import { join } from 'path';
 import { randomUUID } from 'crypto';
 import type { LoopComposer } from './LoopComposer.js';
 import type { SkillRegistry } from './SkillRegistry.js';
+import type { GuaranteeService } from './GuaranteeService.js';
+import type { DeliverableManager } from './DeliverableManager.js';
 import type {
   Loop,
   LoopExecution,
@@ -20,19 +22,59 @@ import type {
   LoopMode,
   AutonomyLevel,
 } from '../types.js';
+import type { ValidationContext } from '../types/guarantee.js';
+import { GuaranteeViolationError } from '../errors/GuaranteeViolationError.js';
 
 export interface ExecutionEngineOptions {
   dataPath: string;  // Path to data/executions/
+  projectsPath?: string;  // Base path for project directories
 }
 
 export class ExecutionEngine {
   private executions: Map<string, LoopExecution> = new Map();
+  private guaranteeService: GuaranteeService | null = null;
+  private deliverableManager: DeliverableManager | null = null;
 
   constructor(
     private options: ExecutionEngineOptions,
     private loopComposer: LoopComposer,
     private skillRegistry: SkillRegistry
   ) {}
+
+  /**
+   * Set the GuaranteeService for validation
+   */
+  setGuaranteeService(service: GuaranteeService): void {
+    this.guaranteeService = service;
+    this.log('info', 'GuaranteeService attached to ExecutionEngine');
+  }
+
+  /**
+   * Set the DeliverableManager for organized deliverable storage
+   */
+  setDeliverableManager(manager: DeliverableManager): void {
+    this.deliverableManager = manager;
+    this.log('info', 'DeliverableManager attached to ExecutionEngine');
+  }
+
+  /**
+   * Get the DeliverableManager (for external access)
+   */
+  getDeliverableManager(): DeliverableManager | null {
+    return this.deliverableManager;
+  }
+
+  /**
+   * Get the project path for an execution
+   */
+  private getProjectPath(execution: LoopExecution): string {
+    // If projectsPath is configured, use it as base
+    if (this.options.projectsPath) {
+      return join(this.options.projectsPath, execution.project);
+    }
+    // Otherwise assume project is a path or use current directory
+    return execution.project.startsWith('/') ? execution.project : process.cwd();
+  }
 
   /**
    * Initialize by loading active executions
@@ -136,6 +178,16 @@ export class ExecutionEngine {
     // Mark first phase as in-progress
     execution.phases[0].status = 'in-progress';
     execution.phases[0].startedAt = now;
+
+    // Initialize deliverable run directory (if manager available)
+    if (this.deliverableManager) {
+      await this.deliverableManager.initializeRun({
+        executionId: id,
+        loopId: params.loopId,
+        project: params.project,
+        phases: loop.phases.map(p => p.name),
+      });
+    }
 
     // Save and track
     await this.saveExecution(execution);
@@ -341,7 +393,11 @@ export class ExecutionEngine {
   async completeSkill(
     executionId: string,
     skillId: string,
-    result?: { deliverables?: string[]; outcome?: { success: boolean; score: number } }
+    result?: {
+      deliverables?: string[];
+      outcome?: { success: boolean; score: number };
+      skipGuarantees?: boolean;  // For testing or manual override
+    }
   ): Promise<LoopExecution> {
     const execution = this.executions.get(executionId);
     if (!execution) {
@@ -357,6 +413,66 @@ export class ExecutionEngine {
     if (!skillState) {
       throw new Error(`Skill not found in current phase: ${skillId}`);
     }
+
+    // ==========================================================================
+    // GUARANTEE VALIDATION
+    // ==========================================================================
+    if (this.guaranteeService && !result?.skipGuarantees) {
+      const context: ValidationContext = {
+        executionId,
+        loopId: execution.loopId,
+        skillId,
+        phase: execution.currentPhase,
+        mode: execution.mode,
+        projectPath: this.getProjectPath(execution),
+      };
+
+      const guaranteeResult = await this.guaranteeService.validateSkillGuarantees(context);
+
+      if (!guaranteeResult.passed) {
+        // Log the blocking guarantees
+        this.addExecutionLog(execution, {
+          level: 'error',
+          category: 'skill',
+          phase: execution.currentPhase,
+          skillId,
+          message: `Skill "${skillId}" blocked by ${guaranteeResult.blocking.length} failed guarantee(s)`,
+          details: {
+            blocking: guaranteeResult.blocking.map(g => ({
+              id: g.guaranteeId,
+              name: g.name,
+              errors: g.errors,
+            })),
+          },
+        });
+
+        // Block execution
+        execution.status = 'blocked';
+        execution.updatedAt = new Date();
+        await this.saveExecution(execution);
+
+        throw GuaranteeViolationError.fromBlocking({ skillId }, guaranteeResult.blocking);
+      }
+
+      // Log any warnings
+      if (guaranteeResult.warnings.length > 0) {
+        this.addExecutionLog(execution, {
+          level: 'warn',
+          category: 'skill',
+          phase: execution.currentPhase,
+          skillId,
+          message: `Skill "${skillId}" has ${guaranteeResult.warnings.length} warning(s)`,
+          details: {
+            warnings: guaranteeResult.warnings.map(g => ({
+              id: g.guaranteeId,
+              name: g.name,
+              errors: g.errors,
+            })),
+          },
+        });
+      }
+    }
+    // ==========================================================================
 
     skillState.status = 'completed';
 
@@ -440,7 +556,8 @@ export class ExecutionEngine {
   async approveGate(
     executionId: string,
     gateId: string,
-    approvedBy?: string
+    approvedBy?: string,
+    options?: { skipGuarantees?: boolean }
   ): Promise<LoopExecution> {
     const execution = this.executions.get(executionId);
     if (!execution) {
@@ -455,6 +572,50 @@ export class ExecutionEngine {
     if (gateState.status === 'approved') {
       return execution; // Already approved
     }
+
+    // ==========================================================================
+    // GUARANTEE VALIDATION
+    // ==========================================================================
+    if (this.guaranteeService && !options?.skipGuarantees) {
+      const context: ValidationContext = {
+        executionId,
+        loopId: execution.loopId,
+        skillId: '',  // Gate-level validation
+        phase: execution.currentPhase,
+        mode: execution.mode,
+        projectPath: this.getProjectPath(execution),
+      };
+
+      const guaranteeResult = await this.guaranteeService.validateGateGuarantees(
+        execution.loopId,
+        gateId,
+        context
+      );
+
+      if (!guaranteeResult.passed) {
+        // Log the blocking guarantees
+        this.addExecutionLog(execution, {
+          level: 'error',
+          category: 'gate',
+          gateId,
+          message: `Gate "${gateId}" blocked by ${guaranteeResult.blocking.length} failed guarantee(s)`,
+          details: {
+            blocking: guaranteeResult.blocking.map(g => ({
+              id: g.guaranteeId,
+              name: g.name,
+              errors: g.errors,
+            })),
+          },
+        });
+
+        // Do not approve gate
+        execution.updatedAt = new Date();
+        await this.saveExecution(execution);
+
+        throw GuaranteeViolationError.fromBlocking({ gateId }, guaranteeResult.blocking);
+      }
+    }
+    // ==========================================================================
 
     gateState.status = 'approved';
     gateState.approvedBy = approvedBy;

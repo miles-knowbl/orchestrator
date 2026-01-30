@@ -21,11 +21,16 @@ import { MemoryService } from './services/MemoryService.js';
 import { LearningService } from './services/LearningService.js';
 import { CalibrationService } from './services/CalibrationService.js';
 import { InboxProcessor } from './services/InboxProcessor.js';
+import { RunArchivalService } from './services/RunArchivalService.js';
+import { GuaranteeService } from './services/GuaranteeService.js';
+import { LoopGuaranteeAggregator } from './services/LoopGuaranteeAggregator.js';
+import { DeliverableManager } from './services/DeliverableManager.js';
 import { skillToolDefinitions, createSkillToolHandlers } from './tools/skillTools.js';
 import { loopToolDefinitions, createLoopToolHandlers } from './tools/loopTools.js';
 import { executionToolDefinitions, createExecutionToolHandlers } from './tools/executionTools.js';
 import { memoryToolDefinitions, createMemoryToolHandlers } from './tools/memoryTools.js';
 import { inboxToolDefinitions, createInboxToolHandlers } from './tools/inboxTools.js';
+import { runToolDefinitions, createRunToolHandlers } from './tools/runTools.js';
 import { createHttpServer, startHttpServer } from './server/httpServer.js';
 
 async function main() {
@@ -128,6 +133,42 @@ async function main() {
     message: 'Calibration service initialized',
   }));
 
+  // Initialize guarantee service
+  const guaranteeRegistryPath = join(config.repoPath, 'config', 'guarantees.json');
+  const guaranteeService = new GuaranteeService({
+    registryPath: guaranteeRegistryPath,
+    dataPath,  // Same as execution data path
+  });
+  await guaranteeService.initialize();
+
+  // Initialize loop guarantee aggregator
+  // This provides belt-and-suspenders guarantee enforcement:
+  // - Aggregates skill guarantees into loop-level guarantee maps
+  // - Re-aggregates when skills or loops change
+  // - Enables comprehensive autonomous mode validation
+  const guaranteeAggregator = new LoopGuaranteeAggregator(guaranteeService, {
+    requireSkillGuarantees: false,  // Don't fail if some skills have no guarantees
+    includeOptional: true,  // Include non-required guarantees (will be warnings)
+  });
+
+  // Wire up the guarantee system
+  // 1. Aggregator gets skill guarantees from GuaranteeService
+  // 2. GuaranteeService uses aggregator for comprehensive validation
+  // 3. LoopComposer triggers re-aggregation on loop changes
+  // 4. ExecutionEngine uses GuaranteeService for enforcement
+  guaranteeService.setAggregator(guaranteeAggregator);
+  loopComposer.setGuaranteeAggregator(guaranteeAggregator);
+  executionEngine.setGuaranteeService(guaranteeService);
+
+  // Log aggregation summary
+  const aggSummary = guaranteeAggregator.getSummary();
+
+  console.error(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    level: 'info',
+    message: `Guarantee service initialized (registry v${guaranteeService.getRegistryVersion()}, ${aggSummary.totalGuarantees} guarantees aggregated for ${aggSummary.loopCount} loops)`,
+  }));
+
   // Initialize inbox processor (second brain)
   const inboxPath = join(config.repoPath, 'inbox');
   const inboxDataPath = join(config.repoPath, 'data', 'inbox');
@@ -143,12 +184,39 @@ async function main() {
     message: 'Inbox processor initialized',
   }));
 
+  // Initialize run archival service
+  const runArchivalService = new RunArchivalService();
+  await runArchivalService.ensureRunsDir();
+
+  console.error(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    level: 'info',
+    message: 'Run archival service initialized',
+  }));
+
+  // Initialize deliverable manager for organized deliverable storage
+  const deliverableManager = new DeliverableManager({
+    projectPath: config.repoPath,
+  });
+  await deliverableManager.initialize();
+
+  // Wire deliverable manager to services
+  guaranteeService.setDeliverableManager(deliverableManager);
+  executionEngine.setDeliverableManager(deliverableManager);
+
+  console.error(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    level: 'info',
+    message: 'Deliverable manager initialized',
+  }));
+
   // Create tool handlers
   const skillHandlers = createSkillToolHandlers(skillRegistry, learningService);
   const loopHandlers = createLoopToolHandlers(loopComposer);
   const executionHandlers = createExecutionToolHandlers(executionEngine);
   const memoryHandlers = createMemoryToolHandlers(memoryService, learningService, calibrationService);
   const inboxHandlers = createInboxToolHandlers(inboxProcessor);
+  const runHandlers = createRunToolHandlers(runArchivalService);
 
   // Combine all handlers
   const allHandlers = {
@@ -157,6 +225,7 @@ async function main() {
     ...executionHandlers,
     ...memoryHandlers,
     ...inboxHandlers,
+    ...runHandlers,
   };
 
   // Combine all tool definitions
@@ -166,6 +235,7 @@ async function main() {
     ...executionToolDefinitions,
     ...memoryToolDefinitions,
     ...inboxToolDefinitions,
+    ...runToolDefinitions,
   ];
 
   // Create MCP server factory

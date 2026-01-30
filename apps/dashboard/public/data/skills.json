@@ -265,6 +265,14 @@
       "category": "core"
     },
     {
+      "id": "smoke-test",
+      "name": "smoke-test",
+      "version": "1.0.0",
+      "description": "Verifies critical features actually work by calling live endpoints. Unlike integration-test (which writes test code), this skill executes manual verification against deployed/running services. Essential for audit-loop to catch functional regressions.",
+      "phase": "VERIFY",
+      "category": "core"
+    },
+    {
       "id": "journey-tracer",
       "name": "journey-tracer",
       "version": "1.0.0",

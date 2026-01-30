@@ -19,6 +19,10 @@ import type {
   EstimateRecord,
   MemoryLevel,
 } from '../types.js';
+import type {
+  GuaranteeFailureRecord,
+  ProblematicSkill,
+} from '../types/guarantee.js';
 
 export interface CalibrationServiceOptions {
   dataPath: string;
@@ -532,6 +536,141 @@ export class CalibrationService {
         global: { multiplier: 1.0, samples: 0 },
       },
     };
+  }
+
+  // ==========================================================================
+  // GUARANTEE FAILURE TRACKING
+  // ==========================================================================
+
+  private guaranteeFailures: GuaranteeFailureRecord[] = [];
+
+  /**
+   * Record a guarantee failure for calibration
+   */
+  async recordGuaranteeFailure(
+    failure: GuaranteeFailureRecord
+  ): Promise<void> {
+    // Store in memory
+    this.guaranteeFailures.push(failure);
+
+    // Record pattern in memory service for learning
+    await this.memoryService.recordPattern('skill', failure.skillId, {
+      name: `guarantee:${failure.guaranteeId}`,
+      context: `Fails in ${failure.phase} phase`,
+      solution: failure.errors.join('; '),
+      confidence: 'low',
+    });
+
+    // Adjust time estimates for skills with guarantee failures
+    // Skills that fail guarantees typically take longer to complete
+    await this.updateSkillMultiplierForFailure(failure.skillId);
+
+    this.log(
+      'info',
+      `Recorded guarantee failure: ${failure.guaranteeId} for skill ${failure.skillId}`
+    );
+  }
+
+  /**
+   * Update skill multiplier when guarantees fail
+   */
+  private async updateSkillMultiplierForFailure(skillId: string): Promise<void> {
+    // Get or create skill-level memory
+    const memory = await this.memoryService.getOrCreateMemory('skill', skillId);
+    const calibration = memory.calibration;
+
+    // Initialize bySkill if needed
+    if (!calibration.adjustments.bySkill) {
+      calibration.adjustments.bySkill = {};
+    }
+
+    // Get or create skill adjustment
+    const existing = calibration.adjustments.bySkill[skillId] || {
+      multiplier: 1.0,
+      samples: 0,
+    };
+
+    // Increase multiplier by 10% for each failure (capped at 3.0)
+    existing.multiplier = Math.min(existing.multiplier * 1.1, 3.0);
+    existing.samples++;
+
+    calibration.adjustments.bySkill[skillId] = existing;
+
+    // Update cache
+    this.calibrationData.set(`skill:${skillId}`, calibration);
+  }
+
+  /**
+   * Get skills with frequent guarantee failures
+   */
+  getProblematicSkills(): ProblematicSkill[] {
+    // Group failures by skill
+    const bySkill = new Map<string, GuaranteeFailureRecord[]>();
+
+    for (const failure of this.guaranteeFailures) {
+      const existing = bySkill.get(failure.skillId) || [];
+      existing.push(failure);
+      bySkill.set(failure.skillId, existing);
+    }
+
+    // Calculate metrics for each skill
+    const problematic: ProblematicSkill[] = [];
+
+    for (const [skillId, failures] of bySkill) {
+      // Count unique guarantee failures
+      const guaranteeIds = new Set(failures.map(f => f.guaranteeId));
+
+      // Only include skills with 2+ failures or 2+ different guarantee types
+      if (failures.length >= 2 || guaranteeIds.size >= 2) {
+        // Find most common guarantees
+        const guaranteeCounts = new Map<string, number>();
+        for (const f of failures) {
+          guaranteeCounts.set(f.guaranteeId, (guaranteeCounts.get(f.guaranteeId) || 0) + 1);
+        }
+
+        const commonGuarantees = Array.from(guaranteeCounts.entries())
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 3)
+          .map(([id]) => id);
+
+        // Calculate failure rate (failures / total completions attempt)
+        // For now, use a simple ratio based on failure count
+        const failureRate = Math.min(failures.length / 10, 1.0);
+
+        problematic.push({
+          skillId,
+          failureRate,
+          commonGuarantees,
+          totalFailures: failures.length,
+          recentFailures: failures.slice(-5),
+        });
+      }
+    }
+
+    // Sort by failure rate descending
+    return problematic.sort((a, b) => b.failureRate - a.failureRate);
+  }
+
+  /**
+   * Get guarantee failures for a specific skill
+   */
+  getSkillGuaranteeFailures(skillId: string): GuaranteeFailureRecord[] {
+    return this.guaranteeFailures.filter(f => f.skillId === skillId);
+  }
+
+  /**
+   * Get all guarantee failure records
+   */
+  getAllGuaranteeFailures(): GuaranteeFailureRecord[] {
+    return [...this.guaranteeFailures];
+  }
+
+  /**
+   * Clear guarantee failures (for testing or reset)
+   */
+  clearGuaranteeFailures(): void {
+    this.guaranteeFailures = [];
+    this.log('info', 'Cleared guarantee failure records');
   }
 
   private log(level: string, message: string): void {

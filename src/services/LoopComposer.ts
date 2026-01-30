@@ -13,10 +13,12 @@ import {
   type LoopConfig,
 } from '../parser/loopParser.js';
 import type { SkillRegistry } from './SkillRegistry.js';
+import type { LoopGuaranteeAggregator } from './LoopGuaranteeAggregator.js';
 import type {
   Loop,
   LoopSummary,
   LoopPhase,
+  LoopGuaranteeCache,
   Gate,
   Phase,
   LoopMode,
@@ -32,11 +34,92 @@ export class LoopComposer {
   private loops: Map<string, Loop> = new Map();
   private watchers: FSWatcher[] = [];
   private reindexTimeout: NodeJS.Timeout | null = null;
+  private guaranteeAggregator: LoopGuaranteeAggregator | null = null;
+  private loopChangeListeners: Array<(loopId: string, loop: Loop | null) => void> = [];
 
   constructor(
     private options: LoopComposerOptions,
     private skillRegistry: SkillRegistry
   ) {}
+
+  /**
+   * Set the guarantee aggregator for automatic guarantee aggregation
+   */
+  setGuaranteeAggregator(aggregator: LoopGuaranteeAggregator): void {
+    this.guaranteeAggregator = aggregator;
+
+    // Aggregate guarantees for all existing loops
+    for (const loop of this.loops.values()) {
+      this.aggregateLoopGuarantees(loop);
+    }
+
+    this.log('info', 'GuaranteeAggregator attached, aggregated guarantees for existing loops');
+  }
+
+  /**
+   * Register a listener for loop changes
+   */
+  onLoopChange(listener: (loopId: string, loop: Loop | null) => void): void {
+    this.loopChangeListeners.push(listener);
+  }
+
+  /**
+   * Aggregate guarantees for a loop and store in cache
+   */
+  private aggregateLoopGuarantees(loop: Loop): void {
+    if (!this.guaranteeAggregator) return;
+
+    const aggregation = this.guaranteeAggregator.aggregateLoop(loop);
+
+    // Convert to cache format for storage on loop object
+    const cache: LoopGuaranteeCache = {
+      aggregatedAt: aggregation.aggregatedAt,
+      byPhase: {},
+      byGate: {},
+      totalCount: aggregation.totalGuarantees,
+    };
+
+    // Populate phase info
+    for (const [phase, phaseSet] of aggregation.byPhase) {
+      const skillCounts: Record<string, number> = {};
+      for (const [skillId, guarantees] of phaseSet.skillGuarantees) {
+        skillCounts[skillId] = guarantees.length;
+      }
+      cache.byPhase[phase] = {
+        skillGuaranteeCount: skillCounts,
+        phaseGuaranteeCount: phaseSet.phaseGuarantees.length,
+        totalCount: phaseSet.allGuarantees.length,
+      };
+    }
+
+    // Populate gate info
+    for (const [gateId, guarantees] of aggregation.byGate) {
+      cache.byGate[gateId] = {
+        guaranteeIds: guarantees.map(g => g.id),
+        totalCount: guarantees.length,
+      };
+    }
+
+    loop.guarantees = cache;
+  }
+
+  /**
+   * Notify listeners of loop changes
+   */
+  private notifyLoopChange(loopId: string, loop: Loop | null): void {
+    for (const listener of this.loopChangeListeners) {
+      try {
+        listener(loopId, loop);
+      } catch (error) {
+        this.log('error', `Loop change listener error: ${error}`);
+      }
+    }
+
+    // Also notify guarantee aggregator
+    if (this.guaranteeAggregator) {
+      this.guaranteeAggregator.onLoopChanged(loopId);
+    }
+  }
 
   /**
    * Initialize the composer by loading all loop definitions
@@ -71,6 +154,9 @@ export class LoopComposer {
           const loop = await this.loadLoop(loopDir);
           if (loop) {
             this.loops.set(loop.id, loop);
+
+            // Aggregate guarantees if aggregator is available
+            this.aggregateLoopGuarantees(loop);
           }
         } catch {
           // loop.json doesn't exist, skip
@@ -148,11 +234,32 @@ export class LoopComposer {
     if (this.reindexTimeout) {
       clearTimeout(this.reindexTimeout);
     }
-    this.reindexTimeout = setTimeout(() => {
+    this.reindexTimeout = setTimeout(async () => {
       this.log('info', 'Loop file change detected, re-indexing...');
-      this.indexAll().catch((error) => {
+
+      // Track existing loops to detect changes
+      const previousLoopIds = new Set(this.loops.keys());
+
+      try {
+        await this.indexAll();
+
+        // Notify about changes
+        const currentLoopIds = new Set(this.loops.keys());
+
+        // Notify about new/changed loops
+        for (const loopId of currentLoopIds) {
+          this.notifyLoopChange(loopId, this.loops.get(loopId)!);
+        }
+
+        // Notify about removed loops
+        for (const loopId of previousLoopIds) {
+          if (!currentLoopIds.has(loopId)) {
+            this.notifyLoopChange(loopId, null);
+          }
+        }
+      } catch (error) {
         this.log('error', `Loop re-index failed: ${error}`);
-      });
+      }
     }, 500);
   }
 

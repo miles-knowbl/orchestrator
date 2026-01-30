@@ -42,9 +42,17 @@ Create `distribution-state.json`:
 ```json
 {
   "loop": "distribution-loop",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "phase": "INIT",
   "status": "active",
+
+  "context": {
+    "tier": "system",
+    "organization": "personal",
+    "system": "my-project",
+    "module": null
+  },
+
   "gates": {
     "readiness-gate": { "status": "pending", "required": true, "approvalType": "auto" },
     "distribution-gate": { "status": "pending", "required": true, "approvalType": "auto" }
@@ -333,6 +341,7 @@ Distribution Loop: Resuming SHIP phase...
    +-- Read: platform-selection.md
    +-- Verify CI pipeline triggered
    +-- Confirm all targets will receive update
+   +-- **Sync slash commands to ~/.claude/commands/**
 
 --- distribution-gate (auto) ---
 
@@ -340,6 +349,20 @@ Distribution Loop: Resuming SHIP phase...
    +-- Summarize distribution results
    +-- Record any issues for next run
 ```
+
+## Slash Command Sync
+
+After successful push, the distribution loop syncs orchestrator commands to Claude Code:
+
+```bash
+# Sync all loop commands to user's Claude Code
+cp commands/*-loop.md ~/.claude/commands/
+
+# Report sync status
+echo "✓ Synced $(ls -1 commands/*-loop.md | wc -l | tr -d ' ') slash commands"
+```
+
+This ensures the user's Claude Code always has the latest loop definitions after each distribution. A post-push hook (`~/.claude/hooks/sync-commands.sh`) provides backup sync for pushes outside the distribution loop.
 
 ## References
 
@@ -352,4 +375,91 @@ mcp__skills-library__get_skill(name: "git-workflow", includeReferences: true)
 mcp__skills-library__get_skill(name: "deploy", includeReferences: true)
 mcp__skills-library__get_skill(name: "distribute", includeReferences: true)
 mcp__skills-library__get_skill(name: "retrospective", includeReferences: true)
+```
+
+---
+
+## Clarification Protocol
+
+This loop follows the **Deep Context Protocol**. Before proceeding past INIT:
+
+1. **Probe relentlessly** — Ask questions about what's being distributed and why
+2. **Surface assumptions** — "I'm assuming all targets should receive this — correct?"
+3. **Gather scope** — Which commits? Which targets? Any targets to skip?
+4. **Don't stop early** — Keep asking until distribution scope is clear
+
+At every phase transition and gate, pause to ask:
+- "Does this release scope look right?"
+- "Any targets I should skip or add?"
+- "Ready to push to all targets?"
+
+See `commands/_shared/clarification-protocol.md` for detailed guidance.
+
+---
+
+## Context Hierarchy
+
+This loop operates within the **Organization → System → Module** hierarchy:
+
+| Tier | Scope | Dream State Location |
+|------|-------|---------------------|
+| **Organization** | All systems across workspace | `~/.claude/DREAM-STATE.md` |
+| **System** | This repository/application | `{repo}/.claude/DREAM-STATE.md` |
+| **Module** | Specific concern within system | `{repo}/{path}/.claude/DREAM-STATE.md` or inline |
+
+### Context Loading (Automatic on Init)
+
+When this loop initializes, it automatically loads:
+
+```
+1. Organization Dream State (~/.claude/DREAM-STATE.md)
+   └── Org-wide vision, active systems, master checklist
+
+2. System Dream State ({repo}/.claude/DREAM-STATE.md)
+   └── System vision, modules, progress checklist
+
+3. Recent Runs (auto-injected via query_runs)
+   └── Last 3-5 relevant runs for context continuity
+
+4. Memory (patterns, calibration)
+   └── Learned patterns from all applicable tiers
+```
+
+---
+
+## On Completion
+
+When this loop reaches COMPLETE phase and finishes:
+
+### 1. Archive Run
+
+**Location:** `~/.claude/runs/{year-month}/{system}-distribution-loop-{timestamp}.json`
+
+**Contents:** Full state + summary including:
+- Release scope and version
+- Targets deployed
+- Gates passed
+- Distribution manifest
+
+### 2. Update Dream State
+
+At the System level (`{repo}/.claude/DREAM-STATE.md`):
+- Update "Recent Completions" section
+- Note deployment status
+
+### 3. Prune Active State
+
+**Delete:** `distribution-state.json` from working directory.
+
+**Result:** Next `/distribution-loop` invocation starts fresh with context gathering.
+
+### 4. Completion Message
+
+```
+══════════════════════════════════════════════════════════════
+  Run archived: ~/.claude/runs/2025-01/myproject-distribution-loop-29T14-30.json
+  Dream State updated: .claude/DREAM-STATE.md
+
+  Next invocation will start fresh.
+══════════════════════════════════════════════════════════════
 ```

@@ -43,9 +43,17 @@ Create `transpose-state.json`:
 ```json
 {
   "loop": "transpose-loop",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "phase": "EXTRACT",
   "status": "active",
+
+  "context": {
+    "tier": "system",
+    "organization": "personal",
+    "system": "target-project",
+    "module": null
+  },
+
   "gates": {
     "arch-gate": { "status": "pending", "required": true, "approvalType": "human" },
     "map-gate": { "status": "pending", "required": true, "approvalType": "human" },
@@ -444,4 +452,91 @@ mcp__skills-library__get_skill(name: "stack-analyzer", includeReferences: true)
 mcp__skills-library__get_skill(name: "architect", includeReferences: true)
 mcp__skills-library__get_skill(name: "spec", includeReferences: true)
 mcp__skills-library__get_skill(name: "retrospective", includeReferences: true)
+```
+
+---
+
+## Clarification Protocol
+
+This loop follows the **Deep Context Protocol**. Before proceeding past EXTRACT:
+
+1. **Probe relentlessly** — Ask 5-10+ questions about source and target stacks
+2. **Surface assumptions** — "I'm assuming you want a 1:1 mapping — correct?"
+3. **Gather constraints** — What parts must change? What should stay similar? Priorities?
+4. **Don't stop early** — Keep asking until the transposition goals are clear
+
+At every phase transition and gate, pause to ask:
+- "Does this architecture extraction look complete?"
+- "Any concepts I'm mapping incorrectly?"
+- "Ready to proceed with this approach?"
+
+See `commands/_shared/clarification-protocol.md` for detailed guidance.
+
+---
+
+## Context Hierarchy
+
+This loop operates within the **Organization → System → Module** hierarchy:
+
+| Tier | Scope | Dream State Location |
+|------|-------|---------------------|
+| **Organization** | All systems across workspace | `~/.claude/DREAM-STATE.md` |
+| **System** | This repository/application | `{repo}/.claude/DREAM-STATE.md` |
+| **Module** | Specific concern within system | `{repo}/{path}/.claude/DREAM-STATE.md` or inline |
+
+### Context Loading (Automatic on Init)
+
+When this loop initializes, it automatically loads:
+
+```
+1. Organization Dream State (~/.claude/DREAM-STATE.md)
+   └── Org-wide vision, active systems, master checklist
+
+2. System Dream State ({repo}/.claude/DREAM-STATE.md)
+   └── System vision, modules, progress checklist
+
+3. Recent Runs (auto-injected via query_runs)
+   └── Last 3-5 relevant runs for context continuity
+
+4. Memory (patterns, calibration)
+   └── Learned patterns from all applicable tiers
+```
+
+---
+
+## On Completion
+
+When this loop reaches COMPLETE phase and finishes:
+
+### 1. Archive Run
+
+**Location:** `~/.claude/runs/{year-month}/{system}-transpose-loop-{timestamp}.json`
+
+**Contents:** Full state + summary including:
+- Source and target stacks
+- Architecture components mapped
+- Gates passed
+- Feature spec produced
+
+### 2. Update Dream State
+
+At the System level (`{repo}/.claude/DREAM-STATE.md`):
+- Update "Recent Completions" section
+- Note transposition completed
+
+### 3. Prune Active State
+
+**Delete:** `transpose-state.json` from working directory.
+
+**Result:** Next `/transpose-loop` invocation starts fresh with context gathering.
+
+### 4. Completion Message
+
+```
+══════════════════════════════════════════════════════════════
+  Run archived: ~/.claude/runs/2025-01/targetproject-transpose-loop-29T14-30.json
+  Dream State updated: .claude/DREAM-STATE.md
+
+  Next invocation will start fresh.
+══════════════════════════════════════════════════════════════
 ```

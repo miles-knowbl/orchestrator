@@ -50,9 +50,17 @@ Create `deck-state.json`:
 ```json
 {
   "loop": "deck-loop",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "phase": "INIT",
   "status": "active",
+
+  "context": {
+    "tier": "system",
+    "organization": "personal",
+    "system": "presentations",
+    "module": null
+  },
+
   "gates": {
     "context-gate": { "status": "pending", "required": true, "approvalType": "human" },
     "taste-gate": { "status": "pending", "required": true, "approvalType": "human" },
@@ -611,3 +619,90 @@ Key references by skill:
 | deck-text-schema | deck-format.md, slide-types.md |
 | deck-image-schema | slide-archetypes.md, dimensional-mode.md |
 | pptx | html2pptx.md, css-design-system.md, slide-rendering.md |
+
+---
+
+## Clarification Protocol
+
+This loop follows the **Deep Context Protocol**. Before proceeding past INIT:
+
+1. **Probe relentlessly** — Ask 5-10+ questions about the presentation
+2. **Surface assumptions** — "I'm assuming a formal tone for this audience — correct?"
+3. **Gather context** — Who's the audience? What's the goal? What action should they take?
+4. **Don't stop early** — Keep asking until the story and style are clear
+
+At every phase transition and gate, pause to ask:
+- "Does this narrative arc match your vision?"
+- "Any slides I should add/remove/reorder?"
+- "Ready to proceed with this design?"
+
+See `commands/_shared/clarification-protocol.md` for detailed guidance.
+
+---
+
+## Context Hierarchy
+
+This loop operates within the **Organization → System → Module** hierarchy:
+
+| Tier | Scope | Dream State Location |
+|------|-------|---------------------|
+| **Organization** | All systems across workspace | `~/.claude/DREAM-STATE.md` |
+| **System** | This repository/application | `{repo}/.claude/DREAM-STATE.md` |
+| **Module** | Specific concern within system | `{repo}/{path}/.claude/DREAM-STATE.md` or inline |
+
+### Context Loading (Automatic on Init)
+
+When this loop initializes, it automatically loads:
+
+```
+1. Organization Dream State (~/.claude/DREAM-STATE.md)
+   └── Org-wide vision, active systems, master checklist
+
+2. System Dream State ({repo}/.claude/DREAM-STATE.md)
+   └── System vision, modules, progress checklist
+
+3. Recent Runs (auto-injected via query_runs)
+   └── Last 3-5 relevant runs for context continuity
+
+4. Memory (patterns, calibration)
+   └── Learned patterns from all applicable tiers
+```
+
+---
+
+## On Completion
+
+When this loop reaches COMPLETE phase and finishes:
+
+### 1. Archive Run
+
+**Location:** `~/.claude/runs/{year-month}/{system}-deck-loop-{timestamp}.json`
+
+**Contents:** Full state + summary including:
+- Deck topic and audience
+- Slide count and quality score
+- Gates passed
+- Brand alignment metrics
+
+### 2. Update Dream State
+
+At the System level (`{repo}/.claude/DREAM-STATE.md`):
+- Update "Recent Completions" section
+- Note presentation created
+
+### 3. Prune Active State
+
+**Delete:** `deck-state.json` from working directory.
+
+**Result:** Next `/deck-loop` invocation starts fresh with context gathering.
+
+### 4. Completion Message
+
+```
+══════════════════════════════════════════════════════════════
+  Run archived: ~/.claude/runs/2025-01/presentations-deck-loop-29T14-30.json
+  Dream State updated: .claude/DREAM-STATE.md
+
+  Next invocation will start fresh.
+══════════════════════════════════════════════════════════════
+```

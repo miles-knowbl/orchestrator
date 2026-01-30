@@ -160,6 +160,16 @@ npm run build  # Compile TypeScript
 npm test       # Run tests
 ```
 
+## Deep Context Protocol
+
+All interactions in this system follow the **Deep Context Protocol**:
+
+1. **Upfront Gathering**: Ask 5-10+ clarifying questions before any non-trivial task
+2. **Terrain Check**: After every response, assess uphill (uncertain → ask) vs downhill (clear → proceed)
+3. **Don't assume**: When in doubt, ask — don't push through uncertainty
+
+See `~/.claude/CLAUDE.md` for full protocol and `commands/_shared/clarification-protocol.md` for loop-specific guidance.
+
 ## Conventions
 
 - All skills have SKILL.md + CHANGELOG.md + optional ui.json

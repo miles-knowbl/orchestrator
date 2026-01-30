@@ -37,9 +37,17 @@ Create `meta-state.json`:
 ```json
 {
   "loop": "meta-loop",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "phase": "INIT",
   "status": "active",
+
+  "context": {
+    "tier": "system",
+    "organization": "personal",
+    "system": "orchestrator",
+    "module": null
+  },
+
   "gates": {
     "design-gate": { "status": "pending", "required": true, "approvalType": "human" },
     "composition-gate": { "status": "pending", "required": true, "approvalType": "human" }
@@ -295,4 +303,91 @@ User: approved
 ║   📄 RETROSPECTIVE.md        Loop creation learnings                ║
 ║                                                                     ║
 ╚═════════════════════════════════════════════════════════════════════╝
+```
+
+---
+
+## Clarification Protocol
+
+This loop follows the **Deep Context Protocol**. Before proceeding past INIT:
+
+1. **Probe relentlessly** — Ask 5-10+ questions about the loop being created
+2. **Surface assumptions** — "I'm assuming this loop needs X phases — correct?"
+3. **Gather requirements** — What problem does this loop solve? Who uses it? What's the output?
+4. **Don't stop early** — Keep asking until the loop design is crystal clear
+
+At every phase transition and gate, pause to ask:
+- "Does this loop structure match your vision?"
+- "Any skills or gates I should add/remove?"
+- "Ready to proceed with this design?"
+
+See `commands/_shared/clarification-protocol.md` for detailed guidance.
+
+---
+
+## Context Hierarchy
+
+This loop operates within the **Organization → System → Module** hierarchy:
+
+| Tier | Scope | Dream State Location |
+|------|-------|---------------------|
+| **Organization** | All systems across workspace | `~/.claude/DREAM-STATE.md` |
+| **System** | This repository/application | `{repo}/.claude/DREAM-STATE.md` |
+| **Module** | Specific concern within system | `{repo}/{path}/.claude/DREAM-STATE.md` or inline |
+
+### Context Loading (Automatic on Init)
+
+When this loop initializes, it automatically loads:
+
+```
+1. Organization Dream State (~/.claude/DREAM-STATE.md)
+   └── Org-wide vision, active systems, master checklist
+
+2. System Dream State ({repo}/.claude/DREAM-STATE.md)
+   └── System vision, modules, progress checklist
+
+3. Recent Runs (auto-injected via query_runs)
+   └── Last 3-5 relevant runs for context continuity
+
+4. Memory (patterns, calibration)
+   └── Learned patterns from all applicable tiers
+```
+
+---
+
+## On Completion
+
+When this loop reaches COMPLETE phase and finishes:
+
+### 1. Archive Run
+
+**Location:** `~/.claude/runs/{year-month}/{system}-meta-loop-{timestamp}.json`
+
+**Contents:** Full state + summary including:
+- Loop requirements defined
+- Skills created
+- Gates passed
+- Deliverables produced
+
+### 2. Update Dream State
+
+At the System level (`{repo}/.claude/DREAM-STATE.md`):
+- Update "Recent Completions" section
+- Note new loops/skills added
+
+### 3. Prune Active State
+
+**Delete:** `meta-state.json` from working directory.
+
+**Result:** Next `/meta-loop` invocation starts fresh with context gathering.
+
+### 4. Completion Message
+
+```
+══════════════════════════════════════════════════════════════
+  Run archived: ~/.claude/runs/2025-01/orchestrator-meta-loop-29T14-30.json
+  Dream State updated: .claude/DREAM-STATE.md
+
+  Next invocation will start fresh.
+══════════════════════════════════════════════════════════════
 ```

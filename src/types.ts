@@ -127,12 +127,36 @@ export interface Loop {
   ui: LoopUIConfig;
   skillUI: Record<string, SkillUIConfig>;
 
+  // Aggregated guarantees (computed from skills)
+  guarantees?: LoopGuaranteeCache;
+
   // Metadata
   skillCount: number;
   category: string;
   author?: string;
   createdAt: Date;
   updatedAt: Date;
+}
+
+/**
+ * Cached guarantee aggregation for a loop
+ */
+export interface LoopGuaranteeCache {
+  aggregatedAt: Date;
+  byPhase: Partial<Record<Phase, PhaseGuaranteeInfo>>;
+  byGate: Record<string, GateGuaranteeInfo>;
+  totalCount: number;
+}
+
+export interface PhaseGuaranteeInfo {
+  skillGuaranteeCount: Record<string, number>;  // skillId → count
+  phaseGuaranteeCount: number;
+  totalCount: number;
+}
+
+export interface GateGuaranteeInfo {
+  guaranteeIds: string[];
+  totalCount: number;
 }
 
 export interface LoopPhase {

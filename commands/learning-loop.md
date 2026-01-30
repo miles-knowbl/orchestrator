@@ -37,9 +37,15 @@ Create `learning-state.json`:
 ```json
 {
   "loop": "learning-loop",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "phase": "INIT",
   "status": "active",
+  "context": {
+    "tier": "system",
+    "organization": "personal",
+    "system": "orchestrator",
+    "module": null
+  },
   "gates": {
     "analysis-gate": { "status": "pending", "required": true, "approvalType": "human" },
     "improvement-gate": { "status": "pending", "required": true, "approvalType": "human" }
@@ -318,4 +324,104 @@ User: approved
 ║   🧠 Pattern — brownfield-integration-penalty recorded              ║
 ║                                                                     ║
 ╚═════════════════════════════════════════════════════════════════════╝
+```
+
+---
+
+## Clarification Protocol
+
+This loop follows the **Deep Context Protocol**. Before proceeding past INIT:
+
+1. **Probe relentlessly** — Ask 5-10+ questions about what to improve and why
+2. **Surface assumptions** — "I'm assuming the gap is X — correct?"
+3. **Gather learning scope** — Which executions? Which skills? What patterns?
+4. **Don't stop early** — Keep asking until improvement targets are clear
+
+At every phase transition and gate, pause to ask:
+- "Does this analysis match your observations?"
+- "Any patterns I'm missing?"
+- "Ready to proceed with these improvements?"
+
+See `commands/_shared/clarification-protocol.md` for detailed guidance.
+
+---
+
+## Context Hierarchy
+
+This loop operates within the **Organization → System → Module** hierarchy:
+
+| Tier | Scope | Dream State Location |
+|------|-------|---------------------|
+| **Organization** | All systems across workspace | `~/.claude/DREAM-STATE.md` |
+| **System** | This repository/application | `{repo}/.claude/DREAM-STATE.md` |
+| **Module** | Specific concern within system | `{repo}/{path}/.claude/DREAM-STATE.md` or inline |
+
+### Context Loading (Automatic on Init)
+
+When this loop initializes, it automatically loads:
+
+```
+1. Organization Dream State (~/.claude/DREAM-STATE.md)
+   └── Org-wide vision, active systems, master checklist
+
+2. System Dream State ({repo}/.claude/DREAM-STATE.md)
+   └── System vision, modules, progress checklist
+
+3. Recent Runs (auto-injected via query_runs)
+   └── Last 3-5 relevant runs for context continuity
+   └── CRITICAL: learning-loop uses these to analyze past executions
+
+4. Memory (patterns, calibration)
+   └── Learned patterns from all applicable tiers
+```
+
+### Learning Loop Context
+
+The learning-loop has special context requirements:
+- **Queries past runs** to find patterns and gaps
+- **Analyzes specific loops** (e.g., engineering-loop calibration)
+- **Updates patterns** at appropriate tier (system or org)
+
+---
+
+## On Completion
+
+When this loop reaches COMPLETE phase:
+
+### 1. Archive Run
+
+**Location:** `~/.claude/runs/{year-month}/{system}-learning-loop-{timestamp}.json`
+
+**Contents:** Full state + summary including:
+- Patterns identified
+- Skills created/updated
+- Calibrations adjusted
+- Executions analyzed
+
+### 2. Update Dream State
+
+At the System level (if system-scoped improvements):
+- Update module progress based on skill improvements
+- Record pattern in system memory
+
+At the Organization level (if org-wide patterns):
+- Add to org patterns list
+- Update calibration data
+
+### 3. Prune Active State
+
+**Delete:** `learning-state.json` from working directory.
+
+**Result:** Next `/learning-loop` invocation starts fresh with context gathering.
+
+### 4. Completion Message
+
+```
+══════════════════════════════════════════════════════════════
+  Run archived: ~/.claude/runs/2025-01/orchestrator-learning-loop-29T14-30.json
+  Dream State updated: .claude/DREAM-STATE.md
+  Patterns recorded: 1
+
+  Next invocation will start fresh.
+══════════════════════════════════════════════════════════════
 ```

@@ -1,0 +1,4240 @@
+{
+  "version": "2.0.0",
+  "generated": "2026-01-30T02:36:15.337Z",
+  "skills": {
+    "architect": {
+      "skillId": "architect",
+      "guarantees": [
+        {
+          "id": "GUA-ARCH-001",
+          "name": "Architecture document created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "ARCHITECTURE.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-ARCH-002",
+          "name": "Architecture has required sections",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "ARCHITECTURE.md",
+                "sections": [
+                  "## System Overview",
+                  "## Components"
+                ],
+                "minLines": 100
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "architecture-extractor": {
+      "skillId": "architecture-extractor",
+      "guarantees": [
+        {
+          "id": "GUA-ARCHITEC-001",
+          "name": "ARCHITECTURE.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "ARCHITECTURE.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-ARCHITEC-003",
+          "name": "ARCHITECTURE.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "ARCHITECTURE.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-ARCHITEC-004",
+          "name": "architecture-extractor passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "ARCHITECTURE.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "architecture-review": {
+      "skillId": "architecture-review",
+      "guarantees": [
+        {
+          "id": "GUA-ARCHITEC-001",
+          "name": "ARCHITECTURE-REVIEW.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "ARCHITECTURE-REVIEW.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-ARCHITEC-002",
+          "name": "ARCHITECTURE-REVIEW.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "ARCHITECTURE-REVIEW.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-ARCHITEC-003",
+          "name": "architecture-review passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "ARCHITECTURE-REVIEW.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "bug-reproducer": {
+      "skillId": "bug-reproducer",
+      "guarantees": [
+        {
+          "id": "GUA-BUGREPRO-001",
+          "name": "BUG-REPRODUCTION.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "BUG-REPRODUCTION.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-BUGREPRO-003",
+          "name": "BUG-REPRODUCTION.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "BUG-REPRODUCTION.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-BUGREPRO-004",
+          "name": "bug-reproducer passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "BUG-REPRODUCTION.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "calibration-tracker": {
+      "skillId": "calibration-tracker",
+      "guarantees": [
+        {
+          "id": "GUA-CALIBRAT-001",
+          "name": "ESTIMATE.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "ESTIMATE.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-CALIBRAT-002",
+          "name": "ESTIMATE.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "ESTIMATE.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-CALIBRAT-003",
+          "name": "calibration-tracker passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "ESTIMATE.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "changelog-generator": {
+      "skillId": "changelog-generator",
+      "guarantees": [
+        {
+          "id": "GUA-CHANGELO-001",
+          "name": "CHANGELOG.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "CHANGELOG.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-CHANGELO-003",
+          "name": "CHANGELOG.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "CHANGELOG.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-CHANGELO-004",
+          "name": "changelog-generator passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "CHANGELOG.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "code-review": {
+      "skillId": "code-review",
+      "guarantees": [
+        {
+          "id": "GUA-REV-001",
+          "name": "Code review document created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "CODE-REVIEW.md",
+                "minCount": 1
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "code-validation": {
+      "skillId": "code-validation",
+      "guarantees": [
+        {
+          "id": "GUA-VAL-001",
+          "name": "Validation report created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "VALIDATION.md",
+                "minCount": 1
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "code-verification": {
+      "skillId": "code-verification",
+      "guarantees": [
+        {
+          "id": "GUA-VER-001",
+          "name": "Verification report created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "VERIFICATION.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-VER-002",
+          "name": "All verification categories pass",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "VERIFICATION.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "collect-bugs": {
+      "skillId": "collect-bugs",
+      "guarantees": [
+        {
+          "id": "GUA-COLLECTB-001",
+          "name": "BUG-BACKLOG.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "BUG-BACKLOG.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-COLLECTB-002",
+          "name": "BUG-BACKLOG.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "BUG-BACKLOG.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-COLLECTB-003",
+          "name": "collect-bugs passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "BUG-BACKLOG.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "compatibility-checker": {
+      "skillId": "compatibility-checker",
+      "guarantees": [
+        {
+          "id": "GUA-COMPATIB-001",
+          "name": "COMPATIBILITY-REPORT.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "COMPATIBILITY-REPORT.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-COMPATIB-002",
+          "name": "COMPATIBILITY-REPORT.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "COMPATIBILITY-REPORT.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-COMPATIB-003",
+          "name": "compatibility-checker passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "COMPATIBILITY-REPORT.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "content-analysis": {
+      "skillId": "content-analysis",
+      "guarantees": [
+        {
+          "id": "GUA-CONTENTA-001",
+          "name": "EXTRACTION-LOG.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "EXTRACTION-LOG.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-CONTENTA-002",
+          "name": "ANALYSIS-REPORT.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "ANALYSIS-REPORT.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-CONTENTA-003",
+          "name": "EXTRACTED-PATTERNS.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "EXTRACTED-PATTERNS.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-CONTENTA-004",
+          "name": "EXTRACTED-SKILLS.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "EXTRACTED-SKILLS.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-CONTENTA-006",
+          "name": "EXTRACTION-LOG.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "EXTRACTION-LOG.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-CONTENTA-007",
+          "name": "ANALYSIS-REPORT.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "ANALYSIS-REPORT.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-CONTENTA-008",
+          "name": "content-analysis passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "EXTRACTION-LOG.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "context-cultivation": {
+      "skillId": "context-cultivation",
+      "guarantees": [
+        {
+          "id": "GUA-CONTEXTC-001",
+          "name": "CULTIVATED-CONTEXT.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "CULTIVATED-CONTEXT.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-CONTEXTC-002",
+          "name": "PATTERNS.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "PATTERNS.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-CONTEXTC-003",
+          "name": "GAPS.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "GAPS.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-CONTEXTC-004",
+          "name": "RAW-CONTEXT.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "RAW-CONTEXT.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-CONTEXTC-005",
+          "name": "CONTEXT-SOURCES.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "CONTEXT-SOURCES.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-CONTEXTC-008",
+          "name": "CULTIVATED-CONTEXT.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "CULTIVATED-CONTEXT.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-CONTEXTC-009",
+          "name": "PATTERNS.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "PATTERNS.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-CONTEXTC-010",
+          "name": "context-cultivation passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "CULTIVATED-CONTEXT.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "context-ingestion": {
+      "skillId": "context-ingestion",
+      "guarantees": [
+        {
+          "id": "GUA-CONTEXTI-001",
+          "name": "CONTEXT-SOURCES.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "CONTEXT-SOURCES.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-CONTEXTI-002",
+          "name": "RAW-CONTEXT.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "RAW-CONTEXT.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-CONTEXTI-003",
+          "name": "INGESTION-LOG.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "INGESTION-LOG.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-CONTEXTI-005",
+          "name": "CONTEXT-SOURCES.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "CONTEXT-SOURCES.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-CONTEXTI-006",
+          "name": "RAW-CONTEXT.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "RAW-CONTEXT.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-CONTEXTI-007",
+          "name": "context-ingestion passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "CONTEXT-SOURCES.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "coordination-protocol": {
+      "skillId": "coordination-protocol",
+      "guarantees": [
+        {
+          "id": "GUA-COORDINA-001",
+          "name": "HANDOFF.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "HANDOFF.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-COORDINA-002",
+          "name": "HANDOFF.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "HANDOFF.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-COORDINA-003",
+          "name": "coordination-protocol passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "HANDOFF.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "debug-assist": {
+      "skillId": "debug-assist",
+      "guarantees": [
+        {
+          "id": "GUA-DEBUGASS-001",
+          "name": "DEBUG-LOG.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "DEBUG-LOG.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-DEBUGASS-002",
+          "name": "DEBUG-LOG.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "DEBUG-LOG.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-DEBUGASS-003",
+          "name": "debug-assist passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "DEBUG-LOG.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "deck-image-schema": {
+      "skillId": "deck-image-schema",
+      "guarantees": [
+        {
+          "id": "GUA-DECKIMAG-001",
+          "name": "deck-image-schema passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "DECK-IMAGE-SCHEMA.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "deck-text-schema": {
+      "skillId": "deck-text-schema",
+      "guarantees": [
+        {
+          "id": "GUA-DECKTEXT-001",
+          "name": "deck-text-schema passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "DECK-TEXT-SCHEMA.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "deploy": {
+      "skillId": "deploy",
+      "guarantees": [
+        {
+          "id": "GUA-DEP-001",
+          "name": "Deployment steps executed",
+          "type": "step_proof",
+          "required": false,
+          "condition": "deployTarget !== undefined",
+          "validation": {
+            "proofType": "artifact",
+            "proofPattern": "deploy-PROOF.json"
+          }
+        }
+      ]
+    },
+    "distribute": {
+      "skillId": "distribute",
+      "guarantees": [
+        {
+          "id": "GUA-DISTRIBU-001",
+          "name": "distribute passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "DISTRIBUTE.md"
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-DISTRIBU-002",
+          "name": "distribute steps executed",
+          "type": "step_proof",
+          "required": true,
+          "validation": {
+            "proofType": "artifact",
+            "proofPattern": "distribute-PROOF.json"
+          }
+        }
+      ]
+    },
+    "docs-alignment": {
+      "skillId": "docs-alignment",
+      "guarantees": [
+        {
+          "id": "GUA-DOCSALIG-001",
+          "name": "INDEX.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "INDEX.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-DOCSALIG-002",
+          "name": "ALIGNMENT-REPORT.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "ALIGNMENT-REPORT.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-DOCSALIG-003",
+          "name": "DREAM-STATE.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "DREAM-STATE.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-DOCSALIG-004",
+          "name": "CLAUDE.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "CLAUDE.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-DOCSALIG-005",
+          "name": "REQUIREMENTS.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "REQUIREMENTS.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-DOCSALIG-006",
+          "name": "FEATURESPEC.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "FEATURESPEC.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-DOCSALIG-007",
+          "name": "AUDIT.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "AUDIT.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-DOCSALIG-008",
+          "name": "CODE-REVIEW.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "CODE-REVIEW.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-DOCSALIG-009",
+          "name": "VALIDATION.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "VALIDATION.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-DOCSALIG-010",
+          "name": "SECURITY-AUDIT.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "SECURITY-AUDIT.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-DOCSALIG-011",
+          "name": "ARCHITECTURE.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "ARCHITECTURE.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-DOCSALIG-018",
+          "name": "INDEX.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "INDEX.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-DOCSALIG-019",
+          "name": "ALIGNMENT-REPORT.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "ALIGNMENT-REPORT.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-DOCSALIG-020",
+          "name": "docs-alignment passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "INDEX.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "document": {
+      "skillId": "document",
+      "guarantees": [
+        {
+          "id": "GUA-DOC-001",
+          "name": "Documentation created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "README.md",
+                "minCount": 1
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "entry-portal": {
+      "skillId": "entry-portal",
+      "guarantees": [
+        {
+          "id": "GUA-ENTRYPOR-001",
+          "name": "ESTIMATE.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "ESTIMATE.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-ENTRYPOR-002",
+          "name": "CONFIG.JSON created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "CONFIG.JSON",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-ENTRYPOR-003",
+          "name": "FEATURESPEC.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "FEATURESPEC.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-ENTRYPOR-004",
+          "name": "SKILL.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "SKILL.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-ENTRYPOR-006",
+          "name": "ESTIMATE.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "ESTIMATE.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-ENTRYPOR-007",
+          "name": "FEATURESPEC.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "FEATURESPEC.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-ENTRYPOR-008",
+          "name": "entry-portal passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "ESTIMATE.md"
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-ENTRYPOR-009",
+          "name": "entry-portal steps executed",
+          "type": "step_proof",
+          "required": true,
+          "validation": {
+            "proofType": "artifact",
+            "proofPattern": "entry-portal-PROOF.json"
+          }
+        }
+      ]
+    },
+    "error-handling": {
+      "skillId": "error-handling",
+      "guarantees": [
+        {
+          "id": "GUA-ERRORHAN-002",
+          "name": "error-handling passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "PATTERNS"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "estimation": {
+      "skillId": "estimation",
+      "guarantees": [
+        {
+          "id": "GUA-ESTIMATI-001",
+          "name": "ESTIMATE.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "ESTIMATE.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-ESTIMATI-002",
+          "name": "FEATURESPEC.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "FEATURESPEC.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-ESTIMATI-003",
+          "name": "ARCHITECTURE.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "ARCHITECTURE.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-ESTIMATI-006",
+          "name": "ESTIMATE.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "ESTIMATE.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-ESTIMATI-007",
+          "name": "FEATURESPEC.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "FEATURESPEC.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-ESTIMATI-008",
+          "name": "estimation passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "ESTIMATE.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "frontend-design": {
+      "skillId": "frontend-design",
+      "guarantees": [
+        {
+          "id": "GUA-FRONTEND-001",
+          "name": "DESIGN.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "DESIGN.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-FRONTEND-002",
+          "name": "FEATURESPEC.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "FEATURESPEC.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-FRONTEND-003",
+          "name": "ARCHITECTURE.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "ARCHITECTURE.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-FRONTEND-007",
+          "name": "DESIGN.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "DESIGN.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-FRONTEND-008",
+          "name": "FEATURESPEC.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "FEATURESPEC.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-FRONTEND-009",
+          "name": "frontend-design passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "DESIGN.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "git-workflow": {
+      "skillId": "git-workflow",
+      "guarantees": [
+        {
+          "id": "GUA-GITWORKF-001",
+          "name": "PR_DESCRIPTION.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "PR_DESCRIPTION.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-GITWORKF-002",
+          "name": "PR_DESCRIPTION.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "PR_DESCRIPTION.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-GITWORKF-003",
+          "name": "git-workflow passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "PR_DESCRIPTION.md"
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-GITWORKF-004",
+          "name": "git-workflow steps executed",
+          "type": "step_proof",
+          "required": true,
+          "validation": {
+            "proofType": "artifact",
+            "proofPattern": "git-workflow-PROOF.json"
+          }
+        }
+      ]
+    },
+    "implement": {
+      "skillId": "implement",
+      "guarantees": [
+        {
+          "id": "GUA-IMPL-001",
+          "name": "Source files created or modified",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "src/**/*.{ts,tsx,js,jsx}",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-IMPL-002",
+          "name": "Implementation steps executed",
+          "type": "step_proof",
+          "required": true,
+          "validation": {
+            "proofType": "artifact",
+            "proofPattern": "implement-PROOF.json"
+          }
+        }
+      ]
+    },
+    "incident-triage": {
+      "skillId": "incident-triage",
+      "guarantees": [
+        {
+          "id": "GUA-INCIDENT-001",
+          "name": "INCIDENT-TRIAGE.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "INCIDENT-TRIAGE.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-INCIDENT-002",
+          "name": "INCIDENT-TRIAGE.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "INCIDENT-TRIAGE.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-INCIDENT-003",
+          "name": "incident-triage passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "INCIDENT-TRIAGE.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "infra-database": {
+      "skillId": "infra-database",
+      "guarantees": [
+        {
+          "id": "GUA-INFRADAT-001",
+          "name": "infra-database passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "INFRA-DATABASE.md"
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-INFRADAT-002",
+          "name": "infra-database steps executed",
+          "type": "step_proof",
+          "required": true,
+          "validation": {
+            "proofType": "artifact",
+            "proofPattern": "infra-database-PROOF.json"
+          }
+        }
+      ]
+    },
+    "infra-devenv": {
+      "skillId": "infra-devenv",
+      "guarantees": [
+        {
+          "id": "GUA-INFRADEV-001",
+          "name": "infra-devenv passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "INFRA-DEVENV.md"
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-INFRADEV-002",
+          "name": "infra-devenv steps executed",
+          "type": "step_proof",
+          "required": true,
+          "validation": {
+            "proofType": "artifact",
+            "proofPattern": "infra-devenv-PROOF.json"
+          }
+        }
+      ]
+    },
+    "infra-docker": {
+      "skillId": "infra-docker",
+      "guarantees": [
+        {
+          "id": "GUA-INFRADOC-001",
+          "name": "infra-docker passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "INFRA-DOCKER.md"
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-INFRADOC-002",
+          "name": "infra-docker steps executed",
+          "type": "step_proof",
+          "required": true,
+          "validation": {
+            "proofType": "artifact",
+            "proofPattern": "infra-docker-PROOF.json"
+          }
+        }
+      ]
+    },
+    "infra-monorepo": {
+      "skillId": "infra-monorepo",
+      "guarantees": [
+        {
+          "id": "GUA-INFRAMON-001",
+          "name": "infra-monorepo passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "INFRA-MONOREPO.md"
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-INFRAMON-002",
+          "name": "infra-monorepo steps executed",
+          "type": "step_proof",
+          "required": true,
+          "validation": {
+            "proofType": "artifact",
+            "proofPattern": "infra-monorepo-PROOF.json"
+          }
+        }
+      ]
+    },
+    "infra-services": {
+      "skillId": "infra-services",
+      "guarantees": [
+        {
+          "id": "GUA-INFRASER-001",
+          "name": "infra-services passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "INFRA-SERVICES.md"
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-INFRASER-002",
+          "name": "infra-services steps executed",
+          "type": "step_proof",
+          "required": true,
+          "validation": {
+            "proofType": "artifact",
+            "proofPattern": "infra-services-PROOF.json"
+          }
+        }
+      ]
+    },
+    "integration-test": {
+      "skillId": "integration-test",
+      "guarantees": [
+        {
+          "id": "GUA-INTEGRAT-001",
+          "name": "INTEGRATION-TEST.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "INTEGRATION-TEST.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-INTEGRAT-003",
+          "name": "INTEGRATION-TEST.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "INTEGRATION-TEST.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-INTEGRAT-004",
+          "name": "integration-test passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "INTEGRATION-TEST.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "journey-tracer": {
+      "skillId": "journey-tracer",
+      "guarantees": [
+        {
+          "id": "GUA-JOURNEYT-001",
+          "name": "journey-tracer passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "JOURNEY-TRACER.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "loop-composer": {
+      "skillId": "loop-composer",
+      "guarantees": [
+        {
+          "id": "GUA-LOOPCOMP-001",
+          "name": "LOOP.JSON created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "LOOP.JSON",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-LOOPCOMP-002",
+          "name": "LOOP.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "LOOP.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-LOOPCOMP-003",
+          "name": "COMPOSITION-NOTES.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "COMPOSITION-NOTES.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-LOOPCOMP-004",
+          "name": "FEATURESPEC.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "FEATURESPEC.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-LOOPCOMP-005",
+          "name": "ARCHITECTURE.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "ARCHITECTURE.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-LOOPCOMP-006",
+          "name": "CODE-REVIEW.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "CODE-REVIEW.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-LOOPCOMP-007",
+          "name": "CONTEXT-SOURCES.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "CONTEXT-SOURCES.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-LOOPCOMP-008",
+          "name": "DELIVERABLE.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "DELIVERABLE.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-LOOPCOMP-013",
+          "name": "LOOP.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "LOOP.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-LOOPCOMP-014",
+          "name": "COMPOSITION-NOTES.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "COMPOSITION-NOTES.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-LOOPCOMP-015",
+          "name": "loop-composer passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "LOOP.JSON"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "loop-controller": {
+      "skillId": "loop-controller",
+      "guarantees": [
+        {
+          "id": "GUA-LOOPCONT-001",
+          "name": "FEATURESPEC.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "FEATURESPEC.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-LOOPCONT-003",
+          "name": "FEATURESPEC.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "FEATURESPEC.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-LOOPCONT-004",
+          "name": "loop-controller passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "FEATURESPEC.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "loop-to-slash-command": {
+      "skillId": "loop-to-slash-command",
+      "guarantees": [
+        {
+          "id": "GUA-LOOPTOSL-001",
+          "name": "SKILL.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "SKILL.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-LOOPTOSL-002",
+          "name": "SKILL.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "SKILL.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-LOOPTOSL-003",
+          "name": "loop-to-slash-command passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "SKILL.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "manifest-manager": {
+      "skillId": "manifest-manager",
+      "guarantees": [
+        {
+          "id": "GUA-MANIFEST-001",
+          "name": "manifest-manager passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "MANIFEST-MANAGER.md"
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-MANIFEST-002",
+          "name": "manifest-manager steps executed",
+          "type": "step_proof",
+          "required": true,
+          "validation": {
+            "proofType": "artifact",
+            "proofPattern": "manifest-manager-PROOF.json"
+          }
+        }
+      ]
+    },
+    "memory-manager": {
+      "skillId": "memory-manager",
+      "guarantees": [
+        {
+          "id": "GUA-MEMORYMA-001",
+          "name": "DREAM-STATE.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "DREAM-STATE.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-MEMORYMA-002",
+          "name": "HANDOFF.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "HANDOFF.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-MEMORYMA-003",
+          "name": "HOOKS.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "HOOKS.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-MEMORYMA-004",
+          "name": "DREAM-STATE.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "DREAM-STATE.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-MEMORYMA-005",
+          "name": "HANDOFF.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "HANDOFF.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-MEMORYMA-006",
+          "name": "memory-manager passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "DREAM-STATE.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "metadata-extraction": {
+      "skillId": "metadata-extraction",
+      "guarantees": [
+        {
+          "id": "GUA-METADATA-001",
+          "name": "README.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "README.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-METADATA-002",
+          "name": "CONTEXT-SOURCES.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "CONTEXT-SOURCES.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-METADATA-004",
+          "name": "README.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "README.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-METADATA-005",
+          "name": "CONTEXT-SOURCES.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "CONTEXT-SOURCES.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-METADATA-006",
+          "name": "metadata-extraction passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "README.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "migration-planner": {
+      "skillId": "migration-planner",
+      "guarantees": [
+        {
+          "id": "GUA-MIGRATIO-001",
+          "name": "MIGRATION-PLAN.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "MIGRATION-PLAN.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-MIGRATIO-003",
+          "name": "MIGRATION-PLAN.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "MIGRATION-PLAN.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-MIGRATIO-004",
+          "name": "migration-planner passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "MIGRATION-PLAN.md"
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-MIGRATIO-005",
+          "name": "migration-planner steps executed",
+          "type": "step_proof",
+          "required": true,
+          "validation": {
+            "proofType": "artifact",
+            "proofPattern": "migration-planner-PROOF.json"
+          }
+        }
+      ]
+    },
+    "mitigation": {
+      "skillId": "mitigation",
+      "guarantees": [
+        {
+          "id": "GUA-MITIGATI-001",
+          "name": "INCIDENT-TRIAGE.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "INCIDENT-TRIAGE.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-MITIGATI-002",
+          "name": "INCIDENT-TRIAGE.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "INCIDENT-TRIAGE.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-MITIGATI-003",
+          "name": "mitigation passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "INCIDENT-TRIAGE.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "orchestrator": {
+      "skillId": "orchestrator",
+      "guarantees": [
+        {
+          "id": "GUA-ORCHESTR-001",
+          "name": "SCOPE-DISCOVERY.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "SCOPE-DISCOVERY.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-ORCHESTR-002",
+          "name": "ESTIMATE.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "ESTIMATE.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-ORCHESTR-003",
+          "name": "CODEBASE-ANALYSIS.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "CODEBASE-ANALYSIS.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-ORCHESTR-004",
+          "name": "FEATURESPEC.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "FEATURESPEC.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-ORCHESTR-007",
+          "name": "SCOPE-DISCOVERY.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "SCOPE-DISCOVERY.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-ORCHESTR-008",
+          "name": "ESTIMATE.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "ESTIMATE.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-ORCHESTR-009",
+          "name": "orchestrator passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "SCOPE-DISCOVERY.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "perf-analysis": {
+      "skillId": "perf-analysis",
+      "guarantees": [
+        {
+          "id": "GUA-PERFANAL-001",
+          "name": "PERF-ANALYSIS.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "PERF-ANALYSIS.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-PERFANAL-003",
+          "name": "PERF-ANALYSIS.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "PERF-ANALYSIS.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-PERFANAL-004",
+          "name": "perf-analysis passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "PERF-ANALYSIS.md"
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-PERFANAL-005",
+          "name": "perf-analysis steps executed",
+          "type": "step_proof",
+          "required": true,
+          "validation": {
+            "proofType": "artifact",
+            "proofPattern": "perf-analysis-PROOF.json"
+          }
+        }
+      ]
+    },
+    "portability": {
+      "skillId": "portability",
+      "guarantees": [
+        {
+          "id": "GUA-PORTABIL-001",
+          "name": "SKILL.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "SKILL.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-PORTABIL-002",
+          "name": "SKILL.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "SKILL.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-PORTABIL-003",
+          "name": "portability passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "SKILL.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "postmortem": {
+      "skillId": "postmortem",
+      "guarantees": [
+        {
+          "id": "GUA-POSTMORT-001",
+          "name": "POSTMORTEM.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "POSTMORTEM.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-POSTMORT-003",
+          "name": "POSTMORTEM.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "POSTMORTEM.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-POSTMORT-004",
+          "name": "postmortem passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "POSTMORTEM.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "priority-matrix": {
+      "skillId": "priority-matrix",
+      "guarantees": [
+        {
+          "id": "GUA-PRIORITY-001",
+          "name": "PRIORITIES.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "PRIORITIES.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-PRIORITY-002",
+          "name": "MATRIX.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "MATRIX.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-PRIORITY-003",
+          "name": "CALIBRATION-LOG.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "CALIBRATION-LOG.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-PRIORITY-004",
+          "name": "PRIORITIES.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "PRIORITIES.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-PRIORITY-005",
+          "name": "MATRIX.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "MATRIX.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-PRIORITY-006",
+          "name": "priority-matrix passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "PRIORITIES.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "proposal-builder": {
+      "skillId": "proposal-builder",
+      "guarantees": [
+        {
+          "id": "GUA-PROPOSAL-001",
+          "name": "PRIORITIES.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "PRIORITIES.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-PROPOSAL-002",
+          "name": "MATRIX.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "MATRIX.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-PROPOSAL-003",
+          "name": "CULTIVATED-CONTEXT.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "CULTIVATED-CONTEXT.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-PROPOSAL-004",
+          "name": "PATTERNS.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "PATTERNS.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-PROPOSAL-005",
+          "name": "GAPS.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "GAPS.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-PROPOSAL-006",
+          "name": "RAW-CONTEXT.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "RAW-CONTEXT.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-PROPOSAL-007",
+          "name": "CONTEXT-SOURCES.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "CONTEXT-SOURCES.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-PROPOSAL-008",
+          "name": "PROPOSAL.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "PROPOSAL.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-PROPOSAL-009",
+          "name": "PROPOSAL-BRIEF.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "PROPOSAL-BRIEF.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-PROPOSAL-010",
+          "name": "PROPOSAL-TECHNICAL.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "PROPOSAL-TECHNICAL.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-PROPOSAL-014",
+          "name": "PRIORITIES.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "PRIORITIES.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-PROPOSAL-015",
+          "name": "MATRIX.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "MATRIX.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-PROPOSAL-016",
+          "name": "proposal-builder passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "PRIORITIES.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "refactor": {
+      "skillId": "refactor",
+      "guarantees": [
+        {
+          "id": "GUA-REFACTOR-001",
+          "name": "REFACTOR.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "REFACTOR.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-REFACTOR-003",
+          "name": "REFACTOR.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "REFACTOR.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-REFACTOR-004",
+          "name": "refactor passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "REFACTOR.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "release-notes": {
+      "skillId": "release-notes",
+      "guarantees": [
+        {
+          "id": "GUA-RELEASEN-001",
+          "name": "RELEASE-NOTES.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "RELEASE-NOTES.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-RELEASEN-003",
+          "name": "RELEASE-NOTES.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "RELEASE-NOTES.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-RELEASEN-004",
+          "name": "release-notes passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "RELEASE-NOTES.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "release-planner": {
+      "skillId": "release-planner",
+      "guarantees": [
+        {
+          "id": "GUA-RELEASEP-001",
+          "name": "RELEASE-PLAN.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "RELEASE-PLAN.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-RELEASEP-002",
+          "name": "RELEASE-PLAN.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "RELEASE-PLAN.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-RELEASEP-003",
+          "name": "release-planner passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "RELEASE-PLAN.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "requirements": {
+      "skillId": "requirements",
+      "guarantees": [
+        {
+          "id": "GUA-REQ-001",
+          "name": "Requirements document created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "REQUIREMENTS.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-REQ-002",
+          "name": "Requirements has required sections",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "REQUIREMENTS.md",
+                "sections": [
+                  "## Functional Requirements",
+                  "## Non-Functional Requirements"
+                ],
+                "minLines": 50
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "retrospective": {
+      "skillId": "retrospective",
+      "guarantees": [
+        {
+          "id": "GUA-RETROSPE-001",
+          "name": "RETROSPECTIVE.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "RETROSPECTIVE.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-RETROSPE-002",
+          "name": "ARCHITECTURE-REVIEW.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "ARCHITECTURE-REVIEW.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-RETROSPE-003",
+          "name": "SKILL.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "SKILL.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-RETROSPE-004",
+          "name": "RETROSPECTIVE.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "RETROSPECTIVE.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-RETROSPE-005",
+          "name": "ARCHITECTURE-REVIEW.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "ARCHITECTURE-REVIEW.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-RETROSPE-006",
+          "name": "retrospective passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "RETROSPECTIVE.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "roadmap-tracker": {
+      "skillId": "roadmap-tracker",
+      "guarantees": [
+        {
+          "id": "GUA-ROADMAPT-001",
+          "name": "ROADMAP.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "ROADMAP.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-ROADMAPT-002",
+          "name": "ROADMAP.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "ROADMAP.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-ROADMAPT-003",
+          "name": "roadmap-tracker passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "ROADMAP.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "rollback-validator": {
+      "skillId": "rollback-validator",
+      "guarantees": [
+        {
+          "id": "GUA-ROLLBACK-001",
+          "name": "ROLLBACK-REPORT.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "ROLLBACK-REPORT.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-ROLLBACK-002",
+          "name": "ROLLBACK-REPORT.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "ROLLBACK-REPORT.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-ROLLBACK-003",
+          "name": "rollback-validator passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "ROLLBACK-REPORT.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "root-cause-analysis": {
+      "skillId": "root-cause-analysis",
+      "guarantees": [
+        {
+          "id": "GUA-ROOTCAUS-001",
+          "name": "BUG-REPRODUCTION.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "BUG-REPRODUCTION.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-ROOTCAUS-002",
+          "name": "ROOT-CAUSE.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "ROOT-CAUSE.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-ROOTCAUS-005",
+          "name": "BUG-REPRODUCTION.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "BUG-REPRODUCTION.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-ROOTCAUS-006",
+          "name": "ROOT-CAUSE.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "ROOT-CAUSE.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-ROOTCAUS-007",
+          "name": "root-cause-analysis passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "BUG-REPRODUCTION.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "scaffold": {
+      "skillId": "scaffold",
+      "guarantees": [
+        {
+          "id": "GUA-SCAF-001",
+          "name": "Project structure created",
+          "type": "deliverable",
+          "required": true,
+          "condition": "mode === 'greenfield'",
+          "validation": {
+            "files": [
+              {
+                "pattern": "package.json",
+                "minCount": 1
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "security-audit": {
+      "skillId": "security-audit",
+      "guarantees": [
+        {
+          "id": "GUA-SEC-001",
+          "name": "Security audit report created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "SECURITY-AUDIT.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-SEC-002",
+          "name": "No critical security issues",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "critical_issues",
+                "operator": "eq",
+                "value": 0,
+                "source": "file",
+                "path": "SECURITY-AUDIT.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "skill-design": {
+      "skillId": "skill-design",
+      "guarantees": [
+        {
+          "id": "GUA-SKILLDES-001",
+          "name": "SKILL.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "SKILL.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-SKILLDES-002",
+          "name": "VALIDATION.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "VALIDATION.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-SKILLDES-004",
+          "name": "SKILL.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "SKILL.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-SKILLDES-005",
+          "name": "VALIDATION.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "VALIDATION.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-SKILLDES-006",
+          "name": "skill-design passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "SKILL.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "skill-verifier": {
+      "skillId": "skill-verifier",
+      "guarantees": [
+        {
+          "id": "GUA-SKILLVER-001",
+          "name": "SKILL.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "SKILL.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-SKILLVER-002",
+          "name": "HOOKS.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "HOOKS.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-SKILLVER-003",
+          "name": "FEATURESPEC.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "FEATURESPEC.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-SKILLVER-004",
+          "name": "ESTIMATE.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "ESTIMATE.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-SKILLVER-005",
+          "name": "ARCHITECTURE.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "ARCHITECTURE.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-SKILLVER-006",
+          "name": "ARCHITECTURE-REVIEW.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "ARCHITECTURE-REVIEW.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-SKILLVER-007",
+          "name": "VERIFICATION.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "VERIFICATION.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-SKILLVER-008",
+          "name": "VALIDATION.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "VALIDATION.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-SKILLVER-009",
+          "name": "README.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "README.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-SKILLVER-010",
+          "name": "CODE-REVIEW.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "CODE-REVIEW.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-SKILLVER-011",
+          "name": "DEPLOY.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "DEPLOY.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-SKILLVER-012",
+          "name": "JOURNEY.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "JOURNEY.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-SKILLVER-013",
+          "name": "RETROSPECTIVE.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "RETROSPECTIVE.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-SKILLVER-014",
+          "name": "HANDOFF.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "HANDOFF.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-SKILLVER-022",
+          "name": "SKILL.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "SKILL.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-SKILLVER-023",
+          "name": "HOOKS.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "HOOKS.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-SKILLVER-024",
+          "name": "skill-verifier passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "SKILL.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "smoke-test": {
+      "skillId": "smoke-test",
+      "guarantees": [
+        {
+          "id": "GUA-SMOKETES-001",
+          "name": "SMOKE-TEST.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "SMOKE-TEST.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-SMOKETES-002",
+          "name": "SMOKE-TEST.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "SMOKE-TEST.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-SMOKETES-003",
+          "name": "smoke-test passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "SMOKE-TEST.md"
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-SMOKETES-004",
+          "name": "smoke-test steps executed",
+          "type": "step_proof",
+          "required": true,
+          "validation": {
+            "proofType": "artifact",
+            "proofPattern": "smoke-test-PROOF.json"
+          }
+        }
+      ]
+    },
+    "spec": {
+      "skillId": "spec",
+      "guarantees": [
+        {
+          "id": "GUA-SPEC-001",
+          "name": "FeatureSpec document created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "FEATURESPEC.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-SPEC-002",
+          "name": "FeatureSpec has required sections",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "FEATURESPEC.md",
+                "sections": [
+                  "## Feature Overview",
+                  "## Architecture Overview",
+                  "## Test Scenarios"
+                ],
+                "minLines": 200
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "stack-analyzer": {
+      "skillId": "stack-analyzer",
+      "guarantees": [
+        {
+          "id": "GUA-STACKANA-001",
+          "name": "STACK-MAP.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "STACK-MAP.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-STACKANA-002",
+          "name": "ARCHITECTURE.md created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "ARCHITECTURE.md",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-STACKANA-005",
+          "name": "STACK-MAP.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "STACK-MAP.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-STACKANA-006",
+          "name": "ARCHITECTURE.md has required content",
+          "type": "content",
+          "required": true,
+          "validation": {
+            "contentChecks": [
+              {
+                "file": "ARCHITECTURE.md",
+                "minLines": 50
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-STACKANA-007",
+          "name": "stack-analyzer passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "STACK-MAP.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "test-generation": {
+      "skillId": "test-generation",
+      "guarantees": [
+        {
+          "id": "GUA-TEST-001",
+          "name": "Test files created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "**/*.{test,spec}.{ts,tsx,js,jsx}",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-TEST-002",
+          "name": "Tests pass",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "test_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "command",
+                "path": "npm test"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "triage": {
+      "skillId": "triage",
+      "guarantees": [
+        {
+          "id": "GUA-TRIAGE-001",
+          "name": "triage passes verification",
+          "type": "quality",
+          "required": true,
+          "validation": {
+            "qualityThresholds": [
+              {
+                "metric": "verification_pass_rate",
+                "operator": "eq",
+                "value": 1,
+                "source": "file",
+                "path": "TRIAGE.md"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "loops": {
+    "engineering-loop": {
+      "loopId": "engineering-loop",
+      "phaseGuarantees": {
+        "INIT": [
+          {
+            "id": "GUA-ENG-INIT-001",
+            "name": "Requirements and spec documented",
+            "type": "deliverable",
+            "required": true,
+            "validation": {
+              "files": [
+                {
+                  "pattern": "REQUIREMENTS.md",
+                  "minCount": 1
+                },
+                {
+                  "pattern": "FEATURESPEC.md",
+                  "minCount": 1
+                }
+              ]
+            }
+          }
+        ],
+        "VERIFY": [
+          {
+            "id": "GUA-ENG-VER-001",
+            "name": "Build compiles without errors",
+            "type": "quality",
+            "required": true,
+            "validation": {
+              "qualityThresholds": [
+                {
+                  "metric": "build_success",
+                  "operator": "eq",
+                  "value": 1,
+                  "source": "command",
+                  "path": "npm run build"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "gateGuarantees": {
+        "spec-gate": [
+          {
+            "id": "GUA-GATE-SPEC-001",
+            "name": "Spec gate deliverables exist",
+            "type": "deliverable",
+            "required": true,
+            "validation": {
+              "files": [
+                {
+                  "pattern": "REQUIREMENTS.md",
+                  "minCount": 1
+                },
+                {
+                  "pattern": "FEATURESPEC.md",
+                  "minCount": 1
+                }
+              ]
+            }
+          }
+        ],
+        "architecture-gate": [
+          {
+            "id": "GUA-GATE-ARCH-001",
+            "name": "Architecture gate deliverables exist",
+            "type": "deliverable",
+            "required": true,
+            "validation": {
+              "files": [
+                {
+                  "pattern": "ARCHITECTURE.md",
+                  "minCount": 1
+                }
+              ]
+            }
+          }
+        ],
+        "verification-gate": [
+          {
+            "id": "GUA-GATE-VER-001",
+            "name": "Verification gate deliverables exist",
+            "type": "deliverable",
+            "required": true,
+            "validation": {
+              "files": [
+                {
+                  "pattern": "VERIFICATION.md",
+                  "minCount": 1
+                }
+              ]
+            }
+          },
+          {
+            "id": "GUA-GATE-VER-002",
+            "name": "Verification passes",
+            "type": "quality",
+            "required": true,
+            "validation": {
+              "qualityThresholds": [
+                {
+                  "metric": "verification_pass_rate",
+                  "operator": "eq",
+                  "value": 1,
+                  "source": "file",
+                  "path": "VERIFICATION.md"
+                }
+              ]
+            }
+          }
+        ],
+        "validation-gate": [
+          {
+            "id": "GUA-GATE-VAL-001",
+            "name": "Validation gate deliverables exist",
+            "type": "deliverable",
+            "required": true,
+            "validation": {
+              "files": [
+                {
+                  "pattern": "VALIDATION.md",
+                  "minCount": 1
+                },
+                {
+                  "pattern": "SECURITY-AUDIT.md",
+                  "minCount": 1
+                }
+              ]
+            }
+          }
+        ],
+        "review-gate": [
+          {
+            "id": "GUA-GATE-REV-001",
+            "name": "Review gate deliverables exist",
+            "type": "deliverable",
+            "required": true,
+            "validation": {
+              "files": [
+                {
+                  "pattern": "CODE-REVIEW.md",
+                  "minCount": 1
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "phases": {}
+}

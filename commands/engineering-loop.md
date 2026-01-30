@@ -48,10 +48,48 @@ else:
 For fresh starts without an existing system-queue.json, invoke the **entry-portal** skill:
 
 1. **Ask for dream state**: "What's your end vision? What are you trying to build?"
-2. **Clarify requirements**: Use clarifying questions until the vision is clear
-3. **Decompose into systems**: Break the dream state into implementable systems
-4. **Create dependency graph**: Order systems by dependencies
-5. **Generate system queue**: `system-queue.json` with all systems and build order
+
+2. **Deep Context Gathering** (CRITICAL — do not rush this):
+   - Ask 5-10+ clarifying questions across all dimensions
+   - Probe: Problem space, constraints, success criteria, risks, stakeholders
+   - Keep asking until user signals "that's everything"
+   - Surface and verify all assumptions
+   - Batch questions (3-5 at a time) for efficiency
+
+   Example questions:
+   ```
+   Problem Space:
+   - What problem does this solve? Why now?
+   - What happens if we don't build this?
+   - Has this been tried before? What happened?
+
+   Constraints:
+   - Hard constraints (time, money, tech)?
+   - Soft preferences (style, approach)?
+   - Existing patterns to follow?
+
+   Success Criteria:
+   - How will we know this worked?
+   - What does "exceptional" look like vs. "acceptable"?
+
+   Risks:
+   - What could go wrong?
+   - Security/compliance considerations?
+   ```
+
+3. **Summarize understanding** back to user before proceeding:
+   ```
+   Here's my understanding:
+   - Problem: [X]
+   - Constraints: [Y]
+   - Success criteria: [Z]
+
+   Does this capture it? Anything I'm missing?
+   ```
+
+4. **Decompose into systems**: Break the dream state into implementable systems
+5. **Create dependency graph**: Order systems by dependencies
+6. **Generate system queue**: `system-queue.json` with all systems and build order
 
 **Output:**
 - `dream-state.md` — Vision document
@@ -109,10 +147,17 @@ Create `loop-state.json`:
 ```json
 {
   "loop": "engineering-loop",
-  "version": "4.0.0",
+  "version": "5.1.0",
   "mode": "brownfield-polish",
   "phase": "INIT",
   "status": "active",
+
+  "context": {
+    "tier": "system",
+    "organization": "personal",
+    "system": "orchestrator",
+    "module": null
+  },
 
   "dreamState": {
     "path": "./dream-state.md",
@@ -779,6 +824,112 @@ User: go
 Engineering Loop: Resuming IMPLEMENT phase...
   [4/8] Implementing capability: asset-management...
 ```
+
+## Clarification Protocol
+
+This loop follows the **Deep Context Protocol**. Before proceeding past INIT:
+
+1. **Probe relentlessly** — Ask 5-10+ clarifying questions across all dimensions
+2. **Surface assumptions** — State what you're assuming and verify
+3. **Batch questions** — Group related questions (3-5 at a time)
+4. **Don't stop early** — Keep asking until the user signals "that's everything"
+
+At every phase transition and gate, pause to ask:
+- "Does this match your expectations?"
+- "Anything I'm missing?"
+- "Any concerns before proceeding?"
+
+See `commands/_shared/clarification-protocol.md` for detailed guidance.
+
+---
+
+## Context Hierarchy
+
+This loop operates within the **Organization → System → Module** hierarchy:
+
+| Tier | Scope | Dream State Location |
+|------|-------|---------------------|
+| **Organization** | All systems across workspace | `~/.claude/DREAM-STATE.md` |
+| **System** | This repository/application | `{repo}/.claude/DREAM-STATE.md` |
+| **Module** | Specific concern within system | `{repo}/{path}/.claude/DREAM-STATE.md` or inline |
+
+### Context Loading (Automatic on Init)
+
+When this loop initializes, it automatically loads:
+
+```
+1. Organization Dream State (~/.claude/DREAM-STATE.md)
+   └── Org-wide vision, active systems, master checklist
+
+2. System Dream State ({repo}/.claude/DREAM-STATE.md)
+   └── System vision, modules, progress checklist
+
+3. Recent Runs (auto-injected via query_runs)
+   └── Last 3-5 relevant runs for context continuity
+
+4. Memory (patterns, calibration)
+   └── Learned patterns from all applicable tiers
+```
+
+### Completion Algebra
+
+The engineering-loop builds **modules** that roll up to **systems** that roll up to the **organization**:
+
+```
+Organization.done = ALL(System.done)
+System.done       = ALL(Module.done)
+Module.done       = ALL(Function.operational)
+```
+
+Each system in the `system-queue.json` represents a **module** within the current repository/system context.
+
+---
+
+## On Completion
+
+When this loop reaches COMPLETE phase and finishes ALL systems in the queue:
+
+### 1. Archive Run
+
+**Location:** `~/.claude/runs/{year-month}/{system}-engineering-loop-{timestamp}.json`
+
+**Contents:** Full state + summary including:
+- All systems completed
+- Gates passed
+- Deliverables produced
+- Duration and outcome
+
+### 2. Update Dream State
+
+At the System level (`{repo}/.claude/DREAM-STATE.md`):
+- Mark completed modules in checklist
+- Update system progress percentage
+- Append to "Recent Completions"
+
+At the Organization level (`~/.claude/DREAM-STATE.md`):
+- Update system status
+- Roll up progress
+
+### 3. Prune Active State
+
+**Delete:** `loop-state.json` and `system-queue.json` from working directory.
+
+**Result:** Next `/engineering-loop` invocation starts fresh with context gathering.
+
+### 4. Completion Message
+
+```
+══════════════════════════════════════════════════════════════
+  DREAM STATE ACHIEVED 🎯
+
+  Run archived: ~/.claude/runs/2025-01/orchestrator-engineering-loop-29T14-30.json
+  Dream State updated: .claude/DREAM-STATE.md
+
+  Next invocation will start fresh.
+══════════════════════════════════════════════════════════════
+```
+
+---
 
 ## References
 
