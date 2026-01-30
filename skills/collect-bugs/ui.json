@@ -1,0 +1,23 @@
+{
+  "display": {
+    "name": "Collect Bugs",
+    "icon": "bug",
+    "description": "Round up minor bugs into prioritized backlog",
+    "category": "operations"
+  },
+  "inputs": {
+    "context": [
+      { "type": "codebase", "required": true },
+      { "type": "runningApp", "required": true }
+    ]
+  },
+  "output": {
+    "type": "markdown",
+    "deliverables": ["BUG-BACKLOG.md"]
+  },
+  "execution": {
+    "autoExecute": false,
+    "confirmationRequired": false,
+    "progressIndicator": "spinner"
+  }
+}

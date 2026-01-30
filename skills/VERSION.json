@@ -3,7 +3,7 @@
   "releaseDate": "2026-01-27",
   "description": "Orchestrator skills library - comprehensive skill definitions for AI-driven software development workflows",
   "skills": {
-    "total": 64,
+    "total": 65,
     "core": [
       "entry-portal", "requirements", "spec", "estimation", "triage",
       "memory-manager", "architect", "architecture-review", "scaffold",
@@ -28,7 +28,7 @@
       "architecture-extractor", "stack-analyzer"
     ],
     "operations": [
-      "bug-reproducer", "changelog-generator", "compatibility-checker",
+      "bug-reproducer", "changelog-generator", "collect-bugs", "compatibility-checker",
       "error-handling", "mitigation", "postmortem", "rollback-validator",
       "root-cause-analysis"
     ]

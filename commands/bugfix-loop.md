@@ -8,6 +8,8 @@ This command orchestrates the complete bug resolution workflow: reproducing the 
 
 **The flow you want:** describe the bug, say `go`, and the loop walks from reproduction through verified fix with regression tests.
 
+**Batch mode:** For multiple minor bugs, start with `collect-bugs` to gather a prioritized backlog before fixing.
+
 ## Usage
 
 ```
@@ -37,9 +39,17 @@ Create `bugfix-state.json`:
 ```json
 {
   "loop": "bugfix-loop",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "phase": "INIT",
   "status": "active",
+
+  "context": {
+    "tier": "system",
+    "organization": "personal",
+    "system": "my-app",
+    "module": null
+  },
+
   "gates": {
     "repro-gate": { "status": "pending", "required": true, "approvalType": "human" },
     "diagnosis-gate": { "status": "pending", "required": true, "approvalType": "human" },
@@ -47,7 +57,7 @@ Create `bugfix-state.json`:
     "review-gate": { "status": "pending", "required": true, "approvalType": "human" }
   },
   "phases": {
-    "INIT": { "status": "pending", "skills": ["bug-reproducer"] },
+    "INIT": { "status": "pending", "skills": ["collect-bugs", "bug-reproducer"] },
     "SCAFFOLD": { "status": "pending", "skills": ["debug-assist", "root-cause-analysis"] },
     "IMPLEMENT": { "status": "pending", "skills": ["implement"] },
     "TEST": { "status": "pending", "skills": ["test-generation"] },
@@ -68,8 +78,8 @@ INIT ──────────► SCAFFOLD ──────────�
   │ [repro-gate]   │ [diagnosis-gate]
   │  human         │  human
   ▼                ▼
-bug-reproducer   debug-assist          implement          test-generation
-                 root-cause-analysis
+collect-bugs     debug-assist          implement          test-generation
+bug-reproducer   root-cause-analysis
 
   ▼                ▼                    ▼                    ▼
 
@@ -81,7 +91,9 @@ VERIFY ──────────► REVIEW ──────────�
 code-verification  code-review         retrospective
 ```
 
-**7 skills across 7 phases, 4 gates (3 human, 1 auto)**
+**8 skills across 7 phases, 4 gates (3 human, 1 auto)**
+
+> **Note:** `collect-bugs` is optional. Skip it with `skip collect-bugs: single known bug` when you already know exactly what to fix.
 
 ### Step 4: Gate Enforcement
 
@@ -130,6 +142,7 @@ code-verification  code-review         retrospective
 | File | Purpose |
 |------|---------|
 | `bugfix-state.json` | Current phase, gate status, progress |
+| `BUG-BACKLOG.md` | Collected bugs with categories and priorities (from collect-bugs) |
 | `BUG-REPRODUCTION.md` | Steps to reproduce, environment, frequency |
 | `ROOT-CAUSE.md` | Diagnosis with debug traces and root cause |
 | `VERIFICATION.md` | Build/test/lint results post-fix |
@@ -162,6 +175,16 @@ User: go
 ══════════════════════════════════════
   INIT                           [1/7]
 ══════════════════════════════════════
+
+  ┌─ collect-bugs
+  │  Sweep the app for minor bugs? (skip if single known bug)
+  │
+  │  Options:
+  │    go        — Sweep console, UI, UX, data for bugs
+  │    skip      — I have a specific bug to fix
+  └─ ...
+
+User: skip collect-bugs: single known bug
 
   ┌─ bug-reproducer
   │  Gathering bug report details...
@@ -248,6 +271,7 @@ User: approved
 ║                                                                     ║
 ║   DELIVERABLES                                                      ║
 ║   ────────────                                                      ║
+║   📄 BUG-BACKLOG.md         Collected bugs (if batch mode)          ║
 ║   📄 BUG-REPRODUCTION.md    Reproduction steps and evidence         ║
 ║   📄 ROOT-CAUSE.md          Diagnosis with debug traces             ║
 ║   📄 VERIFICATION.md        Build/test/lint results                  ║
@@ -255,4 +279,92 @@ User: approved
 ║   📄 RETROSPECTIVE.md       Learnings and prevention                ║
 ║                                                                     ║
 ╚═════════════════════════════════════════════════════════════════════╝
+```
+
+---
+
+## Clarification Protocol
+
+This loop follows the **Deep Context Protocol**. Before proceeding past INIT:
+
+1. **Probe relentlessly** — Ask 5-10+ clarifying questions about the bug
+2. **Surface assumptions** — "I'm assuming the issue is X — correct?"
+3. **Gather reproduction details** — Environment, steps, frequency, recent changes
+4. **Don't stop early** — Keep asking until you can reproduce reliably
+
+At every phase transition and gate, pause to ask:
+- "Does this diagnosis match your understanding?"
+- "Any other symptoms I should know about?"
+- "Ready to proceed with this fix approach?"
+
+See `commands/_shared/clarification-protocol.md` for detailed guidance.
+
+---
+
+## Context Hierarchy
+
+This loop operates within the **Organization → System → Module** hierarchy:
+
+| Tier | Scope | Dream State Location |
+|------|-------|---------------------|
+| **Organization** | All systems across workspace | `~/.claude/DREAM-STATE.md` |
+| **System** | This repository/application | `{repo}/.claude/DREAM-STATE.md` |
+| **Module** | Specific concern within system | `{repo}/{path}/.claude/DREAM-STATE.md` or inline |
+
+### Context Loading (Automatic on Init)
+
+When this loop initializes, it automatically loads:
+
+```
+1. Organization Dream State (~/.claude/DREAM-STATE.md)
+   └── Org-wide vision, active systems, master checklist
+
+2. System Dream State ({repo}/.claude/DREAM-STATE.md)
+   └── System vision, modules, progress checklist
+
+3. Recent Runs (auto-injected via query_runs)
+   └── Last 3-5 relevant runs for context continuity
+
+4. Memory (patterns, calibration)
+   └── Learned patterns from all applicable tiers
+```
+
+---
+
+## On Completion
+
+When this loop reaches COMPLETE phase and finishes:
+
+### 1. Archive Run
+
+**Location:** `~/.claude/runs/{year-month}/{system}-bugfix-loop-{timestamp}.json`
+
+**Contents:** Full state + summary including:
+- Bug reproduction details
+- Root cause analysis
+- Fix applied
+- Gates passed
+- Regression tests added
+
+### 2. Update Dream State
+
+At the System level (`{repo}/.claude/DREAM-STATE.md`):
+- Update "Recent Completions" section
+- Note any patterns learned
+
+### 3. Prune Active State
+
+**Delete:** `bugfix-state.json` from working directory.
+
+**Result:** Next `/bugfix-loop` invocation starts fresh with context gathering.
+
+### 4. Completion Message
+
+```
+══════════════════════════════════════════════════════════════
+  Run archived: ~/.claude/runs/2025-01/myapp-bugfix-loop-29T14-30.json
+  Dream State updated: .claude/DREAM-STATE.md
+
+  Next invocation will start fresh.
+══════════════════════════════════════════════════════════════
 ```
