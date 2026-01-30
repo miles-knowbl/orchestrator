@@ -12,6 +12,7 @@ import type { LoopComposer } from '../services/LoopComposer.js';
 import type { InboxProcessor } from '../services/InboxProcessor.js';
 import type { LearningService } from '../services/LearningService.js';
 import { createApiRoutes } from './apiRoutes.js';
+import { getVersion } from '../version.js';
 
 export interface HttpServerOptions {
   config: OrchestratorConfig;
@@ -77,7 +78,7 @@ export function createHttpServer(options: HttpServerOptions): Express {
     res.json({
       status: 'ok',
       timestamp: new Date().toISOString(),
-      version: process.env.npm_package_version || '0.1.0',
+      version: getVersion(),
     });
   });
 

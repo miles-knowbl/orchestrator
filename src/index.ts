@@ -32,6 +32,7 @@ import { memoryToolDefinitions, createMemoryToolHandlers } from './tools/memoryT
 import { inboxToolDefinitions, createInboxToolHandlers } from './tools/inboxTools.js';
 import { runToolDefinitions, createRunToolHandlers } from './tools/runTools.js';
 import { createHttpServer, startHttpServer } from './server/httpServer.js';
+import { getVersion } from './version.js';
 
 async function main() {
   // Load and validate configuration
@@ -243,7 +244,7 @@ async function main() {
     const server = new Server(
       {
         name: 'orchestrator',
-        version: '0.1.0',
+        version: getVersion(),
       },
       {
         capabilities: {
@@ -311,7 +312,7 @@ async function main() {
   const baseUrl = `http://${config.host === '0.0.0.0' ? 'localhost' : config.host}:${config.port}`;
   console.error([
     '',
-    `  Orchestrator v${process.env.npm_package_version || '0.1.0'}`,
+    `  Orchestrator v${getVersion()}`,
     `  API:       ${baseUrl}`,
     `  MCP:       ${baseUrl}/mcp`,
     `  Health:    ${baseUrl}/health`,
