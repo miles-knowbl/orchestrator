@@ -414,7 +414,25 @@ At the Organization level (if org-wide patterns):
 
 **Result:** Next `/learning-loop` invocation starts fresh with context gathering.
 
-### 4. Completion Message
+### 4. Leverage Proposal (REQUIRED)
+
+Before showing completion, evaluate and propose the next highest leverage move.
+
+See `commands/_shared/leverage-protocol.md` for full details.
+
+**Output:**
+```
+══════════════════════════════════════════════════════════════
+  NEXT HIGHEST LEVERAGE MOVE
+
+  Recommended: /{loop} → {target}
+  Value Score: X.X/10
+
+  Say 'go' to start, or specify a different loop.
+══════════════════════════════════════════════════════════════
+```
+
+### 5. Completion Message
 
 ```
 ══════════════════════════════════════════════════════════════

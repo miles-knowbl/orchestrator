@@ -10,6 +10,22 @@
       "decision": "Adopted Organization → System → Module hierarchy with Dream State documents at each tier",
       "consequences": "All loops now speak the same language, can query past runs, and auto-update progress",
       "date": "2025-01-29T00:00:00Z"
+    },
+    {
+      "id": "ADR-002",
+      "title": "Learning System v2 - Rubric-based skill improvement",
+      "context": "Skills needed a feedback mechanism to improve based on execution experience",
+      "decision": "Added rubric scoring (completeness, quality, friction, relevance) to complete_skill calls, with threshold-based proposal generation",
+      "consequences": "System can now generate upgrade proposals when patterns emerge (e.g., section improvised 2+ times → propose adding it)",
+      "date": "2026-01-30T00:00:00Z"
+    },
+    {
+      "id": "ADR-003",
+      "title": "Leverage Protocol - Next highest leverage move",
+      "context": "Needed a way to sequence loops optimally toward dream state achievement",
+      "decision": "Added value equation (DSA 40% + Unlock 25% + Likelihood 15%) / (Time 10% + Effort 10%) evaluated at loop boundaries",
+      "consequences": "Claude now proposes the next highest leverage loop at every completion, enabling seamless loop chaining",
+      "date": "2026-01-30T00:00:00Z"
     }
   ],
   "patterns": [
@@ -67,6 +83,28 @@
       "confidence": "medium",
       "createdAt": "2025-01-29T00:00:00Z",
       "lastUsed": "2025-01-29T00:00:00Z"
+    },
+    {
+      "id": "PAT-006",
+      "name": "leverage-protocol",
+      "context": "At every loop completion boundary",
+      "solution": "Evaluate available loops against value equation: (DSA×0.40 + Unlock×0.25 + Likelihood×0.15) / (Time×0.10 + Effort×0.10). Always propose a specific loop. If needed capability doesn't exist, propose meta-loop to create it first.",
+      "example": "engineering-loop completes → evaluate: engineering-loop@auth (8.2), bugfix-loop@tests (5.1), learning-loop@review (4.8) → recommend auth-service as highest leverage",
+      "uses": 1,
+      "confidence": "medium",
+      "createdAt": "2026-01-30T00:00:00Z",
+      "lastUsed": "2026-01-30T00:00:00Z"
+    },
+    {
+      "id": "PAT-007",
+      "name": "learning-feedback-loop",
+      "context": "When skills are executed during loops",
+      "solution": "Call complete_skill() with rubric scores. At COMPLETE phase, call complete_run_tracking() to persist signals and generate proposals. Review proposals via list_upgrade_proposals, approve via approve_upgrade_proposal.",
+      "example": "complete_skill(rubric={completeness:4, quality:5, friction:3, relevance:4}) → [COMPLETE] → complete_run_tracking() → 'New proposals: 1' → list_upgrade_proposals → approve",
+      "uses": 1,
+      "confidence": "medium",
+      "createdAt": "2026-01-30T00:00:00Z",
+      "lastUsed": "2026-01-30T00:00:00Z"
     }
   ],
   "calibration": {

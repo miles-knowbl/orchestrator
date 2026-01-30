@@ -195,6 +195,77 @@ export interface LearningConfig {
   };
 }
 
+// =============================================================================
+// LEVERAGE PROTOCOL TYPES
+// =============================================================================
+
+/**
+ * Scores for evaluating a potential next action
+ * Each dimension scored 1-10
+ */
+export interface LeverageScores {
+  dreamStateAlignment: number;    // How directly does this move the checklist toward "done"?
+  downstreamUnlock: number;       // How many subsequent moves does this make easier/possible?
+  likelihood: number;             // Can we actually complete this given current context?
+  timeRequired: number;           // Inverse: 10 = very fast, 1 = very slow
+  effortRequired: number;         // Inverse: 10 = low friction, 1 = high friction
+}
+
+/**
+ * A candidate action evaluated by the leverage protocol
+ */
+export interface LeverageCandidate {
+  loop: string;                   // e.g., "engineering-loop"
+  target: string;                 // e.g., "auth-service module"
+  scores: LeverageScores;
+  valueScore: number;             // Computed from weighted scores
+  selected: boolean;
+  reasoning?: string;             // Brief explanation for this candidate
+
+  // For meta-loop candidates (creating new loops)
+  isMetaLoop?: boolean;
+  strategicValue?: number;        // Value of the eventual capability
+  tacticalValue?: number;         // Value of creation action
+  afterCompletion?: {             // What becomes available after creation
+    loop: string;
+    target: string;
+    valueScore: number;
+  };
+}
+
+/**
+ * Record of a leverage decision at loop completion
+ */
+export interface LeverageDecision {
+  timestamp: Date;
+  loopCompleted: string;          // The loop that just finished
+  systemContext: string;          // e.g., "orchestrator"
+  dreamStateProgress: {           // Snapshot of progress at decision time
+    completed: number;
+    total: number;
+    percentage: number;
+  };
+  candidates: LeverageCandidate[];
+  selected: LeverageCandidate;
+  reasoning: string;              // Why this was the highest leverage move
+
+  // For calibration learning
+  actualOutcome?: {
+    followed: boolean;            // Did user follow the recommendation?
+    alternativeChosen?: string;   // If not, what did they choose?
+    outcomeQuality?: number;      // Post-hoc assessment (1-10)
+    notes?: string;
+  };
+}
+
+/**
+ * Leverage decisions file structure
+ */
+export interface LeverageDecisionsFile {
+  version: string;
+  decisions: LeverageDecision[];
+}
+
 // Skill UI configuration for app generation
 export interface SkillUIConfig {
   displayName?: string;

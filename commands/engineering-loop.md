@@ -916,7 +916,49 @@ At the Organization level (`~/.claude/DREAM-STATE.md`):
 
 **Result:** Next `/engineering-loop` invocation starts fresh with context gathering.
 
-### 4. Completion Message
+### 4. Leverage Proposal (REQUIRED)
+
+Before showing completion, evaluate and propose the next highest leverage move.
+
+**Process:**
+1. Load dream state checklist (what's incomplete?)
+2. Enumerate available loops (static catalog + meta-loop wildcard)
+3. Score each candidate:
+   ```
+          (DSA × 0.40) + (Downstream Unlock × 0.25) + (Likelihood × 0.15)
+   V = ─────────────────────────────────────────────────────────────────────
+                       (Time × 0.10) + (Effort × 0.10)
+   ```
+4. Present proposal with reasoning
+
+**Output:**
+```
+══════════════════════════════════════════════════════════════
+  NEXT HIGHEST LEVERAGE MOVE
+
+  Recommended: /{loop} → {target}
+
+  Reasoning:
+    • Dream State: {alignment explanation}
+    • Downstream Unlock: {what this enables}
+    • Likelihood: {confidence level}
+    • Time/Effort: {estimate}
+
+  Value Score: X.X/10
+
+  Alternatives considered:
+    2. /{loop} → {target} (V: X.X)
+    3. /{loop} → {target} (V: X.X)
+
+  Say 'go' to start, or specify a different loop.
+══════════════════════════════════════════════════════════════
+```
+
+Record the decision in both the archived run JSON and `memory/leverage/decisions.json`.
+
+See `commands/_shared/leverage-protocol.md` for full details.
+
+### 5. Completion Message
 
 ```
 ══════════════════════════════════════════════════════════════

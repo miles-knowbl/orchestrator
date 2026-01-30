@@ -228,3 +228,141 @@ Skills can be enhanced with hierarchy context.
 - audit-loop: 5 phases, 3 gates — read-only evaluation
 - deck-loop: 6 phases, 5 gates — presentation generation
 - transpose-loop: 4 phases, 3 gates — architecture extraction
+
+---
+
+# Learning System v2 — Validation Analysis
+
+**Date:** 2026-01-30
+**Scope:** Rubric scoring, upgrade proposals, learning API
+**Focus:** Production readiness validation
+
+---
+
+## Summary
+
+Learning System v2 is **operationally complete**. All code paths exist and are properly wired. The system has not yet been exercised with real loop executions.
+
+## Components Validated
+
+### 1. API Endpoints ✓
+
+| Endpoint | Status | Response |
+|----------|--------|----------|
+| `GET /api/improvements/summary` | ✓ Working | `{"runSignals":0,"upgradeProposals":{...}}` |
+| `GET /api/improvements` | ✓ Working | `{"count":0,"proposals":[]}` |
+| `POST /api/improvements/:id/approve` | ✓ Defined | Awaiting proposals |
+| `POST /api/improvements/:id/reject` | ✓ Defined | Awaiting proposals |
+
+### 2. State Storage ✓
+
+| File | Status | Contents |
+|------|--------|----------|
+| `memory/learning/config.json` | ✓ Valid | 6 threshold definitions |
+| `memory/learning/signals.json` | ✓ Valid | Empty runs array (expected) |
+| `memory/improvements/pending.json` | ✓ Valid | Empty (expected) |
+| `memory/improvements/applied.json` | ✓ Valid | Empty (expected) |
+| `memory/improvements/rejected.json` | ✓ Valid | Empty (expected) |
+
+### 3. Tool Definition ✓
+
+```typescript
+// complete_skill now accepts:
+{
+  executionId: string,
+  skillId: string,
+  deliverables?: string[],
+  success?: boolean,
+  score?: number,
+  rubric?: {                    // NEW: Learning System v2
+    completeness: number,       // 1-5
+    quality: number,            // 1-5
+    friction: number,           // 1-5
+    relevance: number           // 1-5
+  },
+  sectionRecommendations?: [{   // NEW: Learning System v2
+    type: 'add' | 'remove' | 'update',
+    section: string,
+    reason: string,
+    proposedContent?: string
+  }]
+}
+```
+
+### 4. Tool Handler ✓
+
+The handler correctly:
+- Validates input via Zod schema
+- Calls `executionEngine.completeSkill()` for state update
+- Calls `learningService.captureSkillSignal()` when rubric provided
+- Passes both rubric and sectionRecommendations
+
+### 5. Learning Service ✓
+
+| Method | Purpose | Status |
+|--------|---------|--------|
+| `startRunTracking()` | Initialize run signal collection | ✓ Implemented |
+| `captureSkillSignal()` | Store skill rubric + recommendations | ✓ Implemented |
+| `recordGateOutcome()` | Track gate pass/fail | ✓ Implemented |
+| `updatePhaseDuration()` | Track timing for calibration | ✓ Implemented |
+| `completeRunTracking()` | Persist + analyze + generate proposals | ✓ Implemented |
+| `analyzeRunForProposals()` | Threshold-based proposal generation | ✓ Implemented |
+
+### 6. Threshold Configuration ✓
+
+| Signal Type | Threshold | Description |
+|-------------|-----------|-------------|
+| `skill-section-add` | 2 occurrences | Same section improvised in 2+ runs |
+| `skill-section-remove` | 3 occurrences | Section ignored in 3+ runs |
+| `skill-section-update` | 2 occurrences | Section caused rework in 2+ runs |
+| `calibration-drift` | 5 @ 30% | Estimates off by >30% in 5+ phases |
+| `skill-broken` | 1 occurrence | Immediate - any failure |
+| `low-rubric-score` | 3 @ <3 | Rubric dimension consistently below 3 |
+
+## Gaps Identified
+
+### Gap 1: No Production Signal Data
+
+**Status:** Expected for fresh deployment
+
+**Impact:** Cannot validate threshold-based proposal generation without real signals
+
+**Recommendation:** Run a loop with rubric scoring to generate signals, then verify:
+1. Signals persist to `signals.json`
+2. Proposals generate when thresholds are met
+3. API endpoints return real data
+
+### Gap 2: completeRunTracking() Not Auto-Called
+
+**Status:** Needs wiring
+
+**Question:** Does `completeRunTracking()` get called automatically at loop COMPLETE phase?
+
+**Finding:** Not automatically called. The loop command definitions reference the learning system but don't explicitly trigger `completeRunTracking()`.
+
+**Recommendation:** Add `complete_run_tracking` tool call to the retrospective skill or COMPLETE phase.
+
+### Gap 3: Upgrade Proposal Application Untested
+
+**Status:** Code exists, not tested
+
+**Question:** When a proposal is approved, does it actually modify the skill file?
+
+**Finding:** The `applyUpgradeProposal()` method exists but hasn't been tested.
+
+## Recommendations
+
+1. **Run an engineering-loop with rubric scoring** to generate real signals
+2. **Wire completeRunTracking() to loop completion** (tool call in COMPLETE phase)
+3. **Test proposal approval flow** end-to-end
+
+## Verdict
+
+**Learning System v2: OPERATIONAL but UNTESTED**
+
+All components are in place. The system needs exercising with real loop executions to validate the full feedback cycle:
+
+```
+complete_skill(rubric) → captureSkillSignal() → completeRunTracking()
+    → analyzeRunForProposals() → SkillUpgradeProposal → approve → apply
+```
