@@ -1,7 +1,7 @@
 {
   "id": "orchestrator",
   "level": "orchestrator",
-  "summary": "Self-improving meta-system using Organization → System → Module hierarchy. All loops share context loading protocol and completion archival. 54+ MCP tools, 10 loop definitions.",
+  "summary": "Self-improving meta-system using Organization → System → Module hierarchy. All loops share context loading protocol and completion archival. 54+ MCP tools, 10 loop definitions. Learning System v2 with rubric scoring. Leverage Protocol for optimal loop sequencing. Version alignment from single source of truth.",
   "decisions": [
     {
       "id": "ADR-001",
@@ -25,6 +25,14 @@
       "context": "Needed a way to sequence loops optimally toward dream state achievement",
       "decision": "Added value equation (DSA 40% + Unlock 25% + Likelihood 15%) / (Time 10% + Effort 10%) evaluated at loop boundaries",
       "consequences": "Claude now proposes the next highest leverage loop at every completion, enabling seamless loop chaining",
+      "date": "2026-01-30T00:00:00Z"
+    },
+    {
+      "id": "ADR-004",
+      "title": "Version Alignment - Single source of truth",
+      "context": "Version numbers were getting out of sync between package.json, server, releases, and dashboard",
+      "decision": "Created src/version.ts that reads from package.json at runtime. All consumers use this utility. Distribution-loop bumps version during INIT phase.",
+      "consequences": "Version stays aligned automatically. Bumping package.json propagates everywhere on next distribution.",
       "date": "2026-01-30T00:00:00Z"
     }
   ],
@@ -103,6 +111,17 @@
       "example": "complete_skill(rubric={completeness:4, quality:5, friction:3, relevance:4}) → [COMPLETE] → complete_run_tracking() → 'New proposals: 1' → list_upgrade_proposals → approve",
       "uses": 1,
       "confidence": "medium",
+      "createdAt": "2026-01-30T00:00:00Z",
+      "lastUsed": "2026-01-30T00:00:00Z"
+    },
+    {
+      "id": "PAT-008",
+      "name": "version-alignment-architecture",
+      "context": "When version numbers need to stay aligned across server, releases, and UI",
+      "solution": "Single source of truth in package.json. Create src/version.ts utility that reads at runtime. GitHub Actions reads package.json for releases. UI parses from release body.",
+      "example": "package.json:0.7.0 → version.ts reads it → /health returns 0.7.0 → release body has 'Version: 0.7.0' → /distribute page shows 0.7.0",
+      "uses": 1,
+      "confidence": "high",
       "createdAt": "2026-01-30T00:00:00Z",
       "lastUsed": "2026-01-30T00:00:00Z"
     }
