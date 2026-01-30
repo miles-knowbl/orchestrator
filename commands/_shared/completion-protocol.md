@@ -12,6 +12,8 @@ When this loop reaches the COMPLETE phase and finishes:
 {
   "summary": {
     "loop": "{loop-name}",
+    "organization": "{org-name}",
+    "domain": "{domain-name or null}",
     "system": "{system-name}",
     "module": "{module-name or null}",
     "started_at": "ISO-timestamp",
@@ -24,7 +26,9 @@ When this loop reaches the COMPLETE phase and finishes:
     "checklist_progress": {
       "completed": N,
       "total": N
-    }
+    },
+    "opportunities_identified": N,
+    "opportunities_pursued": N
   }
 }
 ```
@@ -39,11 +43,21 @@ When this loop reaches the COMPLETE phase and finishes:
 
 ### 3. Update Dream State
 
-At the appropriate tier:
+At the appropriate tier(s) in the hierarchy:
+
+| Tier | Update Location | What Gets Updated |
+|------|-----------------|-------------------|
+| Organization | `~/workspaces/{org}/.claude/DREAM-STATE.md` | Recent completions, master checklist |
+| Domain | `~/workspaces/{org}/.claude/domains/{domain}/DREAM-STATE.md` | System progress, domain patterns |
+| System | `{project}/.claude/DREAM-STATE.md` | Module progress, checklist items |
+| Module | `{project}/src/{module}/DREAM-STATE.md` | Function status, completion criteria |
+
+Actions:
 - Mark completed checklist items
-- Update module/system progress percentages
+- Update module/system/domain progress percentages
 - Append to "Recent Completions" section
-- Promote patterns if applicable
+- Promote patterns if applicable (module → system → domain → org)
+- Record opportunities identified/pursued in opportunity backlog
 
 ### 4. Prune Active State
 

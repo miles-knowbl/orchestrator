@@ -1,8 +1,74 @@
 {
   "id": "orchestrator",
   "level": "orchestrator",
-  "decisions": [],
-  "patterns": [],
+  "summary": "Self-improving meta-system using Organization → System → Module hierarchy. All loops share context loading protocol and completion archival. 54+ MCP tools, 10 loop definitions.",
+  "decisions": [
+    {
+      "id": "ADR-001",
+      "title": "Three-tier context hierarchy",
+      "context": "Loops needed a consistent way to understand scope and share context",
+      "decision": "Adopted Organization → System → Module hierarchy with Dream State documents at each tier",
+      "consequences": "All loops now speak the same language, can query past runs, and auto-update progress",
+      "date": "2025-01-29T00:00:00Z"
+    }
+  ],
+  "patterns": [
+    {
+      "id": "PAT-001",
+      "name": "unified-loop-architecture",
+      "context": "When building loops that need to share context and learn from each other",
+      "solution": "Use the Organization → System → Module hierarchy with Dream State documents at each tier. All loops load context on init and archive runs on completion.",
+      "example": "engineering-loop v5.0.0 loads ~/.claude/DREAM-STATE.md, {repo}/.claude/DREAM-STATE.md, and recent runs via query_runs on initialization",
+      "uses": 1,
+      "confidence": "medium",
+      "createdAt": "2025-01-29T00:00:00Z",
+      "lastUsed": "2025-01-29T00:00:00Z"
+    },
+    {
+      "id": "PAT-002",
+      "name": "completion-archival-protocol",
+      "context": "When a loop reaches COMPLETE phase",
+      "solution": "Archive full state + summary to ~/.claude/runs/{year-month}/{system}-{loop}-{timestamp}.json, update Dream State at appropriate tier, prune active state file",
+      "example": "learning-loop completes → archive_run() → update DREAM-STATE.md → delete learning-state.json",
+      "uses": 1,
+      "confidence": "medium",
+      "createdAt": "2025-01-29T00:00:00Z",
+      "lastUsed": "2025-01-29T00:00:00Z"
+    },
+    {
+      "id": "PAT-003",
+      "name": "deep-context-protocol",
+      "context": "Before any non-trivial task or decision",
+      "solution": "Ask 5-10+ clarifying questions across all dimensions (problem, constraints, success criteria, risks, stakeholders). Keep asking until user signals 'that's everything'. Summarize understanding before proceeding.",
+      "example": "User asks for auth system → probe: auth methods, compliance needs, user volume, session handling, MFA requirements, API keys needed, etc.",
+      "uses": 1,
+      "confidence": "high",
+      "createdAt": "2025-01-29T00:00:00Z",
+      "lastUsed": "2025-01-29T00:00:00Z"
+    },
+    {
+      "id": "PAT-004",
+      "name": "terrain-check",
+      "context": "After every substantive response during execution",
+      "solution": "Assess uphill (uncertain, assuming, multiple paths) vs downhill (clear, verified, just executing). If uphill, surface questions. If downhill, proceed without friction. Watch for terrain transitions.",
+      "example": "Implemented auth middleware → [uphill: assumed JWT] → 'Quick check: I went with JWT. Should I stick with that, or do you prefer sessions?'",
+      "uses": 1,
+      "confidence": "high",
+      "createdAt": "2025-01-29T00:00:00Z",
+      "lastUsed": "2025-01-29T00:00:00Z"
+    },
+    {
+      "id": "PAT-005",
+      "name": "docs-alignment-protocol",
+      "context": "After every loop reaches COMPLETE phase",
+      "solution": "Run docs-alignment skill to scan MECE categories, update Dream States with progress, validate cross-references, regenerate indexes, and prune stale documentation.",
+      "example": "engineering-loop completes → docs-alignment scans all tiers → updates DREAM-STATE.md with new module progress → fixes broken links in ARCHITECTURE.md → regenerates INDEX.md",
+      "uses": 1,
+      "confidence": "medium",
+      "createdAt": "2025-01-29T00:00:00Z",
+      "lastUsed": "2025-01-29T00:00:00Z"
+    }
+  ],
   "calibration": {
     "estimates": [],
     "adjustments": {

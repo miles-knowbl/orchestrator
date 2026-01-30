@@ -1,0 +1,112 @@
+{
+  "id": "dream-loop",
+  "name": "Dream Loop",
+  "version": "1.0.0",
+  "description": "Define what 'done' looks like at any tier of the hierarchy. Walks through structured discovery to create dream states for organizations, domains, systems, or modules.",
+  "iterative": false,
+  "phases": [
+    {
+      "name": "DISCOVER",
+      "skills": [
+        "observe",
+        "context-ingestion"
+      ],
+      "required": true,
+      "notes": "Understand current state, load relevant context from hierarchy"
+    },
+    {
+      "name": "DEFINE",
+      "skills": [
+        "define-dream-state"
+      ],
+      "required": true,
+      "notes": "Walk through structured dream state definition process"
+    },
+    {
+      "name": "VALIDATE",
+      "skills": [
+        "skill-verifier"
+      ],
+      "required": true,
+      "notes": "Review and validate the dream state definition"
+    },
+    {
+      "name": "COMPLETE",
+      "skills": [
+        "retrospective"
+      ],
+      "required": true,
+      "notes": "Finalize, update parent tier, archive run"
+    }
+  ],
+  "gates": [
+    {
+      "id": "definition-gate",
+      "name": "Dream State Approval",
+      "afterPhase": "DEFINE",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": [
+        "DREAM-STATE.md"
+      ]
+    }
+  ],
+  "defaults": {
+    "tier": "system",
+    "autonomy": "supervised"
+  },
+  "ui": {
+    "theme": "planning",
+    "layout": "chat-focused",
+    "features": {
+      "skillBrowser": true,
+      "deliverableViewer": true,
+      "gateApprovalUI": true,
+      "progressTimeline": true
+    },
+    "branding": {
+      "title": "Dream Loop",
+      "subtitle": "Define what done looks like"
+    }
+  },
+  "skillUI": {
+    "observe": {
+      "displayName": "Situational Awareness",
+      "icon": "eye",
+      "outputDisplay": "markdown"
+    },
+    "context-ingestion": {
+      "displayName": "Context Loading",
+      "icon": "download",
+      "outputDisplay": "markdown"
+    },
+    "define-dream-state": {
+      "displayName": "Dream State Definition",
+      "icon": "sparkles",
+      "outputDisplay": "markdown"
+    },
+    "skill-verifier": {
+      "displayName": "Validation",
+      "icon": "check-circle",
+      "outputDisplay": "markdown"
+    },
+    "retrospective": {
+      "displayName": "Completion",
+      "icon": "flag",
+      "outputDisplay": "markdown"
+    }
+  },
+  "metadata": {
+    "author": "Orchestrator",
+    "tags": [
+      "planning",
+      "vision",
+      "dream-state",
+      "definition"
+    ],
+    "changelog": {
+      "1.0.0": "Initial release. Four phases: DISCOVER, DEFINE, VALIDATE, COMPLETE. Supports all four tiers of hierarchy."
+    },
+    "category": "meta"
+  }
+}
