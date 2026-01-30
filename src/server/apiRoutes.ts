@@ -12,12 +12,14 @@ import type { ExecutionEngine } from '../services/ExecutionEngine.js';
 import type { SkillRegistry } from '../services/SkillRegistry.js';
 import type { LoopComposer } from '../services/LoopComposer.js';
 import type { InboxProcessor } from '../services/InboxProcessor.js';
+import type { LearningService } from '../services/LearningService.js';
 
 export interface ApiRoutesOptions {
   executionEngine: ExecutionEngine;
   skillRegistry: SkillRegistry;
   loopComposer: LoopComposer;
   inboxProcessor: InboxProcessor;
+  learningService?: LearningService;
 }
 
 // Helper to get string param
@@ -27,7 +29,7 @@ function getParam(req: Request, name: string): string {
 }
 
 export function createApiRoutes(options: ApiRoutesOptions): Router {
-  const { executionEngine, skillRegistry, loopComposer, inboxProcessor } = options;
+  const { executionEngine, skillRegistry, loopComposer, inboxProcessor, learningService } = options;
   const router = Router();
 
   // ==========================================================================
@@ -707,17 +709,143 @@ export function createApiRoutes(options: ApiRoutesOptions): Router {
   });
 
   // ==========================================================================
+  // IMPROVEMENTS (Learning System)
+  // ==========================================================================
+
+  /**
+   * Get learning summary
+   */
+  router.get('/improvements/summary', async (_req: Request, res: Response) => {
+    if (!learningService) {
+      res.status(503).json({ error: 'Learning service not available' });
+      return;
+    }
+
+    const summary = await learningService.getLearningSummary();
+    res.json(summary);
+  });
+
+  /**
+   * List upgrade proposals
+   */
+  router.get('/improvements', (req: Request, res: Response) => {
+    if (!learningService) {
+      res.status(503).json({ error: 'Learning service not available' });
+      return;
+    }
+
+    const { skill, status } = req.query;
+    const proposals = learningService.listUpgradeProposals({
+      skill: skill as string,
+      status: status as any,
+    });
+
+    res.json({
+      count: proposals.length,
+      proposals: proposals.map(p => ({
+        id: p.id,
+        skill: p.skill,
+        currentVersion: p.currentVersion,
+        proposedVersion: p.proposedVersion,
+        status: p.status,
+        createdAt: p.createdAt,
+        changesCount: p.changes.length,
+        evidenceCount: p.evidence.length,
+        changesSummary: p.changes.map(c => `${c.type}: ${c.section}`).join(', '),
+      })),
+    });
+  });
+
+  /**
+   * Get upgrade proposal details
+   */
+  router.get('/improvements/:id', (req: Request, res: Response) => {
+    if (!learningService) {
+      res.status(503).json({ error: 'Learning service not available' });
+      return;
+    }
+
+    const proposal = learningService.getUpgradeProposal(getParam(req, 'id'));
+
+    if (!proposal) {
+      res.status(404).json({ error: 'Proposal not found' });
+      return;
+    }
+
+    res.json(proposal);
+  });
+
+  /**
+   * Approve an upgrade proposal
+   */
+  router.post('/improvements/:id/approve', async (req: Request, res: Response) => {
+    if (!learningService) {
+      res.status(503).json({ error: 'Learning service not available' });
+      return;
+    }
+
+    try {
+      const result = await learningService.approveUpgradeProposal(
+        getParam(req, 'id'),
+        req.body.approvedBy,
+        req.body.modifications
+      );
+      res.json({
+        success: true,
+        proposal: result.proposal,
+        skillVersion: result.skill.version,
+      });
+    } catch (err) {
+      res.status(400).json({ error: err instanceof Error ? err.message : 'Failed to approve proposal' });
+    }
+  });
+
+  /**
+   * Reject an upgrade proposal
+   */
+  router.post('/improvements/:id/reject', async (req: Request, res: Response) => {
+    if (!learningService) {
+      res.status(503).json({ error: 'Learning service not available' });
+      return;
+    }
+
+    try {
+      const reason = req.body.reason;
+      if (!reason) {
+        res.status(400).json({ error: 'reason is required' });
+        return;
+      }
+
+      const proposal = await learningService.rejectUpgradeProposal(
+        getParam(req, 'id'),
+        reason,
+        req.body.rejectedBy
+      );
+      res.json({ success: true, proposal });
+    } catch (err) {
+      res.status(400).json({ error: err instanceof Error ? err.message : 'Failed to reject proposal' });
+    }
+  });
+
+  // ==========================================================================
   // DASHBOARD SUMMARY
   // ==========================================================================
 
   /**
    * Get dashboard summary
    */
-  router.get('/dashboard', (_req: Request, res: Response) => {
+  router.get('/dashboard', async (_req: Request, res: Response) => {
     const executions = executionEngine.listExecutions();
     const skills = skillRegistry.listSkills({ limit: 1 });
     const loops = loopComposer.listLoops();
     const inbox = inboxProcessor.getStats();
+
+    // Get improvement stats if learning service is available
+    let pendingImprovements = 0;
+    if (learningService) {
+      const proposals = learningService.listUpgradeProposals({ status: 'pending' });
+      pendingImprovements = proposals.length;
+    }
 
     const activeExecutions = executions.filter(e => e.status === 'active');
     const recentExecutions = executions.slice(0, 5);
@@ -729,6 +857,7 @@ export function createApiRoutes(options: ApiRoutesOptions): Router {
         totalSkills: skills.total,
         totalLoops: loops.length,
         pendingInbox: inbox.pending,
+        pendingImprovements,
       },
       activeExecutions: activeExecutions.map(e => ({
         id: e.id,

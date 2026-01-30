@@ -21,6 +21,16 @@ import type {
   ImprovementCategory,
   Pattern,
   Phase,
+  SkillRubric,
+  SectionRecommendation,
+  SkillSignal,
+  RunSignal,
+  PhaseSignal,
+  GateOutcome,
+  SkillUpgradeProposal,
+  SkillChange,
+  ProposalEvidence,
+  LearningConfig,
 } from '../types.js';
 
 export interface LearningServiceOptions {
@@ -71,6 +81,27 @@ export class LearningService {
   private proposals: Map<string, ImprovementProposal> = new Map();
   private metrics: Map<string, SkillMetrics> = new Map();
 
+  // Learning system v2: signals and upgrade proposals
+  private runSignals: RunSignal[] = [];
+  private upgradeProposals: Map<string, SkillUpgradeProposal> = new Map();
+  private learningConfig: LearningConfig = {
+    thresholds: {
+      'skill-section-add': { occurrences: 2, description: 'Same section improvised in 2+ runs' },
+      'skill-section-remove': { occurrences: 3, description: 'Section ignored in 3+ runs' },
+      'skill-section-update': { occurrences: 2, description: 'Section caused rework in 2+ runs' },
+      'low-rubric-score': { occurrences: 3, threshold: 3, description: 'Rubric dimension consistently below 3' },
+    },
+  };
+
+  // Current run accumulator (for building signals during execution)
+  private currentRunSignals: Map<string, {
+    executionId: string;
+    loopId: string;
+    project: string;
+    phaseSignals: Map<Phase, PhaseSignal>;
+    gateOutcomes: GateOutcome[];
+  }> = new Map();
+
   constructor(
     private options: LearningServiceOptions,
     private skillRegistry: SkillRegistry,
@@ -84,6 +115,8 @@ export class LearningService {
     await mkdir(this.options.dataPath, { recursive: true });
     await mkdir(join(this.options.dataPath, 'proposals'), { recursive: true });
     await mkdir(join(this.options.dataPath, 'metrics'), { recursive: true });
+    await mkdir(join(this.options.dataPath, 'learning'), { recursive: true });
+    await mkdir(join(this.options.dataPath, 'improvements'), { recursive: true });
 
     // Load existing proposals
     await this.loadProposals();
@@ -91,7 +124,12 @@ export class LearningService {
     // Load skill metrics
     await this.loadMetrics();
 
-    this.log('info', `Loaded ${this.proposals.size} proposals, ${this.metrics.size} skill metrics`);
+    // Load learning system v2 data
+    await this.loadLearningConfig();
+    await this.loadRunSignals();
+    await this.loadUpgradeProposals();
+
+    this.log('info', `Loaded ${this.proposals.size} proposals, ${this.metrics.size} skill metrics, ${this.runSignals.length} run signals, ${this.upgradeProposals.size} upgrade proposals`);
   }
 
   /**
@@ -129,6 +167,58 @@ export class LearningService {
   }
 
   /**
+   * Load learning configuration
+   */
+  private async loadLearningConfig(): Promise<void> {
+    const configPath = join(this.options.dataPath, 'learning', 'config.json');
+    try {
+      const content = await readFile(configPath, 'utf-8');
+      this.learningConfig = JSON.parse(content) as LearningConfig;
+    } catch {
+      // Use defaults
+    }
+  }
+
+  /**
+   * Load run signals from disk
+   */
+  private async loadRunSignals(): Promise<void> {
+    const signalsPath = join(this.options.dataPath, 'learning', 'signals.json');
+    try {
+      const content = await readFile(signalsPath, 'utf-8');
+      const data = JSON.parse(content) as { runs: RunSignal[] };
+      this.runSignals = data.runs.map(run => ({
+        ...run,
+        completedAt: new Date(run.completedAt),
+      }));
+    } catch {
+      // No signals file yet
+    }
+  }
+
+  /**
+   * Load upgrade proposals from disk
+   */
+  private async loadUpgradeProposals(): Promise<void> {
+    const pendingPath = join(this.options.dataPath, 'improvements', 'pending.json');
+    try {
+      const content = await readFile(pendingPath, 'utf-8');
+      const data = JSON.parse(content) as { proposals: SkillUpgradeProposal[] };
+      for (const proposal of data.proposals) {
+        proposal.createdAt = new Date(proposal.createdAt);
+        if (proposal.reviewedAt) proposal.reviewedAt = new Date(proposal.reviewedAt);
+        proposal.evidence = proposal.evidence.map(e => ({
+          ...e,
+          timestamp: new Date(e.timestamp),
+        }));
+        this.upgradeProposals.set(proposal.id, proposal);
+      }
+    } catch {
+      // No proposals file yet
+    }
+  }
+
+  /**
    * Save proposals to disk
    */
   private async saveProposals(): Promise<void> {
@@ -144,6 +234,31 @@ export class LearningService {
     const metricsPath = join(this.options.dataPath, 'metrics.json');
     const data = Object.fromEntries(this.metrics);
     await writeFile(metricsPath, JSON.stringify(data, null, 2));
+  }
+
+  /**
+   * Save run signals to disk
+   */
+  private async saveRunSignals(): Promise<void> {
+    const signalsPath = join(this.options.dataPath, 'learning', 'signals.json');
+    await mkdir(dirname(signalsPath), { recursive: true });
+    await writeFile(signalsPath, JSON.stringify({ runs: this.runSignals }, null, 2));
+  }
+
+  /**
+   * Save upgrade proposals to disk (by status)
+   */
+  private async saveUpgradeProposals(): Promise<void> {
+    const pending = [...this.upgradeProposals.values()].filter(p => p.status === 'pending');
+    const applied = [...this.upgradeProposals.values()].filter(p => p.status === 'applied');
+    const rejected = [...this.upgradeProposals.values()].filter(p => p.status === 'rejected');
+
+    const basePath = join(this.options.dataPath, 'improvements');
+    await mkdir(basePath, { recursive: true });
+
+    await writeFile(join(basePath, 'pending.json'), JSON.stringify({ proposals: pending }, null, 2));
+    await writeFile(join(basePath, 'applied.json'), JSON.stringify({ proposals: applied }, null, 2));
+    await writeFile(join(basePath, 'rejected.json'), JSON.stringify({ proposals: rejected }, null, 2));
   }
 
   // ==========================================================================
@@ -689,6 +804,569 @@ export class LearningService {
       underutilizedSkills: this.identifyUnderutilizedSkills().length,
       improvingSkills: metrics.filter(m => m.improvementTrend === 'improving').length,
       decliningSkills: metrics.filter(m => m.improvementTrend === 'declining').length,
+    };
+  }
+
+  // ==========================================================================
+  // LEARNING SYSTEM V2: SIGNALS AND UPGRADE PROPOSALS
+  // ==========================================================================
+
+  /**
+   * Start tracking a new execution run
+   */
+  startRunTracking(executionId: string, loopId: string, project: string): void {
+    this.currentRunSignals.set(executionId, {
+      executionId,
+      loopId,
+      project,
+      phaseSignals: new Map(),
+      gateOutcomes: [],
+    });
+    this.log('info', `Started tracking run ${executionId}`);
+  }
+
+  /**
+   * Capture a skill signal with rubric and section recommendations
+   * This is called after each skill completes during execution
+   */
+  captureSkillSignal(
+    executionId: string,
+    phase: Phase,
+    signal: SkillSignal
+  ): void {
+    const runData = this.currentRunSignals.get(executionId);
+    if (!runData) {
+      this.log('warn', `No run tracking for execution ${executionId}`);
+      return;
+    }
+
+    // Get or create phase signal
+    let phaseSignal = runData.phaseSignals.get(phase);
+    if (!phaseSignal) {
+      phaseSignal = {
+        name: phase,
+        duration: 0,
+        skills: [],
+      };
+      runData.phaseSignals.set(phase, phaseSignal);
+    }
+
+    phaseSignal.skills.push(signal);
+
+    // Log the rubric display
+    this.log('info', `Skill ${signal.skillId} rubric: C=${signal.rubric.completeness} Q=${signal.rubric.quality} F=${signal.rubric.friction} R=${signal.rubric.relevance}`);
+
+    if (signal.sectionRecommendations.length > 0) {
+      for (const rec of signal.sectionRecommendations) {
+        this.log('info', `  Section note: ${rec.type.toUpperCase()} "${rec.section}" — ${rec.reason}`);
+      }
+    }
+  }
+
+  /**
+   * Record a gate outcome
+   */
+  recordGateOutcome(executionId: string, gateId: string, outcome: 'passed' | 'failed', attempts: number): void {
+    const runData = this.currentRunSignals.get(executionId);
+    if (!runData) return;
+
+    runData.gateOutcomes.push({ gate: gateId, outcome, attempts });
+  }
+
+  /**
+   * Update phase duration
+   */
+  updatePhaseDuration(executionId: string, phase: Phase, durationMs: number, estimatedMs?: number): void {
+    const runData = this.currentRunSignals.get(executionId);
+    if (!runData) return;
+
+    const phaseSignal = runData.phaseSignals.get(phase);
+    if (phaseSignal) {
+      phaseSignal.duration = durationMs;
+      if (estimatedMs) phaseSignal.estimatedDuration = estimatedMs;
+    }
+  }
+
+  /**
+   * Complete run tracking and analyze for proposals
+   * Called at the end of COMPLETE phase
+   */
+  async completeRunTracking(executionId: string): Promise<{
+    runId: string;
+    newProposals: SkillUpgradeProposal[];
+    summary: string;
+  }> {
+    const runData = this.currentRunSignals.get(executionId);
+    if (!runData) {
+      throw new Error(`No run tracking for execution ${executionId}`);
+    }
+
+    // Build the run signal
+    const runSignal: RunSignal = {
+      id: `run-${Date.now().toString(36)}`,
+      loopId: runData.loopId,
+      executionId,
+      project: runData.project,
+      completedAt: new Date(),
+      phases: [...runData.phaseSignals.values()],
+      gateOutcomes: runData.gateOutcomes,
+    };
+
+    // Append to signals log
+    this.runSignals.push(runSignal);
+    await this.saveRunSignals();
+
+    // Analyze for patterns and generate proposals
+    const newProposals = await this.analyzeRunForProposals(runSignal);
+
+    // Clean up
+    this.currentRunSignals.delete(executionId);
+
+    // Build summary
+    const skillCount = runSignal.phases.reduce((sum, p) => sum + p.skills.length, 0);
+    const sectionNotes = runSignal.phases.reduce(
+      (sum, p) => sum + p.skills.reduce((s, sk) => s + sk.sectionRecommendations.length, 0),
+      0
+    );
+
+    const summary = `Signals captured: ${skillCount} skills, ${sectionNotes} section notes. New proposals: ${newProposals.length}. Pending review: ${[...this.upgradeProposals.values()].filter(p => p.status === 'pending').length} proposals.`;
+
+    this.log('info', summary);
+
+    return {
+      runId: runSignal.id,
+      newProposals,
+      summary,
+    };
+  }
+
+  /**
+   * Analyze a completed run for patterns that warrant proposals
+   */
+  private async analyzeRunForProposals(runSignal: RunSignal): Promise<SkillUpgradeProposal[]> {
+    const newProposals: SkillUpgradeProposal[] = [];
+
+    // Collect all section recommendations from this run
+    const recommendations: Map<string, {
+      skill: string;
+      recommendations: SectionRecommendation[];
+    }> = new Map();
+
+    for (const phase of runSignal.phases) {
+      for (const skillSignal of phase.skills) {
+        if (skillSignal.sectionRecommendations.length > 0) {
+          const existing = recommendations.get(skillSignal.skillId) || {
+            skill: skillSignal.skillId,
+            recommendations: [],
+          };
+          existing.recommendations.push(...skillSignal.sectionRecommendations);
+          recommendations.set(skillSignal.skillId, existing);
+        }
+      }
+    }
+
+    // For each skill with recommendations, check historical signals
+    for (const [skillId, data] of recommendations) {
+      for (const rec of data.recommendations) {
+        const signalType = `skill-section-${rec.type}`;
+        const threshold = this.learningConfig.thresholds[signalType];
+        if (!threshold) continue;
+
+        // Count occurrences across all runs
+        const occurrences = this.countSectionRecommendations(skillId, rec.type, rec.section);
+
+        if (occurrences >= threshold.occurrences) {
+          // Check if we already have a pending proposal for this
+          const existingProposal = this.findExistingProposal(skillId, rec.type, rec.section);
+          if (existingProposal) {
+            // Add evidence to existing proposal
+            existingProposal.evidence.push({
+              runId: runSignal.id,
+              signal: `${rec.type}: ${rec.section}`,
+              timestamp: new Date(),
+            });
+            continue;
+          }
+
+          // Create new proposal
+          const proposal = await this.createUpgradeProposal(skillId, rec, runSignal.id);
+          if (proposal) {
+            newProposals.push(proposal);
+          }
+        }
+      }
+    }
+
+    // Check for low rubric scores
+    for (const phase of runSignal.phases) {
+      for (const skillSignal of phase.skills) {
+        await this.checkLowRubricScores(skillSignal, runSignal.id, newProposals);
+      }
+    }
+
+    // Save proposals
+    if (newProposals.length > 0) {
+      await this.saveUpgradeProposals();
+    }
+
+    return newProposals;
+  }
+
+  /**
+   * Count how many times a section recommendation has occurred for a skill
+   */
+  private countSectionRecommendations(skillId: string, type: string, section: string): number {
+    let count = 0;
+    for (const run of this.runSignals) {
+      for (const phase of run.phases) {
+        for (const skill of phase.skills) {
+          if (skill.skillId === skillId) {
+            for (const rec of skill.sectionRecommendations) {
+              if (rec.type === type && rec.section.toLowerCase() === section.toLowerCase()) {
+                count++;
+              }
+            }
+          }
+        }
+      }
+    }
+    return count;
+  }
+
+  /**
+   * Find existing pending proposal for a skill section change
+   */
+  private findExistingProposal(
+    skillId: string,
+    type: string,
+    section: string
+  ): SkillUpgradeProposal | null {
+    for (const proposal of this.upgradeProposals.values()) {
+      if (proposal.skill === skillId && proposal.status === 'pending') {
+        for (const change of proposal.changes) {
+          if (change.type === `${type}-section` && change.section.toLowerCase() === section.toLowerCase()) {
+            return proposal;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Create a new upgrade proposal
+   */
+  private async createUpgradeProposal(
+    skillId: string,
+    recommendation: SectionRecommendation,
+    runId: string
+  ): Promise<SkillUpgradeProposal | null> {
+    const skill = await this.skillRegistry.getSkill(skillId);
+    if (!skill) return null;
+
+    const changeType = `${recommendation.type}-section` as SkillChange['type'];
+
+    // Determine version bump
+    let proposedVersion = skill.version;
+    const [major, minor, patch] = skill.version.split('.').map(Number);
+
+    if (recommendation.type === 'add' || recommendation.type === 'remove') {
+      proposedVersion = `${major}.${minor + 1}.0`;
+    } else {
+      proposedVersion = `${major}.${minor}.${patch + 1}`;
+    }
+
+    const proposal: SkillUpgradeProposal = {
+      id: `upgrade-${Date.now().toString(36)}`,
+      skill: skillId,
+      currentVersion: skill.version,
+      proposedVersion,
+      createdAt: new Date(),
+      changes: [{
+        type: changeType,
+        section: recommendation.section,
+        reason: recommendation.reason,
+        content: recommendation.proposedContent,
+      }],
+      evidence: [{
+        runId,
+        signal: `${recommendation.type}: ${recommendation.section}`,
+        timestamp: new Date(),
+      }],
+      status: 'pending',
+    };
+
+    this.upgradeProposals.set(proposal.id, proposal);
+    this.log('info', `Created upgrade proposal ${proposal.id} for skill ${skillId}`);
+
+    return proposal;
+  }
+
+  /**
+   * Check for consistently low rubric scores
+   */
+  private async checkLowRubricScores(
+    skillSignal: SkillSignal,
+    runId: string,
+    newProposals: SkillUpgradeProposal[]
+  ): Promise<void> {
+    const threshold = this.learningConfig.thresholds['low-rubric-score'];
+    if (!threshold) return;
+
+    const dimensions: (keyof SkillRubric)[] = ['completeness', 'quality', 'friction', 'relevance'];
+
+    for (const dimension of dimensions) {
+      const score = skillSignal.rubric[dimension];
+      if (score < (threshold.threshold || 3)) {
+        // Count how many times this dimension has been low for this skill
+        let lowCount = 0;
+        for (const run of this.runSignals) {
+          for (const phase of run.phases) {
+            for (const skill of phase.skills) {
+              if (skill.skillId === skillSignal.skillId && skill.rubric[dimension] < (threshold.threshold || 3)) {
+                lowCount++;
+              }
+            }
+          }
+        }
+
+        if (lowCount >= threshold.occurrences) {
+          // Check for existing proposal
+          const existing = [...this.upgradeProposals.values()].find(
+            p => p.skill === skillSignal.skillId &&
+                 p.status === 'pending' &&
+                 p.changes.some(c => c.reason.includes(dimension))
+          );
+
+          if (!existing) {
+            const proposal = await this.createRubricImprovementProposal(
+              skillSignal.skillId,
+              dimension,
+              score,
+              runId
+            );
+            if (proposal) {
+              newProposals.push(proposal);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Create a proposal to address low rubric scores
+   */
+  private async createRubricImprovementProposal(
+    skillId: string,
+    dimension: keyof SkillRubric,
+    score: number,
+    runId: string
+  ): Promise<SkillUpgradeProposal | null> {
+    const skill = await this.skillRegistry.getSkill(skillId);
+    if (!skill) return null;
+
+    const [major, minor, patch] = skill.version.split('.').map(Number);
+    const proposedVersion = `${major}.${minor}.${patch + 1}`;
+
+    const dimensionGuidance: Record<keyof SkillRubric, string> = {
+      completeness: 'Add clearer output requirements and deliverable checklist',
+      quality: 'Add quality criteria and examples of high-quality output',
+      friction: 'Simplify steps, add common pitfall warnings, improve clarity',
+      relevance: 'Review and prune sections that are consistently unused',
+    };
+
+    const proposal: SkillUpgradeProposal = {
+      id: `upgrade-${Date.now().toString(36)}`,
+      skill: skillId,
+      currentVersion: skill.version,
+      proposedVersion,
+      createdAt: new Date(),
+      changes: [{
+        type: 'update-section',
+        section: `Improve ${dimension}`,
+        reason: `${dimension} score consistently low (${score}/5). ${dimensionGuidance[dimension]}`,
+      }],
+      evidence: [{
+        runId,
+        signal: `Low ${dimension} score: ${score}/5`,
+        timestamp: new Date(),
+      }],
+      status: 'pending',
+    };
+
+    this.upgradeProposals.set(proposal.id, proposal);
+    this.log('info', `Created rubric improvement proposal ${proposal.id} for skill ${skillId} (${dimension})`);
+
+    return proposal;
+  }
+
+  // ==========================================================================
+  // UPGRADE PROPOSAL MANAGEMENT
+  // ==========================================================================
+
+  /**
+   * List upgrade proposals
+   */
+  listUpgradeProposals(filter?: {
+    skill?: string;
+    status?: SkillUpgradeProposal['status'];
+  }): SkillUpgradeProposal[] {
+    let results = [...this.upgradeProposals.values()];
+
+    if (filter?.skill) {
+      results = results.filter(p => p.skill === filter.skill);
+    }
+    if (filter?.status) {
+      results = results.filter(p => p.status === filter.status);
+    }
+
+    return results.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  }
+
+  /**
+   * Get a specific upgrade proposal
+   */
+  getUpgradeProposal(id: string): SkillUpgradeProposal | null {
+    return this.upgradeProposals.get(id) || null;
+  }
+
+  /**
+   * Approve an upgrade proposal and apply it
+   */
+  async approveUpgradeProposal(
+    proposalId: string,
+    approvedBy?: string,
+    modifications?: {
+      changes?: SkillChange[];
+      proposedVersion?: string;
+    }
+  ): Promise<{ proposal: SkillUpgradeProposal; skill: Skill }> {
+    const proposal = this.upgradeProposals.get(proposalId);
+    if (!proposal) {
+      throw new Error(`Proposal not found: ${proposalId}`);
+    }
+
+    if (proposal.status !== 'pending') {
+      throw new Error(`Proposal ${proposalId} is ${proposal.status}, cannot approve`);
+    }
+
+    // Apply modifications if provided
+    if (modifications?.changes) {
+      proposal.changes = modifications.changes;
+    }
+    if (modifications?.proposedVersion) {
+      proposal.proposedVersion = modifications.proposedVersion;
+    }
+
+    // Get the skill
+    const skill = await this.skillRegistry.getSkill(proposal.skill);
+    if (!skill) {
+      throw new Error(`Skill not found: ${proposal.skill}`);
+    }
+
+    // Apply the changes to the skill
+    let newContent = skill.content;
+
+    for (const change of proposal.changes) {
+      if (change.type === 'add-section' && change.content) {
+        // Add new section at the end (before any references section if present)
+        const refIndex = newContent.indexOf('## References');
+        if (refIndex > -1) {
+          newContent = newContent.slice(0, refIndex) + `## ${change.section}\n\n${change.content}\n\n` + newContent.slice(refIndex);
+        } else {
+          newContent += `\n\n## ${change.section}\n\n${change.content}`;
+        }
+      } else if (change.type === 'remove-section') {
+        // Remove the section (simple regex-based removal)
+        const sectionRegex = new RegExp(`## ${change.section}[\\s\\S]*?(?=\\n## |$)`, 'i');
+        newContent = newContent.replace(sectionRegex, '');
+      }
+      // update-section would require more sophisticated content merging
+    }
+
+    // Determine version bump type
+    let versionBump: 'patch' | 'minor' | 'major' = 'patch';
+    if (proposal.changes.some(c => c.type === 'add-section' || c.type === 'remove-section')) {
+      versionBump = 'minor';
+    }
+    if (proposal.changes.some(c => c.type === 'rewrite')) {
+      versionBump = 'major';
+    }
+
+    // Update the skill
+    const updatedSkill = await this.skillRegistry.updateSkill({
+      name: proposal.skill,
+      content: newContent,
+      versionBump,
+      changeDescription: proposal.changes.map(c => `${c.type}: ${c.section}`).join(', '),
+    });
+
+    // Update proposal status
+    proposal.status = 'applied';
+    proposal.reviewedAt = new Date();
+    proposal.reviewedBy = approvedBy;
+
+    await this.saveUpgradeProposals();
+
+    this.log('info', `Applied upgrade proposal ${proposalId} to skill ${proposal.skill} → v${updatedSkill.version}`);
+
+    return { proposal, skill: updatedSkill };
+  }
+
+  /**
+   * Reject an upgrade proposal
+   */
+  async rejectUpgradeProposal(
+    proposalId: string,
+    reason: string,
+    rejectedBy?: string
+  ): Promise<SkillUpgradeProposal> {
+    const proposal = this.upgradeProposals.get(proposalId);
+    if (!proposal) {
+      throw new Error(`Proposal not found: ${proposalId}`);
+    }
+
+    if (proposal.status !== 'pending') {
+      throw new Error(`Proposal ${proposalId} is ${proposal.status}, cannot reject`);
+    }
+
+    proposal.status = 'rejected';
+    proposal.reviewedAt = new Date();
+    proposal.reviewedBy = rejectedBy;
+    proposal.rejectionReason = reason;
+
+    await this.saveUpgradeProposals();
+
+    this.log('info', `Rejected upgrade proposal ${proposalId}: ${reason}`);
+
+    return proposal;
+  }
+
+  /**
+   * Get learning system summary including upgrade proposals
+   */
+  async getLearningSummary(): Promise<{
+    runSignals: number;
+    upgradeProposals: {
+      pending: number;
+      applied: number;
+      rejected: number;
+    };
+    pendingProposals: SkillUpgradeProposal[];
+    recentRuns: RunSignal[];
+  }> {
+    const proposals = [...this.upgradeProposals.values()];
+
+    return {
+      runSignals: this.runSignals.length,
+      upgradeProposals: {
+        pending: proposals.filter(p => p.status === 'pending').length,
+        applied: proposals.filter(p => p.status === 'applied').length,
+        rejected: proposals.filter(p => p.status === 'rejected').length,
+      },
+      pendingProposals: proposals.filter(p => p.status === 'pending'),
+      recentRuns: this.runSignals.slice(-5),
     };
   }
 

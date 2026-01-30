@@ -86,6 +86,115 @@ export interface ImprovementRecord {
 
 export type ImprovementCategory = 'bug' | 'enhancement' | 'clarification' | 'new-feature';
 
+// =============================================================================
+// LEARNING SYSTEM TYPES
+// =============================================================================
+
+/**
+ * Rubric for evaluating skill execution quality
+ * Each dimension is scored 1-5
+ */
+export interface SkillRubric {
+  completeness: number;    // Did the skill produce all expected outputs?
+  quality: number;         // How well did outputs meet the spec?
+  friction: number;        // How smooth was execution? (5 = no rework)
+  relevance: number;       // Was every section of the skill useful?
+}
+
+/**
+ * Recommendation for improving a skill section
+ */
+export interface SectionRecommendation {
+  type: 'add' | 'remove' | 'update';
+  section: string;         // Section name/title
+  reason: string;          // Why this change is recommended
+  proposedContent?: string; // For 'add' and 'update' types
+}
+
+/**
+ * Signal captured during skill execution
+ */
+export interface SkillSignal {
+  skillId: string;
+  skillVersion: string;
+  rubric: SkillRubric;
+  sectionRecommendations: SectionRecommendation[];
+  durationMs?: number;
+  estimatedDurationMs?: number;
+}
+
+/**
+ * Complete run signal record (appended to signals.json)
+ */
+export interface RunSignal {
+  id: string;
+  loopId: string;
+  executionId: string;
+  project: string;
+  completedAt: Date;
+  phases: PhaseSignal[];
+  gateOutcomes: GateOutcome[];
+}
+
+export interface PhaseSignal {
+  name: Phase;
+  duration: number;
+  estimatedDuration?: number;
+  skills: SkillSignal[];
+}
+
+export interface GateOutcome {
+  gate: string;
+  outcome: 'passed' | 'failed';
+  attempts: number;
+}
+
+/**
+ * Skill upgrade proposal (version bump with changes)
+ */
+export interface SkillUpgradeProposal {
+  id: string;
+  skill: string;
+  currentVersion: string;
+  proposedVersion: string;
+  createdAt: Date;
+
+  changes: SkillChange[];
+
+  evidence: ProposalEvidence[];
+
+  status: 'pending' | 'approved' | 'rejected' | 'applied';
+  reviewedAt?: Date;
+  reviewedBy?: string;
+  rejectionReason?: string;
+}
+
+export interface SkillChange {
+  type: 'add-section' | 'remove-section' | 'update-section' | 'rewrite';
+  section: string;
+  reason: string;
+  content?: string;
+}
+
+export interface ProposalEvidence {
+  runId: string;
+  signal: string;
+  timestamp: Date;
+}
+
+/**
+ * Learning configuration with aggregation thresholds
+ */
+export interface LearningConfig {
+  thresholds: {
+    [signalType: string]: {
+      occurrences: number;
+      threshold?: number;
+      description: string;
+    };
+  };
+}
+
 // Skill UI configuration for app generation
 export interface SkillUIConfig {
   displayName?: string;
@@ -300,6 +409,10 @@ export interface SkillExecution {
     score: number;               // 0-1
     signals: string[];
   };
+
+  // Learning system: rubric and section recommendations
+  rubric?: SkillRubric;
+  sectionRecommendations?: SectionRecommendation[];
 
   // Nesting
   parentExecutionId?: string;

@@ -213,7 +213,7 @@ async function main() {
   // Create tool handlers
   const skillHandlers = createSkillToolHandlers(skillRegistry, learningService);
   const loopHandlers = createLoopToolHandlers(loopComposer);
-  const executionHandlers = createExecutionToolHandlers(executionEngine);
+  const executionHandlers = createExecutionToolHandlers(executionEngine, learningService);
   const memoryHandlers = createMemoryToolHandlers(memoryService, learningService, calibrationService);
   const inboxHandlers = createInboxToolHandlers(inboxProcessor);
   const runHandlers = createRunToolHandlers(runArchivalService);
@@ -302,6 +302,7 @@ async function main() {
       skillRegistry,
       loopComposer,
       inboxProcessor,
+      learningService,
     },
   });
   await startHttpServer(app, config);
