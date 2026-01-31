@@ -1,8 +1,21 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Layers, ChevronRight, Play, Zap, WifiOff } from 'lucide-react';
-import { fetchWithFallback } from '@/lib/api';
+import {
+  Layers,
+  ChevronRight,
+  ChevronDown,
+  Play,
+  Zap,
+  WifiOff,
+  History,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  Calendar,
+  Target
+} from 'lucide-react';
+import { fetchWithFallback, fetchApi } from '@/lib/api';
 
 interface Loop {
   id: string;
@@ -14,17 +27,215 @@ interface Loop {
   skillCount: number;
 }
 
+interface RunPhase {
+  name: string;
+  status: 'completed' | 'in_progress' | 'pending' | 'skipped';
+  skills: string[];
+}
+
+interface Run {
+  id: string;
+  loop: string;
+  version: string;
+  system: string;
+  status: 'completed' | 'active' | 'failed' | 'aborted';
+  startedAt: string;
+  completedAt?: string;
+  duration?: string;
+  phases: RunPhase[];
+  gatesPassed: number;
+  gatesTotal: number;
+  outcome?: string;
+}
+
+// Static fallback data for runs
+const STATIC_RUNS: Run[] = [
+  {
+    id: 'run-001',
+    loop: 'engineering-loop',
+    version: '5.1.0',
+    system: 'orchestrator',
+    status: 'completed',
+    startedAt: '2026-01-30T18:00:00Z',
+    completedAt: '2026-01-30T19:30:00Z',
+    duration: '1h 30m',
+    phases: [
+      { name: 'INIT', status: 'completed', skills: ['requirements', 'spec'] },
+      { name: 'SCAFFOLD', status: 'completed', skills: ['architect', 'scaffold'] },
+      { name: 'IMPLEMENT', status: 'completed', skills: ['implement'] },
+      { name: 'TEST', status: 'completed', skills: ['test-generation'] },
+      { name: 'VERIFY', status: 'completed', skills: ['code-verification'] },
+      { name: 'VALIDATE', status: 'completed', skills: ['code-validation'] },
+      { name: 'DOCUMENT', status: 'completed', skills: ['document'] },
+      { name: 'REVIEW', status: 'completed', skills: ['code-review'] },
+      { name: 'SHIP', status: 'completed', skills: ['deploy', 'distribute'] },
+      { name: 'COMPLETE', status: 'completed', skills: ['retrospective'] },
+    ],
+    gatesPassed: 6,
+    gatesTotal: 6,
+    outcome: 'Dream state visualization shipped',
+  },
+  {
+    id: 'run-002',
+    loop: 'distribution-loop',
+    version: '2.0.0',
+    system: 'orchestrator',
+    status: 'completed',
+    startedAt: '2026-01-30T17:15:00Z',
+    completedAt: '2026-01-30T17:20:00Z',
+    duration: '5m',
+    phases: [
+      { name: 'INIT', status: 'completed', skills: ['release-planner'] },
+      { name: 'VERIFY', status: 'completed', skills: ['code-verification'] },
+      { name: 'SHIP', status: 'completed', skills: ['git-workflow', 'deploy', 'distribute'] },
+      { name: 'COMPLETE', status: 'completed', skills: ['retrospective'] },
+    ],
+    gatesPassed: 2,
+    gatesTotal: 2,
+    outcome: 'v0.7.0 shipped to all targets',
+  },
+  {
+    id: 'run-003',
+    loop: 'learning-loop',
+    version: '2.0.0',
+    system: 'orchestrator',
+    status: 'completed',
+    startedAt: '2026-01-30T16:00:00Z',
+    completedAt: '2026-01-30T16:45:00Z',
+    duration: '45m',
+    phases: [
+      { name: 'INIT', status: 'completed', skills: ['requirements'] },
+      { name: 'ANALYZE', status: 'completed', skills: ['retrospective', 'skill-verifier'] },
+      { name: 'IMPROVE', status: 'completed', skills: ['skill-design', 'calibration-tracker'] },
+      { name: 'VALIDATE', status: 'completed', skills: ['memory-manager'] },
+      { name: 'COMPLETE', status: 'completed', skills: ['retrospective'] },
+    ],
+    gatesPassed: 2,
+    gatesTotal: 2,
+    outcome: 'ADR-004 and PAT-008 recorded',
+  },
+  {
+    id: 'run-004',
+    loop: 'bugfix-loop',
+    version: '2.0.0',
+    system: 'taste-mixer',
+    status: 'completed',
+    startedAt: '2026-01-30T08:20:00Z',
+    completedAt: '2026-01-30T08:35:00Z',
+    duration: '15m',
+    phases: [
+      { name: 'INIT', status: 'completed', skills: ['requirements'] },
+      { name: 'DIAGNOSE', status: 'completed', skills: ['diagnose'] },
+      { name: 'FIX', status: 'completed', skills: ['implement'] },
+      { name: 'VERIFY', status: 'completed', skills: ['code-verification'] },
+      { name: 'COMPLETE', status: 'completed', skills: ['retrospective'] },
+    ],
+    gatesPassed: 2,
+    gatesTotal: 2,
+    outcome: 'Canvas rendering bug fixed',
+  },
+];
+
 const CATEGORIES = [
   { key: 'development', label: 'Development' },
   { key: 'operations', label: 'Operations' },
   { key: 'meta', label: 'Meta' },
 ] as const;
 
+function RunStatusBadge({ status }: { status: Run['status'] }) {
+  const styles = {
+    completed: 'bg-orch-500/10 text-orch-400 border-orch-500/20',
+    active: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+    failed: 'bg-red-500/10 text-red-400 border-red-500/20',
+    aborted: 'bg-gray-500/10 text-gray-400 border-gray-500/20',
+  };
+
+  const icons = {
+    completed: <CheckCircle2 className="w-3 h-3" />,
+    active: <Play className="w-3 h-3" />,
+    failed: <XCircle className="w-3 h-3" />,
+    aborted: <XCircle className="w-3 h-3" />,
+  };
+
+  return (
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs border ${styles[status]}`}>
+      {icons[status]}
+      {status}
+    </span>
+  );
+}
+
+function MiniPhaseTimeline({ phases }: { phases: RunPhase[] }) {
+  return (
+    <div className="flex items-center gap-0.5">
+      {phases.slice(0, 6).map((phase, i) => (
+        <div
+          key={phase.name}
+          className={`w-2 h-2 rounded-full ${
+            phase.status === 'completed'
+              ? 'bg-orch-400'
+              : phase.status === 'in_progress'
+              ? 'bg-blue-400 animate-pulse'
+              : 'bg-gray-600'
+          }`}
+          title={phase.name}
+        />
+      ))}
+      {phases.length > 6 && (
+        <span className="text-xs text-gray-500 ml-1">+{phases.length - 6}</span>
+      )}
+    </div>
+  );
+}
+
+function RunRow({ run }: { run: Run }) {
+  return (
+    <div className="flex items-center justify-between p-3 bg-[#0a0a0a] rounded-lg hover:bg-[#111] transition-colors">
+      <div className="flex items-center gap-3">
+        <div className="w-8 h-8 rounded-lg bg-[#1a1a1a] flex items-center justify-center">
+          <Layers className="w-4 h-4 text-blue-400" />
+        </div>
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-white">{run.loop}</span>
+            <span className="text-xs text-gray-500">v{run.version}</span>
+            <RunStatusBadge status={run.status} />
+          </div>
+          <div className="flex items-center gap-3 text-xs text-gray-500 mt-0.5">
+            <span className="flex items-center gap-1">
+              <Target className="w-3 h-3" />
+              {run.system}
+            </span>
+            <span className="flex items-center gap-1">
+              <Calendar className="w-3 h-3" />
+              {new Date(run.startedAt).toLocaleDateString()}
+            </span>
+            {run.duration && (
+              <span className="flex items-center gap-1">
+                <Clock className="w-3 h-3" />
+                {run.duration}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+      <div className="flex items-center gap-4">
+        <MiniPhaseTimeline phases={run.phases} />
+        <span className="text-xs text-gray-500">
+          {run.phases.filter(p => p.status === 'completed').length}/{run.phases.length}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 export default function LoopsPage() {
   const [loops, setLoops] = useState<Loop[]>([]);
+  const [runs, setRuns] = useState<Run[]>(STATIC_RUNS);
   const [error, setError] = useState<string | null>(null);
   const [isStatic, setIsStatic] = useState(false);
   const [activeCategory, setActiveCategory] = useState('development');
+  const [runsExpanded, setRunsExpanded] = useState(false);
 
   useEffect(() => {
     const fetchLoops = async () => {
@@ -38,7 +249,20 @@ export default function LoopsPage() {
       }
     };
 
+    const fetchRuns = async () => {
+      try {
+        const res = await fetchApi('/api/runs');
+        if (res.ok) {
+          const data = await res.json();
+          setRuns(data.runs || STATIC_RUNS);
+        }
+      } catch {
+        // Use static data
+      }
+    };
+
     fetchLoops();
+    fetchRuns();
   }, []);
 
   const filtered = loops.filter(l => l.category === activeCategory);
@@ -163,6 +387,43 @@ export default function LoopsPage() {
           </p>
         </div>
       )}
+
+      {/* Recent Runs Section - Collapsible */}
+      <div className="mt-8 border-t border-[#222] pt-6">
+        <button
+          onClick={() => setRunsExpanded(!runsExpanded)}
+          className="w-full flex items-center justify-between p-3 bg-[#111] border border-[#222] rounded-lg hover:border-[#333] transition-colors"
+        >
+          <div className="flex items-center gap-2">
+            <History className="w-4 h-4 text-gray-400" />
+            <span className="text-sm font-medium text-gray-300">Recent Runs</span>
+            <span className="text-xs bg-[#222] text-gray-400 px-2 py-0.5 rounded-full">
+              {runs.length}
+            </span>
+          </div>
+          {runsExpanded ? (
+            <ChevronDown className="w-4 h-4 text-gray-400" />
+          ) : (
+            <ChevronRight className="w-4 h-4 text-gray-400" />
+          )}
+        </button>
+
+        {runsExpanded && (
+          <div className="mt-3 space-y-2">
+            {runs.slice(0, 5).map((run) => (
+              <RunRow key={run.id} run={run} />
+            ))}
+            {runs.length > 5 && (
+              <a
+                href="/runs"
+                className="block text-center text-xs text-gray-500 hover:text-gray-300 py-2"
+              >
+                View all {runs.length} runs →
+              </a>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -73,6 +73,14 @@
       "category": "core"
     },
     {
+      "id": "collect-bugs",
+      "name": "collect-bugs",
+      "version": "1.0.0",
+      "description": "Round up minor UI/UX/data bugs into a prioritized backlog",
+      "phase": "INIT",
+      "category": "operations"
+    },
+    {
       "id": "compatibility-checker",
       "name": "compatibility-checker",
       "version": "1.0.0",
@@ -137,6 +145,14 @@
       "category": "specialized"
     },
     {
+      "id": "define-dream-state",
+      "name": "define-dream-state",
+      "version": "1.0.0",
+      "description": "Systematically define a dream state at any tier of the hierarchy",
+      "phase": "INIT",
+      "category": "meta"
+    },
+    {
       "id": "deploy",
       "name": "deploy",
       "version": "1.0.0",
@@ -151,6 +167,14 @@
       "description": "Set up CI/CD distribution pipelines for automated releases. Creates GitHub Actions workflows, configures platform deployment (Vercel or Railway), produces tarball releases with SHA256 checksums, and o",
       "phase": "SHIP",
       "category": "core"
+    },
+    {
+      "id": "docs-alignment",
+      "name": "docs-alignment",
+      "version": "1.0.0",
+      "description": "Scans, updates, and maintains all documentation across the Organization → System → Module hierarchy. Ensures MECE (Mutually Exclusive, Collectively Exhaustive) categories stay aligned after every loop",
+      "phase": "COMPLETE",
+      "category": "meta"
     },
     {
       "id": "document",
@@ -265,14 +289,6 @@
       "category": "core"
     },
     {
-      "id": "smoke-test",
-      "name": "smoke-test",
-      "version": "1.0.0",
-      "description": "Verifies critical features actually work by calling live endpoints. Unlike integration-test (which writes test code), this skill executes manual verification against deployed/running services. Essential for audit-loop to catch functional regressions.",
-      "phase": "VERIFY",
-      "category": "core"
-    },
-    {
       "id": "journey-tracer",
       "name": "journey-tracer",
       "version": "1.0.0",
@@ -343,6 +359,14 @@
       "description": "Execute immediate mitigation for production incidents. Decide between rollback, hotfix, feature flag, or traffic management. Prioritizes restoring service over finding root cause.",
       "phase": "IMPLEMENT",
       "category": "core"
+    },
+    {
+      "id": "observe",
+      "name": "observe",
+      "version": "1.0.0",
+      "description": "Strategic orientation at loop start — grounding in reality, mapping opportunities for leverage",
+      "phase": "INIT",
+      "category": "meta"
     },
     {
       "id": "orchestrator",
@@ -487,6 +511,14 @@
       "description": "Verifies that skills were applied correctly. Self-audit mechanism that checks process compliance and outcome quality. Ensures required deliverables exist, checklists were completed, and reference docu",
       "phase": "VERIFY",
       "category": "meta"
+    },
+    {
+      "id": "smoke-test",
+      "name": "smoke-test",
+      "version": "1.0.0",
+      "description": "Verifies critical features actually work by calling live endpoints. Unlike integration-test (which writes test code), this skill executes manual verification against deployed/running services. Essenti",
+      "phase": "VERIFY",
+      "category": "core"
     },
     {
       "id": "spec",

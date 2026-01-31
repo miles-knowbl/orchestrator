@@ -74,6 +74,13 @@ export class RunArchivalService {
   }
 
   /**
+   * Get the runs directory path
+   */
+  getRunsPath(): string {
+    return this.runsDir;
+  }
+
+  /**
    * Get the archive path for a run
    */
   getArchivePath(system: string, loop: string, completedAt: Date): string {

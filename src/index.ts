@@ -25,6 +25,7 @@ import { RunArchivalService } from './services/RunArchivalService.js';
 import { GuaranteeService } from './services/GuaranteeService.js';
 import { LoopGuaranteeAggregator } from './services/LoopGuaranteeAggregator.js';
 import { DeliverableManager } from './services/DeliverableManager.js';
+import { AnalyticsService } from './services/analytics/index.js';
 import { skillToolDefinitions, createSkillToolHandlers } from './tools/skillTools.js';
 import { loopToolDefinitions, createLoopToolHandlers } from './tools/loopTools.js';
 import { executionToolDefinitions, createExecutionToolHandlers } from './tools/executionTools.js';
@@ -211,6 +212,20 @@ async function main() {
     message: 'Deliverable manager initialized',
   }));
 
+  // Initialize analytics service (OBSERVE layer for self-improvement)
+  const analyticsService = new AnalyticsService(
+    { runsPath: runArchivalService.getRunsPath() },
+    learningService,
+    calibrationService,
+    memoryService
+  );
+
+  console.error(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    level: 'info',
+    message: 'Analytics service initialized',
+  }));
+
   // Create tool handlers
   const skillHandlers = createSkillToolHandlers(skillRegistry, learningService);
   const loopHandlers = createLoopToolHandlers(loopComposer);
@@ -304,6 +319,7 @@ async function main() {
       loopComposer,
       inboxProcessor,
       learningService,
+      analyticsService,
     },
   });
   await startHttpServer(app, config);

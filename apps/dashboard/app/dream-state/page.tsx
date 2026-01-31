@@ -8,7 +8,6 @@ import {
   CheckCircle2,
   Circle,
   Layers,
-  Building2,
   FolderCode,
   Component,
   WifiOff
@@ -258,7 +257,6 @@ export default function DreamStatePage() {
   }
 
   const { organization } = dreamState;
-  const completedSystems = organization.systems.filter(s => s.status === 'complete').length;
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -276,26 +274,6 @@ export default function DreamStatePage() {
           <h1 className="text-2xl font-bold text-white">Dream State</h1>
           <p className="text-sm text-gray-500">Organization → Systems → Modules</p>
         </div>
-      </div>
-
-      {/* Organization Card */}
-      <div className="bg-gradient-to-br from-orch-900/20 to-[#111] border border-orch-500/20 rounded-xl p-6 mb-6">
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <Building2 className="w-6 h-6 text-orch-400" />
-            <div>
-              <h2 className="text-xl font-bold text-white">{organization.name}</h2>
-              <p className="text-sm text-gray-400 max-w-2xl">{organization.vision}</p>
-            </div>
-          </div>
-          <div className="text-right">
-            <p className="text-3xl font-bold text-orch-400">{organization.progress}%</p>
-            <p className="text-xs text-gray-500">
-              {completedSystems}/{organization.systems.length} systems
-            </p>
-          </div>
-        </div>
-        <ProgressBar progress={organization.progress} />
       </div>
 
       {/* Systems */}
@@ -317,46 +295,20 @@ export default function DreamStatePage() {
       </div>
 
       {/* Patterns */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-[#111] border border-[#222] rounded-xl p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Component className="w-5 h-5 text-purple-400" />
-            <h2 className="text-lg font-semibold text-white">Active Patterns</h2>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {dreamState.patterns.map((pattern) => (
-              <span
-                key={pattern}
-                className="px-2.5 py-1 bg-purple-500/10 text-purple-400 text-xs rounded-lg border border-purple-500/20"
-              >
-                {pattern}
-              </span>
-            ))}
-          </div>
+      <div className="bg-[#111] border border-[#222] rounded-xl p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Component className="w-5 h-5 text-purple-400" />
+          <h2 className="text-lg font-semibold text-white">Active Patterns</h2>
         </div>
-
-        <div className="bg-[#111] border border-[#222] rounded-xl p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <CheckCircle2 className="w-5 h-5 text-orch-400" />
-            <h2 className="text-lg font-semibold text-white">Recent Completions</h2>
-          </div>
-          <div className="space-y-2">
-            {dreamState.recentCompletions.map((completion, i) => (
-              <div key={i} className="flex items-center justify-between text-sm">
-                <div className="flex items-center gap-2">
-                  <span className="text-gray-500">{completion.date}</span>
-                  <span className="text-white">{completion.loop}</span>
-                </div>
-                <span className={`text-xs px-2 py-0.5 rounded ${
-                  completion.outcome === 'success'
-                    ? 'bg-orch-500/10 text-orch-400'
-                    : 'bg-red-500/10 text-red-400'
-                }`}>
-                  {completion.outcome}
-                </span>
-              </div>
-            ))}
-          </div>
+        <div className="flex flex-wrap gap-2">
+          {dreamState.patterns.map((pattern) => (
+            <span
+              key={pattern}
+              className="px-2.5 py-1 bg-purple-500/10 text-purple-400 text-xs rounded-lg border border-purple-500/20"
+            >
+              {pattern}
+            </span>
+          ))}
         </div>
       </div>
     </div>

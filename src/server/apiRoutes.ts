@@ -13,6 +13,7 @@ import type { SkillRegistry } from '../services/SkillRegistry.js';
 import type { LoopComposer } from '../services/LoopComposer.js';
 import type { InboxProcessor } from '../services/InboxProcessor.js';
 import type { LearningService } from '../services/LearningService.js';
+import type { AnalyticsService } from '../services/analytics/index.js';
 
 export interface ApiRoutesOptions {
   executionEngine: ExecutionEngine;
@@ -20,6 +21,7 @@ export interface ApiRoutesOptions {
   loopComposer: LoopComposer;
   inboxProcessor: InboxProcessor;
   learningService?: LearningService;
+  analyticsService?: AnalyticsService;
 }
 
 // Helper to get string param
@@ -29,7 +31,7 @@ function getParam(req: Request, name: string): string {
 }
 
 export function createApiRoutes(options: ApiRoutesOptions): Router {
-  const { executionEngine, skillRegistry, loopComposer, inboxProcessor, learningService } = options;
+  const { executionEngine, skillRegistry, loopComposer, inboxProcessor, learningService, analyticsService } = options;
   const router = Router();
 
   // ==========================================================================
@@ -825,6 +827,194 @@ export function createApiRoutes(options: ApiRoutesOptions): Router {
     } catch (err) {
       res.status(400).json({ error: err instanceof Error ? err.message : 'Failed to reject proposal' });
     }
+  });
+
+  // ==========================================================================
+  // ANALYTICS
+  // ==========================================================================
+
+  /**
+   * Get analytics summary (dashboard-ready)
+   */
+  router.get('/analytics/summary', async (_req: Request, res: Response) => {
+    if (!analyticsService) {
+      res.status(503).json({ error: 'Analytics service not available' });
+      return;
+    }
+
+    try {
+      const summary = await analyticsService.getAnalyticsSummary();
+      res.json(summary);
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : 'Failed to get analytics summary' });
+    }
+  });
+
+  /**
+   * Get all aggregated metrics
+   */
+  router.get('/analytics/aggregates', async (_req: Request, res: Response) => {
+    if (!analyticsService) {
+      res.status(503).json({ error: 'Analytics service not available' });
+      return;
+    }
+
+    try {
+      const aggregates = await analyticsService.computeAggregates();
+      res.json(aggregates);
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : 'Failed to compute aggregates' });
+    }
+  });
+
+  /**
+   * Get run metrics
+   */
+  router.get('/analytics/runs', async (_req: Request, res: Response) => {
+    if (!analyticsService) {
+      res.status(503).json({ error: 'Analytics service not available' });
+      return;
+    }
+
+    try {
+      const metrics = await analyticsService.collectRunMetrics();
+      res.json(metrics);
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : 'Failed to get run metrics' });
+    }
+  });
+
+  /**
+   * Get skill health rankings
+   */
+  router.get('/analytics/skills', async (_req: Request, res: Response) => {
+    if (!analyticsService) {
+      res.status(503).json({ error: 'Analytics service not available' });
+      return;
+    }
+
+    try {
+      const health = await analyticsService.getSkillHealth();
+      res.json({ skills: health });
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : 'Failed to get skill health' });
+    }
+  });
+
+  /**
+   * Get loop performance metrics
+   */
+  router.get('/analytics/loops', async (_req: Request, res: Response) => {
+    if (!analyticsService) {
+      res.status(503).json({ error: 'Analytics service not available' });
+      return;
+    }
+
+    try {
+      const performance = await analyticsService.getLoopPerformance();
+      res.json({ loops: performance });
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : 'Failed to get loop performance' });
+    }
+  });
+
+  /**
+   * Get calibration accuracy metrics
+   */
+  router.get('/analytics/calibration', async (_req: Request, res: Response) => {
+    if (!analyticsService) {
+      res.status(503).json({ error: 'Analytics service not available' });
+      return;
+    }
+
+    try {
+      const calibration = await analyticsService.getCalibrationAccuracy();
+      res.json(calibration);
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : 'Failed to get calibration metrics' });
+    }
+  });
+
+  /**
+   * Get gate metrics
+   */
+  router.get('/analytics/gates', async (_req: Request, res: Response) => {
+    if (!analyticsService) {
+      res.status(503).json({ error: 'Analytics service not available' });
+      return;
+    }
+
+    try {
+      const gates = await analyticsService.collectGateMetrics();
+      res.json(gates);
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : 'Failed to get gate metrics' });
+    }
+  });
+
+  /**
+   * Get pattern metrics
+   */
+  router.get('/analytics/patterns', async (_req: Request, res: Response) => {
+    if (!analyticsService) {
+      res.status(503).json({ error: 'Analytics service not available' });
+      return;
+    }
+
+    try {
+      const patterns = await analyticsService.collectPatternMetrics();
+      res.json(patterns);
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : 'Failed to get pattern metrics' });
+    }
+  });
+
+  /**
+   * Get proposal metrics
+   */
+  router.get('/analytics/proposals', async (_req: Request, res: Response) => {
+    if (!analyticsService) {
+      res.status(503).json({ error: 'Analytics service not available' });
+      return;
+    }
+
+    try {
+      const proposals = await analyticsService.collectProposalMetrics();
+      res.json(proposals);
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : 'Failed to get proposal metrics' });
+    }
+  });
+
+  /**
+   * Get time-series trends
+   */
+  router.get('/analytics/trends', async (req: Request, res: Response) => {
+    if (!analyticsService) {
+      res.status(503).json({ error: 'Analytics service not available' });
+      return;
+    }
+
+    try {
+      const days = req.query.days ? parseInt(req.query.days as string, 10) : 30;
+      const trends = await analyticsService.getTrends(days);
+      res.json({ days, trends });
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : 'Failed to get trends' });
+    }
+  });
+
+  /**
+   * Invalidate analytics cache
+   */
+  router.post('/analytics/invalidate', (_req: Request, res: Response) => {
+    if (!analyticsService) {
+      res.status(503).json({ error: 'Analytics service not available' });
+      return;
+    }
+
+    analyticsService.invalidateCache();
+    res.json({ success: true, message: 'Cache invalidated' });
   });
 
   // ==========================================================================

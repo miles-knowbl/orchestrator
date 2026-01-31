@@ -1,0 +1,80 @@
+{
+  "id": "dream-loop",
+  "name": "Dream Loop",
+  "version": "1.0.0",
+  "description": "Define what 'done' looks like at any tier of the hierarchy. Walks through structured discovery to create dream states for organizations, domains, systems, or modules.",
+  "category": "meta",
+  "content": "# Dream Loop\n\nDefine what \"done\" looks like at any tier of the hierarchy.\n\n## Overview\n\nThe dream loop guides you through structured discovery to create DREAM-STATE.md files for organizations, domains, systems, or modules. It answers:\n\n1. Where are we at?\n2. Where are we going?\n3. How do we get there?\n4. What does done mean?\n\n## Phases\n\n```\nDISCOVER → DEFINE → VALIDATE → COMPLETE\n              │\n              └── [definition-gate] human approval\n```\n\n| Phase | Skills | Purpose |\n|-------|--------|---------|\n| DISCOVER | observe, context-ingestion | Situational awareness, tier detection |\n| DEFINE | define-dream-state | Vision, decomposition, completion criteria |\n| VALIDATE | skill-verifier | Review and validate structure |\n| COMPLETE | retrospective | Finalize, update parent, archive |\n\n## Tiers\n\n| Tier | Location | Decomposes Into |\n|------|----------|-----------------|\n| Organization | `~/workspaces/{org}/.claude/DREAM-STATE.md` | Domains |\n| Domain | `~/workspaces/{org}/.claude/domains/{domain}/DREAM-STATE.md` | Systems |\n| System | `{project}/.claude/DREAM-STATE.md` | Modules |\n| Module | `{project}/src/{module}/DREAM-STATE.md` | Functions |\n\n## Usage\n\n```bash\n/dream-loop                    # Auto-detect tier\n/dream-loop --tier=organization # Explicit tier\n/dream-loop --resume           # Resume existing\n```\n\n## Deliverables\n\n- `DREAM-STATE.md` at tier-appropriate location\n- Parent tier update (if creating child)\n- Run archive on completion\n\n## Version\n\n1.0.0 — Initial release with four-tier support\n",
+  "phases": [
+    {
+      "name": "DISCOVER",
+      "order": 0,
+      "skills": [
+        {
+          "skillId": "observe",
+          "required": true,
+          "order": 0
+        },
+        {
+          "skillId": "context-ingestion",
+          "required": true,
+          "order": 1
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "DEFINE",
+      "order": 1,
+      "skills": [
+        {
+          "skillId": "define-dream-state",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "VALIDATE",
+      "order": 2,
+      "skills": [
+        {
+          "skillId": "skill-verifier",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "COMPLETE",
+      "order": 3,
+      "skills": [
+        {
+          "skillId": "retrospective",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    }
+  ],
+  "gates": [
+    {
+      "id": "definition-gate",
+      "name": "Dream State Approval",
+      "afterPhase": "DEFINE",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": [
+        "DREAM-STATE.md"
+      ]
+    }
+  ],
+  "defaultMode": "greenfield",
+  "defaultAutonomy": "supervised",
+  "skillCount": 5,
+  "phaseCount": 4,
+  "author": "Orchestrator"
+}

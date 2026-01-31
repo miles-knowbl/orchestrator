@@ -37,13 +37,22 @@
       "skillCount": 6
     },
     {
+      "id": "dream-loop",
+      "name": "Dream Loop",
+      "version": "1.0.0",
+      "description": "Define what 'done' looks like at any tier of the hierarchy. Walks through structured discovery to create dream states for organizations, domains, systems, or modules.",
+      "category": "meta",
+      "phaseCount": 4,
+      "skillCount": 5
+    },
+    {
       "id": "engineering-loop",
       "name": "Engineering Loop",
-      "version": "3.1.0",
-      "description": "Complete engineering loop for building production-quality software. Takes requirements through specification, architecture, implementation, testing, verification, validation, documentation, review, an",
+      "version": "4.0.0",
+      "description": "Dream state-driven engineering loop. Starts by defining your end vision, decomposes it into systems, then iterates through each system until the dream state is achieved.",
       "category": "development",
       "phaseCount": 10,
-      "skillCount": 14
+      "skillCount": 15
     },
     {
       "id": "infrastructure-loop",

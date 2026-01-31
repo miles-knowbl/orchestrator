@@ -11,6 +11,7 @@ import type { SkillRegistry } from '../services/SkillRegistry.js';
 import type { LoopComposer } from '../services/LoopComposer.js';
 import type { InboxProcessor } from '../services/InboxProcessor.js';
 import type { LearningService } from '../services/LearningService.js';
+import type { AnalyticsService } from '../services/analytics/index.js';
 import { createApiRoutes } from './apiRoutes.js';
 import { getVersion } from '../version.js';
 
@@ -23,6 +24,7 @@ export interface HttpServerOptions {
     loopComposer: LoopComposer;
     inboxProcessor: InboxProcessor;
     learningService?: LearningService;
+    analyticsService?: AnalyticsService;
   };
 }
 
@@ -150,6 +152,7 @@ export function startHttpServer(
           skills: `http://${config.host}:${config.port}/api/skills`,
           loops: `http://${config.host}:${config.port}/api/loops`,
           improvements: `http://${config.host}:${config.port}/api/improvements`,
+          analytics: `http://${config.host}:${config.port}/api/analytics`,
         },
       }));
       resolve();
