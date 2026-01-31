@@ -14,6 +14,7 @@ import type { LoopComposer } from '../services/LoopComposer.js';
 import type { InboxProcessor } from '../services/InboxProcessor.js';
 import type { LearningService } from '../services/LearningService.js';
 import type { AnalyticsService } from '../services/analytics/index.js';
+import type { ImprovementOrchestrator } from '../services/learning/index.js';
 
 export interface ApiRoutesOptions {
   executionEngine: ExecutionEngine;
@@ -22,6 +23,7 @@ export interface ApiRoutesOptions {
   inboxProcessor: InboxProcessor;
   learningService?: LearningService;
   analyticsService?: AnalyticsService;
+  improvementOrchestrator?: ImprovementOrchestrator;
 }
 
 // Helper to get string param
@@ -31,7 +33,7 @@ function getParam(req: Request, name: string): string {
 }
 
 export function createApiRoutes(options: ApiRoutesOptions): Router {
-  const { executionEngine, skillRegistry, loopComposer, inboxProcessor, learningService, analyticsService } = options;
+  const { executionEngine, skillRegistry, loopComposer, inboxProcessor, learningService, analyticsService, improvementOrchestrator } = options;
   const router = Router();
 
   // ==========================================================================
@@ -1015,6 +1017,185 @@ export function createApiRoutes(options: ApiRoutesOptions): Router {
 
     analyticsService.invalidateCache();
     res.json({ success: true, message: 'Cache invalidated' });
+  });
+
+  // ==========================================================================
+  // LEARNING (Improvement Orchestrator)
+  // ==========================================================================
+
+  /**
+   * Get improvement queue (prioritized proposals)
+   */
+  router.get('/learning/queue', async (_req: Request, res: Response) => {
+    if (!improvementOrchestrator) {
+      res.status(503).json({ error: 'Improvement orchestrator not available' });
+      return;
+    }
+
+    try {
+      const queue = await improvementOrchestrator.getImprovementQueue();
+      res.json({ queue });
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : 'Failed to get improvement queue' });
+    }
+  });
+
+  /**
+   * Get improvement targets
+   */
+  router.get('/learning/targets', (_req: Request, res: Response) => {
+    if (!improvementOrchestrator) {
+      res.status(503).json({ error: 'Improvement orchestrator not available' });
+      return;
+    }
+
+    const targets = improvementOrchestrator.getTargets();
+    res.json({ count: targets.length, targets });
+  });
+
+  /**
+   * Get improvement history
+   */
+  router.get('/learning/history', async (req: Request, res: Response) => {
+    if (!improvementOrchestrator) {
+      res.status(503).json({ error: 'Improvement orchestrator not available' });
+      return;
+    }
+
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 50;
+      const history = await improvementOrchestrator.getImprovementHistory(limit);
+      res.json({ count: history.length, history });
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : 'Failed to get improvement history' });
+    }
+  });
+
+  /**
+   * Trigger an improvement cycle
+   */
+  router.post('/learning/cycle', async (_req: Request, res: Response) => {
+    if (!improvementOrchestrator) {
+      res.status(503).json({ error: 'Improvement orchestrator not available' });
+      return;
+    }
+
+    try {
+      const result = await improvementOrchestrator.runImprovementCycle();
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : 'Failed to run improvement cycle' });
+    }
+  });
+
+  /**
+   * Get pattern proposals
+   */
+  router.get('/learning/patterns', (req: Request, res: Response) => {
+    if (!improvementOrchestrator) {
+      res.status(503).json({ error: 'Improvement orchestrator not available' });
+      return;
+    }
+
+    const status = req.query.status as any;
+    const proposals = improvementOrchestrator.getPatternProposals(status);
+    res.json({ count: proposals.length, proposals });
+  });
+
+  /**
+   * Get a specific pattern proposal
+   */
+  router.get('/learning/patterns/:id', (req: Request, res: Response) => {
+    if (!improvementOrchestrator) {
+      res.status(503).json({ error: 'Improvement orchestrator not available' });
+      return;
+    }
+
+    const proposal = improvementOrchestrator.getPatternProposal(getParam(req, 'id'));
+    if (!proposal) {
+      res.status(404).json({ error: 'Pattern proposal not found' });
+      return;
+    }
+
+    res.json(proposal);
+  });
+
+  /**
+   * Approve a pattern proposal
+   */
+  router.post('/learning/patterns/:id/approve', async (req: Request, res: Response) => {
+    if (!improvementOrchestrator) {
+      res.status(503).json({ error: 'Improvement orchestrator not available' });
+      return;
+    }
+
+    try {
+      const proposal = await improvementOrchestrator.approvePatternProposal(
+        getParam(req, 'id'),
+        req.body.approvedBy
+      );
+      res.json({ success: true, proposal });
+    } catch (err) {
+      res.status(400).json({ error: err instanceof Error ? err.message : 'Failed to approve pattern proposal' });
+    }
+  });
+
+  /**
+   * Reject a pattern proposal
+   */
+  router.post('/learning/patterns/:id/reject', async (req: Request, res: Response) => {
+    if (!improvementOrchestrator) {
+      res.status(503).json({ error: 'Improvement orchestrator not available' });
+      return;
+    }
+
+    try {
+      const reason = req.body.reason;
+      if (!reason) {
+        res.status(400).json({ error: 'reason is required' });
+        return;
+      }
+
+      const proposal = await improvementOrchestrator.rejectPatternProposal(
+        getParam(req, 'id'),
+        reason,
+        req.body.rejectedBy
+      );
+      res.json({ success: true, proposal });
+    } catch (err) {
+      res.status(400).json({ error: err instanceof Error ? err.message : 'Failed to reject pattern proposal' });
+    }
+  });
+
+  /**
+   * Get calibration adjustments
+   */
+  router.get('/learning/calibration', (req: Request, res: Response) => {
+    if (!improvementOrchestrator) {
+      res.status(503).json({ error: 'Improvement orchestrator not available' });
+      return;
+    }
+
+    const status = req.query.status as any;
+    const adjustments = improvementOrchestrator.getCalibrationAdjustments(status);
+    res.json({ count: adjustments.length, adjustments });
+  });
+
+  /**
+   * Apply a calibration adjustment
+   */
+  router.post('/learning/calibration/:id/apply', async (req: Request, res: Response) => {
+    if (!improvementOrchestrator) {
+      res.status(503).json({ error: 'Improvement orchestrator not available' });
+      return;
+    }
+
+    try {
+      const adjustment = await improvementOrchestrator.applyCalibrationAdjustment(getParam(req, 'id'));
+      res.json({ success: true, adjustment });
+    } catch (err) {
+      res.status(400).json({ error: err instanceof Error ? err.message : 'Failed to apply calibration adjustment' });
+    }
   });
 
   // ==========================================================================

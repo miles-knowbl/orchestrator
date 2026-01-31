@@ -26,6 +26,7 @@ import { GuaranteeService } from './services/GuaranteeService.js';
 import { LoopGuaranteeAggregator } from './services/LoopGuaranteeAggregator.js';
 import { DeliverableManager } from './services/DeliverableManager.js';
 import { AnalyticsService } from './services/analytics/index.js';
+import { ImprovementOrchestrator } from './services/learning/index.js';
 import { skillToolDefinitions, createSkillToolHandlers } from './tools/skillTools.js';
 import { loopToolDefinitions, createLoopToolHandlers } from './tools/loopTools.js';
 import { executionToolDefinitions, createExecutionToolHandlers } from './tools/executionTools.js';
@@ -226,6 +227,24 @@ async function main() {
     message: 'Analytics service initialized',
   }));
 
+  // Initialize improvement orchestrator (ACT layer for self-improvement)
+  const improvementDataPath = join(config.repoPath, 'data', 'improvements');
+  const improvementOrchestrator = new ImprovementOrchestrator(
+    { dataPath: improvementDataPath },
+    analyticsService,
+    learningService,
+    calibrationService,
+    memoryService,
+    skillRegistry
+  );
+  await improvementOrchestrator.initialize();
+
+  console.error(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    level: 'info',
+    message: 'Improvement orchestrator initialized',
+  }));
+
   // Create tool handlers
   const skillHandlers = createSkillToolHandlers(skillRegistry, learningService);
   const loopHandlers = createLoopToolHandlers(loopComposer);
@@ -320,6 +339,7 @@ async function main() {
       inboxProcessor,
       learningService,
       analyticsService,
+      improvementOrchestrator,
     },
   });
   await startHttpServer(app, config);
