@@ -34,6 +34,7 @@ export default function RootLayout({
               <nav className="flex items-center gap-6">
                 <a href="/" className="text-sm text-gray-400 hover:text-white transition-colors">Loops</a>
                 <a href="/skills" className="text-sm text-gray-400 hover:text-white transition-colors">Skills</a>
+                <a href="/dream-state" className="text-sm text-gray-400 hover:text-white transition-colors">Dream State</a>
                 <a href="/inbox" className="text-sm text-gray-400 hover:text-white transition-colors">Inbox</a>
                 <a href="/improvements" className="text-sm text-gray-400 hover:text-white transition-colors">Improvements</a>
                 <a href="/distribute" className="text-sm text-gray-400 hover:text-white transition-colors">Distribute</a>
