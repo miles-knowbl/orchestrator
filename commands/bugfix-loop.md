@@ -53,7 +53,7 @@ Create `bugfix-state.json`:
   "gates": {
     "repro-gate": { "status": "pending", "required": true, "approvalType": "human" },
     "diagnosis-gate": { "status": "pending", "required": true, "approvalType": "human" },
-    "verification-gate": { "status": "pending", "required": true, "approvalType": "auto" },
+    "verification-gate": { "status": "pending", "required": true, "approvalType": "hybrid" },
     "review-gate": { "status": "pending", "required": true, "approvalType": "human" }
   },
   "phases": {
@@ -86,12 +86,14 @@ bug-reproducer   root-cause-analysis
 VERIFY ──────────► REVIEW ──────────► COMPLETE
   │                  │
   │ [verification]   │ [review-gate]
-  │  auto            │  human
+  │  hybrid          │  human
   ▼                  ▼
 code-verification  code-review         retrospective
 ```
 
-**8 skills across 7 phases, 4 gates (3 human, 1 auto)**
+**8 skills across 7 phases, 4 gates (3 human, 1 hybrid)**
+
+> **Hybrid gate = auto checks + human runtime confirmation**
 
 > **Note:** `collect-bugs` is optional. Skip it with `skip collect-bugs: single known bug` when you already know exactly what to fix.
 
@@ -101,8 +103,19 @@ code-verification  code-review         retrospective
 |------|-------------|------|--------------|-------------|
 | `repro-gate` | INIT | human | User says `approved` | BUG-REPRODUCTION.md |
 | `diagnosis-gate` | SCAFFOLD | human | User says `approved` | ROOT-CAUSE.md |
-| `verification-gate` | VERIFY | auto | Build passes, tests pass, lint clean | VERIFICATION.md |
+| `verification-gate` | VERIFY | **hybrid** | Build/tests/lint pass + user confirms bug gone | VERIFICATION.md |
 | `review-gate` | REVIEW | human | User says `approved` | CODE-REVIEW.md |
+
+> **CRITICAL: verification-gate is hybrid, not auto**
+>
+> The verification gate has TWO parts:
+> 1. **Auto checks** — Build passes, tests pass, lint clean
+> 2. **Runtime confirmation** — User confirms the original bug is gone
+>
+> After auto checks pass, ALWAYS ask: "Please refresh/restart and confirm the error is gone."
+> Do NOT pass verification-gate until user confirms the bug no longer reproduces.
+>
+> This prevents false-positive fixes where code compiles but runtime behavior unchanged.
 
 **Gate presentation (repro-gate):**
 ```
@@ -124,6 +137,32 @@ code-verification  code-review         retrospective
 ═══════════════════════════════════════════════════════════════
 ```
 
+**Gate presentation (verification-gate) — HYBRID:**
+```
+═══════════════════════════════════════════════════════════════
+║  VERIFICATION GATE                             [HYBRID]    ║
+║                                                             ║
+║  Auto Checks:                                               ║
+║    ✓ Build: passed                                          ║
+║    ✓ Tests: 196/196 passed                                  ║
+║    ✓ Lint: 0 errors                                         ║
+║                                                             ║
+║  ⚠️  RUNTIME CONFIRMATION REQUIRED                          ║
+║                                                             ║
+║  Please refresh/restart the app and confirm:                ║
+║    - The original error no longer appears                   ║
+║    - The fix works as expected                              ║
+║                                                             ║
+║  Commands:                                                  ║
+║    confirmed   — Bug is gone, pass verification gate        ║
+║    still-broken — Bug still occurs, return to SCAFFOLD      ║
+═══════════════════════════════════════════════════════════════
+```
+
+> **Why hybrid?** Build/tests/lint can pass while the actual bug persists.
+> Production bundling, minification, and runtime behavior differ from dev.
+> The user MUST confirm the bug is gone before proceeding.
+
 ## Commands During Execution
 
 | Command | Action |
@@ -131,6 +170,8 @@ code-verification  code-review         retrospective
 | `go` | Continue execution / proceed to next phase |
 | `status` | Show current phase, gate status, progress |
 | `approved` | Pass current human gate |
+| `confirmed` | Pass verification gate (confirms bug is gone at runtime) |
+| `still-broken` | Bug still occurs — return to SCAFFOLD for re-diagnosis |
 | `changes: [feedback]` | Request changes at gate |
 | `pause` | Stop after current skill |
 | `skip [skill]` | Skip a skill (requires reason) |
