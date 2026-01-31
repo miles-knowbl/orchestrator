@@ -39,9 +39,26 @@ Create `bugfix-state.json`:
 ```json
 {
   "loop": "bugfix-loop",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "phase": "INIT",
   "status": "active",
+
+  "bug": {
+    "id": "BUG-001",
+    "title": "Brief description",
+    "severity": "P0|P1|P2|P3"
+  },
+
+  "reproduction": {
+    "steps": [
+      "Step 1: Navigate to /app",
+      "Step 2: Click the button",
+      "Step 3: Observe the error"
+    ],
+    "expected_error": "ReferenceError: Cannot access 'X' before initialization",
+    "environment": "production build",
+    "frequency": "100% reproducible"
+  },
 
   "context": {
     "tier": "system",
@@ -61,7 +78,7 @@ Create `bugfix-state.json`:
     "SCAFFOLD": { "status": "pending", "skills": ["debug-assist", "root-cause-analysis"] },
     "IMPLEMENT": { "status": "pending", "skills": ["implement"] },
     "TEST": { "status": "pending", "skills": ["test-generation"] },
-    "VERIFY": { "status": "pending", "skills": ["code-verification"] },
+    "VERIFY": { "status": "pending", "skills": ["code-verification", "bug-re-reproducer"] },
     "REVIEW": { "status": "pending", "skills": ["code-review"] },
     "COMPLETE": { "status": "pending", "skills": ["retrospective"] }
   },
@@ -70,14 +87,19 @@ Create `bugfix-state.json`:
 }
 ```
 
+> **CRITICAL: The `reproduction` object is captured at INIT and re-used at VERIFY**
+>
+> At VERIFY, the exact reproduction steps are re-run to confirm the bug no longer occurs.
+> This prevents "fix the wrong thing" errors where automated checks pass but the original bug persists.
+
 ### Step 3: Execute Phases
 
 ```
 INIT ──────────► SCAFFOLD ──────────► IMPLEMENT ──────────► TEST
-  │                │
-  │ [repro-gate]   │ [diagnosis-gate]
-  │  human         │  human
-  ▼                ▼
+  │                │  ▲
+  │ [repro-gate]   │  │ (if re-repro fails)
+  │  human         │  │
+  ▼                ▼  │
 collect-bugs     debug-assist          implement          test-generation
 bug-reproducer   root-cause-analysis
 
@@ -86,14 +108,16 @@ bug-reproducer   root-cause-analysis
 VERIFY ──────────► REVIEW ──────────► COMPLETE
   │                  │
   │ [verification]   │ [review-gate]
-  │  auto+e2e        │  human
+  │  auto+re-repro   │  human
   ▼                  ▼
 code-verification  code-review         retrospective
++ bug-re-reproducer
 ```
 
-**8 skills across 7 phases, 4 gates (3 human, 1 auto)**
+**9 skills across 7 phases, 4 gates (3 human, 1 auto)**
 
-> **Auto gate now includes production E2E** — catches TDZ and bundling issues
+> **Auto gate includes production E2E + bug re-reproduction**
+> If re-reproduction shows bug still occurs → return to SCAFFOLD
 
 > **Note:** `collect-bugs` is optional. Skip it with `skip collect-bugs: single known bug` when you already know exactly what to fix.
 
@@ -106,25 +130,35 @@ code-verification  code-review         retrospective
 | `verification-gate` | VERIFY | auto | Build + tests + lint + **production E2E** all pass | VERIFICATION.md |
 | `review-gate` | REVIEW | human | User says `approved` | CODE-REVIEW.md |
 
-> **CRITICAL: verification-gate requires production E2E testing**
+> **CRITICAL: verification-gate has THREE mandatory checks**
 >
-> The verification gate has TWO parts:
-> 1. **Auto checks** — Build passes, unit tests pass, lint clean
-> 2. **Production E2E** — Run production build through E2E smoke tests
->
-> ```bash
-> # Required verification command
-> npm run test:e2e:prod   # Build production + run Playwright against it
+> ```
+> ┌─────────────────────────────────────────────────────────────────┐
+> │  VERIFICATION GATE — All three must pass                       │
+> ├─────────────────────────────────────────────────────────────────┤
+> │  1. AUTO CHECKS                                                 │
+> │     npm run build      → must pass                              │
+> │     npm test           → must pass                              │
+> │     npm run lint       → 0 errors                               │
+> │                                                                 │
+> │  2. PRODUCTION E2E                                              │
+> │     npm run test:e2e:prod  → must pass                          │
+> │     - Builds production bundle                                  │
+> │     - Runs Playwright against production server                 │
+> │     - Catches ErrorBoundary, TDZ, ReferenceError                │
+> │                                                                 │
+> │  3. BUG RE-REPRODUCTION (THE KEY CHECK)                         │
+> │     Re-run the exact steps from bugfix-state.json.reproduction  │
+> │     - The original error MUST NOT appear                        │
+> │     - The app MUST behave correctly now                         │
+> │     - If bug still occurs → return to SCAFFOLD                  │
+> └─────────────────────────────────────────────────────────────────┘
 > ```
 >
-> The E2E smoke test MUST:
-> - Build the production bundle (catches bundling/minification issues)
-> - Load the app and check for ErrorBoundary triggers
-> - Capture console errors matching critical patterns (TDZ, ReferenceError, etc.)
-> - Catch uncaught page exceptions
->
-> Only pass verification-gate if ALL checks pass including production E2E.
-> This catches issues that unit tests miss (TDZ errors, circular imports, etc.).
+> **Why re-reproduction?** Build/lint/tests can pass while the original bug persists.
+> You might have fixed a *different* issue than the one reported. Re-running the
+> exact reproduction steps confirms the *actual bug* is gone, not just that the
+> code compiles.
 
 **Gate presentation (repro-gate):**
 ```
@@ -146,29 +180,63 @@ code-verification  code-review         retrospective
 ═══════════════════════════════════════════════════════════════
 ```
 
-**Gate presentation (verification-gate) — AUTO with Production E2E:**
+**Gate presentation (verification-gate):**
 ```
 ═══════════════════════════════════════════════════════════════
 ║  VERIFICATION GATE                              [AUTO]     ║
 ║                                                             ║
-║  Unit Checks:                                               ║
-║    ✓ Build: passed                                          ║
-║    ✓ Tests: 196/196 passed                                  ║
-║    ✓ Lint: 0 errors                                         ║
+║  1. Unit Checks:                                            ║
+║     ✓ Build: passed                                         ║
+║     ✓ Tests: 196/196 passed                                 ║
+║     ✓ Lint: 0 errors                                        ║
 ║                                                             ║
-║  Production E2E (npm run test:e2e:prod):                    ║
-║    ✓ Production build: passed                               ║
-║    ✓ App loads without ErrorBoundary                        ║
-║    ✓ No critical console errors (TDZ, ReferenceError)       ║
-║    ✓ No uncaught page exceptions                            ║
+║  2. Production E2E (npm run test:e2e:prod):                 ║
+║     ✓ Production build: passed                              ║
+║     ✓ App loads without ErrorBoundary                       ║
+║     ✓ No critical console errors                            ║
 ║                                                             ║
-║  Result: PASSED — All automated checks passed               ║
+║  3. Bug Re-Reproduction:                                    ║
+║     Original bug: "Cannot access 'oe' before initialization"║
+║     Steps: Build prod → Load app → Check console            ║
+║     ✓ Error NO LONGER appears                               ║
+║     ✓ App loads correctly                                   ║
+║                                                             ║
+║  Result: PASSED — Bug confirmed FIXED                       ║
 ═══════════════════════════════════════════════════════════════
 ```
 
-> **Why production E2E?** Build/tests/lint can pass while the actual bug persists.
-> Production bundling and minification expose TDZ errors, circular imports,
-> and other issues invisible in dev mode. The `test:e2e:prod` command catches these.
+> **The re-reproduction check is the most important one.**
+> It uses the exact steps captured at INIT to verify the *specific bug* is gone.
+> Without this, you might fix something else and declare victory prematurely.
+
+**When re-reproduction FAILS (bug still occurs):**
+```
+═══════════════════════════════════════════════════════════════
+║  VERIFICATION GATE                             [FAILED]    ║
+║                                                             ║
+║  1. Unit Checks: ✓ passed                                   ║
+║  2. Production E2E: ✓ passed                                ║
+║  3. Bug Re-Reproduction: ✗ FAILED                           ║
+║                                                             ║
+║  Original bug STILL OCCURS:                                 ║
+║     "Cannot access 'oe' before initialization"              ║
+║                                                             ║
+║  Analysis:                                                  ║
+║     You fixed something, but not the actual bug.            ║
+║     The root cause was misdiagnosed.                        ║
+║                                                             ║
+║  Action: Returning to SCAFFOLD for re-diagnosis             ║
+║                                                             ║
+║  Tip: Look for other forward references, circular imports,  ║
+║       or production-only code paths.                        ║
+═══════════════════════════════════════════════════════════════
+```
+
+When this happens:
+1. Reset phase to SCAFFOLD
+2. Keep the reproduction steps (they're still valid)
+3. Mark the previous diagnosis as "incorrect" in ROOT-CAUSE.md
+4. Re-analyze with fresh eyes — the bug is something else
 
 ## Commands During Execution
 
@@ -178,6 +246,7 @@ code-verification  code-review         retrospective
 | `status` | Show current phase, gate status, progress |
 | `approved` | Pass current human gate |
 | `changes: [feedback]` | Request changes at gate |
+| `still-broken` | Bug still reproduces after fix — return to SCAFFOLD |
 | `pause` | Stop after current skill |
 | `skip [skill]` | Skip a skill (requires reason) |
 | `show [deliverable]` | Display a deliverable |
