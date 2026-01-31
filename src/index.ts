@@ -28,6 +28,7 @@ import { DeliverableManager } from './services/DeliverableManager.js';
 import { AnalyticsService } from './services/analytics/index.js';
 import { ImprovementOrchestrator } from './services/learning/index.js';
 import { RoadmapService } from './services/roadmapping/index.js';
+import { KnowledgeGraphService } from './services/knowledge-graph/index.js';
 import { skillToolDefinitions, createSkillToolHandlers } from './tools/skillTools.js';
 import { loopToolDefinitions, createLoopToolHandlers } from './tools/loopTools.js';
 import { executionToolDefinitions, createExecutionToolHandlers } from './tools/executionTools.js';
@@ -269,6 +270,31 @@ async function main() {
     }));
   }
 
+  // Initialize knowledge graph service (skill-based ontology for compound leverage)
+  const knowledgeGraphService = new KnowledgeGraphService({
+    skillRegistry,
+    loopComposer,
+    graphPath: join(config.repoPath, 'data', 'knowledge-graph.json'),
+    runArchivePath: runArchivalService.getRunsPath(),
+  });
+
+  // Try to load existing graph (optional - may not exist yet)
+  try {
+    await knowledgeGraphService.load();
+    const stats = knowledgeGraphService.getStats();
+    console.error(JSON.stringify({
+      timestamp: new Date().toISOString(),
+      level: 'info',
+      message: `Knowledge graph service initialized (${stats.nodeCount} nodes, ${stats.edgeCount} edges)`,
+    }));
+  } catch (err) {
+    console.error(JSON.stringify({
+      timestamp: new Date().toISOString(),
+      level: 'info',
+      message: 'Knowledge graph service initialized (no existing graph, build with POST /api/knowledge-graph/build)',
+    }));
+  }
+
   // Create tool handlers
   const skillHandlers = createSkillToolHandlers(skillRegistry, learningService);
   const loopHandlers = createLoopToolHandlers(loopComposer);
@@ -365,6 +391,7 @@ async function main() {
       analyticsService,
       improvementOrchestrator,
       roadmapService,
+      knowledgeGraphService,
     },
   });
   await startHttpServer(app, config);

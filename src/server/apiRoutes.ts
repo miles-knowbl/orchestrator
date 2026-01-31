@@ -16,6 +16,7 @@ import type { LearningService } from '../services/LearningService.js';
 import type { AnalyticsService } from '../services/analytics/index.js';
 import type { ImprovementOrchestrator } from '../services/learning/index.js';
 import type { RoadmapService } from '../services/roadmapping/index.js';
+import type { KnowledgeGraphService } from '../services/knowledge-graph/index.js';
 
 export interface ApiRoutesOptions {
   executionEngine: ExecutionEngine;
@@ -26,6 +27,7 @@ export interface ApiRoutesOptions {
   analyticsService?: AnalyticsService;
   improvementOrchestrator?: ImprovementOrchestrator;
   roadmapService?: RoadmapService;
+  knowledgeGraphService?: KnowledgeGraphService;
 }
 
 // Helper to get string param
@@ -35,7 +37,7 @@ function getParam(req: Request, name: string): string {
 }
 
 export function createApiRoutes(options: ApiRoutesOptions): Router {
-  const { executionEngine, skillRegistry, loopComposer, inboxProcessor, learningService, analyticsService, improvementOrchestrator, roadmapService } = options;
+  const { executionEngine, skillRegistry, loopComposer, inboxProcessor, learningService, analyticsService, improvementOrchestrator, roadmapService, knowledgeGraphService } = options;
   const router = Router();
 
   // ==========================================================================
@@ -1374,6 +1376,342 @@ export function createApiRoutes(options: ApiRoutesOptions): Router {
     } catch (err) {
       res.status(400).json({ error: err instanceof Error ? err.message : 'Failed to set current module' });
     }
+  });
+
+  // ==========================================================================
+  // KNOWLEDGE GRAPH
+  // ==========================================================================
+
+  /**
+   * Build/rebuild the knowledge graph
+   */
+  router.post('/knowledge-graph/build', async (_req: Request, res: Response) => {
+    if (!knowledgeGraphService) {
+      res.status(503).json({ error: 'Knowledge graph service not available' });
+      return;
+    }
+
+    try {
+      const graph = await knowledgeGraphService.build();
+      res.json({
+        success: true,
+        message: 'Knowledge graph built successfully',
+        stats: graph.stats,
+        builtAt: graph.builtAt,
+      });
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : 'Failed to build graph' });
+    }
+  });
+
+  /**
+   * Get full knowledge graph
+   */
+  router.get('/knowledge-graph', (_req: Request, res: Response) => {
+    if (!knowledgeGraphService) {
+      res.status(503).json({ error: 'Knowledge graph service not available' });
+      return;
+    }
+
+    const graph = knowledgeGraphService.getGraph();
+    res.json({
+      version: graph.version,
+      stats: graph.stats,
+      nodeCount: graph.nodes.length,
+      edgeCount: graph.edges.length,
+      clusterCount: graph.clusters.length,
+      builtAt: graph.builtAt,
+      updatedAt: graph.updatedAt,
+      nodes: graph.nodes.map(n => ({
+        id: n.id,
+        name: n.name,
+        phase: n.phase,
+        leverageScore: n.leverageScore,
+        inDegree: n.inDegree,
+        outDegree: n.outDegree,
+      })),
+    });
+  });
+
+  /**
+   * Get graph statistics
+   */
+  router.get('/knowledge-graph/stats', (_req: Request, res: Response) => {
+    if (!knowledgeGraphService) {
+      res.status(503).json({ error: 'Knowledge graph service not available' });
+      return;
+    }
+
+    const stats = knowledgeGraphService.getStats();
+    res.json(stats);
+  });
+
+  /**
+   * Get a specific node
+   */
+  router.get('/knowledge-graph/nodes/:skillId', (req: Request, res: Response) => {
+    if (!knowledgeGraphService) {
+      res.status(503).json({ error: 'Knowledge graph service not available' });
+      return;
+    }
+
+    const node = knowledgeGraphService.getNode(getParam(req, 'skillId'));
+    if (!node) {
+      res.status(404).json({ error: 'Node not found' });
+      return;
+    }
+
+    const edges = knowledgeGraphService.getEdges(node.id);
+    res.json({ node, edges });
+  });
+
+  /**
+   * Get nodes by phase
+   */
+  router.get('/knowledge-graph/phases/:phase/nodes', (req: Request, res: Response) => {
+    if (!knowledgeGraphService) {
+      res.status(503).json({ error: 'Knowledge graph service not available' });
+      return;
+    }
+
+    const nodes = knowledgeGraphService.getNodesByPhase(getParam(req, 'phase'));
+    res.json({ phase: getParam(req, 'phase'), count: nodes.length, nodes });
+  });
+
+  /**
+   * Get nodes by tag
+   */
+  router.get('/knowledge-graph/tags/:tag/nodes', (req: Request, res: Response) => {
+    if (!knowledgeGraphService) {
+      res.status(503).json({ error: 'Knowledge graph service not available' });
+      return;
+    }
+
+    const nodes = knowledgeGraphService.getNodesByTag(getParam(req, 'tag'));
+    res.json({ tag: getParam(req, 'tag'), count: nodes.length, nodes });
+  });
+
+  /**
+   * Get edges by type
+   */
+  router.get('/knowledge-graph/edges/:type', (req: Request, res: Response) => {
+    if (!knowledgeGraphService) {
+      res.status(503).json({ error: 'Knowledge graph service not available' });
+      return;
+    }
+
+    const type = getParam(req, 'type') as any;
+    const edges = knowledgeGraphService.getEdgesByType(type);
+    res.json({ type, count: edges.length, edges });
+  });
+
+  /**
+   * Get neighbors of a node
+   */
+  router.get('/knowledge-graph/nodes/:skillId/neighbors', (req: Request, res: Response) => {
+    if (!knowledgeGraphService) {
+      res.status(503).json({ error: 'Knowledge graph service not available' });
+      return;
+    }
+
+    const neighbors = knowledgeGraphService.getNeighbors(getParam(req, 'skillId'));
+    res.json({
+      skillId: getParam(req, 'skillId'),
+      count: neighbors.length,
+      neighbors: neighbors.map(n => ({
+        id: n.id,
+        name: n.name,
+        phase: n.phase,
+        leverageScore: n.leverageScore,
+      })),
+    });
+  });
+
+  /**
+   * Find path between two nodes
+   */
+  router.get('/knowledge-graph/path', (req: Request, res: Response) => {
+    if (!knowledgeGraphService) {
+      res.status(503).json({ error: 'Knowledge graph service not available' });
+      return;
+    }
+
+    const { from, to } = req.query;
+    if (!from || !to) {
+      res.status(400).json({ error: 'from and to query params are required' });
+      return;
+    }
+
+    const path = knowledgeGraphService.findPath(from as string, to as string);
+    if (!path) {
+      res.json({ found: false, message: `No path found from ${from} to ${to}` });
+      return;
+    }
+
+    res.json({ found: true, path });
+  });
+
+  /**
+   * Get all clusters
+   */
+  router.get('/knowledge-graph/clusters', (_req: Request, res: Response) => {
+    if (!knowledgeGraphService) {
+      res.status(503).json({ error: 'Knowledge graph service not available' });
+      return;
+    }
+
+    const clusters = knowledgeGraphService.getClusters();
+    res.json({ count: clusters.length, clusters });
+  });
+
+  /**
+   * Get cluster by tag
+   */
+  router.get('/knowledge-graph/clusters/:tag', (req: Request, res: Response) => {
+    if (!knowledgeGraphService) {
+      res.status(503).json({ error: 'Knowledge graph service not available' });
+      return;
+    }
+
+    const cluster = knowledgeGraphService.getClusterByTag(getParam(req, 'tag'));
+    if (!cluster) {
+      res.status(404).json({ error: 'Cluster not found' });
+      return;
+    }
+
+    res.json(cluster);
+  });
+
+  /**
+   * Get high leverage skills
+   */
+  router.get('/knowledge-graph/high-leverage', (req: Request, res: Response) => {
+    if (!knowledgeGraphService) {
+      res.status(503).json({ error: 'Knowledge graph service not available' });
+      return;
+    }
+
+    const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 10;
+    const skills = knowledgeGraphService.getHighLeverageSkills(limit);
+    res.json({
+      count: skills.length,
+      skills: skills.map(s => ({
+        id: s.id,
+        name: s.name,
+        leverageScore: s.leverageScore,
+        inDegree: s.inDegree,
+        outDegree: s.outDegree,
+        tags: s.tags,
+      })),
+    });
+  });
+
+  /**
+   * Get isolated skills
+   */
+  router.get('/knowledge-graph/isolated', (_req: Request, res: Response) => {
+    if (!knowledgeGraphService) {
+      res.status(503).json({ error: 'Knowledge graph service not available' });
+      return;
+    }
+
+    const isolated = knowledgeGraphService.getIsolatedSkills();
+    res.json({
+      count: isolated.length,
+      skills: isolated.map(s => ({
+        id: s.id,
+        name: s.name,
+        phase: s.phase,
+        tags: s.tags,
+      })),
+    });
+  });
+
+  /**
+   * Get unused skills
+   */
+  router.get('/knowledge-graph/unused', (req: Request, res: Response) => {
+    if (!knowledgeGraphService) {
+      res.status(503).json({ error: 'Knowledge graph service not available' });
+      return;
+    }
+
+    const days = req.query.days ? parseInt(req.query.days as string, 10) : 30;
+    const unused = knowledgeGraphService.getUnusedSkills(days);
+    res.json({
+      daysSinceLastUse: days,
+      count: unused.length,
+      skills: unused.map(s => ({
+        id: s.id,
+        name: s.name,
+        lastUsed: s.lastUsed,
+        usageCount: s.usageCount,
+      })),
+    });
+  });
+
+  /**
+   * Analyze graph gaps
+   */
+  router.get('/knowledge-graph/gaps', (_req: Request, res: Response) => {
+    if (!knowledgeGraphService) {
+      res.status(503).json({ error: 'Knowledge graph service not available' });
+      return;
+    }
+
+    const gaps = knowledgeGraphService.analyzeGaps();
+    res.json(gaps);
+  });
+
+  /**
+   * Refresh a single node
+   */
+  router.post('/knowledge-graph/nodes/:skillId/refresh', async (req: Request, res: Response) => {
+    if (!knowledgeGraphService) {
+      res.status(503).json({ error: 'Knowledge graph service not available' });
+      return;
+    }
+
+    try {
+      const node = await knowledgeGraphService.refreshNode(getParam(req, 'skillId'));
+      if (!node) {
+        res.status(404).json({ error: 'Failed to refresh node' });
+        return;
+      }
+      res.json({ success: true, node });
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : 'Failed to refresh node' });
+    }
+  });
+
+  /**
+   * Remove a node
+   */
+  router.delete('/knowledge-graph/nodes/:skillId', async (req: Request, res: Response) => {
+    if (!knowledgeGraphService) {
+      res.status(503).json({ error: 'Knowledge graph service not available' });
+      return;
+    }
+
+    try {
+      const success = await knowledgeGraphService.removeNode(getParam(req, 'skillId'));
+      res.json({ success, skillId: getParam(req, 'skillId') });
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : 'Failed to remove node' });
+    }
+  });
+
+  /**
+   * Get terminal visualization
+   */
+  router.get('/knowledge-graph/terminal', (_req: Request, res: Response) => {
+    if (!knowledgeGraphService) {
+      res.status(503).json({ error: 'Knowledge graph service not available' });
+      return;
+    }
+
+    const terminal = knowledgeGraphService.generateTerminalView();
+    res.type('text/plain').send(terminal);
   });
 
   // ==========================================================================

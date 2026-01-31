@@ -35,6 +35,7 @@ A self-improving meta-system where skills are the atomic primitive. Orchestrator
 | analytics | src/services/analytics/ | complete | 12/12 | 100% |
 | learning | src/services/learning/ | complete | 15/15 | 100% |
 | roadmapping | src/services/roadmapping/ | complete | 14/14 | 100% |
+| knowledge-graph | src/services/knowledge-graph/ | complete | 25/25 | 100% |
 
 ---
 
@@ -179,6 +180,30 @@ A self-improving meta-system where skills are the atomic primitive. Orchestrator
 - [x] API endpoints — /api/learning/* (10 endpoints)
 - [ ] Dashboard enhancements — improvements page updates (optional)
 
+### knowledge-graph (complete)
+- [x] build — build/rebuild from skills and run archives
+- [x] load/save — persist to JSON
+- [x] getGraph — full graph structure
+- [x] getNode — single node with edges
+- [x] getNodesByPhase — filter by phase
+- [x] getNodesByTag — filter by tag
+- [x] getEdges — incoming/outgoing for skill
+- [x] getEdgesByType — filter by edge type
+- [x] getNeighbors — connected skills
+- [x] findPath — BFS path between skills
+- [x] getClusters — all clusters
+- [x] getClusterByTag — specific cluster
+- [x] getHighLeverageSkills — top leverage skills
+- [x] getIsolatedSkills — unconnected skills
+- [x] getUnusedSkills — stale skills
+- [x] analyzeGaps — full gap analysis
+- [x] getStats — graph statistics
+- [x] refreshNode — refresh single node
+- [x] removeNode — remove node and edges
+- [x] generateTerminalView — terminal visualization
+- [x] API endpoints — /api/knowledge-graph/* (17 endpoints)
+- [x] MCP tools — 19 tools
+
 ---
 
 ## Completion Algebra
@@ -191,10 +216,11 @@ System.done = ALL(Module.done)
               AND loop-guarantee-aggregator.done AND deliverable-manager.done
               AND version-utility.done AND http-server.done AND loop-commands.done
               AND analytics.done AND learning.done AND roadmapping.done
+              AND knowledge-graph.done
 
-Current: 17/17 modules complete (100%)
+Current: 18/18 modules complete (100%)
 Pending: None
-Status: Core operational, self-improvement architecture complete, roadmapping foundation
+Status: Core operational, self-improvement architecture complete, knowledge graph ontology
 Version: 1.0.0
 ```
 
@@ -214,11 +240,11 @@ Version: 1.0.0
 
 | Date | Loop | Scope | Outcome | Key Deliverables |
 |------|------|-------|---------|------------------|
+| 2026-01-31 | engineering-loop | knowledge-graph-ontology | success | KnowledgeGraphService, 17 API endpoints, 19 MCP tools |
 | 2026-01-31 | engineering-loop | roadmapping-module | success | RoadmapService, 10 API endpoints, leverage integration |
 | 2026-01-31 | distribution-loop | v1.0.0 | success | Milestone release, ROADMAP.md, 32 modules planned |
 | 2026-01-31 | engineering-loop | learning-module | success | ImprovementOrchestrator, 10 API endpoints |
 | 2026-01-31 | engineering-loop | analytics-module | success | AnalyticsService, 11 API endpoints, dashboard page |
-| 2026-01-30 | distribution-loop | v0.8.0 | success | Critical Rules + version alignment |
 
 ---
 
@@ -289,3 +315,10 @@ Version: 1.0.0
   - Context Delta schema for reflexive phase output
   - Finite/infinite game framing for hierarchy levels
   - Loop sequencing (chess-line multi-move planning)
+- Knowledge Graph Ontology (v1.0.0 - 2026-01-31)
+  - Skills as only primitive (nodes); everything else is metadata or derived
+  - Objective ontology: about skills themselves, not personal proficiency
+  - Five edge types: depends_on, tag_cluster, sequence, co_executed, improved_by
+  - PageRank-like leverage scoring for centrality
+  - Gap analysis: missing dependencies, isolated skills, weak clusters, phase gaps
+  - See src/services/knowledge-graph/DREAM-STATE.md

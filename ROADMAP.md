@@ -192,9 +192,9 @@ Based on dependencies and leverage:
 
 ```
 Phase 1: Foundation
-  1. roadmapping ◄── YOU ARE HERE
-  2. knowledge-graph-ontology
-  3. 2-layer-orchestration
+  1. roadmapping ✓
+  2. knowledge-graph-ontology ✓
+  3. 2-layer-orchestration ◄── YOU ARE HERE
 
 Phase 2: Core Capabilities
   4. kanban
@@ -276,6 +276,6 @@ Phase 7: Advanced
 
 ## Next Action
 
-**Current Module**: roadmapping
+**Current Module**: knowledge-graph-ontology
 **Status**: Complete
-**Next**: knowledge-graph-ontology (unlocks 5 downstream modules)
+**Next**: 2-layer-orchestration (unlocks autonomous, dreaming, multi-agent-worktrees)
