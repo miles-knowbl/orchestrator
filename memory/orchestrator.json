@@ -1,7 +1,7 @@
 {
   "id": "orchestrator",
   "level": "orchestrator",
-  "summary": "Self-improving meta-system using Organization → System → Module hierarchy. All loops share context loading protocol and completion archival. 54+ MCP tools, 10 loop definitions. Learning System v2 with rubric scoring. Leverage Protocol for optimal loop sequencing. Version alignment from single source of truth.",
+  "summary": "Self-improving meta-system using Organization → System → Module hierarchy. All loops share context loading protocol and completion archival. 54+ MCP tools, 10 loop definitions. Learning System v2 with rubric scoring. Leverage Protocol with Critical Rules for optimal loop sequencing. Version alignment from single source of truth. v0.8.0 with dashboard at 100%.",
   "decisions": [
     {
       "id": "ADR-001",
@@ -34,6 +34,14 @@
       "decision": "Created src/version.ts that reads from package.json at runtime. All consumers use this utility. Distribution-loop bumps version during INIT phase.",
       "consequences": "Version stays aligned automatically. Bumping package.json propagates everywhere on next distribution.",
       "date": "2026-01-30T00:00:00Z"
+    },
+    {
+      "id": "ADR-005",
+      "title": "Critical Rules - Explicit enforcement over implicit understanding",
+      "context": "Leverage protocol was being skipped (no distribution after code, saying 'done' instead of proposing next loop)",
+      "decision": "Added Critical Rules section to protocols with explicit numbered rules, ❌/✅ examples, decision trees, and anti-patterns list",
+      "consequences": "Behavior immediately corrected. Pattern generalizes to all protocols that need enforced behavior.",
+      "date": "2026-01-31T00:00:00Z"
     }
   ],
   "patterns": [
@@ -124,6 +132,17 @@
       "confidence": "high",
       "createdAt": "2026-01-30T00:00:00Z",
       "lastUsed": "2026-01-30T00:00:00Z"
+    },
+    {
+      "id": "PAT-009",
+      "name": "explicit-rules-enforcement",
+      "context": "When a protocol or skill has implicit behavior that gets skipped",
+      "solution": "Add a 'Critical Rules' section with explicit numbered rules, ❌/✅ examples, decision trees, and anti-patterns. Implicit understanding fails; explicit rules succeed.",
+      "example": "Leverage protocol was being skipped → added Rule 1 (distribution after code), Rule 2 (never say done), Rule 3 (look beyond queue) with anti-patterns → behavior corrected",
+      "uses": 1,
+      "confidence": "high",
+      "createdAt": "2026-01-31T00:00:00Z",
+      "lastUsed": "2026-01-31T00:00:00Z"
     }
   ],
   "calibration": {
@@ -133,5 +152,5 @@
     }
   },
   "createdAt": "2026-01-25T00:00:00Z",
-  "updatedAt": "2026-01-25T00:00:00Z"
+  "updatedAt": "2026-01-31T00:00:00Z"
 }
