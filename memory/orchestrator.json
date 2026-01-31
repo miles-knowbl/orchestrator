@@ -1,7 +1,7 @@
 {
   "id": "orchestrator",
   "level": "orchestrator",
-  "summary": "Self-improving meta-system using Organization → System → Module hierarchy. All loops share context loading protocol and completion archival. 54+ MCP tools, 10 loop definitions. Learning System v2 with rubric scoring. Leverage Protocol with Critical Rules for optimal loop sequencing. Version alignment from single source of truth. v0.8.0 with dashboard at 100%.",
+  "summary": "Self-improving meta-system using Organization → System → Module hierarchy (simplified from 4-tier to 3-tier). 32 modules across 7 layers planned via ROADMAP.md. All loops share context loading protocol and completion archival. 54+ MCP tools, 11 loop definitions. Learning System v2 with rubric scoring. Leverage Protocol with Critical Rules for optimal loop sequencing. Version alignment from single source of truth. v0.9.0 with self-improvement architecture complete: Analytics (OBSERVE) + Learning (ACT) modules provide closed-loop feedback.",
   "decisions": [
     {
       "id": "ADR-001",
@@ -41,6 +41,22 @@
       "context": "Leverage protocol was being skipped (no distribution after code, saying 'done' instead of proposing next loop)",
       "decision": "Added Critical Rules section to protocols with explicit numbered rules, ❌/✅ examples, decision trees, and anti-patterns list",
       "consequences": "Behavior immediately corrected. Pattern generalizes to all protocols that need enforced behavior.",
+      "date": "2026-01-31T00:00:00Z"
+    },
+    {
+      "id": "ADR-006",
+      "title": "Hierarchy Simplification - Remove domain tier",
+      "context": "Four-tier hierarchy (Org→Domain→System→Module) added unnecessary complexity. 'Domain' concept was confusing and rarely used.",
+      "decision": "Simplified to three tiers: Organization → System → Module. Systems ladder directly to Org dream state. Modules ladder to System dream state.",
+      "consequences": "Clearer mental model. ROADMAP.md tracks modules within a system. Dream states are now just Org-level and System-level.",
+      "date": "2026-01-31T00:00:00Z"
+    },
+    {
+      "id": "ADR-007",
+      "title": "Seven-Layer Roadmap Architecture",
+      "context": "Needed a consistent way to organize modules within a system by their purpose and dependencies",
+      "decision": "Adopted 7-layer structure: L0 Foundation, L1 Visualization, L2 Autonomy, L3 Intelligence, L4 Interface, L5 Domain Loops, L6 Meta, L7 Sovereignty",
+      "consequences": "Modules have clear placement. Dependencies flow upward. Layer 7 (Sovereignty/local-first) sits at the top as the architectural decision that affects all external integrations.",
       "date": "2026-01-31T00:00:00Z"
     }
   ],
@@ -143,6 +159,61 @@
       "confidence": "high",
       "createdAt": "2026-01-31T00:00:00Z",
       "lastUsed": "2026-01-31T00:00:00Z"
+    },
+    {
+      "id": "PAT-010",
+      "name": "self-improvement-architecture",
+      "context": "When building a system that needs to observe its own behavior and improve autonomously",
+      "solution": "Two-module design: OBSERVE layer (Analytics) reads from all services without modification, surfaces insights via aggregation. ACT layer (Learning) consumes Analytics signals, generates prioritized proposals, applies improvements with human-in-the-loop approval. Separation ensures read operations don't cause side effects.",
+      "example": "Execute loops → AnalyticsService.getSkillHealth() identifies low-scoring skills → ImprovementOrchestrator.processAnalyticsSignals() generates proposals → Human approves → LearningService.applyProposal() upgrades skill → Next execution benefits",
+      "uses": 1,
+      "confidence": "high",
+      "createdAt": "2026-01-31T00:00:00Z",
+      "lastUsed": "2026-01-31T00:00:00Z"
+    },
+    {
+      "id": "PAT-011",
+      "name": "roadmapping-process",
+      "context": "When creating a system roadmap from a user's coded brainstorm list",
+      "solution": "1) Receive user's coded list, 2) Explore codebase to understand existing modules, 3) Ask clarifying questions batched by category (acronyms, scope, differentiation, dependencies, updates vs new), 4) Identify dependencies between modules, 5) Separate updates from new modules, 6) Organize into 7 layers based on purpose and dependencies, 7) Create both ROADMAP.md and terminal visualization",
+      "example": "User pastes coded list → explore src/services, loops/, skills/ → ask about 'ADIR', 'autonomous', 'tech trees vs skill trees' → identify 2-layer-orchestration unlocks autonomous → place in Layer 0 Foundation → create ROADMAP.md",
+      "uses": 1,
+      "confidence": "high",
+      "createdAt": "2026-01-31T00:00:00Z",
+      "lastUsed": "2026-01-31T00:00:00Z"
+    },
+    {
+      "id": "PAT-012",
+      "name": "ADIR-reasoning-cycle",
+      "context": "When running strategic loops that need to improve their own reasoning, not just conclusions",
+      "solution": "Four phases: Abductive (hypotheses from observations), Deductive (testable predictions), Inductive (updated beliefs from results), Reflexive (frame audit producing Context Delta). The Reflexive phase outputs keep/discard/add/reweight/next_tests/guardrails to improve the instruction set.",
+      "example": "Abductive: 'Users might want voice' → Deductive: 'If true, usage should spike on mobile' → Inductive: '80% mobile usage confirms' → Reflexive: {keep: 'mobile-first', add: 'voice input', next_tests: ['dictation UX']}",
+      "uses": 0,
+      "confidence": "medium",
+      "createdAt": "2026-01-31T00:00:00Z",
+      "lastUsed": null
+    },
+    {
+      "id": "PAT-013",
+      "name": "finite-infinite-game-framing",
+      "context": "When aligning work at different hierarchy levels to motivate coherent action",
+      "solution": "Frame module→system and system→org as finite games with clear win conditions, checkpoints, and 'done' states. Frame org (mission) as infinite game with cosmic purpose and continuous play. Finite games ladder up to enable infinite play.",
+      "example": "Module: 'Ship roadmapping module' (finite, clear deliverable) → System: 'Complete orchestrator for launch' (finite, checkpoint) → Org: 'Augment human capability indefinitely' (infinite, mission)",
+      "uses": 0,
+      "confidence": "medium",
+      "createdAt": "2026-01-31T00:00:00Z",
+      "lastUsed": null
+    },
+    {
+      "id": "PAT-014",
+      "name": "loop-sequencing-chess-lines",
+      "context": "When planning beyond the immediate next loop to optimize multi-move strategy",
+      "solution": "Detect patterns of loop co-occurrence (like NLP n-grams). Use that intuition to look multiple moves ahead in the 'line'. Goes beyond single-move leverage protocol to multi-move planning inspired by chess.",
+      "example": "Notice: engineering-loop often followed by bugfix-loop then distribution-loop. When starting engineering-loop, plan the full line: engineering→bugfix→distribution, not just engineering.",
+      "uses": 0,
+      "confidence": "low",
+      "createdAt": "2026-01-31T00:00:00Z",
+      "lastUsed": null
     }
   ],
   "calibration": {

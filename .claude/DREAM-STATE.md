@@ -3,12 +3,14 @@
 > This document defines "done" for the orchestrator system. All modules roll up here.
 
 **Organization:** superorganism
-**Domain:** _{to be defined}_
 **Location:** ~/workspaces/orchestrator
+**Roadmap:** [ROADMAP.md](../ROADMAP.md) — 32 modules across 7 layers
 
 ## Vision
 
 A self-improving meta-system where skills are the atomic primitive. Orchestrator manages skills, composes them into loops, executes loops with quality gates, learns from every execution, and maintains context across sessions. The system should enable "show up, say go" workflows where complex engineering tasks are decomposed and executed with rigor.
+
+**Dream State:** Autonomous, coherent, local-first system that compounds leverage through skill-based ontology.
 
 ---
 
@@ -192,7 +194,7 @@ System.done = ALL(Module.done)
 Current: 16/16 modules complete (100%)
 Pending: None
 Status: Core operational, self-improvement architecture complete
-Version: 0.9.0
+Version: 1.0.0
 ```
 
 ---
@@ -272,3 +274,17 @@ Version: 0.9.0
   - Learning processes signals, generates proposals, applies upgrades
   - Feedback loop: Execute → Analytics → Learning → improved skills → Execute
   - See src/services/analytics/DREAM-STATE.md and src/services/learning/DREAM-STATE.md
+- Hierarchy Simplification (ADR-006 - 2026-01-31)
+  - Simplified from 4-tier (Org→Domain→System→Module) to 3-tier (Org→System→Module)
+  - Systems ladder directly to Org dream state
+  - Clearer mental model, less confusion around "domain" concept
+- Seven-Layer Roadmap Architecture (ADR-007 - 2026-01-31)
+  - L0 Foundation, L1 Visualization, L2 Autonomy, L3 Intelligence, L4 Interface, L5 Domain Loops, L6 Meta, L7 Sovereignty
+  - 32 new modules planned across 7 layers
+  - Dependencies flow upward through layers
+  - See ROADMAP.md for full details
+- Key Concepts Captured (PAT-011 through PAT-014 - 2026-01-31)
+  - ADIR reasoning cycle (Abductive→Deductive→Inductive→Reflexive)
+  - Context Delta schema for reflexive phase output
+  - Finite/infinite game framing for hierarchy levels
+  - Loop sequencing (chess-line multi-move planning)
