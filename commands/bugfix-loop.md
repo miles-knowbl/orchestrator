@@ -53,7 +53,7 @@ Create `bugfix-state.json`:
   "gates": {
     "repro-gate": { "status": "pending", "required": true, "approvalType": "human" },
     "diagnosis-gate": { "status": "pending", "required": true, "approvalType": "human" },
-    "verification-gate": { "status": "pending", "required": true, "approvalType": "hybrid" },
+    "verification-gate": { "status": "pending", "required": true, "approvalType": "auto" },
     "review-gate": { "status": "pending", "required": true, "approvalType": "human" }
   },
   "phases": {
@@ -86,14 +86,14 @@ bug-reproducer   root-cause-analysis
 VERIFY ──────────► REVIEW ──────────► COMPLETE
   │                  │
   │ [verification]   │ [review-gate]
-  │  hybrid          │  human
+  │  auto+e2e        │  human
   ▼                  ▼
 code-verification  code-review         retrospective
 ```
 
-**8 skills across 7 phases, 4 gates (3 human, 1 hybrid)**
+**8 skills across 7 phases, 4 gates (3 human, 1 auto)**
 
-> **Hybrid gate = auto checks + human runtime confirmation**
+> **Auto gate now includes production E2E** — catches TDZ and bundling issues
 
 > **Note:** `collect-bugs` is optional. Skip it with `skip collect-bugs: single known bug` when you already know exactly what to fix.
 
@@ -103,19 +103,28 @@ code-verification  code-review         retrospective
 |------|-------------|------|--------------|-------------|
 | `repro-gate` | INIT | human | User says `approved` | BUG-REPRODUCTION.md |
 | `diagnosis-gate` | SCAFFOLD | human | User says `approved` | ROOT-CAUSE.md |
-| `verification-gate` | VERIFY | **hybrid** | Build/tests/lint pass + user confirms bug gone | VERIFICATION.md |
+| `verification-gate` | VERIFY | auto | Build + tests + lint + **production E2E** all pass | VERIFICATION.md |
 | `review-gate` | REVIEW | human | User says `approved` | CODE-REVIEW.md |
 
-> **CRITICAL: verification-gate is hybrid, not auto**
+> **CRITICAL: verification-gate requires production E2E testing**
 >
 > The verification gate has TWO parts:
-> 1. **Auto checks** — Build passes, tests pass, lint clean
-> 2. **Runtime confirmation** — User confirms the original bug is gone
+> 1. **Auto checks** — Build passes, unit tests pass, lint clean
+> 2. **Production E2E** — Run production build through E2E smoke tests
 >
-> After auto checks pass, ALWAYS ask: "Please refresh/restart and confirm the error is gone."
-> Do NOT pass verification-gate until user confirms the bug no longer reproduces.
+> ```bash
+> # Required verification command
+> npm run test:e2e:prod   # Build production + run Playwright against it
+> ```
 >
-> This prevents false-positive fixes where code compiles but runtime behavior unchanged.
+> The E2E smoke test MUST:
+> - Build the production bundle (catches bundling/minification issues)
+> - Load the app and check for ErrorBoundary triggers
+> - Capture console errors matching critical patterns (TDZ, ReferenceError, etc.)
+> - Catch uncaught page exceptions
+>
+> Only pass verification-gate if ALL checks pass including production E2E.
+> This catches issues that unit tests miss (TDZ errors, circular imports, etc.).
 
 **Gate presentation (repro-gate):**
 ```
@@ -137,31 +146,29 @@ code-verification  code-review         retrospective
 ═══════════════════════════════════════════════════════════════
 ```
 
-**Gate presentation (verification-gate) — HYBRID:**
+**Gate presentation (verification-gate) — AUTO with Production E2E:**
 ```
 ═══════════════════════════════════════════════════════════════
-║  VERIFICATION GATE                             [HYBRID]    ║
+║  VERIFICATION GATE                              [AUTO]     ║
 ║                                                             ║
-║  Auto Checks:                                               ║
+║  Unit Checks:                                               ║
 ║    ✓ Build: passed                                          ║
 ║    ✓ Tests: 196/196 passed                                  ║
 ║    ✓ Lint: 0 errors                                         ║
 ║                                                             ║
-║  ⚠️  RUNTIME CONFIRMATION REQUIRED                          ║
+║  Production E2E (npm run test:e2e:prod):                    ║
+║    ✓ Production build: passed                               ║
+║    ✓ App loads without ErrorBoundary                        ║
+║    ✓ No critical console errors (TDZ, ReferenceError)       ║
+║    ✓ No uncaught page exceptions                            ║
 ║                                                             ║
-║  Please refresh/restart the app and confirm:                ║
-║    - The original error no longer appears                   ║
-║    - The fix works as expected                              ║
-║                                                             ║
-║  Commands:                                                  ║
-║    confirmed   — Bug is gone, pass verification gate        ║
-║    still-broken — Bug still occurs, return to SCAFFOLD      ║
+║  Result: PASSED — All automated checks passed               ║
 ═══════════════════════════════════════════════════════════════
 ```
 
-> **Why hybrid?** Build/tests/lint can pass while the actual bug persists.
-> Production bundling, minification, and runtime behavior differ from dev.
-> The user MUST confirm the bug is gone before proceeding.
+> **Why production E2E?** Build/tests/lint can pass while the actual bug persists.
+> Production bundling and minification expose TDZ errors, circular imports,
+> and other issues invisible in dev mode. The `test:e2e:prod` command catches these.
 
 ## Commands During Execution
 
@@ -170,8 +177,6 @@ code-verification  code-review         retrospective
 | `go` | Continue execution / proceed to next phase |
 | `status` | Show current phase, gate status, progress |
 | `approved` | Pass current human gate |
-| `confirmed` | Pass verification gate (confirms bug is gone at runtime) |
-| `still-broken` | Bug still occurs — return to SCAFFOLD for re-diagnosis |
 | `changes: [feedback]` | Request changes at gate |
 | `pause` | Stop after current skill |
 | `skip [skill]` | Skip a skill (requires reason) |
