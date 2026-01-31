@@ -15,68 +15,31 @@
 ## The Seven Layers
 
 ```
-Layer 7: Sovereignty        ─────────────────────────────────────────────────────
-         local-first                    "Own your system"
+Layer 6  ───────────────────────────────────────────────────────────────────────
+         local-first
 
-Layer 6: Meta               ─────────────────────────────────────────────────────
-         game-design, co-op, proposing-decks, spaced-repetition, auto-updating
+Layer 5  ───────────────────────────────────────────────────────────────────────
+         game-design, co-op, proposing-decks, spaced-repetition, auto-updating, custom-tool-roundup
 
-Layer 5: Domain Loops       ─────────────────────────────────────────────────────
-         sales, ops, business-model, go-to-market, brownfield
+Layer 4  ───────────────────────────────────────────────────────────────────────
+         sales-loop, ops-loop, business-model-loop, go-to-market-loop, brownfield-specialization
 
-Layer 4: Interface          ─────────────────────────────────────────────────────
-         voice, proactive-messaging, slack
+Layer 3  ───────────────────────────────────────────────────────────────────────
+         voice, proactive-messaging, slack-integration
 
-Layer 3: Intelligence       ─────────────────────────────────────────────────────
-         patterns, scoring, ADIR, mece, coherence
+Layer 2  ───────────────────────────────────────────────────────────────────────
+         patterns-roundup, scoring, ADIR-loop, mece-opportunity-mapping, coherence-system
 
-Layer 2: Autonomy           ─────────────────────────────────────────────────────
-         autonomous, dreaming, multi-agent-worktrees, loop-sequencing
+Layer 1  ───────────────────────────────────────────────────────────────────────
+         autonomous, dreaming, multi-agent-worktrees, loop-sequencing, kanban, ooda-clocks, skill-trees, tech-trees, ladder-of-abstraction
 
-Layer 1: Visualization      ─────────────────────────────────────────────────────
-         kanban, ooda-clocks, skill-trees, tech-trees, ladder-of-abstraction
-
-Layer 0: Foundation         ─────────────────────────────────────────────────────
+Layer 0  ───────────────────────────────────────────────────────────────────────
          roadmapping, 2-layer-orchestration, knowledge-graph-ontology
 ```
 
 ---
 
-## Module Dependency Graph
-
-```
-                                    ┌─────────────────┐
-                                    │   DREAM STATE   │
-                                    │   (System Done) │
-                                    └────────┬────────┘
-                                             │
-            ┌────────────────────────────────┼────────────────────────────────┐
-            │                                │                                │
-            ▼                                ▼                                ▼
-    ┌───────────────┐              ┌─────────────────┐              ┌─────────────────┐
-    │  AUTONOMY     │              │  INTELLIGENCE   │              │   INTERFACE     │
-    │  LAYER 2      │              │  LAYER 3        │              │   LAYER 4       │
-    └───────┬───────┘              └────────┬────────┘              └────────┬────────┘
-            │                                │                                │
-            ▼                                ▼                                ▼
-    ┌───────────────┐              ┌─────────────────┐              ┌─────────────────┐
-    │ 2-LAYER ORCH  │◄─────────────│ KNOWLEDGE GRAPH │─────────────►│  LOCAL-FIRST    │
-    └───────┬───────┘              └────────┬────────┘              └────────┬────────┘
-            │                                │                                │
-            └────────────────────────────────┴────────────────────────────────┘
-                                             │
-                                             ▼
-                                    ┌─────────────────┐
-                                    │   ROADMAPPING   │
-                                    │   (This Module) │
-                                    └─────────────────┘
-```
-
----
-
-## Layer 0: Foundation
-
-*The bedrock. Everything else builds on these.*
+## Layer 0
 
 | Module | Description | Unlocks |
 |--------|-------------|---------|
@@ -86,9 +49,7 @@ Layer 0: Foundation         ─────────────────�
 
 ---
 
-## Layer 1: Visualization
-
-*Making the invisible visible.*
+## Layer 1
 
 | Module | Description | Depends On |
 |--------|-------------|------------|
@@ -97,15 +58,6 @@ Layer 0: Foundation         ─────────────────�
 | **skill-trees** | DAG-like domain-specific sequences of skills. Simultaneously illustrates skill relationships to LLMs while helping users gain familiarity by seeing each skill produce output before using it in a loop. Interface to the skill-based ontology. | knowledge-graph-ontology |
 | **tech-trees** | Macroscopic technology progressions that cultures/orgs pursue. Predictive capabilities (potentially RL-based like AlphaGo with Markov decision trees) that inspire MECE opportunity mapping at system and module levels. | knowledge-graph-ontology, mece-opportunity-mapping |
 | **ladder-of-abstraction-interfaces** | UI showing the same loop at different zoom levels (module/system/org). Music-gear-like looping interfaces for piloting, co-piloting, or playing co-op PvE with the orchestrator. | kanban |
-
----
-
-## Layer 2: Autonomy
-
-*The system that works while you sleep.*
-
-| Module | Description | Depends On |
-|--------|-------------|------------|
 | **autonomous** | Full loop execution without human gates + background continuous operation. "It works while I sleep." The orchestrator advances dream state while you're away. | 2-layer-orchestration, proactive-messaging |
 | **dreaming** | Sleep/background processing mode for proposing new modules→system and systems→org. The system "dreams up" new work while idle, ready for review when you return. | autonomous |
 | **multi-agent-worktrees** | Multiple sets of parallel agents across two hierarchy levels and multiple humans. Thoughtful coordination when collaborators each have their own agent sets working on isolated git worktrees. | 2-layer-orchestration |
@@ -113,9 +65,7 @@ Layer 0: Foundation         ─────────────────�
 
 ---
 
-## Layer 3: Intelligence
-
-*The system that gets smarter.*
+## Layer 2
 
 | Module | Description | Depends On |
 |--------|-------------|------------|
@@ -127,9 +77,7 @@ Layer 0: Foundation         ─────────────────�
 
 ---
 
-## Layer 4: Interface
-
-*How you and others interact with the system.*
+## Layer 3
 
 | Module | Description | Depends On |
 |--------|-------------|------------|
@@ -139,9 +87,7 @@ Layer 0: Foundation         ─────────────────�
 
 ---
 
-## Layer 5: Domain Loops
-
-*Loops for specific domains of work.*
+## Layer 4
 
 | Module | Description | Depends On |
 |--------|-------------|------------|
@@ -153,9 +99,7 @@ Layer 0: Foundation         ─────────────────�
 
 ---
 
-## Layer 6: Meta
-
-*The system that improves itself and teaches you.*
+## Layer 5
 
 | Module | Description | Depends On |
 |--------|-------------|------------|
@@ -168,9 +112,7 @@ Layer 0: Foundation         ─────────────────�
 
 ---
 
-## Layer 7: Sovereignty
-
-*Own your system completely.*
+## Layer 6
 
 | Module | Description | Depends On |
 |--------|-------------|------------|
@@ -199,16 +141,48 @@ Layer 0: Foundation         ─────────────────�
 
 | Layer | Count | Modules |
 |-------|-------|---------|
-| 0: Foundation | 3 | roadmapping, 2-layer-orchestration, knowledge-graph-ontology |
-| 1: Visualization | 5 | kanban, ooda-clocks, skill-trees, tech-trees, ladder-of-abstraction |
-| 2: Autonomy | 4 | autonomous, dreaming, multi-agent-worktrees, loop-sequencing |
-| 3: Intelligence | 5 | patterns-roundup, scoring, ADIR-loop, mece-opportunity-mapping, coherence-system |
-| 4: Interface | 3 | voice, proactive-messaging, slack-integration |
-| 5: Domain Loops | 5 | sales-loop, ops-loop, business-model-loop, go-to-market-loop, brownfield-specialization |
-| 6: Meta | 6 | game-design, co-op-skill-acquisition, proposing-decks, spaced-repetition, auto-updating, custom-tool-roundup |
-| 7: Sovereignty | 1 | local-first |
+| 0 | 3 | roadmapping, 2-layer-orchestration, knowledge-graph-ontology |
+| 1 | 9 | kanban, ooda-clocks, skill-trees, tech-trees, ladder-of-abstraction, autonomous, dreaming, multi-agent-worktrees, loop-sequencing |
+| 2 | 5 | patterns-roundup, scoring, ADIR-loop, mece-opportunity-mapping, coherence-system |
+| 3 | 3 | voice, proactive-messaging, slack-integration |
+| 4 | 5 | sales-loop, ops-loop, business-model-loop, go-to-market-loop, brownfield-specialization |
+| 5 | 6 | game-design, co-op-skill-acquisition, proposing-decks, spaced-repetition, auto-updating, custom-tool-roundup |
+| 6 | 1 | local-first |
 | **Total** | **32** | |
 | Updates | 2 | distribution-loop, InboxProcessor |
+
+---
+
+## Dependency Graph
+
+```
+                                    ┌─────────────────┐
+                                    │   DREAM STATE   │
+                                    │   (System Done) │
+                                    └────────┬────────┘
+                                             │
+            ┌────────────────────────────────┼────────────────────────────────┐
+            │                                │                                │
+            ▼                                ▼                                ▼
+    ┌───────────────┐              ┌─────────────────┐              ┌─────────────────┐
+    │ 2-LAYER ORCH  │              │ KNOWLEDGE GRAPH │              │  LOCAL-FIRST    │
+    └───────┬───────┘              └────────┬────────┘              └────────┬────────┘
+            │                                │                                │
+            ├──► autonomous                  ├──► skill-trees                 ├──► voice
+            ├──► dreaming                    ├──► tech-trees                  ├──► proactive-messaging
+            └──► multi-agent-worktrees       ├──► mece-opportunity-mapping    ├──► slack-integration
+                                             ├──► co-op-skill-acquisition     └──► auto-updating
+                                             └──► spaced-repetition
+
+    ┌───────────────┐              ┌─────────────────┐
+    │  ROADMAPPING  │              │    ANALYTICS    │
+    └───────┬───────┘              └────────┬────────┘
+            │                                │
+            ├──► kanban                      ├──► patterns-roundup
+            └──► coherence-system            └──► scoring
+                      │
+                      └──► game-design
+```
 
 ---
 
@@ -239,7 +213,7 @@ Phase 4: Visualization
   13. skill-trees
   14. ladder-of-abstraction-interfaces
 
-Phase 5: Interface (requires Layer 7 decision)
+Phase 5: Interface (requires local-first decision)
   15. local-first (architecture)
   16. voice
   17. proactive-messaging
@@ -303,5 +277,5 @@ Phase 7: Advanced
 ## Next Action
 
 **Current Module**: roadmapping
-**Status**: In progress
+**Status**: Complete
 **Next**: knowledge-graph-ontology (unlocks 5 downstream modules)

@@ -13,6 +13,7 @@ import type { InboxProcessor } from '../services/InboxProcessor.js';
 import type { LearningService } from '../services/LearningService.js';
 import type { AnalyticsService } from '../services/analytics/index.js';
 import type { ImprovementOrchestrator } from '../services/learning/index.js';
+import type { RoadmapService } from '../services/roadmapping/index.js';
 import { createApiRoutes } from './apiRoutes.js';
 import { getVersion } from '../version.js';
 
@@ -27,6 +28,7 @@ export interface HttpServerOptions {
     learningService?: LearningService;
     analyticsService?: AnalyticsService;
     improvementOrchestrator?: ImprovementOrchestrator;
+    roadmapService?: RoadmapService;
   };
 }
 
@@ -156,6 +158,7 @@ export function startHttpServer(
           improvements: `http://${config.host}:${config.port}/api/improvements`,
           analytics: `http://${config.host}:${config.port}/api/analytics`,
           learning: `http://${config.host}:${config.port}/api/learning`,
+          roadmap: `http://${config.host}:${config.port}/api/roadmap`,
         },
       }));
       resolve();

@@ -15,6 +15,7 @@ import type { InboxProcessor } from '../services/InboxProcessor.js';
 import type { LearningService } from '../services/LearningService.js';
 import type { AnalyticsService } from '../services/analytics/index.js';
 import type { ImprovementOrchestrator } from '../services/learning/index.js';
+import type { RoadmapService } from '../services/roadmapping/index.js';
 
 export interface ApiRoutesOptions {
   executionEngine: ExecutionEngine;
@@ -24,6 +25,7 @@ export interface ApiRoutesOptions {
   learningService?: LearningService;
   analyticsService?: AnalyticsService;
   improvementOrchestrator?: ImprovementOrchestrator;
+  roadmapService?: RoadmapService;
 }
 
 // Helper to get string param
@@ -33,7 +35,7 @@ function getParam(req: Request, name: string): string {
 }
 
 export function createApiRoutes(options: ApiRoutesOptions): Router {
-  const { executionEngine, skillRegistry, loopComposer, inboxProcessor, learningService, analyticsService, improvementOrchestrator } = options;
+  const { executionEngine, skillRegistry, loopComposer, inboxProcessor, learningService, analyticsService, improvementOrchestrator, roadmapService } = options;
   const router = Router();
 
   // ==========================================================================
@@ -1195,6 +1197,182 @@ export function createApiRoutes(options: ApiRoutesOptions): Router {
       res.json({ success: true, adjustment });
     } catch (err) {
       res.status(400).json({ error: err instanceof Error ? err.message : 'Failed to apply calibration adjustment' });
+    }
+  });
+
+  // ==========================================================================
+  // ROADMAP
+  // ==========================================================================
+
+  /**
+   * Get full roadmap with progress
+   */
+  router.get('/roadmap', async (_req: Request, res: Response) => {
+    if (!roadmapService) {
+      res.status(503).json({ error: 'Roadmap service not available' });
+      return;
+    }
+
+    try {
+      const roadmap = roadmapService.getRoadmap();
+      const progress = roadmapService.getProgress();
+      res.json({ roadmap, progress });
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : 'Failed to get roadmap' });
+    }
+  });
+
+  /**
+   * Get roadmap progress summary
+   */
+  router.get('/roadmap/progress', async (_req: Request, res: Response) => {
+    if (!roadmapService) {
+      res.status(503).json({ error: 'Roadmap service not available' });
+      return;
+    }
+
+    try {
+      const progress = roadmapService.getProgress();
+      res.json(progress);
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : 'Failed to get progress' });
+    }
+  });
+
+  /**
+   * Get all modules
+   */
+  router.get('/roadmap/modules', async (_req: Request, res: Response) => {
+    if (!roadmapService) {
+      res.status(503).json({ error: 'Roadmap service not available' });
+      return;
+    }
+
+    try {
+      const roadmap = roadmapService.getRoadmap();
+      res.json({ count: roadmap.modules.length, modules: roadmap.modules });
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : 'Failed to get modules' });
+    }
+  });
+
+  /**
+   * Get specific module
+   */
+  router.get('/roadmap/modules/:id', async (req: Request, res: Response) => {
+    if (!roadmapService) {
+      res.status(503).json({ error: 'Roadmap service not available' });
+      return;
+    }
+
+    try {
+      const module = roadmapService.getModule(getParam(req, 'id'));
+      if (!module) {
+        res.status(404).json({ error: 'Module not found' });
+        return;
+      }
+      res.json(module);
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : 'Failed to get module' });
+    }
+  });
+
+  /**
+   * Update module status
+   */
+  router.put('/roadmap/modules/:id/status', async (req: Request, res: Response) => {
+    if (!roadmapService) {
+      res.status(503).json({ error: 'Roadmap service not available' });
+      return;
+    }
+
+    try {
+      const { status } = req.body;
+      if (!status) {
+        res.status(400).json({ error: 'status is required' });
+        return;
+      }
+      const module = await roadmapService.updateModuleStatus(getParam(req, 'id'), status);
+      res.json(module);
+    } catch (err) {
+      res.status(400).json({ error: err instanceof Error ? err.message : 'Failed to update status' });
+    }
+  });
+
+  /**
+   * Get next highest leverage module
+   */
+  router.get('/roadmap/next', async (_req: Request, res: Response) => {
+    if (!roadmapService) {
+      res.status(503).json({ error: 'Roadmap service not available' });
+      return;
+    }
+
+    try {
+      const next = roadmapService.getNextHighestLeverageModule();
+      if (!next) {
+        res.json({ message: 'No available modules', next: null });
+        return;
+      }
+      res.json({ next });
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : 'Failed to get next module' });
+    }
+  });
+
+  /**
+   * Get leverage scores for all available modules
+   */
+  router.get('/roadmap/leverage', async (_req: Request, res: Response) => {
+    if (!roadmapService) {
+      res.status(503).json({ error: 'Roadmap service not available' });
+      return;
+    }
+
+    try {
+      const scores = roadmapService.calculateLeverageScores();
+      res.json({ count: scores.length, scores });
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : 'Failed to calculate leverage' });
+    }
+  });
+
+  /**
+   * Get terminal visualization
+   */
+  router.get('/roadmap/terminal', async (_req: Request, res: Response) => {
+    if (!roadmapService) {
+      res.status(503).json({ error: 'Roadmap service not available' });
+      return;
+    }
+
+    try {
+      const terminal = roadmapService.generateTerminalView();
+      res.type('text/plain').send(terminal);
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : 'Failed to generate terminal view' });
+    }
+  });
+
+  /**
+   * Set current module
+   */
+  router.put('/roadmap/current', async (req: Request, res: Response) => {
+    if (!roadmapService) {
+      res.status(503).json({ error: 'Roadmap service not available' });
+      return;
+    }
+
+    try {
+      const { moduleId } = req.body;
+      if (!moduleId) {
+        res.status(400).json({ error: 'moduleId is required' });
+        return;
+      }
+      await roadmapService.setCurrentModule(moduleId);
+      res.json({ success: true, currentModule: moduleId });
+    } catch (err) {
+      res.status(400).json({ error: err instanceof Error ? err.message : 'Failed to set current module' });
     }
   });
 

@@ -27,6 +27,7 @@ import { LoopGuaranteeAggregator } from './services/LoopGuaranteeAggregator.js';
 import { DeliverableManager } from './services/DeliverableManager.js';
 import { AnalyticsService } from './services/analytics/index.js';
 import { ImprovementOrchestrator } from './services/learning/index.js';
+import { RoadmapService } from './services/roadmapping/index.js';
 import { skillToolDefinitions, createSkillToolHandlers } from './tools/skillTools.js';
 import { loopToolDefinitions, createLoopToolHandlers } from './tools/loopTools.js';
 import { executionToolDefinitions, createExecutionToolHandlers } from './tools/executionTools.js';
@@ -245,6 +246,29 @@ async function main() {
     message: 'Improvement orchestrator initialized',
   }));
 
+  // Initialize roadmap service (system-level visibility into module progress)
+  const roadmapService = new RoadmapService({
+    roadmapPath: join(config.repoPath, 'ROADMAP.md'),
+    statePath: join(config.repoPath, 'data', 'roadmap-state.json'),
+  });
+
+  // Try to load roadmap (optional - may not exist in all projects)
+  try {
+    await roadmapService.load();
+    const progress = roadmapService.getProgress();
+    console.error(JSON.stringify({
+      timestamp: new Date().toISOString(),
+      level: 'info',
+      message: `Roadmap service initialized (${progress.completeModules}/${progress.totalModules} modules complete)`,
+    }));
+  } catch (err) {
+    console.error(JSON.stringify({
+      timestamp: new Date().toISOString(),
+      level: 'warn',
+      message: 'Roadmap service not available (no ROADMAP.md found)',
+    }));
+  }
+
   // Create tool handlers
   const skillHandlers = createSkillToolHandlers(skillRegistry, learningService);
   const loopHandlers = createLoopToolHandlers(loopComposer);
@@ -340,6 +364,7 @@ async function main() {
       learningService,
       analyticsService,
       improvementOrchestrator,
+      roadmapService,
     },
   });
   await startHttpServer(app, config);
