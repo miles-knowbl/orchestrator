@@ -30,6 +30,8 @@ A self-improving meta-system where skills are the atomic primitive. Orchestrator
 | version-utility | src/version.ts | complete | 1/1 | 100% |
 | http-server | src/server/httpServer.ts | complete | 5/5 | 100% |
 | loop-commands | commands/*.md | complete | 11/11 | 100% |
+| analytics | src/services/analytics/ | pending | 0/12 | 0% |
+| learning | src/services/learning/ | pending | 7/15 | 47% |
 
 ---
 
@@ -139,6 +141,41 @@ A self-improving meta-system where skills are the atomic primitive. Orchestrator
 - [x] transpose-loop — v2.0.0 with hierarchy + completion + leverage
 - [x] dream-loop — v1.0.0 with tier detection + leverage
 
+### analytics (pending)
+- [ ] collectRunMetrics — parse run archives
+- [ ] collectRubricMetrics — aggregate from LearningService
+- [ ] collectCalibrationMetrics — pull from CalibrationService
+- [ ] collectGateMetrics — extract from run archives
+- [ ] collectPatternMetrics — pull from MemoryService
+- [ ] collectProposalMetrics — pull from LearningService
+- [ ] computeAggregates — rates, averages, trends
+- [ ] getAnalyticsSummary — dashboard-ready summary
+- [ ] getSkillHealth — rankings by rubric dimension
+- [ ] getLoopPerformance — duration/success metrics
+- [ ] getCalibrationAccuracy — estimate accuracy trends
+- [ ] getTrends — time-series data
+- [ ] API endpoints — /api/analytics/*
+- [ ] Dashboard view — apps/dashboard/app/analytics/page.tsx
+
+### learning (pending)
+- [ ] processAnalyticsSignals — consume analytics, identify targets
+- [ ] identifyLowHealthSkills — find skills below threshold
+- [ ] identifyCalibrationDrift — find poor estimate accuracy
+- [ ] identifyPatternCandidates — find repeated behaviors
+- [x] generateSkillProposal — exists in LearningService
+- [x] generateCalibrationAdjustment — exists in CalibrationService
+- [ ] generatePatternProposal — propose new patterns
+- [ ] prioritizeProposals — rank by impact
+- [x] applySkillUpgrade — exists in LearningService
+- [x] applyCalibrationAdjustment — exists in CalibrationService
+- [x] applyPatternRecording — exists in MemoryService
+- [x] bumpSkillVersion — exists in SkillRegistry
+- [ ] runImprovementCycle — full analyze→propose→apply cycle
+- [ ] getImprovementQueue — list pending proposals
+- [ ] getImprovementHistory — past improvements
+- [ ] API endpoints — /api/learning/*
+- [ ] Dashboard enhancements — improvements page updates
+
 ---
 
 ## Completion Algebra
@@ -150,10 +187,12 @@ System.done = ALL(Module.done)
               AND inbox-processor.done AND run-archival.done AND guarantee-service.done
               AND loop-guarantee-aggregator.done AND deliverable-manager.done
               AND version-utility.done AND http-server.done AND loop-commands.done
+              AND analytics.done AND learning.done
 
-Current: 14/14 modules complete (100%)
-Status: All modules operational
-Version: 0.7.0
+Current: 14/16 modules complete (87%)
+Pending: analytics (0%), learning (47%)
+Status: Core operational, self-improvement modules in progress
+Version: 0.8.0
 ```
 
 ---
@@ -227,3 +266,9 @@ Version: 0.7.0
 - Deliverable Organization (v1.0.0 - 2026-01-30)
   - Structured deliverable storage per execution
   - Consistent paths: deliverables/{executionId}/{phase}/{filename}
+- Self-Improvement Architecture (v1.0.0 - 2026-01-31)
+  - Two-module design: Analytics (observe) + Learning (improve)
+  - Analytics reads from all services, surfaces insights
+  - Learning processes signals, generates proposals, applies upgrades
+  - Feedback loop: Execute → Analytics → Learning → improved skills → Execute
+  - See src/services/analytics/DREAM-STATE.md and src/services/learning/DREAM-STATE.md
