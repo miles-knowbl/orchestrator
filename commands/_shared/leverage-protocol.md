@@ -230,6 +230,78 @@ This feeds into the learning service for calibration.
 
 ---
 
+## Critical Rules
+
+### Rule 1: Distribution After Code Changes
+
+**After ANY loop that produces code changes, `/distribution-loop` is the default next move.**
+
+```
+engineering-loop completes → MUST recommend distribution-loop
+bugfix-loop completes → MUST recommend distribution-loop
+infra-loop completes → MUST recommend distribution-loop
+```
+
+Rationale: Unshipped code has zero value. Distribution unlocks everything downstream. The value equation naturally scores distribution high after code changes:
+- DSA: 8+ (makes progress real)
+- Unlock: 9+ (enables all dependent work)
+- Likelihood: 10 (just push)
+- Time: 10 (fast)
+- Effort: 10 (automated)
+
+**Exception:** Only skip distribution if user explicitly says "batch these" or "ship later".
+
+### Rule 2: Never Say "Done"
+
+**NEVER output "Done" or "Done for now". ALWAYS propose a specific next loop.**
+
+❌ "Done ✓" / "All systems complete" / "Session complete"
+✅ Always propose: `/dream-loop`, `/learning-loop`, `/proposal-loop`, or ask user
+
+Even when:
+- All modules show 100% → propose `/learning-loop` to validate or `/audit-loop` to verify
+- User seems satisfied → still propose, let them decline
+- Queue is empty → propose `/dream-loop` to define next system
+
+```
+══════════════════════════════════════════════════════════════
+  NEXT HIGHEST LEVERAGE MOVE
+
+  Current queue empty. Proposing exploration:
+
+  Recommended: /dream-loop → define next system
+
+  Alternatives:
+    • /learning-loop → review today's runs, extract patterns
+    • /proposal-loop → design a new capability
+    • /audit-loop → security/quality review of shipped work
+
+  Or describe what you want to build next.
+══════════════════════════════════════════════════════════════
+```
+
+### Rule 3: Look Beyond Current Queue
+
+**Don't only evaluate items in the current system queue. Consider:**
+
+1. **New systems** that could be built (ask user or propose based on patterns)
+2. **Adjacent capabilities** that would compound existing work
+3. **Meta-improvements** to the loop system itself
+4. **Validation work** for recently shipped features
+
+When the queue is empty:
+```
+if recently_shipped_code:
+    → /learning-loop (validate in production)
+elif dream_state_has_gaps:
+    → /engineering-loop (fill gaps)
+else:
+    → /dream-loop (define what's next)
+    → Ask: "What would be most valuable to build next?"
+```
+
+---
+
 ## Anti-Patterns
 
 ### Don't Optimize Locally
@@ -251,6 +323,16 @@ This feeds into the learning service for calibration.
 
 ❌ Creating a new loop for every minor variation
 ✅ Use existing loops with scoped targets; create new loops only for genuinely novel workflows
+
+### Don't Skip Distribution
+
+❌ engineering-loop → engineering-loop → "done"
+✅ engineering-loop → distribution-loop → engineering-loop → distribution-loop
+
+### Don't Declare Done
+
+❌ "All systems complete. Session complete."
+✅ "All systems complete. Recommend: /learning-loop → validate shipped features"
 
 ---
 
