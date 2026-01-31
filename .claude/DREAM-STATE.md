@@ -30,7 +30,7 @@ A self-improving meta-system where skills are the atomic primitive. Orchestrator
 | version-utility | src/version.ts | complete | 1/1 | 100% |
 | http-server | src/server/httpServer.ts | complete | 5/5 | 100% |
 | loop-commands | commands/*.md | complete | 11/11 | 100% |
-| analytics | src/services/analytics/ | pending | 0/12 | 0% |
+| analytics | src/services/analytics/ | complete | 12/12 | 100% |
 | learning | src/services/learning/ | pending | 7/15 | 47% |
 
 ---
@@ -141,21 +141,21 @@ A self-improving meta-system where skills are the atomic primitive. Orchestrator
 - [x] transpose-loop — v2.0.0 with hierarchy + completion + leverage
 - [x] dream-loop — v1.0.0 with tier detection + leverage
 
-### analytics (pending)
-- [ ] collectRunMetrics — parse run archives
-- [ ] collectRubricMetrics — aggregate from LearningService
-- [ ] collectCalibrationMetrics — pull from CalibrationService
-- [ ] collectGateMetrics — extract from run archives
-- [ ] collectPatternMetrics — pull from MemoryService
-- [ ] collectProposalMetrics — pull from LearningService
-- [ ] computeAggregates — rates, averages, trends
-- [ ] getAnalyticsSummary — dashboard-ready summary
-- [ ] getSkillHealth — rankings by rubric dimension
-- [ ] getLoopPerformance — duration/success metrics
-- [ ] getCalibrationAccuracy — estimate accuracy trends
-- [ ] getTrends — time-series data
-- [ ] API endpoints — /api/analytics/*
-- [ ] Dashboard view — apps/dashboard/app/analytics/page.tsx
+### analytics (complete)
+- [x] collectRunMetrics — parse run archives
+- [x] collectRubricMetrics — aggregate from LearningService
+- [x] collectCalibrationMetrics — pull from CalibrationService
+- [x] collectGateMetrics — extract from run archives
+- [x] collectPatternMetrics — pull from MemoryService
+- [x] collectProposalMetrics — pull from LearningService
+- [x] computeAggregates — rates, averages, trends
+- [x] getAnalyticsSummary — dashboard-ready summary
+- [x] getSkillHealth — rankings by rubric dimension
+- [x] getLoopPerformance — duration/success metrics
+- [x] getCalibrationAccuracy — estimate accuracy trends
+- [x] getTrends — time-series data
+- [x] API endpoints — /api/analytics/* (11 endpoints)
+- [x] Dashboard view — apps/dashboard/app/analytics/page.tsx
 
 ### learning (pending)
 - [ ] processAnalyticsSignals — consume analytics, identify targets
@@ -189,9 +189,9 @@ System.done = ALL(Module.done)
               AND version-utility.done AND http-server.done AND loop-commands.done
               AND analytics.done AND learning.done
 
-Current: 14/16 modules complete (87%)
-Pending: analytics (0%), learning (47%)
-Status: Core operational, self-improvement modules in progress
+Current: 15/16 modules complete (94%)
+Pending: learning (47%)
+Status: Core operational, analytics complete, learning module in progress
 Version: 0.8.0
 ```
 
@@ -211,11 +211,11 @@ Version: 0.8.0
 
 | Date | Loop | Scope | Outcome | Key Deliverables |
 |------|------|-------|---------|------------------|
-| 2026-01-30 | distribution-loop | v0.7.0 | success | Version alignment shipped |
-| 2026-01-30 | learning-loop | validation | success | ADR-004, PAT-008 recorded |
+| 2026-01-31 | engineering-loop | analytics-module | success | AnalyticsService, 11 API endpoints, dashboard page |
+| 2026-01-30 | distribution-loop | v0.8.0 | success | Critical Rules + version alignment |
+| 2026-01-30 | learning-loop | validation | success | ADR-005, PAT-009 recorded |
+| 2026-01-30 | dream-loop | self-improvement | success | Analytics + Learning module dream states |
 | 2026-01-30 | distribution-loop | v0.7.0 | success | Learning System v2 + Leverage Protocol |
-| 2026-01-30 | engineering-loop | leverage-protocol | success | Protocol + loop integration |
-| 2026-01-30 | engineering-loop | learning-v2 | success | Rubric scoring + proposals |
 
 ---
 
