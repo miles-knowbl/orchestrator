@@ -1,0 +1,16 @@
+{
+  "displayName": "Pipeline Discovery",
+  "icon": "git-branch",
+  "color": "#3B82F6",
+  "outputDisplay": "markdown",
+  "description": "Identify backend data pipelines (P-series)",
+  "estimatedDuration": "10-20 minutes",
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "backend_pipelines",
+      "type": "array",
+      "description": "Discovered P-series pipelines"
+    }
+  ]
+}

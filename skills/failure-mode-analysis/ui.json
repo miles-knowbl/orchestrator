@@ -1,0 +1,22 @@
+{
+  "displayName": "Failure Mode Analysis",
+  "icon": "exclamation-triangle",
+  "color": "#EF4444",
+  "outputDisplay": "markdown",
+  "description": "Apply MECE failure mode taxonomy to backend pipelines",
+  "estimatedDuration": "15-30 minutes",
+  "inputs": [
+    {
+      "name": "backend_pipelines",
+      "type": "array",
+      "description": "P-series pipelines from pipeline-discovery"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "PIPELINE-FAILURE-MODES.md",
+      "type": "file",
+      "description": "Failure mode inventory with coverage"
+    }
+  ]
+}

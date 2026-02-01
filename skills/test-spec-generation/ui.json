@@ -1,0 +1,32 @@
+{
+  "displayName": "Test Spec Generation",
+  "icon": "document-text",
+  "color": "#F59E0B",
+  "outputDisplay": "markdown",
+  "description": "Generate test specifications for unvalidated failure modes",
+  "estimatedDuration": "10-20 minutes",
+  "inputs": [
+    {
+      "name": "PIPELINE-FAILURE-MODES.md",
+      "type": "file",
+      "description": "Backend failure modes"
+    },
+    {
+      "name": "UI-FAILURE-MODES.md",
+      "type": "file",
+      "description": "UI failure modes"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "PIPELINE-TEST-SPECS.md",
+      "type": "file",
+      "description": "Backend test specifications"
+    },
+    {
+      "name": "UI-TEST-SPECS.md",
+      "type": "file",
+      "description": "UI test specifications"
+    }
+  ]
+}

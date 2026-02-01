@@ -1,0 +1,22 @@
+{
+  "displayName": "UI Interaction Test",
+  "icon": "cursor-click",
+  "color": "#F59E0B",
+  "outputDisplay": "markdown",
+  "description": "Validate that UI flows actually work",
+  "estimatedDuration": "15-30 minutes",
+  "inputs": [
+    {
+      "name": "ui_pipelines",
+      "type": "array",
+      "description": "U-series pipelines to validate"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "UI-VALIDATION.md",
+      "type": "file",
+      "description": "UI validation results and issues"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "displayName": "UI Failure Mode Analysis",
+  "icon": "device-mobile",
+  "color": "#EF4444",
+  "outputDisplay": "markdown",
+  "description": "Apply MECE failure mode taxonomy to UI pipelines",
+  "estimatedDuration": "15-30 minutes",
+  "inputs": [
+    {
+      "name": "ui_pipelines",
+      "type": "array",
+      "description": "U-series pipelines from ui-pipeline-discovery"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "UI-FAILURE-MODES.md",
+      "type": "file",
+      "description": "UI failure mode inventory with coverage"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "displayName": "Taste Discovery",
+  "icon": "search",
+  "color": "#8B5CF6",
+  "outputDisplay": "markdown",
+  "description": "Find project-specific taste evaluations",
+  "estimatedDuration": "1-2 minutes",
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "eval_source",
+      "type": "string",
+      "description": "Discovery source (manifest | taste-evals | convention | defaults)"
+    },
+    {
+      "name": "dimensions",
+      "type": "array",
+      "description": "Parsed dimension definitions"
+    }
+  ]
+}

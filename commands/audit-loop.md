@@ -1,18 +1,21 @@
 # /audit-loop Command
 
-**Single entry point for system audits.** Evaluates backend pipelines, UI pipelines, and cross-cutting concerns using MECE failure mode analysis, content quality evals, and UI interaction validation — produces a prioritized "checklist to done" for shipping.
+**Single entry point for system audits.** Evaluates **taste** (subjective quality), backend pipelines, UI pipelines, and cross-cutting concerns using MECE failure mode analysis, content quality evals, and UI interaction validation — produces a **taste-ordered** "checklist to done" for shipping.
 
 ## Purpose
 
-This command orchestrates a comprehensive system audit: scoping the evaluation, identifying **backend pipelines (P-series)** and **UI pipelines (U-series)**, applying **MECE failure mode taxonomy** to each, running **content quality evals**, validating **UI interactions**, and producing test specifications for unvalidated failure modes. The loop is read-only by design — it observes and documents, never modifies code.
+This command orchestrates a comprehensive system audit: **evaluating taste first**, then scoping the evaluation, identifying **backend pipelines (P-series)** and **UI pipelines (U-series)**, applying **MECE failure mode taxonomy** to each, running **content quality evals**, validating **UI interactions**, and producing test specifications for unvalidated failure modes. The loop is read-only by design — it observes and documents, never modifies code.
+
+**Key Principle:** Taste gates technical readiness. If it doesn't feel right, coverage percentages don't matter.
 
 **The flow you want:** point it at a codebase, say `go`, and receive:
-1. Infrastructure findings (architecture, security, performance)
-2. **Backend pipeline failure modes** with coverage percentages
-3. **UI pipeline failure modes** with interaction validation
-4. **Content quality evals** for AI-generated outputs
-5. **Test specifications** for all unvalidated failure modes
-6. A clear "checklist to done" for shipping
+1. **Taste evaluation** with dimension scores and gap analysis
+2. Infrastructure findings (architecture, security, performance)
+3. **Backend pipeline failure modes** with coverage percentages
+4. **UI pipeline failure modes** with interaction validation
+5. **Content quality evals** for AI-generated outputs
+6. **Test specifications** for all unvalidated failure modes
+7. A **taste-ordered** "checklist to done" for shipping
 
 ## Version History
 
@@ -21,7 +24,8 @@ This command orchestrates a comprehensive system audit: scoping the evaluation, 
 | v1.0.0 | Infrastructure-only audit (arch, security, perf) |
 | v2.0.0 | Added pipeline validation (PASS/PARTIAL/FAIL) |
 | v3.0.0 | MECE failure modes, coverage %, quality evals, test specs |
-| **v3.1.0** | **UI pipelines (U-series), interaction validation, L5/L6 locations** |
+| v3.1.0 | UI pipelines (U-series), interaction validation, L5/L6 locations |
+| **v4.0.0** | **TASTE phase as entry point, taste-ordered checklist, eval discovery** |
 
 ## Usage
 
@@ -31,7 +35,77 @@ This command orchestrates a comprehensive system audit: scoping the evaluation, 
 
 **Options:**
 - `--resume`: Resume from existing audit-state.json
-- `--phase=PHASE`: Start from specific phase (INIT | REVIEW | VALIDATE | DOCUMENT | COMPLETE)
+- `--phase=PHASE`: Start from specific phase (TASTE | INIT | REVIEW | VALIDATE | DOCUMENT | COMPLETE)
+
+---
+
+## Phase Structure
+
+```
+TASTE ──► INIT ──► REVIEW ──► VALIDATE ──► DOCUMENT ──► COMPLETE
+  │         │         │
+  │taste    │scope    │findings
+  │gate     │gate     │gate
+```
+
+**6 phases, 18 skills, 4 human gates**
+
+---
+
+## TASTE Phase (Entry Point)
+
+**Taste gates everything.** Before analyzing pipelines or failure modes, evaluate whether the system *feels* right.
+
+### Eval Discovery Order
+
+The TASTE phase discovers project-specific quality evaluations (first match wins):
+
+| Priority | Location | Description |
+|----------|----------|-------------|
+| 1 | `.claude/taste-manifest.json` | Explicit manifest with dimension weights |
+| 2 | `TASTE-EVALS.md` | Single-file eval definition |
+| 3 | `*-QUALITY-EVALS.md` | Convention (e.g., CONTENT-QUALITY-EVALS.md, UX-QUALITY-EVALS.md) |
+| 4 | Minimal defaults | 4 UX dimensions if nothing found |
+
+### Minimal Defaults (no custom evals found)
+
+When no project-specific evals exist:
+
+| Dimension | Weight | Description |
+|-----------|--------|-------------|
+| Usability | 35% | Can users accomplish their goals? |
+| Responsiveness | 25% | Does UI respond quickly? |
+| Reliability | 25% | Does it work consistently? |
+| Accessibility | 15% | Keyboard nav, screen reader, contrast |
+
+**Quality gates:** Ship (≥3.5), Polish (2.5-3.5), Fix (<2.5)
+
+### Taste Gap Format
+
+```yaml
+id: TG-001
+category: content | ux | brand | custom
+dimension: voice_fidelity
+score: 2.8
+floor: 2.5
+status: gap | acceptable | exceeds
+pipeline: P2
+evidence:
+  - "Generated tweets sound generic"
+traced_failure_modes: []  # Populated in REVIEW
+```
+
+### Ship Decision Matrix
+
+| Taste Score | Technical Coverage | Decision |
+|-------------|-------------------|----------|
+| ≥ 4.0 | ≥ 70% | Ship |
+| ≥ 4.0 | < 70% | Fix coverage, ship |
+| 3.0 - 4.0 | ≥ 70% | Polish then ship |
+| 3.0 - 4.0 | < 70% | Fix both, ship |
+| < 3.0 | Any | **Fix taste first** |
+
+**Taste < 3.0 always blocks ship.**
 
 ---
 
@@ -327,15 +401,23 @@ During INIT, identify UI pipelines by looking for:
 ```json
 {
   "loop": "audit-loop",
-  "version": "3.1.0",
-  "phase": "INIT",
+  "version": "4.0.0",
+  "phase": "TASTE",
   "status": "active",
   "phases": {
+    "TASTE": { "skills": ["taste-discovery", "taste-eval"] },
     "INIT": { "skills": ["requirements", "pipeline-discovery", "ui-pipeline-discovery", "dependency-mapping"] },
-    "REVIEW": { "skills": ["architecture-review", "security-audit", "perf-analysis", "failure-mode-analysis", "ui-failure-mode-analysis", "quality-eval-design"] },
+    "REVIEW": { "skills": ["architecture-review", "security-audit", "perf-analysis", "failure-mode-analysis", "ui-failure-mode-analysis", "quality-eval-design", "taste-trace"] },
     "VALIDATE": { "skills": ["integration-test", "ui-interaction-test", "code-verification", "test-spec-generation"] },
-    "DOCUMENT": { "skills": ["document"] },
+    "DOCUMENT": { "skills": ["document", "taste-report"] },
     "COMPLETE": { "skills": ["retrospective"] }
+  },
+  "taste": {
+    "eval_source": null,
+    "dimensions": [],
+    "weighted_score": 0,
+    "gaps": [],
+    "ship_status": "unknown"
   },
   "backend_pipelines": [],
   "ui_pipelines": [],
@@ -351,29 +433,38 @@ During INIT, identify UI pipelines by looking for:
 ### Phase Flow
 
 ```
-INIT ──────────► REVIEW ──────────► VALIDATE
-  │                │
-  │ [scope-gate]   │ [findings-gate]
-  ▼                ▼
-requirements     architecture-review    integration-test
-pipeline-discovery security-audit       ui-interaction-test
-ui-pipeline-discovery perf-analysis     code-verification
-dependency-mapping failure-mode-analysis test-spec-generation
-                 ui-failure-mode-analysis
-                 quality-eval-design
+TASTE ─────────► INIT ──────────► REVIEW ──────────► VALIDATE
+  │                │                │
+  │ [taste-gate]   │ [scope-gate]   │ [findings-gate]
+  ▼                ▼                ▼
+taste-discovery  requirements     architecture-review    integration-test
+taste-eval       pipeline-disc    security-audit         ui-interaction-test
+                 ui-pipeline-disc perf-analysis          code-verification
+                 dependency-map   failure-mode-analysis  test-spec-generation
+                                  ui-failure-mode-analysis
+                                  quality-eval-design
+                                  taste-trace
 
 DOCUMENT ──────────► COMPLETE
   │
   │ [report-gate]
   ▼
 document            retrospective
+taste-report
 ```
 
-**16 skills across 5 phases, 3 human gates**
+**18 skills across 6 phases, 4 human gates**
 
 ---
 
 ## Skills by Phase
+
+### TASTE Phase (NEW)
+
+| Skill | Output |
+|-------|--------|
+| **taste-discovery** | **Find project evals (manifest/convention/defaults)** |
+| **taste-eval** | **TASTE-EVAL.md, TASTE-GAPS.md** |
 
 ### INIT Phase
 
@@ -381,7 +472,7 @@ document            retrospective
 |-------|--------|
 | requirements | Audit scope definition |
 | pipeline-discovery | Backend pipelines (P-series) |
-| **ui-pipeline-discovery** | **UI pipelines (U-series)** |
+| ui-pipeline-discovery | UI pipelines (U-series) |
 | dependency-mapping | Cross-pipeline failure modes (X-series) |
 
 ### REVIEW Phase
@@ -392,43 +483,90 @@ document            retrospective
 | security-audit | SECURITY-AUDIT.md |
 | perf-analysis | PERF-ANALYSIS.md |
 | failure-mode-analysis | Backend failure modes |
-| **ui-failure-mode-analysis** | **UI failure modes (L5/L6 patterns)** |
+| ui-failure-mode-analysis | UI failure modes (L5/L6 patterns) |
 | quality-eval-design | Content + UX quality evals |
+| **taste-trace** | **TASTE-TRACE.md (gap-to-failure-mode mapping)** |
 
 ### VALIDATE Phase
 
 | Skill | Output |
 |-------|--------|
 | integration-test | Run existing tests |
-| **ui-interaction-test** | **Validate UI flows work** |
+| ui-interaction-test | Validate UI flows work |
 | code-verification | Verify findings against code |
 | test-spec-generation | Specs for all unvalidated modes |
+
+### DOCUMENT Phase
+
+| Skill | Output |
+|-------|--------|
+| document | AUDIT-REPORT.md |
+| **taste-report** | **Taste-ordered checklist** |
 
 ---
 
 ## Deliverables
 
-| File | Purpose |
-|------|---------|
-| `audit-state.json` | Phase, coverage (backend + UI + cross) |
-| `AUDIT-SCOPE.md` | P-series + U-series + dependency map |
-| `ARCHITECTURE-REVIEW.md` | Architecture findings |
-| `SECURITY-AUDIT.md` | Security findings |
-| `PERF-ANALYSIS.md` | Performance findings |
-| `PIPELINE-FAILURE-MODES.md` | Backend MECE taxonomy |
-| `UI-FAILURE-MODES.md` | **UI MECE taxonomy with L5/L6** |
-| `PIPELINE-VALIDATION.md` | Backend coverage by pipeline |
-| `UI-VALIDATION.md` | **UI coverage by pipeline** |
-| `PIPELINE-TEST-SPECS.md` | Backend test specs |
-| `UI-TEST-SPECS.md` | **UI test specs (component + E2E)** |
-| `CONTENT-QUALITY-EVALS.md` | Content quality framework |
-| `UX-QUALITY-EVALS.md` | **UX quality framework** |
-| `AUDIT-REPORT.md` | Checklist to done (backend + UI) |
-| `RETROSPECTIVE.md` | Loop learnings |
+| File | Phase | Purpose |
+|------|-------|---------|
+| `audit-state.json` | All | Phase, taste scores, coverage (backend + UI + cross) |
+| **`TASTE-EVAL.md`** | **TASTE** | **Full dimension scores with evidence** |
+| **`TASTE-GAPS.md`** | **TASTE** | **Identified taste gaps with evidence** |
+| **`TASTE-TRACE.md`** | **REVIEW** | **Gap-to-failure-mode mapping** |
+| `AUDIT-SCOPE.md` | INIT | P-series + U-series + dependency map |
+| `ARCHITECTURE-REVIEW.md` | REVIEW | Architecture findings |
+| `SECURITY-AUDIT.md` | REVIEW | Security findings |
+| `PERF-ANALYSIS.md` | REVIEW | Performance findings |
+| `PIPELINE-FAILURE-MODES.md` | REVIEW | Backend MECE taxonomy |
+| `UI-FAILURE-MODES.md` | REVIEW | UI MECE taxonomy with L5/L6 |
+| `PIPELINE-VALIDATION.md` | VALIDATE | Backend coverage by pipeline |
+| `UI-VALIDATION.md` | VALIDATE | UI coverage by pipeline |
+| `PIPELINE-TEST-SPECS.md` | VALIDATE | Backend test specs |
+| `UI-TEST-SPECS.md` | VALIDATE | UI test specs (component + E2E) |
+| `CONTENT-QUALITY-EVALS.md` | REVIEW | Content quality framework |
+| `UX-QUALITY-EVALS.md` | REVIEW | UX quality framework |
+| `AUDIT-REPORT.md` | DOCUMENT | **Taste-ordered** checklist to done |
+| `RETROSPECTIVE.md` | COMPLETE | Loop learnings |
 
 ---
 
 ## Gate Presentations
+
+### taste-gate (NEW)
+
+```
+═══════════════════════════════════════════════════════════════
+║  TASTE GATE                                    [HUMAN]      ║
+║                                                             ║
+║  Eval Source: CONTENT-QUALITY-EVALS.md + UX-QUALITY-EVALS.md║
+║                                                             ║
+║  Dimension Scores:                                          ║
+║    voice_fidelity:     3.2  [floor: 2.5] ✓                  ║
+║    topic_relevance:    4.1  [floor: 3.0] ✓                  ║
+║    engagement:         2.4  [floor: 2.5] ✗ GAP              ║
+║    responsiveness:     4.0  [floor: 3.0] ✓                  ║
+║    feedback_clarity:   2.8  [floor: 3.0] ✗ GAP              ║
+║                                                             ║
+║  Taste Gaps:                                                ║
+║    TG-001 [content] engagement: 2.4 < 2.5 (CRITICAL)        ║
+║    TG-002 [ux] feedback_clarity: 2.8 < 3.0 (SIGNIFICANT)    ║
+║                                                             ║
+║  Weighted Score: 3.3                                        ║
+║  Ship Status: POLISH_THEN_SHIP                              ║
+║                                                             ║
+║  Commands:                                                  ║
+║    approved      — Pass gate, continue to INIT              ║
+║    changes: ...  — Request re-evaluation                    ║
+║    show gaps     — Full gap details with evidence           ║
+═══════════════════════════════════════════════════════════════
+```
+
+**Gate logic:**
+- If Taste Score < 3.0: **BLOCKED** — must fix taste before continuing
+- If any CRITICAL gaps (below floor): Show warning, recommend addressing first
+- If POLISH_THEN_SHIP: Can proceed, but taste issues tracked in final checklist
+
+---
 
 ### findings-gate
 
@@ -460,57 +598,146 @@ document            retrospective
 
 ---
 
-## Checklist to Done Structure
+## Checklist to Done Structure (Taste-Ordered)
+
+The checklist is ordered by **taste impact**, not pure technical severity:
+
+### Tier Algorithm
+
+```
+Tier 1: Taste-Critical (failure modes linked to critical taste gaps)
+Tier 2: Taste-Significant (failure modes linked to significant gaps)
+Tier 3: Technical-Only (no taste link, ordered by S1→S4)
+```
+
+**Rationale:** A technically perfect system that doesn't feel right won't ship. Taste-linked failures directly impact user perception.
+
+### Example Output
 
 ```markdown
-## Checklist to Done
+## Checklist to Done (Taste-Ordered)
 
-### Critical: Fix Before Launch
+### Tier 1: Taste-Critical
+*Linked to critical taste gaps (below floor)*
+
+| # | Item | Taste Gap | Failure Mode | Effort |
+|---|------|-----------|--------------|--------|
+| 1 | Improve generated content engagement | TG-001 | P2-003 | M |
+| 2 | Add variety to tweet templates | TG-001 | P2-007 | S |
+
+### Tier 2: Taste-Significant
+*Linked to significant taste gaps*
+
+| # | Item | Taste Gap | Failure Mode | Effort |
+|---|------|-----------|--------------|--------|
+| 3 | Show clear loading states during gen | TG-002 | U2-003 | S |
+| 4 | Add change summary to edit responses | TG-002 | U1-004 | S |
+
+### Tier 3: Technical-Only
+*No taste link, ordered by severity (S1 first)*
 
 | # | Item | Type | Failure Mode | Effort |
 |---|------|------|--------------|--------|
-| 1 | Fix artifact_id context sync | UI | U1-001 | S |
-| 2 | Add cache invalidation after edit | UI | U1-005 | S |
-| 3 | Validate content length before publish | Backend | P3-007 | S |
+| 5 | Fix silent cache invalidation | UI | U1-005 (S1) | S |
+| 6 | Validate JSON before save | Backend | P1-007 (S1) | S |
+| 7 | Add retry for SSE timeout | UI | U2-002 (S3) | M |
 
-### High Priority: Silent Failures
+### Coverage Summary
 
-| # | Item | Type | Failure Mode | Effort |
-|---|------|------|--------------|--------|
-| 4 | Add change_summary to all edit responses | UI | U1-004 | S |
-| 5 | Validate JSON structure before save | Backend | P1-007 | S |
-
-### Medium Priority: UX Polish
-
-| # | Item | Type | Failure Mode | Effort |
-|---|------|------|--------------|--------|
-| 6 | Add loading indicator during generation | UI | U2-003 | S |
-| 7 | Show caption preview before publish | UI | U3-002 | M |
-
-### Coverage Targets
-
-| Type | Current | Target | Gap |
-|------|---------|--------|-----|
-| Backend | 37% | 70% | 33 tests |
-| UI | 18% | 60% | 23 tests |
-| Cross | 0% | 50% | 8 tests |
+| Metric | Current | Target | Gap |
+|--------|---------|--------|-----|
+| **Taste Score** | **3.3** | **3.5** | **+0.2** |
+| Backend Coverage | 37% | 70% | 33 tests |
+| UI Coverage | 18% | 60% | 23 tests |
+| Cross Coverage | 0% | 50% | 8 tests |
 ```
 
 ---
 
-## Summary of Changes (v3.1.0)
+## On Completion
 
-| Area | v3.0.0 | v3.1.0 |
+When this loop reaches COMPLETE phase:
+
+### 1. Archive Run (Full Artifacts)
+
+**Location:** `~/.claude/runs/{year-month}/{project}-audit-loop-{timestamp}/`
+
+```bash
+ARCHIVE_DIR=~/.claude/runs/$(date +%Y-%m)/${PROJECT}-audit-loop-$(date +%Y%m%d-%H%M)
+mkdir -p "$ARCHIVE_DIR"
+
+# Archive all audit artifacts (including taste files)
+mv audit-state.json "$ARCHIVE_DIR/" 2>/dev/null || true
+cp TASTE-EVAL.md TASTE-GAPS.md TASTE-TRACE.md \
+   AUDIT-REPORT.md AUDIT-SCOPE.md UI-FAILURE-MODES.md UI-VALIDATION.md \
+   UI-TEST-SPECS.md UX-QUALITY-EVALS.md RETROSPECTIVE.md \
+   "$ARCHIVE_DIR/" 2>/dev/null || true
+```
+
+**Artifact organization:**
+| Category | Location | Files |
+|----------|----------|-------|
+| **Permanent** | Project root | None (audit is read-only) |
+| **Transient** | `~/.claude/runs/` | All audit reports and state |
+
+### 2. Commit Audit Report
+
+**Principle:** A completed loop leaves no orphaned files.
+
+```bash
+git add -A
+git diff --cached --quiet || git commit -m "Audit complete: [system] [coverage]%
+
+Co-Authored-By: Claude <noreply@anthropic.com>"
+```
+
+**Note:** Commits before archiving. Use `/distribution-loop` to push.
+
+### 3. Clean Project Directory
+
+Remove transient artifacts (already archived):
+
+```bash
+rm -f TASTE-EVAL.md TASTE-GAPS.md TASTE-TRACE.md \
+      AUDIT-REPORT.md AUDIT-SCOPE.md UI-FAILURE-MODES.md UI-VALIDATION.md \
+      UI-TEST-SPECS.md UX-QUALITY-EVALS.md RETROSPECTIVE.md \
+      audit-state.json 2>/dev/null || true
+```
+
+**Result:** Project stays clean; audit history in `~/.claude/runs/`
+
+### 4. Leverage Proposal (REQUIRED)
+
+Before showing completion, evaluate and propose the next highest leverage move.
+
+---
+
+## Summary of Changes (v4.0.0)
+
+| Area | v3.1.0 | v4.0.0 |
 |------|--------|--------|
-| Pipeline types | P-series only | **P-series + U-series** |
-| Location codes | L1-L4 | **L1-L6** (+Interaction, +Streaming) |
-| Type codes | T1-T4 | **T1-T5** (+UX) |
-| UI patterns | None | **8 patterns** (Dead Click, Stale Closure, etc.) |
-| Skills | 13 | **16** (+ui-pipeline-discovery, +ui-failure-mode-analysis, +ui-interaction-test) |
-| Deliverables | 11 | **15** (+UI-FAILURE-MODES.md, +UI-VALIDATION.md, +UI-TEST-SPECS.md, +UX-QUALITY-EVALS.md) |
-| Test specs | Backend only | **Backend + UI (component, hook, E2E)** |
+| **Entry point** | INIT | **TASTE** |
+| **Phases** | 5 | **6** (+TASTE) |
+| **Skills** | 16 | **18** (+taste-discovery, +taste-eval, +taste-trace, +taste-report) |
+| **Deliverables** | 15 | **18** (+TASTE-EVAL.md, +TASTE-GAPS.md, +TASTE-TRACE.md) |
+| **Human gates** | 3 | **4** (+taste-gate) |
+| **Checklist ordering** | Severity (S1→S4) | **Taste-weighted (Tier 1/2/3)** |
+| **Eval discovery** | None | **Manifest → Convention → Defaults** |
+| **Ship decision** | Coverage-only | **Taste + Coverage matrix** |
 
-**Key insight:** A system can have solid backend pipelines but broken UI flows. Users interact through the UI — if chat-to-edit doesn't work, the backend pipeline quality is irrelevant.
+**Key insight:** Taste gates technical readiness. If it doesn't feel right, coverage percentages don't matter. A system with 95% test coverage that produces generic content won't ship.
+
+### What Stays the Same
+
+All existing technical rigor preserved:
+- MECE failure mode taxonomy (L1-L6, T1-T5, S1-S4)
+- Pipeline discovery (P-series, U-series, X-series)
+- Coverage tracking and percentages
+- Test spec generation
+- Security, architecture, performance audits
+- Existing gates (scope, findings, report)
+
+The technical layer becomes **ordered by taste impact**, not replaced.
 
 ---
 
@@ -583,3 +810,184 @@ When discovering UI pipelines, look for:
 - [ ] Navigation state synchronization
 - [ ] Selection state → context sync
 - [ ] Callback registration and cleanup
+
+---
+
+## Appendix: TASTE-EVAL.md Template
+
+```markdown
+# Taste Evaluation
+
+**Project:** [project-name]
+**Eval Source:** [manifest | convention | defaults]
+**Timestamp:** [ISO 8601]
+
+## Discovered Evals
+
+| Source File | Category | Dimensions |
+|-------------|----------|------------|
+| CONTENT-QUALITY-EVALS.md | content | voice_fidelity, topic_relevance, engagement |
+| UX-QUALITY-EVALS.md | ux | responsiveness, feedback_clarity, error_recovery |
+
+## Dimension Scores
+
+### Content Quality
+
+| Dimension | Weight | Score | Floor | Status |
+|-----------|--------|-------|-------|--------|
+| voice_fidelity | 40% | 3.2 | 2.5 | ✓ Acceptable |
+| topic_relevance | 35% | 4.1 | 3.0 | ✓ Exceeds |
+| engagement | 25% | 2.4 | 2.5 | ✗ Gap |
+
+**Category Score:** 3.2 (weighted)
+
+### UX Quality
+
+| Dimension | Weight | Score | Floor | Status |
+|-----------|--------|-------|-------|--------|
+| responsiveness | 30% | 4.0 | 3.0 | ✓ Exceeds |
+| feedback_clarity | 30% | 2.8 | 3.0 | ✗ Gap |
+| error_recovery | 20% | 3.5 | 2.5 | ✓ Acceptable |
+| accessibility | 20% | 4.2 | 3.0 | ✓ Exceeds |
+
+**Category Score:** 3.6 (weighted)
+
+## Overall
+
+| Metric | Value |
+|--------|-------|
+| **Weighted Score** | **3.3** |
+| **Ship Status** | POLISH_THEN_SHIP |
+| **Gaps Found** | 2 |
+| **Critical Gaps** | 1 |
+```
+
+---
+
+## Appendix: TASTE-TRACE.md Template
+
+```markdown
+# Taste-to-Failure-Mode Trace
+
+**Project:** [project-name]
+**Timestamp:** [ISO 8601]
+
+## Traced Gaps
+
+### TG-001: engagement (CRITICAL)
+
+| Attribute | Value |
+|-----------|-------|
+| **Category** | content |
+| **Score** | 2.4 |
+| **Floor** | 2.5 |
+| **Pipeline** | P2: Content Generation |
+
+**Evidence:**
+- Generated tweets sound generic
+- Lack of personality markers in output
+- Templates feel repetitive
+
+**Linked Failure Modes:**
+
+| ID | Location | Description | Impact on Taste |
+|----|----------|-------------|-----------------|
+| P2-003 | L2-Processing | Template selection too narrow | Direct cause of repetition |
+| P2-007 | L2-Processing | No personality injection | Generic voice output |
+
+---
+
+### TG-002: feedback_clarity (SIGNIFICANT)
+
+| Attribute | Value |
+|-----------|-------|
+| **Category** | ux |
+| **Score** | 2.8 |
+| **Floor** | 3.0 |
+| **Pipeline** | U2: Chat-to-Generate |
+
+**Evidence:**
+- Loading states unclear during generation
+- Change summaries often missing
+
+**Linked Failure Modes:**
+
+| ID | Location | Description | Impact on Taste |
+|----|----------|-------------|-----------------|
+| U2-003 | L3-Output | Missing loading indicator | User confusion |
+| U1-004 | L3-Output | Change summary not returned | No feedback on edit |
+
+## Untraced Failure Modes
+
+Failure modes not linked to taste gaps (Tier 3 in checklist):
+
+| ID | Location | Type | Severity |
+|----|----------|------|----------|
+| U1-005 | L3-Output | T1-Data | S1-Silent |
+| P1-007 | L2-Processing | T1-Data | S1-Silent |
+```
+
+---
+
+## Appendix: Taste Manifest Schema
+
+Projects can define `.claude/taste-manifest.json` for explicit eval configuration:
+
+```json
+{
+  "version": "1.0.0",
+  "eval_files": [
+    "CONTENT-QUALITY-EVALS.md",
+    "UX-QUALITY-EVALS.md"
+  ],
+  "category_weights": {
+    "content": 0.6,
+    "ux": 0.4
+  },
+  "quality_gates": {
+    "ship": 4.0,
+    "polish": 3.0,
+    "fix": 2.5
+  },
+  "custom_dimensions": [
+    {
+      "name": "brand_consistency",
+      "category": "brand",
+      "weight": 0.3,
+      "floor": 3.0,
+      "description": "Output matches brand voice guidelines"
+    }
+  ]
+}
+```
+
+**Discovery priority:** manifest > convention > defaults
+
+---
+
+## Appendix: Adding Project Taste Evals
+
+If no taste evals exist and minimal defaults are used, inform the user:
+
+```
+═══════════════════════════════════════════════════════════════
+║  TASTE DISCOVERY                                            ║
+║                                                             ║
+║  No project-specific taste evals found.                     ║
+║  Using minimal defaults (4 UX dimensions).                  ║
+║                                                             ║
+║  To add custom evals:                                       ║
+║                                                             ║
+║  Option 1: Convention files                                 ║
+║    Create *-QUALITY-EVALS.md in project root                ║
+║    Example: CONTENT-QUALITY-EVALS.md                        ║
+║                                                             ║
+║  Option 2: Single eval file                                 ║
+║    Create TASTE-EVALS.md in project root                    ║
+║                                                             ║
+║  Option 3: Explicit manifest                                ║
+║    Create .claude/taste-manifest.json                       ║
+║                                                             ║
+║  See appendix for templates.                                ║
+═══════════════════════════════════════════════════════════════
+```

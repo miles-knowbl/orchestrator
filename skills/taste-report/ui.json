@@ -1,0 +1,32 @@
+{
+  "displayName": "Taste Report",
+  "icon": "presentation-chart-bar",
+  "color": "#8B5CF6",
+  "outputDisplay": "markdown",
+  "description": "Generate taste-ordered checklist",
+  "estimatedDuration": "3-5 minutes",
+  "inputs": [
+    {
+      "name": "TASTE-TRACE.md",
+      "type": "file",
+      "description": "Gap-to-failure-mode traces"
+    },
+    {
+      "name": "PIPELINE-FAILURE-MODES.md",
+      "type": "file",
+      "description": "Backend failure modes"
+    },
+    {
+      "name": "UI-FAILURE-MODES.md",
+      "type": "file",
+      "description": "UI failure modes"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "AUDIT-REPORT.md",
+      "type": "file",
+      "description": "Taste-ordered checklist and summary"
+    }
+  ]
+}

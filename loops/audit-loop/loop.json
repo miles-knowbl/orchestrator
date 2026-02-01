@@ -1,13 +1,24 @@
 {
   "id": "audit-loop",
   "name": "Audit Loop",
-  "version": "1.0.0",
-  "description": "Audit loop for evaluating existing systems across architecture, performance, and security dimensions. Takes audit scope through systematic review, validation, and reporting with enforced quality gates.",
+  "version": "4.0.0",
+  "description": "Taste-first audit loop for evaluating existing systems. Evaluates subjective quality (taste) before technical analysis, then applies MECE failure mode taxonomy to backend and UI pipelines. Produces a taste-ordered checklist to done.",
   "phases": [
+    {
+      "name": "TASTE",
+      "skills": [
+        "taste-discovery",
+        "taste-eval"
+      ],
+      "required": true
+    },
     {
       "name": "INIT",
       "skills": [
-        "requirements"
+        "requirements",
+        "pipeline-discovery",
+        "ui-pipeline-discovery",
+        "dependency-mapping"
       ],
       "required": true
     },
@@ -16,7 +27,11 @@
       "skills": [
         "architecture-review",
         "security-audit",
-        "perf-analysis"
+        "perf-analysis",
+        "failure-mode-analysis",
+        "ui-failure-mode-analysis",
+        "quality-eval-design",
+        "taste-trace"
       ],
       "required": true
     },
@@ -24,14 +39,17 @@
       "name": "VALIDATE",
       "skills": [
         "integration-test",
-        "code-verification"
+        "ui-interaction-test",
+        "code-verification",
+        "test-spec-generation"
       ],
       "required": true
     },
     {
       "name": "DOCUMENT",
       "skills": [
-        "document"
+        "document",
+        "taste-report"
       ],
       "required": true
     },
@@ -44,6 +62,17 @@
     }
   ],
   "gates": [
+    {
+      "id": "taste-gate",
+      "name": "Taste Evaluation Approval",
+      "afterPhase": "TASTE",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": [
+        "TASTE-EVAL.md",
+        "TASTE-GAPS.md"
+      ]
+    },
     {
       "id": "scope-gate",
       "name": "Audit Scope Approval",
@@ -63,7 +92,10 @@
       "deliverables": [
         "ARCHITECTURE-REVIEW.md",
         "SECURITY-AUDIT.md",
-        "PERF-ANALYSIS.md"
+        "PERF-ANALYSIS.md",
+        "PIPELINE-FAILURE-MODES.md",
+        "UI-FAILURE-MODES.md",
+        "TASTE-TRACE.md"
       ]
     },
     {
@@ -89,17 +121,43 @@
       "deliverableViewer": true,
       "gateApprovalUI": true,
       "progressTimeline": true,
-      "metricsPanel": true
+      "metricsPanel": true,
+      "tasteScoreDisplay": true
     },
     "branding": {
       "title": "Audit Loop",
-      "subtitle": "Evaluate your systems"
+      "subtitle": "Taste-first system evaluation"
     }
   },
   "skillUI": {
+    "taste-discovery": {
+      "displayName": "Taste Discovery",
+      "icon": "search",
+      "outputDisplay": "markdown"
+    },
+    "taste-eval": {
+      "displayName": "Taste Evaluation",
+      "icon": "star",
+      "outputDisplay": "markdown"
+    },
     "requirements": {
       "displayName": "Requirements Analysis",
       "icon": "clipboard-list",
+      "outputDisplay": "markdown"
+    },
+    "pipeline-discovery": {
+      "displayName": "Pipeline Discovery",
+      "icon": "git-branch",
+      "outputDisplay": "markdown"
+    },
+    "ui-pipeline-discovery": {
+      "displayName": "UI Pipeline Discovery",
+      "icon": "cursor-click",
+      "outputDisplay": "markdown"
+    },
+    "dependency-mapping": {
+      "displayName": "Dependency Mapping",
+      "icon": "link",
       "outputDisplay": "markdown"
     },
     "architecture-review": {
@@ -117,9 +175,34 @@
       "icon": "chart-bar",
       "outputDisplay": "markdown"
     },
+    "failure-mode-analysis": {
+      "displayName": "Failure Mode Analysis",
+      "icon": "exclamation-triangle",
+      "outputDisplay": "markdown"
+    },
+    "ui-failure-mode-analysis": {
+      "displayName": "UI Failure Mode Analysis",
+      "icon": "device-mobile",
+      "outputDisplay": "markdown"
+    },
+    "quality-eval-design": {
+      "displayName": "Quality Eval Design",
+      "icon": "beaker",
+      "outputDisplay": "markdown"
+    },
+    "taste-trace": {
+      "displayName": "Taste Trace",
+      "icon": "map",
+      "outputDisplay": "markdown"
+    },
     "integration-test": {
       "displayName": "Integration Testing",
       "icon": "puzzle",
+      "outputDisplay": "markdown"
+    },
+    "ui-interaction-test": {
+      "displayName": "UI Interaction Testing",
+      "icon": "cursor-click",
       "outputDisplay": "markdown"
     },
     "code-verification": {
@@ -127,9 +210,19 @@
       "icon": "check-circle",
       "outputDisplay": "markdown"
     },
+    "test-spec-generation": {
+      "displayName": "Test Spec Generation",
+      "icon": "document-text",
+      "outputDisplay": "markdown"
+    },
     "document": {
       "displayName": "Documentation",
       "icon": "book-open",
+      "outputDisplay": "markdown"
+    },
+    "taste-report": {
+      "displayName": "Taste Report",
+      "icon": "presentation-chart-bar",
       "outputDisplay": "markdown"
     },
     "retrospective": {
@@ -142,12 +235,18 @@
     "author": "Orchestrator",
     "tags": [
       "audit",
+      "taste",
       "review",
       "security",
-      "performance"
+      "performance",
+      "quality"
     ],
     "changelog": {
-      "1.0.0": "Initial release"
+      "1.0.0": "Initial release",
+      "2.0.0": "Added pipeline validation (PASS/PARTIAL/FAIL)",
+      "3.0.0": "MECE failure modes, coverage %, quality evals, test specs",
+      "3.1.0": "UI pipelines (U-series), interaction validation, L5/L6 locations",
+      "4.0.0": "TASTE phase as entry point, taste-ordered checklist, eval discovery"
     },
     "category": "development"
   }

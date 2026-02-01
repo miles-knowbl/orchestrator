@@ -1,0 +1,27 @@
+{
+  "displayName": "Dependency Mapping",
+  "icon": "link",
+  "color": "#3B82F6",
+  "outputDisplay": "markdown",
+  "description": "Map cross-pipeline dependencies (X-series)",
+  "estimatedDuration": "10-15 minutes",
+  "inputs": [
+    {
+      "name": "backend_pipelines",
+      "type": "array",
+      "description": "P-series pipelines from pipeline-discovery"
+    },
+    {
+      "name": "ui_pipelines",
+      "type": "array",
+      "description": "U-series pipelines from ui-pipeline-discovery"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "dependencies",
+      "type": "array",
+      "description": "X-series dependencies with failure modes"
+    }
+  ]
+}

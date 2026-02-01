@@ -1,0 +1,28 @@
+{
+  "displayName": "Taste Evaluation",
+  "icon": "star",
+  "color": "#8B5CF6",
+  "outputDisplay": "markdown",
+  "description": "Score taste dimensions and identify gaps",
+  "estimatedDuration": "5-10 minutes",
+  "inputs": [
+    {
+      "name": "dimensions",
+      "type": "array",
+      "description": "Dimensions from taste-discovery",
+      "source": "audit-state.json"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "TASTE-EVAL.md",
+      "type": "file",
+      "description": "Full dimension scores with evidence"
+    },
+    {
+      "name": "TASTE-GAPS.md",
+      "type": "file",
+      "description": "Identified gaps with evidence"
+    }
+  ]
+}

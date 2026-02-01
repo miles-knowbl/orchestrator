@@ -1,0 +1,16 @@
+{
+  "displayName": "UI Pipeline Discovery",
+  "icon": "cursor-click",
+  "color": "#3B82F6",
+  "outputDisplay": "markdown",
+  "description": "Identify UI interaction pipelines (U-series)",
+  "estimatedDuration": "10-20 minutes",
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "ui_pipelines",
+      "type": "array",
+      "description": "Discovered U-series pipelines"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "displayName": "Taste Trace",
+  "icon": "map",
+  "color": "#8B5CF6",
+  "outputDisplay": "markdown",
+  "description": "Link taste gaps to failure modes",
+  "estimatedDuration": "5-10 minutes",
+  "inputs": [
+    {
+      "name": "TASTE-GAPS.md",
+      "type": "file",
+      "description": "Identified taste gaps"
+    },
+    {
+      "name": "PIPELINE-FAILURE-MODES.md",
+      "type": "file",
+      "description": "Backend failure modes"
+    },
+    {
+      "name": "UI-FAILURE-MODES.md",
+      "type": "file",
+      "description": "UI failure modes"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "TASTE-TRACE.md",
+      "type": "file",
+      "description": "Gap-to-failure-mode trace documentation"
+    }
+  ]
+}
