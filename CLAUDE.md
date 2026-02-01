@@ -17,7 +17,7 @@ npm run build && node dist/index.js
 ## Directory Structure
 
 - `src/` - TypeScript source code
-  - `services/` - Core services (SkillRegistry, LoopComposer, ExecutionEngine, MemoryService, LearningService, CalibrationService, InboxProcessor)
+  - `services/` - Core services (SkillRegistry, LoopComposer, ExecutionEngine, MemoryService, LearningService, CalibrationService, InboxProcessor, SlackIntegrationService)
   - `tools/` - MCP tool handlers
   - `server/` - HTTP server and API routes
   - `generator/` - Loop App generation
@@ -83,6 +83,23 @@ npm run build && node dist/index.js
 | `approve_extraction` | Create skill from extraction |
 | `reject_extraction` | Reject extracted skill |
 
+### Slack Integration Tools
+| Tool | Purpose |
+|------|---------|
+| `configure_slack_channel` | Configure channel for engineer |
+| `list_slack_channels` | List all configured channels |
+| `get_slack_threads` | Get active threads for channel |
+| `get_thread_context` | Get full context for thread |
+| `send_slack_command` | Send command (for testing) |
+| `parse_slack_command` | Parse text into command |
+| `get_engineer_status` | Get engineer's work status |
+| `list_engineers` | List all registered engineers |
+| `trigger_merge` | Trigger merge to main |
+| `trigger_rebase` | Trigger rebase from main |
+| `get_branch_status` | Check behind/ahead of main |
+| `get_pending_merges` | Get pending merge requests |
+| `get_pending_rebases` | Get pending rebase requests |
+
 ## Available Loops
 
 ### Engineering Loop (engineering-loop)
@@ -128,6 +145,12 @@ This creates an improvement proposal that can be reviewed and applied.
 | `GET /api/skills` | List skills |
 | `GET /api/loops` | List loops |
 | `GET /api/inbox/stats` | Inbox statistics |
+| `GET /api/slack/channels` | List configured channels |
+| `GET /api/slack/engineers` | List all engineers |
+| `GET /api/slack/threads` | Get active threads |
+| `POST /api/slack/command` | Execute command |
+| `POST /api/slack/merge` | Trigger merge |
+| `POST /api/slack/rebase` | Trigger rebase |
 
 ## Key Patterns
 

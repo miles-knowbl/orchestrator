@@ -29,12 +29,40 @@ import { AnalyticsService } from './services/analytics/index.js';
 import { ImprovementOrchestrator } from './services/learning/index.js';
 import { RoadmapService } from './services/roadmapping/index.js';
 import { KnowledgeGraphService } from './services/knowledge-graph/index.js';
+import { PatternsService } from './services/patterns/index.js';
+import { ScoringService } from './services/scoring/index.js';
+import { AutonomousExecutor } from './services/autonomous/index.js';
+import { DreamEngine } from './services/dreaming/index.js';
+import { MultiAgentCoordinator } from './services/multi-agent/index.js';
+import { MECEOpportunityService } from './services/mece/index.js';
+import { CoherenceService } from './services/coherence/index.js';
+import { LoopSequencingService } from './services/loop-sequencing/index.js';
+import { SkillTreeService } from './services/skill-trees/index.js';
+import { GameDesignService } from './services/game-design/index.js';
+import { SpacedRepetitionService } from './services/spaced-repetition/index.js';
+import { ProposingDecksService } from './services/proposing-decks/index.js';
+import { ProactiveMessagingService } from './services/proactive-messaging/index.js';
+import { SlackIntegrationService } from './services/slack-integration/index.js';
 import { skillToolDefinitions, createSkillToolHandlers } from './tools/skillTools.js';
 import { loopToolDefinitions, createLoopToolHandlers } from './tools/loopTools.js';
 import { executionToolDefinitions, createExecutionToolHandlers } from './tools/executionTools.js';
 import { memoryToolDefinitions, createMemoryToolHandlers } from './tools/memoryTools.js';
 import { inboxToolDefinitions, createInboxToolHandlers } from './tools/inboxTools.js';
 import { runToolDefinitions, createRunToolHandlers } from './tools/runTools.js';
+import { patternsTools, createPatternsToolHandlers } from './tools/patternsTools.js';
+import { scoringTools, createScoringToolHandlers } from './tools/scoringTools.js';
+import { autonomousTools, createAutonomousToolHandlers } from './tools/autonomousTools.js';
+import { dreamingTools, createDreamingToolHandlers } from './tools/dreamingTools.js';
+import { multiAgentTools, createMultiAgentToolHandlers } from './tools/multiAgentTools.js';
+import { meceTools, createMECEToolHandlers } from './tools/meceTools.js';
+import { coherenceTools, createCoherenceToolHandlers } from './tools/coherenceTools.js';
+import { loopSequencingTools, createLoopSequencingToolHandlers } from './tools/loopSequencingTools.js';
+import { skillTreeTools, createSkillTreeToolHandlers } from './tools/skillTreeTools.js';
+import { gameDesignTools, createGameDesignToolHandlers } from './tools/gameDesignTools.js';
+import { spacedRepetitionTools, createSpacedRepetitionToolHandlers } from './tools/spacedRepetitionTools.js';
+import { proposingDecksTools, createProposingDecksToolHandlers } from './tools/proposingDecksTools.js';
+import { proactiveMessagingTools, createProactiveMessagingToolHandlers } from './tools/proactiveMessagingTools.js';
+import { slackIntegrationTools, createSlackIntegrationToolHandlers } from './tools/slackIntegrationTools.js';
 import { createHttpServer, startHttpServer } from './server/httpServer.js';
 import { getVersion } from './version.js';
 
@@ -295,6 +323,249 @@ async function main() {
     }));
   }
 
+  // Initialize patterns service (roundup and automatic detection)
+  const patternsService = new PatternsService({
+    memoryPath,
+    skillsPath: config.skillsPath,
+    runsPath: runArchivalService.getRunsPath(),
+  });
+  patternsService.setDependencies({
+    memoryService,
+    analyticsService,
+  });
+
+  console.error(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    level: 'info',
+    message: 'Patterns service initialized',
+  }));
+
+  // Initialize scoring service (system-level module evaluation)
+  const scoringService = new ScoringService({
+    dataPath: join(config.repoPath, 'data', 'scoring'),
+  });
+  scoringService.setDependencies({
+    roadmapService,
+    analyticsService,
+    calibrationService,
+  });
+  await scoringService.initialize();
+
+  console.error(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    level: 'info',
+    message: 'Scoring service initialized',
+  }));
+
+  // Initialize autonomous executor (background loop execution)
+  const autonomousExecutor = new AutonomousExecutor({
+    tickInterval: 5000,
+    maxParallelExecutions: 3,
+    maxSkillRetries: 3,
+    autoStart: false,  // Must be explicitly started
+  });
+  autonomousExecutor.setDependencies({
+    executionEngine,
+    loopComposer,
+    learningService,
+  });
+  await autonomousExecutor.initialize();
+
+  console.error(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    level: 'info',
+    message: 'Autonomous executor initialized (not running - use start_autonomous to begin)',
+  }));
+
+  // Initialize dream engine (background proposal generation)
+  const dreamEngine = new DreamEngine({
+    dataPath: join(config.repoPath, 'data', 'dreaming', 'state.json'),
+    idleThreshold: 60000,      // 1 minute idle before dreaming
+    dreamInterval: 300000,     // 5 minutes between dream cycles
+    maxProposalsPerCycle: 5,
+    autoStart: false,
+  });
+  dreamEngine.setDependencies({
+    roadmapService,
+    scoringService,
+    patternsService,
+    improvementOrchestrator,
+    autonomousExecutor,
+  });
+  await dreamEngine.initialize();
+
+  console.error(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    level: 'info',
+    message: 'Dream engine initialized (not running - use start_dreaming to begin)',
+  }));
+
+  // Initialize multi-agent coordinator (worktree-based parallel development)
+  const multiAgentCoordinator = new MultiAgentCoordinator({
+    dataPath: join(config.repoPath, 'data', 'multi-agent', 'state.json'),
+    systemPath: config.repoPath,
+    reservationTimeoutMs: 3600000,   // 1 hour default reservation
+    mergeCheckIntervalMs: 30000,      // Check merge queue every 30 seconds
+  });
+  // Note: AgentManager and WorktreeManager can be wired up via setDependencies()
+  // when using the orchestration module's services
+  await multiAgentCoordinator.initialize();
+
+  console.error(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    level: 'info',
+    message: 'Multi-agent coordinator initialized',
+  }));
+
+  // Initialize MECE opportunity mapping service
+  const meceService = new MECEOpportunityService({
+    dataPath: join(config.repoPath, 'data', 'mece', 'state.json'),
+  });
+  meceService.setDependencies({
+    roadmapService,
+    knowledgeGraphService,
+    patternsService,
+    analyticsService,
+  });
+  await meceService.initialize();
+
+  console.error(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    level: 'info',
+    message: 'MECE opportunity mapping service initialized',
+  }));
+
+  // Initialize coherence service (system alignment validation)
+  const coherenceService = new CoherenceService({
+    dataPath: join(config.repoPath, 'data', 'coherence', 'state.json'),
+  });
+  coherenceService.setDependencies({
+    roadmapService,
+    knowledgeGraphService,
+    patternsService,
+    meceService,
+    skillRegistry,
+    loopComposer,
+    memoryService,
+  });
+  await coherenceService.initialize();
+
+  console.error(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    level: 'info',
+    message: 'Coherence service initialized',
+  }));
+
+  // Initialize loop sequencing service
+  const loopSequencingService = new LoopSequencingService({
+    dataPath: join(config.repoPath, 'data', 'sequencing', 'state.json'),
+  });
+  loopSequencingService.setDependencies({
+    runArchivalService,
+    roadmapService,
+    loopComposer,
+  });
+  await loopSequencingService.initialize();
+
+  console.error(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    level: 'info',
+    message: 'Loop sequencing service initialized',
+  }));
+
+  // Initialize skill tree service
+  const skillTreeService = new SkillTreeService({
+    dataPath: join(config.repoPath, 'data', 'skill-trees', 'state.json'),
+  });
+  skillTreeService.setDependencies({
+    knowledgeGraphService,
+    loopComposer,
+  });
+  await skillTreeService.initialize();
+
+  console.error(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    level: 'info',
+    message: 'Skill tree service initialized',
+  }));
+
+  // Initialize game design service (finite/infinite game framing)
+  const gameDesignService = new GameDesignService({
+    dataPath: join(config.repoPath, 'data', 'game-design', 'state.json'),
+  });
+  gameDesignService.setDependencies({
+    roadmapService,
+    coherenceService,
+  });
+  await gameDesignService.initialize();
+
+  console.error(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    level: 'info',
+    message: 'Game design service initialized',
+  }));
+
+  // Initialize spaced repetition service (SRS for skill mastery)
+  const spacedRepetitionService = new SpacedRepetitionService({
+    dataPath: join(config.repoPath, 'data', 'spaced-repetition', 'state.json'),
+  });
+  spacedRepetitionService.setDependencies({
+    knowledgeGraphService,
+    skillRegistry,
+    memoryService,
+  });
+  await spacedRepetitionService.initialize();
+
+  console.error(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    level: 'info',
+    message: 'Spaced repetition service initialized',
+  }));
+
+  // Initialize proposing decks service (wake up to decks ready for review)
+  const proposingDecksService = new ProposingDecksService({
+    dataPath: join(config.repoPath, 'data', 'proposing-decks', 'state.json'),
+  });
+  proposingDecksService.setDependencies({
+    dreamEngine,
+    spacedRepetitionService,
+    knowledgeGraphService,
+    skillRegistry,
+  });
+  await proposingDecksService.initialize();
+
+  console.error(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    level: 'info',
+    message: 'Proposing decks service initialized',
+  }));
+
+  // Initialize proactive messaging service (multi-channel notifications)
+  const proactiveMessagingService = new ProactiveMessagingService({
+    dataDir: join(config.repoPath, 'data', 'proactive-messaging'),
+    executionEngine,
+    dreamEngine,
+  });
+  await proactiveMessagingService.initialize();
+
+  console.error(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    level: 'info',
+    message: 'Proactive messaging service initialized',
+  }));
+
+  // Initialize Slack integration service (full bidirectional control)
+  const slackIntegrationService = new SlackIntegrationService({
+    dataPath: join(config.repoPath, 'data', 'slack-integration'),
+  });
+  await slackIntegrationService.initialize();
+
+  console.error(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    level: 'info',
+    message: 'Slack integration service initialized',
+  }));
+
   // Create tool handlers
   const skillHandlers = createSkillToolHandlers(skillRegistry, learningService);
   const loopHandlers = createLoopToolHandlers(loopComposer);
@@ -302,6 +573,20 @@ async function main() {
   const memoryHandlers = createMemoryToolHandlers(memoryService, learningService, calibrationService);
   const inboxHandlers = createInboxToolHandlers(inboxProcessor);
   const runHandlers = createRunToolHandlers(runArchivalService);
+  const patternsHandlers = createPatternsToolHandlers(patternsService);
+  const scoringHandlers = createScoringToolHandlers(scoringService);
+  const autonomousHandlers = createAutonomousToolHandlers(autonomousExecutor);
+  const dreamingHandlers = createDreamingToolHandlers(dreamEngine);
+  const multiAgentHandlers = createMultiAgentToolHandlers(multiAgentCoordinator);
+  const meceHandlers = createMECEToolHandlers(meceService);
+  const coherenceHandlers = createCoherenceToolHandlers(coherenceService);
+  const loopSequencingHandlers = createLoopSequencingToolHandlers(loopSequencingService);
+  const skillTreeHandlers = createSkillTreeToolHandlers(skillTreeService);
+  const gameDesignHandlers = createGameDesignToolHandlers(gameDesignService);
+  const spacedRepetitionHandlers = createSpacedRepetitionToolHandlers(spacedRepetitionService);
+  const proposingDecksHandlers = createProposingDecksToolHandlers(proposingDecksService);
+  const proactiveMessagingHandlers = createProactiveMessagingToolHandlers(proactiveMessagingService);
+  const slackIntegrationHandlers = createSlackIntegrationToolHandlers(slackIntegrationService);
 
   // Combine all handlers
   const allHandlers = {
@@ -311,6 +596,20 @@ async function main() {
     ...memoryHandlers,
     ...inboxHandlers,
     ...runHandlers,
+    ...patternsHandlers,
+    ...scoringHandlers,
+    ...autonomousHandlers,
+    ...dreamingHandlers,
+    ...multiAgentHandlers,
+    ...meceHandlers,
+    ...coherenceHandlers,
+    ...loopSequencingHandlers,
+    ...skillTreeHandlers,
+    ...gameDesignHandlers,
+    ...spacedRepetitionHandlers,
+    ...proposingDecksHandlers,
+    ...proactiveMessagingHandlers,
+    ...slackIntegrationHandlers,
   };
 
   // Combine all tool definitions
@@ -321,6 +620,20 @@ async function main() {
     ...memoryToolDefinitions,
     ...inboxToolDefinitions,
     ...runToolDefinitions,
+    ...patternsTools,
+    ...scoringTools,
+    ...autonomousTools,
+    ...dreamingTools,
+    ...multiAgentTools,
+    ...meceTools,
+    ...coherenceTools,
+    ...loopSequencingTools,
+    ...skillTreeTools,
+    ...gameDesignTools,
+    ...spacedRepetitionTools,
+    ...proposingDecksTools,
+    ...proactiveMessagingTools,
+    ...slackIntegrationTools,
   ];
 
   // Create MCP server factory
@@ -392,6 +705,20 @@ async function main() {
       improvementOrchestrator,
       roadmapService,
       knowledgeGraphService,
+      patternsService,
+      scoringService,
+      autonomousExecutor,
+      dreamEngine,
+      multiAgentCoordinator,
+      meceService,
+      coherenceService,
+      loopSequencingService,
+      skillTreeService,
+      gameDesignService,
+      spacedRepetitionService,
+      proposingDecksService,
+      proactiveMessagingService,
+      slackIntegrationService,
     },
   });
   await startHttpServer(app, config);

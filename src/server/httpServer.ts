@@ -15,6 +15,20 @@ import type { AnalyticsService } from '../services/analytics/index.js';
 import type { ImprovementOrchestrator } from '../services/learning/index.js';
 import type { RoadmapService } from '../services/roadmapping/index.js';
 import type { KnowledgeGraphService } from '../services/knowledge-graph/index.js';
+import type { PatternsService } from '../services/patterns/index.js';
+import type { ScoringService } from '../services/scoring/index.js';
+import type { AutonomousExecutor } from '../services/autonomous/index.js';
+import type { DreamEngine } from '../services/dreaming/index.js';
+import type { MultiAgentCoordinator } from '../services/multi-agent/index.js';
+import type { MECEOpportunityService } from '../services/mece/index.js';
+import type { CoherenceService } from '../services/coherence/index.js';
+import type { LoopSequencingService } from '../services/loop-sequencing/index.js';
+import type { SkillTreeService } from '../services/skill-trees/index.js';
+import type { GameDesignService } from '../services/game-design/index.js';
+import type { SpacedRepetitionService } from '../services/spaced-repetition/index.js';
+import type { ProposingDecksService } from '../services/proposing-decks/index.js';
+import type { ProactiveMessagingService } from '../services/proactive-messaging/index.js';
+import type { SlackIntegrationService } from '../services/slack-integration/index.js';
 import { createApiRoutes } from './apiRoutes.js';
 import { getVersion } from '../version.js';
 
@@ -31,6 +45,20 @@ export interface HttpServerOptions {
     improvementOrchestrator?: ImprovementOrchestrator;
     roadmapService?: RoadmapService;
     knowledgeGraphService?: KnowledgeGraphService;
+    patternsService?: PatternsService;
+    scoringService?: ScoringService;
+    autonomousExecutor?: AutonomousExecutor;
+    dreamEngine?: DreamEngine;
+    multiAgentCoordinator?: MultiAgentCoordinator;
+    meceService?: MECEOpportunityService;
+    coherenceService?: CoherenceService;
+    loopSequencingService?: LoopSequencingService;
+    skillTreeService?: SkillTreeService;
+    gameDesignService?: GameDesignService;
+    spacedRepetitionService?: SpacedRepetitionService;
+    proposingDecksService?: ProposingDecksService;
+    proactiveMessagingService?: ProactiveMessagingService;
+    slackIntegrationService?: SlackIntegrationService;
   };
 }
 
@@ -162,6 +190,9 @@ export function startHttpServer(
           learning: `http://${config.host}:${config.port}/api/learning`,
           roadmap: `http://${config.host}:${config.port}/api/roadmap`,
           knowledgeGraph: `http://${config.host}:${config.port}/api/knowledge-graph`,
+          scoring: `http://${config.host}:${config.port}/api/scoring`,
+          autonomous: `http://${config.host}:${config.port}/api/autonomous`,
+          dreaming: `http://${config.host}:${config.port}/api/dreaming`,
         },
       }));
       resolve();

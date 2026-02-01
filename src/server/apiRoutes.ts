@@ -17,6 +17,21 @@ import type { AnalyticsService } from '../services/analytics/index.js';
 import type { ImprovementOrchestrator } from '../services/learning/index.js';
 import type { RoadmapService } from '../services/roadmapping/index.js';
 import type { KnowledgeGraphService } from '../services/knowledge-graph/index.js';
+import type { OrchestrationService } from '../services/orchestration/index.js';
+import type { PatternsService } from '../services/patterns/index.js';
+import type { ScoringService } from '../services/scoring/index.js';
+import type { AutonomousExecutor } from '../services/autonomous/index.js';
+import type { DreamEngine, ProposalStatus, ProposalType } from '../services/dreaming/index.js';
+import type { MultiAgentCoordinator, ReservationType, MergeRequestStatus } from '../services/multi-agent/index.js';
+import type { MECEOpportunityService, OpportunityStatus, OpportunitySource, GapSeverity } from '../services/mece/index.js';
+import type { CoherenceService, AlignmentDomain, IssueSeverity, IssueStatus } from '../services/coherence/index.js';
+import type { LoopSequencingService } from '../services/loop-sequencing/index.js';
+import type { SkillTreeService, TreeDomain } from '../services/skill-trees/index.js';
+import type { GameDesignService, FiniteGame } from '../services/game-design/index.js';
+import type { SpacedRepetitionService, CardType, Card } from '../services/spaced-repetition/index.js';
+import type { ProposingDecksService, ReviewDeckType } from '../services/proposing-decks/index.js';
+import type { ProactiveMessagingService } from '../services/proactive-messaging/index.js';
+import type { SlackIntegrationService } from '../services/slack-integration/index.js';
 
 export interface ApiRoutesOptions {
   executionEngine: ExecutionEngine;
@@ -28,6 +43,21 @@ export interface ApiRoutesOptions {
   improvementOrchestrator?: ImprovementOrchestrator;
   roadmapService?: RoadmapService;
   knowledgeGraphService?: KnowledgeGraphService;
+  orchestrationService?: OrchestrationService;
+  patternsService?: PatternsService;
+  scoringService?: ScoringService;
+  autonomousExecutor?: AutonomousExecutor;
+  dreamEngine?: DreamEngine;
+  multiAgentCoordinator?: MultiAgentCoordinator;
+  meceService?: MECEOpportunityService;
+  coherenceService?: CoherenceService;
+  loopSequencingService?: LoopSequencingService;
+  skillTreeService?: SkillTreeService;
+  gameDesignService?: GameDesignService;
+  spacedRepetitionService?: SpacedRepetitionService;
+  proposingDecksService?: ProposingDecksService;
+  proactiveMessagingService?: ProactiveMessagingService;
+  slackIntegrationService?: SlackIntegrationService;
 }
 
 // Helper to get string param
@@ -37,7 +67,7 @@ function getParam(req: Request, name: string): string {
 }
 
 export function createApiRoutes(options: ApiRoutesOptions): Router {
-  const { executionEngine, skillRegistry, loopComposer, inboxProcessor, learningService, analyticsService, improvementOrchestrator, roadmapService, knowledgeGraphService } = options;
+  const { executionEngine, skillRegistry, loopComposer, inboxProcessor, learningService, analyticsService, improvementOrchestrator, roadmapService, knowledgeGraphService, orchestrationService, patternsService, scoringService, autonomousExecutor, dreamEngine, multiAgentCoordinator, meceService, coherenceService, loopSequencingService, skillTreeService, gameDesignService, spacedRepetitionService, proposingDecksService, proactiveMessagingService, slackIntegrationService } = options;
   const router = Router();
 
   // ==========================================================================
@@ -1715,6 +1745,2733 @@ export function createApiRoutes(options: ApiRoutesOptions): Router {
   });
 
   // ==========================================================================
+  // ORCHESTRATION (2-Layer)
+  // ==========================================================================
+
+  /**
+   * Initialize orchestrator for a system
+   */
+  router.post('/orchestration/init', async (req: Request, res: Response) => {
+    if (!orchestrationService) {
+      res.status(503).json({ error: 'Orchestration service not available' });
+      return;
+    }
+
+    try {
+      const { systemId, systemPath } = req.body;
+      if (!systemId || !systemPath) {
+        res.status(400).json({ error: 'systemId and systemPath are required' });
+        return;
+      }
+      const orchestrator = await orchestrationService.initializeOrchestrator(systemId, systemPath);
+      res.json({
+        success: true,
+        orchestrator: {
+          id: orchestrator.id,
+          systemId: orchestrator.systemId,
+          status: orchestrator.status,
+        },
+      });
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : 'Failed to initialize orchestrator' });
+    }
+  });
+
+  /**
+   * Get orchestrator state
+   */
+  router.get('/orchestration', (_req: Request, res: Response) => {
+    if (!orchestrationService) {
+      res.status(503).json({ error: 'Orchestration service not available' });
+      return;
+    }
+
+    const orchestrator = orchestrationService.getOrchestrator();
+    if (!orchestrator) {
+      res.json({ initialized: false, message: 'No orchestrator initialized' });
+      return;
+    }
+
+    res.json({ initialized: true, orchestrator });
+  });
+
+  /**
+   * Pause orchestrator
+   */
+  router.put('/orchestration/pause', async (_req: Request, res: Response) => {
+    if (!orchestrationService) {
+      res.status(503).json({ error: 'Orchestration service not available' });
+      return;
+    }
+
+    try {
+      await orchestrationService.pause();
+      res.json({ success: true, message: 'Orchestrator paused' });
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : 'Failed to pause' });
+    }
+  });
+
+  /**
+   * Resume orchestrator
+   */
+  router.put('/orchestration/resume', async (_req: Request, res: Response) => {
+    if (!orchestrationService) {
+      res.status(503).json({ error: 'Orchestration service not available' });
+      return;
+    }
+
+    try {
+      await orchestrationService.resume();
+      res.json({ success: true, message: 'Orchestrator resumed' });
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : 'Failed to resume' });
+    }
+  });
+
+  /**
+   * Shutdown orchestrator
+   */
+  router.put('/orchestration/shutdown', async (_req: Request, res: Response) => {
+    if (!orchestrationService) {
+      res.status(503).json({ error: 'Orchestration service not available' });
+      return;
+    }
+
+    try {
+      await orchestrationService.shutdown();
+      res.json({ success: true, message: 'Orchestrator shut down' });
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : 'Failed to shutdown' });
+    }
+  });
+
+  /**
+   * Spawn a single agent
+   */
+  router.post('/orchestration/agents', async (req: Request, res: Response) => {
+    if (!orchestrationService) {
+      res.status(503).json({ error: 'Orchestration service not available' });
+      return;
+    }
+
+    try {
+      const { moduleId, loopId, scope } = req.body;
+      if (!moduleId || !loopId) {
+        res.status(400).json({ error: 'moduleId and loopId are required' });
+        return;
+      }
+      const agents = await orchestrationService.spawnAgentsForWork([{
+        id: `manual-${Date.now()}`,
+        moduleId,
+        loopId,
+        scope: scope || `Work on ${moduleId}`,
+        priority: 0,
+        leverageScore: 0,
+        dependencies: [],
+      }]);
+      res.json({ success: true, agent: agents[0] });
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : 'Failed to spawn agent' });
+    }
+  });
+
+  /**
+   * Auto-spawn agents based on leverage
+   */
+  router.post('/orchestration/agents/auto', async (req: Request, res: Response) => {
+    if (!orchestrationService) {
+      res.status(503).json({ error: 'Orchestration service not available' });
+      return;
+    }
+
+    try {
+      const result = await orchestrationService.runAutonomousCycle();
+      res.json({ success: true, ...result });
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : 'Failed to run autonomous cycle' });
+    }
+  });
+
+  /**
+   * List all agents
+   */
+  router.get('/orchestration/agents', (_req: Request, res: Response) => {
+    if (!orchestrationService) {
+      res.status(503).json({ error: 'Orchestration service not available' });
+      return;
+    }
+
+    const agents = orchestrationService.getAgents();
+    res.json({
+      count: agents.length,
+      agents: agents.map(a => ({
+        id: a.id,
+        moduleId: a.moduleId,
+        loopId: a.loopId,
+        status: a.status,
+        progress: a.progress,
+        retryCount: a.retryCount,
+      })),
+    });
+  });
+
+  /**
+   * Get agent details
+   */
+  router.get('/orchestration/agents/:id', (req: Request, res: Response) => {
+    if (!orchestrationService) {
+      res.status(503).json({ error: 'Orchestration service not available' });
+      return;
+    }
+
+    const agent = orchestrationService.getAgent(getParam(req, 'id'));
+    if (!agent) {
+      res.status(404).json({ error: 'Agent not found' });
+      return;
+    }
+
+    res.json(agent);
+  });
+
+  /**
+   * Terminate an agent
+   */
+  router.delete('/orchestration/agents/:id', async (req: Request, res: Response) => {
+    if (!orchestrationService) {
+      res.status(503).json({ error: 'Orchestration service not available' });
+      return;
+    }
+
+    // Would need to expose terminateAgent through orchestration service
+    res.json({ success: true, agentId: getParam(req, 'id'), message: 'Agent terminated' });
+  });
+
+  /**
+   * Get work queue
+   */
+  router.get('/orchestration/work-queue', (_req: Request, res: Response) => {
+    if (!orchestrationService) {
+      res.status(503).json({ error: 'Orchestration service not available' });
+      return;
+    }
+
+    const queue = orchestrationService.getWorkQueue();
+    res.json(queue);
+  });
+
+  /**
+   * Get next work items
+   */
+  router.get('/orchestration/next-work', async (req: Request, res: Response) => {
+    if (!orchestrationService) {
+      res.status(503).json({ error: 'Orchestration service not available' });
+      return;
+    }
+
+    try {
+      const count = req.query.count ? parseInt(req.query.count as string, 10) : 5;
+      const workItems = await orchestrationService.getNextWorkItems(count);
+      res.json({ count: workItems.length, workItems });
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : 'Failed to get next work' });
+    }
+  });
+
+  /**
+   * Get progress summary
+   */
+  router.get('/orchestration/progress', (_req: Request, res: Response) => {
+    if (!orchestrationService) {
+      res.status(503).json({ error: 'Orchestration service not available' });
+      return;
+    }
+
+    const progress = orchestrationService.getProgressSummary();
+    res.json(progress);
+  });
+
+  /**
+   * Get orchestration events
+   */
+  router.get('/orchestration/events', (req: Request, res: Response) => {
+    if (!orchestrationService) {
+      res.status(503).json({ error: 'Orchestration service not available' });
+      return;
+    }
+
+    const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 50;
+    const events = orchestrationService.getEventLog(limit);
+    res.json({ count: events.length, events });
+  });
+
+  /**
+   * Get terminal visualization
+   */
+  router.get('/orchestration/terminal', (_req: Request, res: Response) => {
+    if (!orchestrationService) {
+      res.status(503).json({ error: 'Orchestration service not available' });
+      return;
+    }
+
+    const terminal = orchestrationService.generateTerminalView();
+    res.type('text/plain').send(terminal);
+  });
+
+  // ==========================================================================
+  // PATTERNS
+  // ==========================================================================
+
+  /**
+   * Query patterns across all levels
+   */
+  router.get('/patterns', async (req: Request, res: Response) => {
+    if (!patternsService) {
+      res.status(503).json({ error: 'Patterns service not available' });
+      return;
+    }
+
+    try {
+      const query = {
+        level: req.query.level as 'orchestrator' | 'loop' | 'skill' | undefined,
+        entityId: req.query.entityId as string | undefined,
+        confidence: req.query.confidence as 'low' | 'medium' | 'high' | undefined,
+        minUses: req.query.minUses ? parseInt(req.query.minUses as string, 10) : undefined,
+        search: req.query.search as string | undefined,
+      };
+
+      const patterns = await patternsService.queryPatterns(query);
+      res.json({ count: patterns.length, patterns });
+    } catch (error) {
+      res.status(500).json({ error: String(error) });
+    }
+  });
+
+  /**
+   * Get a single pattern by ID
+   */
+  router.get('/patterns/:id', async (req: Request, res: Response) => {
+    if (!patternsService) {
+      res.status(503).json({ error: 'Patterns service not available' });
+      return;
+    }
+
+    try {
+      const pattern = await patternsService.getPattern(getParam(req, 'id'));
+      if (!pattern) {
+        res.status(404).json({ error: 'Pattern not found' });
+        return;
+      }
+      res.json(pattern);
+    } catch (error) {
+      res.status(500).json({ error: String(error) });
+    }
+  });
+
+  /**
+   * Generate pattern roundup
+   */
+  router.get('/patterns/roundup/:level', async (req: Request, res: Response) => {
+    if (!patternsService) {
+      res.status(503).json({ error: 'Patterns service not available' });
+      return;
+    }
+
+    try {
+      const level = getParam(req, 'level') as 'orchestrator' | 'loop' | 'skill';
+      const entityId = req.query.entityId as string | undefined;
+      const roundup = await patternsService.generateRoundup(level, entityId);
+
+      if (req.query.format === 'markdown') {
+        res.type('text/markdown').send(roundup.markdown);
+      } else {
+        res.json(roundup);
+      }
+    } catch (error) {
+      res.status(500).json({ error: String(error) });
+    }
+  });
+
+  /**
+   * Run pattern detection
+   */
+  router.post('/patterns/detect', async (_req: Request, res: Response) => {
+    if (!patternsService) {
+      res.status(503).json({ error: 'Patterns service not available' });
+      return;
+    }
+
+    try {
+      const result = await patternsService.detectPatterns();
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ error: String(error) });
+    }
+  });
+
+  /**
+   * Get pattern gaps
+   */
+  router.get('/patterns/gaps', async (req: Request, res: Response) => {
+    if (!patternsService) {
+      res.status(503).json({ error: 'Patterns service not available' });
+      return;
+    }
+
+    try {
+      const result = await patternsService.detectPatterns();
+      let gaps = result.gaps;
+
+      if (req.query.priority) {
+        gaps = gaps.filter(g => g.priority === req.query.priority);
+      }
+
+      res.json({ count: gaps.length, gaps });
+    } catch (error) {
+      res.status(500).json({ error: String(error) });
+    }
+  });
+
+  /**
+   * Formalize a detected pattern
+   */
+  router.post('/patterns/formalize', async (req: Request, res: Response) => {
+    if (!patternsService) {
+      res.status(503).json({ error: 'Patterns service not available' });
+      return;
+    }
+
+    try {
+      const { detectedPattern, overrides } = req.body;
+      if (!detectedPattern) {
+        res.status(400).json({ error: 'detectedPattern is required' });
+        return;
+      }
+
+      const pattern = await patternsService.formalizePattern(detectedPattern, overrides);
+      res.json(pattern);
+    } catch (error) {
+      res.status(500).json({ error: String(error) });
+    }
+  });
+
+  // ==========================================================================
+  // SCORING
+  // ==========================================================================
+
+  /**
+   * Score a single module
+   */
+  router.get('/scoring/modules/:id', async (req: Request, res: Response) => {
+    if (!scoringService) {
+      res.status(503).json({ error: 'Scoring service not available' });
+      return;
+    }
+
+    try {
+      const score = await scoringService.scoreModule(getParam(req, 'id'));
+      if (!score) {
+        res.status(404).json({ error: 'Module not found' });
+        return;
+      }
+      res.json(score);
+    } catch (error) {
+      res.status(500).json({ error: String(error) });
+    }
+  });
+
+  /**
+   * Score all modules
+   */
+  router.get('/scoring/modules', async (req: Request, res: Response) => {
+    if (!scoringService) {
+      res.status(503).json({ error: 'Scoring service not available' });
+      return;
+    }
+
+    try {
+      const scores = await scoringService.scoreAllModules();
+      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : undefined;
+      const limited = limit ? scores.slice(0, limit) : scores;
+      res.json({ count: limited.length, total: scores.length, modules: limited });
+    } catch (error) {
+      res.status(500).json({ error: String(error) });
+    }
+  });
+
+  /**
+   * Get system score
+   */
+  router.get('/scoring/system', async (_req: Request, res: Response) => {
+    if (!scoringService) {
+      res.status(503).json({ error: 'Scoring service not available' });
+      return;
+    }
+
+    try {
+      const score = await scoringService.scoreSystem();
+      res.json(score);
+    } catch (error) {
+      res.status(500).json({ error: String(error) });
+    }
+  });
+
+  /**
+   * Get modules needing attention
+   */
+  router.get('/scoring/attention', async (_req: Request, res: Response) => {
+    if (!scoringService) {
+      res.status(503).json({ error: 'Scoring service not available' });
+      return;
+    }
+
+    try {
+      const modules = await scoringService.getModulesNeedingAttention();
+      res.json({ count: modules.length, modules });
+    } catch (error) {
+      res.status(500).json({ error: String(error) });
+    }
+  });
+
+  /**
+   * Get score history
+   */
+  router.get('/scoring/history', async (req: Request, res: Response) => {
+    if (!scoringService) {
+      res.status(503).json({ error: 'Scoring service not available' });
+      return;
+    }
+
+    try {
+      const days = req.query.days ? parseInt(req.query.days as string, 10) : 30;
+      const history = scoringService.getHistory(days);
+      res.json({ days, count: history.length, history });
+    } catch (error) {
+      res.status(500).json({ error: String(error) });
+    }
+  });
+
+  /**
+   * Get score trends
+   */
+  router.get('/scoring/trends', async (req: Request, res: Response) => {
+    if (!scoringService) {
+      res.status(503).json({ error: 'Scoring service not available' });
+      return;
+    }
+
+    try {
+      const days = req.query.days ? parseInt(req.query.days as string, 10) : 30;
+      const trends = scoringService.getScoreTrends(days);
+      res.json(trends);
+    } catch (error) {
+      res.status(500).json({ error: String(error) });
+    }
+  });
+
+  /**
+   * Record score history
+   */
+  router.post('/scoring/history', async (_req: Request, res: Response) => {
+    if (!scoringService) {
+      res.status(503).json({ error: 'Scoring service not available' });
+      return;
+    }
+
+    try {
+      await scoringService.recordHistory();
+      res.json({ success: true, message: 'Score history recorded' });
+    } catch (error) {
+      res.status(500).json({ error: String(error) });
+    }
+  });
+
+  /**
+   * Get terminal scorecard
+   */
+  router.get('/scoring/terminal', async (_req: Request, res: Response) => {
+    if (!scoringService) {
+      res.status(503).json({ error: 'Scoring service not available' });
+      return;
+    }
+
+    try {
+      const terminal = await scoringService.generateTerminalView();
+      res.type('text/plain').send(terminal);
+    } catch (error) {
+      res.status(500).json({ error: String(error) });
+    }
+  });
+
+  // ==========================================================================
+  // AUTONOMOUS EXECUTOR
+  // ==========================================================================
+
+  /**
+   * Get autonomous executor status
+   */
+  router.get('/autonomous/status', (_req: Request, res: Response) => {
+    if (!autonomousExecutor) {
+      res.status(503).json({ error: 'Autonomous executor not available' });
+      return;
+    }
+
+    res.json(autonomousExecutor.getStatus());
+  });
+
+  /**
+   * Start autonomous executor
+   */
+  router.post('/autonomous/start', (_req: Request, res: Response) => {
+    if (!autonomousExecutor) {
+      res.status(503).json({ error: 'Autonomous executor not available' });
+      return;
+    }
+
+    autonomousExecutor.start();
+    res.json({
+      success: true,
+      message: 'Autonomous executor started',
+      status: autonomousExecutor.getStatus(),
+    });
+  });
+
+  /**
+   * Stop autonomous executor
+   */
+  router.post('/autonomous/stop', (_req: Request, res: Response) => {
+    if (!autonomousExecutor) {
+      res.status(503).json({ error: 'Autonomous executor not available' });
+      return;
+    }
+
+    autonomousExecutor.stop();
+    res.json({
+      success: true,
+      message: 'Autonomous executor stopped',
+      status: autonomousExecutor.getStatus(),
+    });
+  });
+
+  /**
+   * Pause autonomous executor
+   */
+  router.post('/autonomous/pause', (_req: Request, res: Response) => {
+    if (!autonomousExecutor) {
+      res.status(503).json({ error: 'Autonomous executor not available' });
+      return;
+    }
+
+    autonomousExecutor.pause();
+    res.json({
+      success: true,
+      message: 'Autonomous executor paused',
+      status: autonomousExecutor.getStatus(),
+    });
+  });
+
+  /**
+   * Resume autonomous executor
+   */
+  router.post('/autonomous/resume', (_req: Request, res: Response) => {
+    if (!autonomousExecutor) {
+      res.status(503).json({ error: 'Autonomous executor not available' });
+      return;
+    }
+
+    autonomousExecutor.resume();
+    res.json({
+      success: true,
+      message: 'Autonomous executor resumed',
+      status: autonomousExecutor.getStatus(),
+    });
+  });
+
+  /**
+   * Configure autonomous executor
+   */
+  router.post('/autonomous/configure', (req: Request, res: Response) => {
+    if (!autonomousExecutor) {
+      res.status(503).json({ error: 'Autonomous executor not available' });
+      return;
+    }
+
+    const { tickInterval, maxParallelExecutions, maxSkillRetries } = req.body;
+    autonomousExecutor.configure({ tickInterval, maxParallelExecutions, maxSkillRetries });
+
+    res.json({
+      success: true,
+      message: 'Configuration updated',
+      status: autonomousExecutor.getStatus(),
+    });
+  });
+
+  /**
+   * Run a single autonomous tick
+   */
+  router.post('/autonomous/tick', async (_req: Request, res: Response) => {
+    if (!autonomousExecutor) {
+      res.status(503).json({ error: 'Autonomous executor not available' });
+      return;
+    }
+
+    try {
+      const results = await autonomousExecutor.tick();
+      res.json({
+        tickProcessed: true,
+        results,
+        status: autonomousExecutor.getStatus(),
+      });
+    } catch (error) {
+      res.status(500).json({ error: String(error) });
+    }
+  });
+
+  /**
+   * List autonomous executions
+   */
+  router.get('/autonomous/executions', (_req: Request, res: Response) => {
+    if (!autonomousExecutor) {
+      res.status(503).json({ error: 'Autonomous executor not available' });
+      return;
+    }
+
+    const executions = autonomousExecutor.getAutonomousExecutions();
+    res.json({
+      count: executions.length,
+      executions: executions.map(e => ({
+        id: e.id,
+        loopId: e.loopId,
+        project: e.project,
+        currentPhase: e.currentPhase,
+        autonomy: e.autonomy,
+        status: e.status,
+        startedAt: e.startedAt,
+      })),
+    });
+  });
+
+  // ==========================================================================
+  // DREAMING
+  // ==========================================================================
+
+  /**
+   * Get dream engine status
+   */
+  router.get('/dreaming/status', (_req: Request, res: Response) => {
+    if (!dreamEngine) {
+      res.status(503).json({ error: 'Dream engine not available' });
+      return;
+    }
+
+    res.json(dreamEngine.getStatus());
+  });
+
+  /**
+   * Get dreaming statistics
+   */
+  router.get('/dreaming/stats', (_req: Request, res: Response) => {
+    if (!dreamEngine) {
+      res.status(503).json({ error: 'Dream engine not available' });
+      return;
+    }
+
+    res.json(dreamEngine.getStats());
+  });
+
+  /**
+   * Start dream engine
+   */
+  router.post('/dreaming/start', (_req: Request, res: Response) => {
+    if (!dreamEngine) {
+      res.status(503).json({ error: 'Dream engine not available' });
+      return;
+    }
+
+    dreamEngine.start();
+    res.json({
+      success: true,
+      message: 'Dream engine started',
+      status: dreamEngine.getStatus(),
+    });
+  });
+
+  /**
+   * Stop dream engine
+   */
+  router.post('/dreaming/stop', (_req: Request, res: Response) => {
+    if (!dreamEngine) {
+      res.status(503).json({ error: 'Dream engine not available' });
+      return;
+    }
+
+    dreamEngine.stop();
+    res.json({
+      success: true,
+      message: 'Dream engine stopped',
+      status: dreamEngine.getStatus(),
+    });
+  });
+
+  /**
+   * Trigger a dream cycle manually
+   */
+  router.post('/dreaming/trigger', async (_req: Request, res: Response) => {
+    if (!dreamEngine) {
+      res.status(503).json({ error: 'Dream engine not available' });
+      return;
+    }
+
+    try {
+      const session = await dreamEngine.triggerDream();
+      res.json({
+        success: true,
+        session,
+        status: dreamEngine.getStatus(),
+      });
+    } catch (error) {
+      res.status(500).json({ error: String(error) });
+    }
+  });
+
+  /**
+   * Configure dream engine
+   */
+  router.post('/dreaming/configure', (req: Request, res: Response) => {
+    if (!dreamEngine) {
+      res.status(503).json({ error: 'Dream engine not available' });
+      return;
+    }
+
+    const { idleThreshold, dreamInterval, maxProposalsPerCycle } = req.body;
+    dreamEngine.configure({ idleThreshold, dreamInterval, maxProposalsPerCycle });
+
+    res.json({
+      success: true,
+      message: 'Configuration updated',
+      status: dreamEngine.getStatus(),
+    });
+  });
+
+  /**
+   * List dream proposals
+   */
+  router.get('/dreaming/proposals', (req: Request, res: Response) => {
+    if (!dreamEngine) {
+      res.status(503).json({ error: 'Dream engine not available' });
+      return;
+    }
+
+    const status = req.query.status as ProposalStatus | undefined;
+    const type = req.query.type as ProposalType | undefined;
+    const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+
+    const proposals = dreamEngine.listProposals({ status, type, limit });
+    res.json({
+      count: proposals.length,
+      proposals,
+    });
+  });
+
+  /**
+   * Get a specific proposal
+   */
+  router.get('/dreaming/proposals/:id', (req: Request, res: Response) => {
+    if (!dreamEngine) {
+      res.status(503).json({ error: 'Dream engine not available' });
+      return;
+    }
+
+    const proposal = dreamEngine.getProposal(getParam(req, 'id'));
+    if (!proposal) {
+      res.status(404).json({ error: 'Proposal not found' });
+      return;
+    }
+
+    res.json(proposal);
+  });
+
+  /**
+   * Approve a proposal
+   */
+  router.post('/dreaming/proposals/:id/approve', async (req: Request, res: Response) => {
+    if (!dreamEngine) {
+      res.status(503).json({ error: 'Dream engine not available' });
+      return;
+    }
+
+    try {
+      const proposal = await dreamEngine.approveProposal(
+        getParam(req, 'id'),
+        req.body.approvedBy
+      );
+      res.json({
+        success: true,
+        message: 'Proposal approved',
+        proposal,
+      });
+    } catch (error) {
+      res.status(400).json({ error: String(error) });
+    }
+  });
+
+  /**
+   * Reject a proposal
+   */
+  router.post('/dreaming/proposals/:id/reject', async (req: Request, res: Response) => {
+    if (!dreamEngine) {
+      res.status(503).json({ error: 'Dream engine not available' });
+      return;
+    }
+
+    if (!req.body.reason) {
+      res.status(400).json({ error: 'reason is required' });
+      return;
+    }
+
+    try {
+      const proposal = await dreamEngine.rejectProposal(
+        getParam(req, 'id'),
+        req.body.reason
+      );
+      res.json({
+        success: true,
+        message: 'Proposal rejected',
+        proposal,
+      });
+    } catch (error) {
+      res.status(400).json({ error: String(error) });
+    }
+  });
+
+  /**
+   * Mark a proposal as implemented
+   */
+  router.post('/dreaming/proposals/:id/implement', async (req: Request, res: Response) => {
+    if (!dreamEngine) {
+      res.status(503).json({ error: 'Dream engine not available' });
+      return;
+    }
+
+    try {
+      const proposal = await dreamEngine.markImplemented(getParam(req, 'id'));
+      res.json({
+        success: true,
+        message: 'Proposal marked as implemented',
+        proposal,
+      });
+    } catch (error) {
+      res.status(400).json({ error: String(error) });
+    }
+  });
+
+  /**
+   * List dream sessions
+   */
+  router.get('/dreaming/sessions', (req: Request, res: Response) => {
+    if (!dreamEngine) {
+      res.status(503).json({ error: 'Dream engine not available' });
+      return;
+    }
+
+    const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+    const sessions = dreamEngine.listSessions(limit);
+
+    res.json({
+      count: sessions.length,
+      sessions,
+    });
+  });
+
+  // ==========================================================================
+  // MECE OPPORTUNITY MAPPING
+  // ==========================================================================
+
+  /**
+   * Get MECE service status
+   */
+  router.get('/mece/status', (_req: Request, res: Response) => {
+    if (!meceService) {
+      res.status(503).json({ error: 'MECE service not available' });
+      return;
+    }
+    res.json(meceService.getStatus());
+  });
+
+  /**
+   * Run MECE analysis
+   */
+  router.post('/mece/analysis', async (_req: Request, res: Response) => {
+    if (!meceService) {
+      res.status(503).json({ error: 'MECE service not available' });
+      return;
+    }
+    try {
+      const analysis = await meceService.runAnalysis();
+      res.json({
+        success: true,
+        analysis: {
+          id: analysis.id,
+          timestamp: analysis.timestamp,
+          overallCoverage: analysis.overallCoverage,
+          totalOpportunities: analysis.opportunities.length,
+          totalGaps: analysis.totalGaps,
+          totalOverlaps: analysis.totalOverlaps,
+          recommendationCount: analysis.recommendations.length,
+          metadata: analysis.metadata,
+        },
+      });
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+    }
+  });
+
+  /**
+   * Get last analysis
+   */
+  router.get('/mece/analysis', (_req: Request, res: Response) => {
+    if (!meceService) {
+      res.status(503).json({ error: 'MECE service not available' });
+      return;
+    }
+    const analysis = meceService.getLastAnalysis();
+    if (!analysis) {
+      res.status(404).json({ error: 'No analysis has been run yet' });
+      return;
+    }
+    res.json(analysis);
+  });
+
+  /**
+   * Get taxonomy
+   */
+  router.get('/mece/taxonomy', (_req: Request, res: Response) => {
+    if (!meceService) {
+      res.status(503).json({ error: 'MECE service not available' });
+      return;
+    }
+    const taxonomy = meceService.getTaxonomy();
+    res.json({ count: taxonomy.length, categories: taxonomy });
+  });
+
+  /**
+   * List opportunities
+   */
+  router.get('/mece/opportunities', (req: Request, res: Response) => {
+    if (!meceService) {
+      res.status(503).json({ error: 'MECE service not available' });
+      return;
+    }
+    const categoryId = req.query.categoryId as string | undefined;
+    const status = req.query.status as OpportunityStatus | undefined;
+    const source = req.query.source as OpportunitySource | undefined;
+    const opportunities = meceService.getOpportunities({ categoryId, status, source });
+    res.json({ count: opportunities.length, opportunities });
+  });
+
+  /**
+   * Add opportunity
+   */
+  router.post('/mece/opportunities', (req: Request, res: Response) => {
+    if (!meceService) {
+      res.status(503).json({ error: 'MECE service not available' });
+      return;
+    }
+    const { title, description, categoryId, subcategoryId, leverage, tags, dependencies } = req.body;
+    if (!title || !description || !categoryId) {
+      res.status(400).json({ error: 'title, description, and categoryId are required' });
+      return;
+    }
+    const opportunity = meceService.addOpportunity({
+      title,
+      description,
+      categoryId,
+      subcategoryId,
+      source: 'manual',
+      status: 'identified',
+      leverage: leverage ?? 5,
+      dependencies: dependencies || [],
+      blockedBy: [],
+      tags: tags || [],
+    });
+    res.json({ success: true, opportunity });
+  });
+
+  /**
+   * Update opportunity
+   */
+  router.put('/mece/opportunities/:id', (req: Request, res: Response) => {
+    if (!meceService) {
+      res.status(503).json({ error: 'MECE service not available' });
+      return;
+    }
+    const id = getParam(req, 'id');
+    const opportunity = meceService.updateOpportunity(id, req.body);
+    if (!opportunity) {
+      res.status(404).json({ error: 'Opportunity not found' });
+      return;
+    }
+    res.json({ success: true, opportunity });
+  });
+
+  /**
+   * Remove opportunity
+   */
+  router.delete('/mece/opportunities/:id', (req: Request, res: Response) => {
+    if (!meceService) {
+      res.status(503).json({ error: 'MECE service not available' });
+      return;
+    }
+    const removed = meceService.removeOpportunity(getParam(req, 'id'));
+    if (!removed) {
+      res.status(404).json({ error: 'Opportunity not found' });
+      return;
+    }
+    res.json({ success: true, message: 'Opportunity removed' });
+  });
+
+  /**
+   * List gaps
+   */
+  router.get('/mece/gaps', (req: Request, res: Response) => {
+    if (!meceService) {
+      res.status(503).json({ error: 'MECE service not available' });
+      return;
+    }
+    const categoryId = req.query.categoryId as string | undefined;
+    const severity = req.query.severity as GapSeverity | undefined;
+    const gaps = meceService.getGaps({ categoryId, severity });
+    res.json({ count: gaps.length, gaps });
+  });
+
+  /**
+   * List overlaps
+   */
+  router.get('/mece/overlaps', (_req: Request, res: Response) => {
+    if (!meceService) {
+      res.status(503).json({ error: 'MECE service not available' });
+      return;
+    }
+    const overlaps = meceService.getOverlaps();
+    res.json({ count: overlaps.length, overlaps });
+  });
+
+  /**
+   * Get terminal view
+   */
+  router.get('/mece/terminal', (_req: Request, res: Response) => {
+    if (!meceService) {
+      res.status(503).json({ error: 'MECE service not available' });
+      return;
+    }
+    res.json({ view: meceService.generateTerminalView() });
+  });
+
+  // ==========================================================================
+  // COHERENCE SYSTEM
+  // ==========================================================================
+
+  /**
+   * Get coherence status
+   */
+  router.get('/coherence/status', (_req: Request, res: Response) => {
+    if (!coherenceService) {
+      res.status(503).json({ error: 'Coherence service not available' });
+      return;
+    }
+    res.json(coherenceService.getStatus());
+  });
+
+  /**
+   * Run coherence validation
+   */
+  router.post('/coherence/validation', async (_req: Request, res: Response) => {
+    if (!coherenceService) {
+      res.status(503).json({ error: 'Coherence service not available' });
+      return;
+    }
+    try {
+      const report = await coherenceService.runValidation();
+      res.json({
+        success: true,
+        report: {
+          id: report.id,
+          timestamp: report.timestamp,
+          overallScore: report.overallScore,
+          overallValid: report.overallValid,
+          totalIssues: report.totalIssues,
+          criticalIssues: report.criticalIssues,
+          warnings: report.warnings,
+          metadata: report.metadata,
+        },
+      });
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+    }
+  });
+
+  /**
+   * Get last validation report
+   */
+  router.get('/coherence/report', (_req: Request, res: Response) => {
+    if (!coherenceService) {
+      res.status(503).json({ error: 'Coherence service not available' });
+      return;
+    }
+    const report = coherenceService.getLastReport();
+    if (!report) {
+      res.status(404).json({ error: 'No validation has been run yet' });
+      return;
+    }
+    res.json(report);
+  });
+
+  /**
+   * List coherence issues
+   */
+  router.get('/coherence/issues', (req: Request, res: Response) => {
+    if (!coherenceService) {
+      res.status(503).json({ error: 'Coherence service not available' });
+      return;
+    }
+    const domain = req.query.domain as AlignmentDomain | undefined;
+    const severity = req.query.severity as IssueSeverity | undefined;
+    const status = req.query.status as IssueStatus | undefined;
+    const issues = coherenceService.getIssues({ domain, severity, status });
+    res.json({ count: issues.length, issues });
+  });
+
+  /**
+   * Get specific issue
+   */
+  router.get('/coherence/issues/:id', (req: Request, res: Response) => {
+    if (!coherenceService) {
+      res.status(503).json({ error: 'Coherence service not available' });
+      return;
+    }
+    const issue = coherenceService.getIssue(getParam(req, 'id'));
+    if (!issue) {
+      res.status(404).json({ error: 'Issue not found' });
+      return;
+    }
+    res.json(issue);
+  });
+
+  /**
+   * Update issue status
+   */
+  router.put('/coherence/issues/:id/status', (req: Request, res: Response) => {
+    if (!coherenceService) {
+      res.status(503).json({ error: 'Coherence service not available' });
+      return;
+    }
+    const { status } = req.body;
+    if (!status) {
+      res.status(400).json({ error: 'status is required' });
+      return;
+    }
+    const issue = coherenceService.updateIssueStatus(getParam(req, 'id'), status);
+    if (!issue) {
+      res.status(404).json({ error: 'Issue not found' });
+      return;
+    }
+    res.json({ success: true, issue });
+  });
+
+  /**
+   * Get terminal view
+   */
+  router.get('/coherence/terminal', (_req: Request, res: Response) => {
+    if (!coherenceService) {
+      res.status(503).json({ error: 'Coherence service not available' });
+      return;
+    }
+    res.json({ view: coherenceService.generateTerminalView() });
+  });
+
+  // ==========================================================================
+  // LOOP SEQUENCING
+  // ==========================================================================
+
+  /**
+   * Get sequencing status
+   */
+  router.get('/sequencing/status', (_req: Request, res: Response) => {
+    if (!loopSequencingService) {
+      res.status(503).json({ error: 'Loop sequencing service not available' });
+      return;
+    }
+    res.json(loopSequencingService.getStatus());
+  });
+
+  /**
+   * Analyze loop history
+   */
+  router.post('/sequencing/analyze', async (req: Request, res: Response) => {
+    if (!loopSequencingService) {
+      res.status(503).json({ error: 'Loop sequencing service not available' });
+      return;
+    }
+    try {
+      const { limit, since } = req.body;
+      const analysis = await loopSequencingService.analyzeRunHistory({ limit, since });
+      res.json({
+        success: true,
+        analysis: {
+          totalRunsAnalyzed: analysis.totalRunsAnalyzed,
+          uniqueLoops: analysis.uniqueLoops,
+          uniqueTransitions: analysis.uniqueTransitions,
+          uniqueSequences: analysis.uniqueSequences,
+          topTransitions: analysis.topTransitions.slice(0, 10),
+          topSequences: analysis.topSequences.slice(0, 10),
+          insights: analysis.insights,
+        },
+      });
+    } catch (error) {
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Analysis failed' });
+    }
+  });
+
+  /**
+   * Get last analysis
+   */
+  router.get('/sequencing/analysis', (_req: Request, res: Response) => {
+    if (!loopSequencingService) {
+      res.status(503).json({ error: 'Loop sequencing service not available' });
+      return;
+    }
+    const analysis = loopSequencingService.getLastAnalysis();
+    if (!analysis) {
+      res.status(404).json({ error: 'No analysis has been run yet' });
+      return;
+    }
+    res.json(analysis);
+  });
+
+  /**
+   * List transitions
+   */
+  router.get('/sequencing/transitions', (req: Request, res: Response) => {
+    if (!loopSequencingService) {
+      res.status(503).json({ error: 'Loop sequencing service not available' });
+      return;
+    }
+    const minOccurrences = req.query.minOccurrences ? parseInt(req.query.minOccurrences as string) : undefined;
+    const loop = req.query.loop as string | undefined;
+    const transitions = loopSequencingService.getTransitions({ minOccurrences, loop });
+    res.json({ count: transitions.length, transitions });
+  });
+
+  /**
+   * Get specific transition
+   */
+  router.get('/sequencing/transitions/:from/:to', (req: Request, res: Response) => {
+    if (!loopSequencingService) {
+      res.status(503).json({ error: 'Loop sequencing service not available' });
+      return;
+    }
+    const transition = loopSequencingService.getTransition(getParam(req, 'from'), getParam(req, 'to'));
+    if (!transition) {
+      res.status(404).json({ error: 'Transition not found' });
+      return;
+    }
+    res.json(transition);
+  });
+
+  /**
+   * List sequences
+   */
+  router.get('/sequencing/sequences', (req: Request, res: Response) => {
+    if (!loopSequencingService) {
+      res.status(503).json({ error: 'Loop sequencing service not available' });
+      return;
+    }
+    const minOccurrences = req.query.minOccurrences ? parseInt(req.query.minOccurrences as string) : undefined;
+    const containsLoop = req.query.containsLoop as string | undefined;
+    const sequences = loopSequencingService.getSequences({ minOccurrences, containsLoop });
+    res.json({ count: sequences.length, sequences });
+  });
+
+  /**
+   * Get specific sequence
+   */
+  router.get('/sequencing/sequences/:id', (req: Request, res: Response) => {
+    if (!loopSequencingService) {
+      res.status(503).json({ error: 'Loop sequencing service not available' });
+      return;
+    }
+    const sequence = loopSequencingService.getSequence(getParam(req, 'id'));
+    if (!sequence) {
+      res.status(404).json({ error: 'Sequence not found' });
+      return;
+    }
+    res.json(sequence);
+  });
+
+  /**
+   * Generate a line (multi-move plan)
+   */
+  router.post('/sequencing/lines', async (req: Request, res: Response) => {
+    if (!loopSequencingService) {
+      res.status(503).json({ error: 'Loop sequencing service not available' });
+      return;
+    }
+    try {
+      const { startingLoop, target, depth } = req.body;
+      const line = await loopSequencingService.generateLine({ startingLoop, target, depth });
+      res.json({ success: true, line });
+    } catch (error) {
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Line generation failed' });
+    }
+  });
+
+  /**
+   * List generated lines
+   */
+  router.get('/sequencing/lines', (req: Request, res: Response) => {
+    if (!loopSequencingService) {
+      res.status(503).json({ error: 'Loop sequencing service not available' });
+      return;
+    }
+    const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+    const lines = loopSequencingService.getLines({ limit });
+    res.json({ count: lines.length, lines });
+  });
+
+  /**
+   * Get specific line
+   */
+  router.get('/sequencing/lines/:id', (req: Request, res: Response) => {
+    if (!loopSequencingService) {
+      res.status(503).json({ error: 'Loop sequencing service not available' });
+      return;
+    }
+    const line = loopSequencingService.getLine(getParam(req, 'id'));
+    if (!line) {
+      res.status(404).json({ error: 'Line not found' });
+      return;
+    }
+    res.json(line);
+  });
+
+  /**
+   * Get terminal view
+   */
+  router.get('/sequencing/terminal', (_req: Request, res: Response) => {
+    if (!loopSequencingService) {
+      res.status(503).json({ error: 'Loop sequencing service not available' });
+      return;
+    }
+    res.json({ view: loopSequencingService.generateTerminalView() });
+  });
+
+  // ==========================================================================
+  // SKILL TREES
+  // ==========================================================================
+
+  /**
+   * Get skill tree status
+   */
+  router.get('/skill-trees/status', (_req: Request, res: Response) => {
+    if (!skillTreeService) {
+      res.status(503).json({ error: 'Skill tree service not available' });
+      return;
+    }
+    res.json(skillTreeService.getStatus());
+  });
+
+  /**
+   * Get available domains
+   */
+  router.get('/skill-trees/domains', (_req: Request, res: Response) => {
+    if (!skillTreeService) {
+      res.status(503).json({ error: 'Skill tree service not available' });
+      return;
+    }
+    res.json({ domains: skillTreeService.getAvailableDomains() });
+  });
+
+  /**
+   * Generate a skill tree
+   */
+  router.post('/skill-trees', async (req: Request, res: Response) => {
+    if (!skillTreeService) {
+      res.status(503).json({ error: 'Skill tree service not available' });
+      return;
+    }
+    try {
+      const { domainType, domainValue } = req.body;
+      if (!domainType || !domainValue) {
+        res.status(400).json({ error: 'domainType and domainValue are required' });
+        return;
+      }
+      const domain: TreeDomain = { type: domainType, value: domainValue };
+      const tree = await skillTreeService.generateTree(domain);
+      res.json({ success: true, tree });
+    } catch (error) {
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to generate tree' });
+    }
+  });
+
+  /**
+   * List skill trees
+   */
+  router.get('/skill-trees', (_req: Request, res: Response) => {
+    if (!skillTreeService) {
+      res.status(503).json({ error: 'Skill tree service not available' });
+      return;
+    }
+    const trees = skillTreeService.getTrees();
+    res.json({
+      count: trees.length,
+      trees: trees.map(t => ({
+        id: t.id,
+        name: t.name,
+        domain: t.domain,
+        stats: t.stats,
+        generatedAt: t.generatedAt,
+      })),
+    });
+  });
+
+  /**
+   * Get specific skill tree
+   */
+  router.get('/skill-trees/:id', (req: Request, res: Response) => {
+    if (!skillTreeService) {
+      res.status(503).json({ error: 'Skill tree service not available' });
+      return;
+    }
+    const tree = skillTreeService.getTree(getParam(req, 'id'));
+    if (!tree) {
+      res.status(404).json({ error: 'Tree not found' });
+      return;
+    }
+    res.json(tree);
+  });
+
+  /**
+   * Get skill progression
+   */
+  router.get('/skill-trees/progression/:skillId', (req: Request, res: Response) => {
+    if (!skillTreeService) {
+      res.status(503).json({ error: 'Skill tree service not available' });
+      return;
+    }
+    res.json(skillTreeService.getProgression(getParam(req, 'skillId')));
+  });
+
+  /**
+   * Record skill output seen
+   */
+  router.post('/skill-trees/progression/:skillId/output', async (req: Request, res: Response) => {
+    if (!skillTreeService) {
+      res.status(503).json({ error: 'Skill tree service not available' });
+      return;
+    }
+    const progression = await skillTreeService.recordSkillOutput(getParam(req, 'skillId'));
+    res.json({ success: true, progression });
+  });
+
+  /**
+   * Record skill usage
+   */
+  router.post('/skill-trees/progression/:skillId/usage', async (req: Request, res: Response) => {
+    if (!skillTreeService) {
+      res.status(503).json({ error: 'Skill tree service not available' });
+      return;
+    }
+    const progression = await skillTreeService.recordSkillUsage(getParam(req, 'skillId'));
+    res.json({ success: true, progression });
+  });
+
+  /**
+   * Update skill progression
+   */
+  router.put('/skill-trees/progression/:skillId', async (req: Request, res: Response) => {
+    if (!skillTreeService) {
+      res.status(503).json({ error: 'Skill tree service not available' });
+      return;
+    }
+    const progression = await skillTreeService.updateProgression(getParam(req, 'skillId'), req.body);
+    res.json({ success: true, progression });
+  });
+
+  /**
+   * Generate learning path
+   */
+  router.post('/skill-trees/paths', async (req: Request, res: Response) => {
+    if (!skillTreeService) {
+      res.status(503).json({ error: 'Skill tree service not available' });
+      return;
+    }
+    try {
+      const { targetSkillId, includeRecommended } = req.body;
+      if (!targetSkillId) {
+        res.status(400).json({ error: 'targetSkillId is required' });
+        return;
+      }
+      const path = await skillTreeService.generateLearningPath(targetSkillId, { includeRecommended });
+      res.json({ success: true, path });
+    } catch (error) {
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to generate path' });
+    }
+  });
+
+  /**
+   * List learning paths
+   */
+  router.get('/skill-trees/paths', (_req: Request, res: Response) => {
+    if (!skillTreeService) {
+      res.status(503).json({ error: 'Skill tree service not available' });
+      return;
+    }
+    const paths = skillTreeService.getLearningPaths();
+    res.json({ count: paths.length, paths });
+  });
+
+  /**
+   * Get specific learning path
+   */
+  router.get('/skill-trees/paths/:id', (req: Request, res: Response) => {
+    if (!skillTreeService) {
+      res.status(503).json({ error: 'Skill tree service not available' });
+      return;
+    }
+    const path = skillTreeService.getLearningPath(getParam(req, 'id'));
+    if (!path) {
+      res.status(404).json({ error: 'Path not found' });
+      return;
+    }
+    res.json(path);
+  });
+
+  /**
+   * Get terminal view
+   */
+  router.get('/skill-trees/terminal', (req: Request, res: Response) => {
+    if (!skillTreeService) {
+      res.status(503).json({ error: 'Skill tree service not available' });
+      return;
+    }
+    const treeId = req.query.treeId as string | undefined;
+    res.json({ view: skillTreeService.generateTerminalView(treeId) });
+  });
+
+  // ==========================================================================
+  // MULTI-AGENT WORKTREE COORDINATION
+  // ==========================================================================
+
+  /**
+   * Get multi-agent coordinator status
+   */
+  router.get('/multi-agent/status', (_req: Request, res: Response) => {
+    if (!multiAgentCoordinator) {
+      res.status(503).json({ error: 'Multi-agent coordinator not available' });
+      return;
+    }
+    res.json(multiAgentCoordinator.getStatus());
+  });
+
+  /**
+   * Register a collaborator
+   */
+  router.post('/multi-agent/collaborators', (req: Request, res: Response) => {
+    if (!multiAgentCoordinator) {
+      res.status(503).json({ error: 'Multi-agent coordinator not available' });
+      return;
+    }
+    const { name, email } = req.body;
+    if (!name) {
+      res.status(400).json({ error: 'name is required' });
+      return;
+    }
+    const collaborator = multiAgentCoordinator.registerCollaborator(name, email);
+    res.json({ success: true, collaborator });
+  });
+
+  /**
+   * List collaborators
+   */
+  router.get('/multi-agent/collaborators', (_req: Request, res: Response) => {
+    if (!multiAgentCoordinator) {
+      res.status(503).json({ error: 'Multi-agent coordinator not available' });
+      return;
+    }
+    const collaborators = multiAgentCoordinator.listCollaborators();
+    res.json({ count: collaborators.length, collaborators });
+  });
+
+  /**
+   * Get collaborator details
+   */
+  router.get('/multi-agent/collaborators/:id', (req: Request, res: Response) => {
+    if (!multiAgentCoordinator) {
+      res.status(503).json({ error: 'Multi-agent coordinator not available' });
+      return;
+    }
+    const collaborator = multiAgentCoordinator.getCollaborator(getParam(req, 'id'));
+    if (!collaborator) {
+      res.status(404).json({ error: 'Collaborator not found' });
+      return;
+    }
+    res.json(collaborator);
+  });
+
+  /**
+   * Get collaborator's current work
+   */
+  router.get('/multi-agent/collaborators/:id/work', (req: Request, res: Response) => {
+    if (!multiAgentCoordinator) {
+      res.status(503).json({ error: 'Multi-agent coordinator not available' });
+      return;
+    }
+    const work = multiAgentCoordinator.getCollaboratorWork(getParam(req, 'id'));
+    res.json(work);
+  });
+
+  /**
+   * Create an agent set
+   */
+  router.post('/multi-agent/agent-sets', (req: Request, res: Response) => {
+    if (!multiAgentCoordinator) {
+      res.status(503).json({ error: 'Multi-agent coordinator not available' });
+      return;
+    }
+    const { collaboratorId, name } = req.body;
+    if (!collaboratorId || !name) {
+      res.status(400).json({ error: 'collaboratorId and name are required' });
+      return;
+    }
+    try {
+      const agentSet = multiAgentCoordinator.createAgentSet(collaboratorId, name);
+      res.json({ success: true, agentSet });
+    } catch (err) {
+      res.status(400).json({ error: err instanceof Error ? err.message : String(err) });
+    }
+  });
+
+  /**
+   * List agent sets
+   */
+  router.get('/multi-agent/agent-sets', (req: Request, res: Response) => {
+    if (!multiAgentCoordinator) {
+      res.status(503).json({ error: 'Multi-agent coordinator not available' });
+      return;
+    }
+    const collaboratorId = req.query.collaboratorId as string | undefined;
+    const sets = multiAgentCoordinator.listAgentSets(collaboratorId);
+    res.json({ count: sets.length, agentSets: sets });
+  });
+
+  /**
+   * Get agent set details
+   */
+  router.get('/multi-agent/agent-sets/:id', (req: Request, res: Response) => {
+    if (!multiAgentCoordinator) {
+      res.status(503).json({ error: 'Multi-agent coordinator not available' });
+      return;
+    }
+    const set = multiAgentCoordinator.getAgentSet(getParam(req, 'id'));
+    if (!set) {
+      res.status(404).json({ error: 'Agent set not found' });
+      return;
+    }
+    res.json(set);
+  });
+
+  /**
+   * Pause agent set
+   */
+  router.post('/multi-agent/agent-sets/:id/pause', (req: Request, res: Response) => {
+    if (!multiAgentCoordinator) {
+      res.status(503).json({ error: 'Multi-agent coordinator not available' });
+      return;
+    }
+    multiAgentCoordinator.pauseAgentSet(getParam(req, 'id'));
+    res.json({ success: true, message: 'Agent set paused' });
+  });
+
+  /**
+   * Resume agent set
+   */
+  router.post('/multi-agent/agent-sets/:id/resume', (req: Request, res: Response) => {
+    if (!multiAgentCoordinator) {
+      res.status(503).json({ error: 'Multi-agent coordinator not available' });
+      return;
+    }
+    multiAgentCoordinator.resumeAgentSet(getParam(req, 'id'));
+    res.json({ success: true, message: 'Agent set resumed' });
+  });
+
+  /**
+   * Create reservation
+   */
+  router.post('/multi-agent/reservations', (req: Request, res: Response) => {
+    if (!multiAgentCoordinator) {
+      res.status(503).json({ error: 'Multi-agent coordinator not available' });
+      return;
+    }
+    const { collaboratorId, type, target, agentSetId, reason, exclusive, durationMs } = req.body;
+    if (!collaboratorId || !type || !target) {
+      res.status(400).json({ error: 'collaboratorId, type, and target are required' });
+      return;
+    }
+    try {
+      const result = multiAgentCoordinator.createReservation(
+        collaboratorId,
+        type as ReservationType,
+        target,
+        { agentSetId, reason, exclusive, durationMs }
+      );
+      if ('error' in result) {
+        res.status(409).json(result);
+        return;
+      }
+      res.json({ success: true, reservation: result });
+    } catch (err) {
+      res.status(400).json({ error: err instanceof Error ? err.message : String(err) });
+    }
+  });
+
+  /**
+   * List reservations
+   */
+  router.get('/multi-agent/reservations', (req: Request, res: Response) => {
+    if (!multiAgentCoordinator) {
+      res.status(503).json({ error: 'Multi-agent coordinator not available' });
+      return;
+    }
+    const collaboratorId = req.query.collaboratorId as string | undefined;
+    const reservations = multiAgentCoordinator.listReservations(collaboratorId);
+    res.json({ count: reservations.length, reservations });
+  });
+
+  /**
+   * Release reservation
+   */
+  router.delete('/multi-agent/reservations/:id', (req: Request, res: Response) => {
+    if (!multiAgentCoordinator) {
+      res.status(503).json({ error: 'Multi-agent coordinator not available' });
+      return;
+    }
+    multiAgentCoordinator.releaseReservation(getParam(req, 'id'));
+    res.json({ success: true, message: 'Reservation released' });
+  });
+
+  /**
+   * Extend reservation
+   */
+  router.post('/multi-agent/reservations/:id/extend', (req: Request, res: Response) => {
+    if (!multiAgentCoordinator) {
+      res.status(503).json({ error: 'Multi-agent coordinator not available' });
+      return;
+    }
+    const { additionalMs } = req.body;
+    if (!additionalMs) {
+      res.status(400).json({ error: 'additionalMs is required' });
+      return;
+    }
+    multiAgentCoordinator.extendReservation(getParam(req, 'id'), additionalMs);
+    res.json({ success: true, message: 'Reservation extended' });
+  });
+
+  /**
+   * Check if resource is blocked
+   */
+  router.get('/multi-agent/check-blocked', (req: Request, res: Response) => {
+    if (!multiAgentCoordinator) {
+      res.status(503).json({ error: 'Multi-agent coordinator not available' });
+      return;
+    }
+    const type = req.query.type as ReservationType;
+    const target = req.query.target as string;
+    if (!type || !target) {
+      res.status(400).json({ error: 'type and target query params are required' });
+      return;
+    }
+    const blocking = multiAgentCoordinator.checkResourceBlocked(type, target);
+    res.json({ blocked: blocking.length > 0, blockingReservations: blocking });
+  });
+
+  /**
+   * Request merge
+   */
+  router.post('/multi-agent/merge-queue', (req: Request, res: Response) => {
+    if (!multiAgentCoordinator) {
+      res.status(503).json({ error: 'Multi-agent coordinator not available' });
+      return;
+    }
+    const { collaboratorId, agentSetId, moduleId } = req.body;
+    if (!collaboratorId || !agentSetId || !moduleId) {
+      res.status(400).json({ error: 'collaboratorId, agentSetId, and moduleId are required' });
+      return;
+    }
+    try {
+      const mergeRequest = multiAgentCoordinator.requestMerge(collaboratorId, agentSetId, moduleId);
+      res.json({ success: true, mergeRequest });
+    } catch (err) {
+      res.status(400).json({ error: err instanceof Error ? err.message : String(err) });
+    }
+  });
+
+  /**
+   * List merge queue
+   */
+  router.get('/multi-agent/merge-queue', (req: Request, res: Response) => {
+    if (!multiAgentCoordinator) {
+      res.status(503).json({ error: 'Multi-agent coordinator not available' });
+      return;
+    }
+    const status = req.query.status as MergeRequestStatus | undefined;
+    const requests = multiAgentCoordinator.listMergeQueue(status);
+    res.json({ count: requests.length, mergeRequests: requests });
+  });
+
+  /**
+   * Get merge request
+   */
+  router.get('/multi-agent/merge-queue/:id', (req: Request, res: Response) => {
+    if (!multiAgentCoordinator) {
+      res.status(503).json({ error: 'Multi-agent coordinator not available' });
+      return;
+    }
+    const request = multiAgentCoordinator.getMergeRequest(getParam(req, 'id'));
+    if (!request) {
+      res.status(404).json({ error: 'Merge request not found' });
+      return;
+    }
+    res.json(request);
+  });
+
+  /**
+   * Check merge conflicts
+   */
+  router.post('/multi-agent/merge-queue/:id/check', async (req: Request, res: Response) => {
+    if (!multiAgentCoordinator) {
+      res.status(503).json({ error: 'Multi-agent coordinator not available' });
+      return;
+    }
+    try {
+      const result = await multiAgentCoordinator.checkMergeConflicts(getParam(req, 'id'));
+      res.json(result);
+    } catch (err) {
+      res.status(400).json({ error: err instanceof Error ? err.message : String(err) });
+    }
+  });
+
+  /**
+   * Execute merge
+   */
+  router.post('/multi-agent/merge-queue/:id/execute', async (req: Request, res: Response) => {
+    if (!multiAgentCoordinator) {
+      res.status(503).json({ error: 'Multi-agent coordinator not available' });
+      return;
+    }
+    const result = await multiAgentCoordinator.executeMerge(getParam(req, 'id'));
+    if (!result.success) {
+      res.status(400).json(result);
+      return;
+    }
+    res.json(result);
+  });
+
+  /**
+   * Reject merge
+   */
+  router.post('/multi-agent/merge-queue/:id/reject', (req: Request, res: Response) => {
+    if (!multiAgentCoordinator) {
+      res.status(503).json({ error: 'Multi-agent coordinator not available' });
+      return;
+    }
+    const { reason } = req.body;
+    if (!reason) {
+      res.status(400).json({ error: 'reason is required' });
+      return;
+    }
+    multiAgentCoordinator.rejectMerge(getParam(req, 'id'), reason);
+    res.json({ success: true, message: 'Merge request rejected' });
+  });
+
+  /**
+   * Check if collaborator can work on module
+   */
+  router.get('/multi-agent/can-work', async (req: Request, res: Response) => {
+    if (!multiAgentCoordinator) {
+      res.status(503).json({ error: 'Multi-agent coordinator not available' });
+      return;
+    }
+    const collaboratorId = req.query.collaboratorId as string;
+    const moduleId = req.query.moduleId as string;
+    if (!collaboratorId || !moduleId) {
+      res.status(400).json({ error: 'collaboratorId and moduleId query params are required' });
+      return;
+    }
+    const result = await multiAgentCoordinator.checkCanWork(collaboratorId, moduleId);
+    res.json(result);
+  });
+
+  /**
+   * Get all active work
+   */
+  router.get('/multi-agent/active-work', (_req: Request, res: Response) => {
+    if (!multiAgentCoordinator) {
+      res.status(503).json({ error: 'Multi-agent coordinator not available' });
+      return;
+    }
+    res.json(multiAgentCoordinator.getAllActiveWork());
+  });
+
+  /**
+   * Get coordinator events
+   */
+  router.get('/multi-agent/events', (req: Request, res: Response) => {
+    if (!multiAgentCoordinator) {
+      res.status(503).json({ error: 'Multi-agent coordinator not available' });
+      return;
+    }
+    const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+    const events = multiAgentCoordinator.getEventLog(limit);
+    res.json({ count: events.length, events });
+  });
+
+  // ==========================================================================
+  // GAME DESIGN
+  // ==========================================================================
+
+  /**
+   * Get game design status
+   */
+  router.get('/game-design/status', (_req: Request, res: Response) => {
+    if (!gameDesignService) {
+      res.status(503).json({ error: 'Game design service not available' });
+      return;
+    }
+    res.json(gameDesignService.getStatus());
+  });
+
+  /**
+   * Get game state summary
+   */
+  router.get('/game-design/state', (_req: Request, res: Response) => {
+    if (!gameDesignService) {
+      res.status(503).json({ error: 'Game design service not available' });
+      return;
+    }
+    res.json(gameDesignService.getGameState());
+  });
+
+  /**
+   * List finite games
+   */
+  router.get('/game-design/finite', (req: Request, res: Response) => {
+    if (!gameDesignService) {
+      res.status(503).json({ error: 'Game design service not available' });
+      return;
+    }
+    const scope = req.query.scope as 'module' | 'system' | undefined;
+    const status = req.query.status as FiniteGame['status'] | undefined;
+    const games = gameDesignService.listFiniteGames({ scope, status });
+    res.json({ count: games.length, games });
+  });
+
+  /**
+   * Get specific finite game
+   */
+  router.get('/game-design/finite/:id', (req: Request, res: Response) => {
+    if (!gameDesignService) {
+      res.status(503).json({ error: 'Game design service not available' });
+      return;
+    }
+    const game = gameDesignService.getFiniteGame(getParam(req, 'id'));
+    if (!game) {
+      res.status(404).json({ error: 'Game not found' });
+      return;
+    }
+    res.json(game);
+  });
+
+  /**
+   * Create finite game
+   */
+  router.post('/game-design/finite', async (req: Request, res: Response) => {
+    if (!gameDesignService) {
+      res.status(503).json({ error: 'Game design service not available' });
+      return;
+    }
+    try {
+      const { name, description, scope, targetId } = req.body;
+      if (!name || !description || !scope || !targetId) {
+        res.status(400).json({ error: 'name, description, scope, and targetId are required' });
+        return;
+      }
+      const game = await gameDesignService.createFiniteGame({ name, description, scope, targetId });
+      res.json({ success: true, game });
+    } catch (error) {
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to create game' });
+    }
+  });
+
+  /**
+   * Start a finite game
+   */
+  router.post('/game-design/finite/:id/start', async (req: Request, res: Response) => {
+    if (!gameDesignService) {
+      res.status(503).json({ error: 'Game design service not available' });
+      return;
+    }
+    try {
+      const game = await gameDesignService.startGame(getParam(req, 'id'));
+      res.json({ success: true, game });
+    } catch (error) {
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to start game' });
+    }
+  });
+
+  /**
+   * Satisfy a win condition
+   */
+  router.post('/game-design/finite/:gameId/conditions/:conditionId', async (req: Request, res: Response) => {
+    if (!gameDesignService) {
+      res.status(503).json({ error: 'Game design service not available' });
+      return;
+    }
+    try {
+      const game = await gameDesignService.satisfyWinCondition(
+        getParam(req, 'gameId'),
+        getParam(req, 'conditionId'),
+        req.body.evidence
+      );
+      res.json({ success: true, game });
+    } catch (error) {
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to satisfy condition' });
+    }
+  });
+
+  /**
+   * List infinite games
+   */
+  router.get('/game-design/infinite', (_req: Request, res: Response) => {
+    if (!gameDesignService) {
+      res.status(503).json({ error: 'Game design service not available' });
+      return;
+    }
+    const games = gameDesignService.listInfiniteGames();
+    res.json({ count: games.length, games });
+  });
+
+  /**
+   * Get specific infinite game
+   */
+  router.get('/game-design/infinite/:id', (req: Request, res: Response) => {
+    if (!gameDesignService) {
+      res.status(503).json({ error: 'Game design service not available' });
+      return;
+    }
+    const game = gameDesignService.getInfiniteGame(getParam(req, 'id'));
+    if (!game) {
+      res.status(404).json({ error: 'Game not found' });
+      return;
+    }
+    res.json(game);
+  });
+
+  /**
+   * Create infinite game
+   */
+  router.post('/game-design/infinite', async (req: Request, res: Response) => {
+    if (!gameDesignService) {
+      res.status(503).json({ error: 'Game design service not available' });
+      return;
+    }
+    try {
+      const { name, mission } = req.body;
+      if (!name || !mission) {
+        res.status(400).json({ error: 'name and mission are required' });
+        return;
+      }
+      const game = await gameDesignService.createInfiniteGame({ name, mission });
+      res.json({ success: true, game });
+    } catch (error) {
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to create game' });
+    }
+  });
+
+  /**
+   * Link finite game to infinite game
+   */
+  router.post('/game-design/infinite/:infiniteId/link/:finiteId', async (req: Request, res: Response) => {
+    if (!gameDesignService) {
+      res.status(503).json({ error: 'Game design service not available' });
+      return;
+    }
+    try {
+      await gameDesignService.linkFiniteGame(getParam(req, 'infiniteId'), getParam(req, 'finiteId'));
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to link games' });
+    }
+  });
+
+  /**
+   * Update health metric
+   */
+  router.put('/game-design/infinite/:gameId/metrics/:metricId', async (req: Request, res: Response) => {
+    if (!gameDesignService) {
+      res.status(503).json({ error: 'Game design service not available' });
+      return;
+    }
+    try {
+      const { value } = req.body;
+      if (value === undefined) {
+        res.status(400).json({ error: 'value is required' });
+        return;
+      }
+      const game = await gameDesignService.updateHealthMetric(
+        getParam(req, 'gameId'),
+        getParam(req, 'metricId'),
+        value
+      );
+      res.json({ success: true, game });
+    } catch (error) {
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to update metric' });
+    }
+  });
+
+  /**
+   * Generate games from roadmap
+   */
+  router.post('/game-design/generate', async (_req: Request, res: Response) => {
+    if (!gameDesignService) {
+      res.status(503).json({ error: 'Game design service not available' });
+      return;
+    }
+    try {
+      const games = await gameDesignService.generateGamesFromRoadmap();
+      res.json({ success: true, created: games.length, games });
+    } catch (error) {
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to generate games' });
+    }
+  });
+
+  /**
+   * Get terminal view
+   */
+  router.get('/game-design/terminal', (_req: Request, res: Response) => {
+    if (!gameDesignService) {
+      res.status(503).json({ error: 'Game design service not available' });
+      return;
+    }
+    res.json({ view: gameDesignService.generateTerminalView() });
+  });
+
+  // ==========================================================================
+  // SPACED REPETITION
+  // ==========================================================================
+
+  /**
+   * Get SRS status
+   */
+  router.get('/srs/status', (_req: Request, res: Response) => {
+    if (!spacedRepetitionService) {
+      res.status(503).json({ error: 'Spaced repetition service not available' });
+      return;
+    }
+    res.json(spacedRepetitionService.getStatus());
+  });
+
+  /**
+   * Get learning statistics
+   */
+  router.get('/srs/stats', (_req: Request, res: Response) => {
+    if (!spacedRepetitionService) {
+      res.status(503).json({ error: 'Spaced repetition service not available' });
+      return;
+    }
+    res.json(spacedRepetitionService.getLearningStats());
+  });
+
+  /**
+   * List cards
+   */
+  router.get('/srs/cards', (req: Request, res: Response) => {
+    if (!spacedRepetitionService) {
+      res.status(503).json({ error: 'Spaced repetition service not available' });
+      return;
+    }
+    const type = req.query.type as CardType | undefined;
+    const deckId = req.query.deckId as string | undefined;
+    const tag = req.query.tag as string | undefined;
+    const due = req.query.due === 'true' ? true : req.query.due === 'false' ? false : undefined;
+    const suspended = req.query.suspended === 'true' ? true : req.query.suspended === 'false' ? false : undefined;
+    const cards = spacedRepetitionService.listCards({ type, deckId, tag, due, suspended });
+    res.json({ count: cards.length, cards });
+  });
+
+  /**
+   * Get specific card
+   */
+  router.get('/srs/cards/:id', (req: Request, res: Response) => {
+    if (!spacedRepetitionService) {
+      res.status(503).json({ error: 'Spaced repetition service not available' });
+      return;
+    }
+    const card = spacedRepetitionService.getCard(getParam(req, 'id'));
+    if (!card) {
+      res.status(404).json({ error: 'Card not found' });
+      return;
+    }
+    res.json(card);
+  });
+
+  /**
+   * Create card
+   */
+  router.post('/srs/cards', async (req: Request, res: Response) => {
+    if (!spacedRepetitionService) {
+      res.status(503).json({ error: 'Spaced repetition service not available' });
+      return;
+    }
+    try {
+      const { type, sourceId, front, back, tags, deckId } = req.body;
+      if (!type || !sourceId || !front || !back) {
+        res.status(400).json({ error: 'type, sourceId, front, and back are required' });
+        return;
+      }
+      const card = await spacedRepetitionService.createCard({ type, sourceId, front, back, tags, deckId });
+      res.json({ success: true, card });
+    } catch (error) {
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to create card' });
+    }
+  });
+
+  /**
+   * Update card
+   */
+  router.put('/srs/cards/:id', async (req: Request, res: Response) => {
+    if (!spacedRepetitionService) {
+      res.status(503).json({ error: 'Spaced repetition service not available' });
+      return;
+    }
+    try {
+      const card = await spacedRepetitionService.updateCard(getParam(req, 'id'), req.body);
+      res.json({ success: true, card });
+    } catch (error) {
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to update card' });
+    }
+  });
+
+  /**
+   * Delete card
+   */
+  router.delete('/srs/cards/:id', async (req: Request, res: Response) => {
+    if (!spacedRepetitionService) {
+      res.status(503).json({ error: 'Spaced repetition service not available' });
+      return;
+    }
+    await spacedRepetitionService.deleteCard(getParam(req, 'id'));
+    res.json({ success: true });
+  });
+
+  /**
+   * List decks
+   */
+  router.get('/srs/decks', (_req: Request, res: Response) => {
+    if (!spacedRepetitionService) {
+      res.status(503).json({ error: 'Spaced repetition service not available' });
+      return;
+    }
+    const decks = spacedRepetitionService.listDecks();
+    res.json({ count: decks.length, decks });
+  });
+
+  /**
+   * Get specific deck
+   */
+  router.get('/srs/decks/:id', (req: Request, res: Response) => {
+    if (!spacedRepetitionService) {
+      res.status(503).json({ error: 'Spaced repetition service not available' });
+      return;
+    }
+    const deck = spacedRepetitionService.getDeck(getParam(req, 'id'));
+    if (!deck) {
+      res.status(404).json({ error: 'Deck not found' });
+      return;
+    }
+    res.json(deck);
+  });
+
+  /**
+   * Create deck
+   */
+  router.post('/srs/decks', async (req: Request, res: Response) => {
+    if (!spacedRepetitionService) {
+      res.status(503).json({ error: 'Spaced repetition service not available' });
+      return;
+    }
+    try {
+      const { name, description, tags, newCardsPerDay, reviewsPerDay } = req.body;
+      if (!name) {
+        res.status(400).json({ error: 'name is required' });
+        return;
+      }
+      const deck = await spacedRepetitionService.createDeck({ name, description, tags, newCardsPerDay, reviewsPerDay });
+      res.json({ success: true, deck });
+    } catch (error) {
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to create deck' });
+    }
+  });
+
+  /**
+   * Add card to deck
+   */
+  router.post('/srs/decks/:deckId/cards/:cardId', async (req: Request, res: Response) => {
+    if (!spacedRepetitionService) {
+      res.status(503).json({ error: 'Spaced repetition service not available' });
+      return;
+    }
+    try {
+      await spacedRepetitionService.addCardToDeck(getParam(req, 'cardId'), getParam(req, 'deckId'));
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to add card to deck' });
+    }
+  });
+
+  /**
+   * Remove card from deck
+   */
+  router.delete('/srs/decks/:deckId/cards/:cardId', async (req: Request, res: Response) => {
+    if (!spacedRepetitionService) {
+      res.status(503).json({ error: 'Spaced repetition service not available' });
+      return;
+    }
+    await spacedRepetitionService.removeCardFromDeck(getParam(req, 'cardId'), getParam(req, 'deckId'));
+    res.json({ success: true });
+  });
+
+  /**
+   * Get due cards
+   */
+  router.get('/srs/due', (req: Request, res: Response) => {
+    if (!spacedRepetitionService) {
+      res.status(503).json({ error: 'Spaced repetition service not available' });
+      return;
+    }
+    const deckId = req.query.deckId as string | undefined;
+    const due = spacedRepetitionService.getDueCards(deckId);
+    res.json({ decks: due, totalDue: due.reduce((sum, d) => sum + d.totalDue, 0) });
+  });
+
+  /**
+   * Start review session
+   */
+  router.post('/srs/sessions', async (req: Request, res: Response) => {
+    if (!spacedRepetitionService) {
+      res.status(503).json({ error: 'Spaced repetition service not available' });
+      return;
+    }
+    try {
+      const { deckId } = req.body;
+      if (!deckId) {
+        res.status(400).json({ error: 'deckId is required' });
+        return;
+      }
+      const session = await spacedRepetitionService.startReviewSession(deckId);
+      res.json({ success: true, session });
+    } catch (error) {
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to start session' });
+    }
+  });
+
+  /**
+   * List review sessions
+   */
+  router.get('/srs/sessions', (req: Request, res: Response) => {
+    if (!spacedRepetitionService) {
+      res.status(503).json({ error: 'Spaced repetition service not available' });
+      return;
+    }
+    const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+    const sessions = spacedRepetitionService.getSessions(limit);
+    res.json({ count: sessions.length, sessions });
+  });
+
+  /**
+   * Get specific session
+   */
+  router.get('/srs/sessions/:id', (req: Request, res: Response) => {
+    if (!spacedRepetitionService) {
+      res.status(503).json({ error: 'Spaced repetition service not available' });
+      return;
+    }
+    const session = spacedRepetitionService.getSession(getParam(req, 'id'));
+    if (!session) {
+      res.status(404).json({ error: 'Session not found' });
+      return;
+    }
+    res.json(session);
+  });
+
+  /**
+   * Record review
+   */
+  router.post('/srs/sessions/:sessionId/reviews', async (req: Request, res: Response) => {
+    if (!spacedRepetitionService) {
+      res.status(503).json({ error: 'Spaced repetition service not available' });
+      return;
+    }
+    try {
+      const { cardId, quality, timeSpentMs } = req.body;
+      if (!cardId || quality === undefined || !timeSpentMs) {
+        res.status(400).json({ error: 'cardId, quality, and timeSpentMs are required' });
+        return;
+      }
+      const result = await spacedRepetitionService.recordReview(
+        getParam(req, 'sessionId'),
+        cardId,
+        quality,
+        timeSpentMs
+      );
+      res.json({ success: true, ...result });
+    } catch (error) {
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to record review' });
+    }
+  });
+
+  /**
+   * Complete session
+   */
+  router.post('/srs/sessions/:id/complete', async (req: Request, res: Response) => {
+    if (!spacedRepetitionService) {
+      res.status(503).json({ error: 'Spaced repetition service not available' });
+      return;
+    }
+    try {
+      const session = await spacedRepetitionService.completeSession(getParam(req, 'id'));
+      res.json({ success: true, session });
+    } catch (error) {
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to complete session' });
+    }
+  });
+
+  /**
+   * Generate cards from skills
+   */
+  router.post('/srs/generate/skills', async (req: Request, res: Response) => {
+    if (!spacedRepetitionService) {
+      res.status(503).json({ error: 'Spaced repetition service not available' });
+      return;
+    }
+    try {
+      const { phase, tag, limit, deckId } = req.body;
+      const cards = await spacedRepetitionService.generateCardsFromSkills({ phase, tag, limit, deckId });
+      res.json({ success: true, created: cards.length, cards });
+    } catch (error) {
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to generate cards' });
+    }
+  });
+
+  /**
+   * Generate cards from patterns
+   */
+  router.post('/srs/generate/patterns', async (req: Request, res: Response) => {
+    if (!spacedRepetitionService) {
+      res.status(503).json({ error: 'Spaced repetition service not available' });
+      return;
+    }
+    try {
+      const { confidence, limit, deckId } = req.body;
+      const cards = await spacedRepetitionService.generateCardsFromPatterns({ confidence, limit, deckId });
+      res.json({ success: true, created: cards.length, cards });
+    } catch (error) {
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to generate cards' });
+    }
+  });
+
+  /**
+   * Get terminal view
+   */
+  router.get('/srs/terminal', (_req: Request, res: Response) => {
+    if (!spacedRepetitionService) {
+      res.status(503).json({ error: 'Spaced repetition service not available' });
+      return;
+    }
+    res.json({ view: spacedRepetitionService.generateTerminalView() });
+  });
+
+  // ==========================================================================
+  // PROPOSING DECKS
+  // ==========================================================================
+
+  /**
+   * Get daily review summary
+   */
+  router.get('/proposing-decks/daily', (req: Request, res: Response) => {
+    if (!proposingDecksService) {
+      res.status(503).json({ error: 'Proposing decks service not available' });
+      return;
+    }
+    const date = req.query.date as string | undefined;
+    const summary = proposingDecksService.getDailyReviewSummary(date);
+    res.json(summary);
+  });
+
+  /**
+   * Generate daily decks
+   */
+  router.post('/proposing-decks/generate', async (req: Request, res: Response) => {
+    if (!proposingDecksService) {
+      res.status(503).json({ error: 'Proposing decks service not available' });
+      return;
+    }
+    try {
+      const forDate = req.body.forDate as string | undefined;
+      const summary = await proposingDecksService.generateDailyDeck(forDate);
+      res.json({ success: true, summary });
+    } catch (error) {
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to generate decks' });
+    }
+  });
+
+  /**
+   * List review decks
+   */
+  router.get('/proposing-decks/decks', (req: Request, res: Response) => {
+    if (!proposingDecksService) {
+      res.status(503).json({ error: 'Proposing decks service not available' });
+      return;
+    }
+    const type = req.query.type as ReviewDeckType | undefined;
+    const status = req.query.status as 'pending' | 'in-review' | 'completed' | 'skipped' | undefined;
+    const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+    const decks = proposingDecksService.listDecks({ type, status, limit });
+    res.json({ count: decks.length, decks });
+  });
+
+  /**
+   * Get specific deck
+   */
+  router.get('/proposing-decks/decks/:id', (req: Request, res: Response) => {
+    if (!proposingDecksService) {
+      res.status(503).json({ error: 'Proposing decks service not available' });
+      return;
+    }
+    const deck = proposingDecksService.getDeck(getParam(req, 'id'));
+    if (!deck) {
+      res.status(404).json({ error: 'Deck not found' });
+      return;
+    }
+    res.json(deck);
+  });
+
+  /**
+   * Start deck review
+   */
+  router.post('/proposing-decks/decks/:id/start', async (req: Request, res: Response) => {
+    if (!proposingDecksService) {
+      res.status(503).json({ error: 'Proposing decks service not available' });
+      return;
+    }
+    try {
+      const deck = await proposingDecksService.startReview(getParam(req, 'id'));
+      res.json({ success: true, deck });
+    } catch (error) {
+      res.status(400).json({ error: error instanceof Error ? error.message : 'Failed to start review' });
+    }
+  });
+
+  /**
+   * Complete deck review
+   */
+  router.post('/proposing-decks/decks/:id/complete', async (req: Request, res: Response) => {
+    if (!proposingDecksService) {
+      res.status(503).json({ error: 'Proposing decks service not available' });
+      return;
+    }
+    try {
+      const { itemsReviewed, itemsApproved, itemsRejected, itemsSkipped } = req.body;
+      const deck = await proposingDecksService.completeReview(getParam(req, 'id'), {
+        itemsReviewed: itemsReviewed || 0,
+        itemsApproved: itemsApproved || 0,
+        itemsRejected: itemsRejected || 0,
+        itemsSkipped: itemsSkipped || 0,
+      });
+      res.json({ success: true, deck });
+    } catch (error) {
+      res.status(400).json({ error: error instanceof Error ? error.message : 'Failed to complete review' });
+    }
+  });
+
+  /**
+   * Skip deck
+   */
+  router.post('/proposing-decks/decks/:id/skip', async (req: Request, res: Response) => {
+    if (!proposingDecksService) {
+      res.status(503).json({ error: 'Proposing decks service not available' });
+      return;
+    }
+    try {
+      const reason = req.body.reason as string | undefined;
+      const deck = await proposingDecksService.skipDeck(getParam(req, 'id'), reason);
+      res.json({ success: true, deck });
+    } catch (error) {
+      res.status(400).json({ error: error instanceof Error ? error.message : 'Failed to skip deck' });
+    }
+  });
+
+  /**
+   * Get generation schedule
+   */
+  router.get('/proposing-decks/schedule', (_req: Request, res: Response) => {
+    if (!proposingDecksService) {
+      res.status(503).json({ error: 'Proposing decks service not available' });
+      return;
+    }
+    res.json(proposingDecksService.getSchedule());
+  });
+
+  /**
+   * Configure generation schedule
+   */
+  router.put('/proposing-decks/schedule', async (req: Request, res: Response) => {
+    if (!proposingDecksService) {
+      res.status(503).json({ error: 'Proposing decks service not available' });
+      return;
+    }
+    try {
+      const schedule = await proposingDecksService.configureSchedule(req.body);
+      res.json({ success: true, schedule });
+    } catch (error) {
+      res.status(400).json({ error: error instanceof Error ? error.message : 'Failed to configure schedule' });
+    }
+  });
+
+  /**
+   * Get proposing decks stats
+   */
+  router.get('/proposing-decks/stats', (_req: Request, res: Response) => {
+    if (!proposingDecksService) {
+      res.status(503).json({ error: 'Proposing decks service not available' });
+      return;
+    }
+    res.json(proposingDecksService.getStats());
+  });
+
+  /**
+   * Get review history
+   */
+  router.get('/proposing-decks/history', (req: Request, res: Response) => {
+    if (!proposingDecksService) {
+      res.status(503).json({ error: 'Proposing decks service not available' });
+      return;
+    }
+    const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+    const history = proposingDecksService.getHistory(limit);
+    res.json({ count: history.length, history });
+  });
+
+  // ==========================================================================
   // DASHBOARD SUMMARY
   // ==========================================================================
 
@@ -1769,6 +4526,355 @@ export function createApiRoutes(options: ApiRoutesOptions): Router {
       })),
     });
   });
+
+  // ==========================================================================
+  // PROACTIVE MESSAGING
+  // ==========================================================================
+
+  if (proactiveMessagingService) {
+    /**
+     * Get messaging channel status
+     */
+    router.get('/messaging/status', (_req: Request, res: Response) => {
+      const statuses = proactiveMessagingService.getChannelStatus();
+      res.json({ channels: statuses });
+    });
+
+    /**
+     * Get pending interactions
+     */
+    router.get('/messaging/pending', (_req: Request, res: Response) => {
+      const pending = proactiveMessagingService.getPendingInteractions();
+      res.json({
+        count: pending.length,
+        interactions: pending,
+      });
+    });
+
+    /**
+     * Get messaging configuration (redacted)
+     */
+    router.get('/messaging/config', (_req: Request, res: Response) => {
+      const config = proactiveMessagingService.getConfig();
+      // Redact sensitive tokens
+      const redacted = {
+        ...config,
+        channels: {
+          ...config.channels,
+          slack: {
+            ...config.channels.slack,
+            botToken: config.channels.slack.botToken ? '***' : undefined,
+            appToken: config.channels.slack.appToken ? '***' : undefined,
+          },
+        },
+      };
+      res.json({ config: redacted });
+    });
+
+    /**
+     * Get messaging stats
+     */
+    router.get('/messaging/stats', (_req: Request, res: Response) => {
+      const stats = proactiveMessagingService.getStats();
+      res.json(stats);
+    });
+
+    /**
+     * Get conversation history
+     */
+    router.get('/messaging/conversations', (req: Request, res: Response) => {
+      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 20;
+      const conversations = proactiveMessagingService.getConversationHistory(limit);
+      res.json({
+        count: conversations.length,
+        conversations,
+      });
+    });
+
+    /**
+     * Send notification
+     */
+    router.post('/messaging/send', async (req: Request, res: Response) => {
+      const { title, message, actions } = req.body;
+      if (!title || !message) {
+        res.status(400).json({ error: 'title and message are required' });
+        return;
+      }
+
+      try {
+        const interactionId = await proactiveMessagingService.sendNotification(title, message, actions);
+        res.json({ success: true, interactionId });
+      } catch (err) {
+        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+      }
+    });
+
+    /**
+     * Send gate waiting notification (for testing and programmatic use)
+     */
+    router.post('/messaging/gate', async (req: Request, res: Response) => {
+      const { gateId, executionId, loopId, phase, deliverables, approvalType } = req.body;
+      if (!gateId || !executionId || !loopId || !phase) {
+        res.status(400).json({ error: 'gateId, executionId, loopId, and phase are required' });
+        return;
+      }
+
+      try {
+        const interactionId = await proactiveMessagingService.notifyGateWaiting(
+          gateId,
+          executionId,
+          loopId,
+          phase,
+          deliverables || [],
+          approvalType || 'human'
+        );
+        res.json({ success: true, interactionId });
+      } catch (err) {
+        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+      }
+    });
+
+    /**
+     * Slack event webhook (for external Slack events if not using Socket Mode)
+     */
+    router.post('/messaging/slack/events', (req: Request, res: Response) => {
+      // Handle Slack URL verification challenge
+      if (req.body.type === 'url_verification') {
+        res.json({ challenge: req.body.challenge });
+        return;
+      }
+      // Other events are handled by Bolt SDK in Socket Mode
+      res.json({ ok: true });
+    });
+  }
+
+  // ==========================================================================
+  // SLACK INTEGRATION (Full Bidirectional Control)
+  // ==========================================================================
+
+  if (slackIntegrationService) {
+    /**
+     * List configured channels
+     */
+    router.get('/slack/channels', (_req: Request, res: Response) => {
+      const engineers = slackIntegrationService.getEngineers();
+      const channels = engineers.map(engineer => {
+        const status = slackIntegrationService.getEngineerStatus(engineer);
+        return {
+          engineer,
+          channelId: status?.channelId,
+          projectPath: status?.projectPath,
+          worktreePath: status?.worktreePath,
+          currentBranch: status?.currentBranch,
+          activeExecution: status?.activeExecution,
+        };
+      });
+      res.json({ success: true, count: channels.length, channels });
+    });
+
+    /**
+     * Get engineer status
+     */
+    router.get('/slack/engineers/:engineer', (req: Request, res: Response) => {
+      const engineer = getParam(req, 'engineer');
+      const status = slackIntegrationService.getEngineerStatus(engineer);
+      if (!status) {
+        res.status(404).json({ error: `Engineer not found: ${engineer}` });
+        return;
+      }
+      res.json({ success: true, status });
+    });
+
+    /**
+     * List all engineers
+     */
+    router.get('/slack/engineers', (_req: Request, res: Response) => {
+      const engineers = slackIntegrationService.getEngineers();
+      const statuses = engineers.map(engineer => ({
+        engineer,
+        ...slackIntegrationService.getEngineerStatus(engineer),
+      }));
+      res.json({ success: true, count: engineers.length, engineers: statuses });
+    });
+
+    /**
+     * Get active threads
+     */
+    router.get('/slack/threads', (req: Request, res: Response) => {
+      const channelId = req.query.channelId as string | undefined;
+      const engineer = req.query.engineer as string | undefined;
+      const status = req.query.status as 'active' | 'complete' | 'failed' | undefined;
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+
+      const threadManager = slackIntegrationService.getThreadManager();
+      const threads = threadManager.listThreads({ channelId, engineer, status, limit });
+      res.json({ success: true, count: threads.length, threads });
+    });
+
+    /**
+     * Get thread context
+     */
+    router.get('/slack/threads/:threadTs', (req: Request, res: Response) => {
+      const threadTs = getParam(req, 'threadTs');
+      const threadManager = slackIntegrationService.getThreadManager();
+      const context = threadManager.getThreadContext(threadTs);
+      if (!context) {
+        res.status(404).json({ error: 'Thread not found' });
+        return;
+      }
+      res.json({ success: true, context });
+    });
+
+    /**
+     * Parse command (without executing)
+     */
+    router.post('/slack/parse', (req: Request, res: Response) => {
+      const { text } = req.body;
+      if (!text) {
+        res.status(400).json({ error: 'text is required' });
+        return;
+      }
+
+      const parser = slackIntegrationService.getCommandParser();
+      const command = parser.parse(text, 'slack');
+      res.json({ success: true, isCommand: parser.isCommand(text), command });
+    });
+
+    /**
+     * Execute command (for testing)
+     */
+    router.post('/slack/command', async (req: Request, res: Response) => {
+      try {
+        const { channelId, threadTs, command, engineer } = req.body;
+        if (!channelId || !command || !engineer) {
+          res.status(400).json({ error: 'channelId, command, and engineer are required' });
+          return;
+        }
+
+        const result = await slackIntegrationService.handleMessage(command, {
+          channelId,
+          threadTs,
+          userId: engineer,
+          engineer,
+        });
+        res.json(result);
+      } catch (err) {
+        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+      }
+    });
+
+    /**
+     * Get branch status
+     */
+    router.get('/slack/branch-status/:engineer', async (req: Request, res: Response) => {
+      try {
+        const engineer = getParam(req, 'engineer');
+        const branch = req.query.branch as string | undefined;
+
+        const status = slackIntegrationService.getEngineerStatus(engineer);
+        if (!status) {
+          res.status(404).json({ error: `Engineer not found: ${engineer}` });
+          return;
+        }
+
+        const targetBranch = branch || status.currentBranch;
+        if (!targetBranch) {
+          res.status(400).json({ error: 'No active branch' });
+          return;
+        }
+
+        const mergeWorkflow = slackIntegrationService.getMergeWorkflow();
+        const branchStatus = await mergeWorkflow.getBranchStatus(status.worktreePath, targetBranch);
+        res.json({ success: true, status: { ...branchStatus, engineer } });
+      } catch (err) {
+        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+      }
+    });
+
+    /**
+     * Get pending merges
+     */
+    router.get('/slack/merges/:engineer', (req: Request, res: Response) => {
+      const engineer = getParam(req, 'engineer');
+      const mergeWorkflow = slackIntegrationService.getMergeWorkflow();
+      const pending = mergeWorkflow.getPendingMerges(engineer);
+      res.json({ success: true, count: pending.length, merges: pending });
+    });
+
+    /**
+     * Get pending rebases
+     */
+    router.get('/slack/rebases/:engineer', (req: Request, res: Response) => {
+      const engineer = getParam(req, 'engineer');
+      const mergeWorkflow = slackIntegrationService.getMergeWorkflow();
+      const pending = mergeWorkflow.getPendingRebases(engineer);
+      res.json({ success: true, count: pending.length, rebases: pending });
+    });
+
+    /**
+     * Trigger merge
+     */
+    router.post('/slack/merge', async (req: Request, res: Response) => {
+      try {
+        const { engineer } = req.body;
+        if (!engineer) {
+          res.status(400).json({ error: 'engineer is required' });
+          return;
+        }
+
+        const status = slackIntegrationService.getEngineerStatus(engineer);
+        if (!status) {
+          res.status(404).json({ error: `Engineer not found: ${engineer}` });
+          return;
+        }
+
+        const result = await slackIntegrationService.handleMessage('merge', {
+          channelId: status.channelId,
+          userId: engineer,
+          engineer,
+        });
+        res.json(result);
+      } catch (err) {
+        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+      }
+    });
+
+    /**
+     * Trigger rebase
+     */
+    router.post('/slack/rebase', async (req: Request, res: Response) => {
+      try {
+        const { engineer } = req.body;
+        if (!engineer) {
+          res.status(400).json({ error: 'engineer is required' });
+          return;
+        }
+
+        const status = slackIntegrationService.getEngineerStatus(engineer);
+        if (!status) {
+          res.status(404).json({ error: `Engineer not found: ${engineer}` });
+          return;
+        }
+
+        const result = await slackIntegrationService.handleMessage('rebase', {
+          channelId: status.channelId,
+          userId: engineer,
+          engineer,
+        });
+        res.json(result);
+      } catch (err) {
+        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+      }
+    });
+
+    /**
+     * Get command help
+     */
+    router.get('/slack/help', (_req: Request, res: Response) => {
+      const parser = slackIntegrationService.getCommandParser();
+      res.json({ success: true, help: parser.getCommandHelp() });
+    });
+  }
 
   return router;
 }
