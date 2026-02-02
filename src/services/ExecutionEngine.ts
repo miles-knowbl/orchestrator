@@ -9,6 +9,7 @@ import type { LoopComposer } from './LoopComposer.js';
 import type { SkillRegistry } from './SkillRegistry.js';
 import type { GuaranteeService } from './GuaranteeService.js';
 import type { DeliverableManager } from './DeliverableManager.js';
+import type { ProactiveMessagingService } from './proactive-messaging/index.js';
 import type {
   Loop,
   LoopExecution,
@@ -34,6 +35,7 @@ export class ExecutionEngine {
   private executions: Map<string, LoopExecution> = new Map();
   private guaranteeService: GuaranteeService | null = null;
   private deliverableManager: DeliverableManager | null = null;
+  private messagingService: ProactiveMessagingService | null = null;
 
   constructor(
     private options: ExecutionEngineOptions,
@@ -55,6 +57,14 @@ export class ExecutionEngine {
   setDeliverableManager(manager: DeliverableManager): void {
     this.deliverableManager = manager;
     this.log('info', 'DeliverableManager attached to ExecutionEngine');
+  }
+
+  /**
+   * Set the ProactiveMessagingService for notifications
+   */
+  setMessagingService(service: ProactiveMessagingService): void {
+    this.messagingService = service;
+    this.log('info', 'ProactiveMessagingService attached to ExecutionEngine');
   }
 
   /**
@@ -193,6 +203,19 @@ export class ExecutionEngine {
     await this.saveExecution(execution);
     this.executions.set(id, execution);
 
+    // Send loop start notification (creates Slack thread)
+    if (this.messagingService) {
+      try {
+        await this.messagingService.notifyLoopStart(
+          params.loopId,
+          id,
+          params.project
+        );
+      } catch (err) {
+        this.log('warn', `Failed to send loop start notification: ${err}`);
+      }
+    }
+
     this.log('info', `Started execution ${id} for loop ${params.loopId}`);
     return execution;
   }
@@ -284,6 +307,25 @@ export class ExecutionEngine {
       });
 
       await this.saveExecution(execution);
+
+      // Send loop complete notification (to same Slack thread)
+      if (this.messagingService) {
+        try {
+          const deliverables = execution.skillExecutions
+            .flatMap(s => s.deliverables || [])
+            .filter(Boolean);
+          await this.messagingService.notifyLoopComplete(
+            execution.loopId,
+            executionId,
+            execution.project,
+            `Completed in ${Math.round((execution.completedAt.getTime() - execution.startedAt.getTime()) / 1000)}s`,
+            deliverables
+          );
+        } catch (err) {
+          this.log('warn', `Failed to send loop complete notification: ${err}`);
+        }
+      }
+
       this.log('info', `Execution ${executionId} completed`);
       return execution;
     }

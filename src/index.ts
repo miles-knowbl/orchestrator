@@ -548,6 +548,9 @@ async function main() {
   });
   await proactiveMessagingService.initialize();
 
+  // Wire up bidirectional connection (execution engine can send notifications)
+  executionEngine.setMessagingService(proactiveMessagingService);
+
   console.error(JSON.stringify({
     timestamp: new Date().toISOString(),
     level: 'info',
