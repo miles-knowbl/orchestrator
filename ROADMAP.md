@@ -8,8 +8,8 @@
 
 **System**: Orchestrator — Self-improving meta-system where skills are the atomic primitive
 **Dream State**: Autonomous, coherent, local-first system that compounds leverage through skill-based ontology
-**Progress**: 19/31 modules complete (61%) + 8 deferred
-**Remaining**: voice, sales-loop, ops-loop, auto-updating
+**Progress**: 20/31 modules complete (65%) + 8 deferred
+**Remaining**: voice, sales-loop, ops-loop
 
 ---
 
@@ -20,7 +20,7 @@ Layer 6  ───────────────────────�
          local-first (deferred)
 
 Layer 5  ───────────────────────────────────────────────────────────────────────
-         game-design ✓, co-op (deferred), proposing-decks ✓, spaced-repetition ✓, auto-updating, ecosystem-roundup (deferred)
+         game-design ✓, co-op (deferred), proposing-decks ✓, spaced-repetition ✓, auto-updating ✓, ecosystem-roundup (deferred)
 
 Layer 4  ───────────────────────────────────────────────────────────────────────
          sales-loop, ops-loop, business-model-loop (deferred), go-to-market-loop (deferred), brownfield-specialization (deferred)
@@ -107,7 +107,7 @@ Layer 0  ───────────────────────�
 | **co-op-skill-acquisition** | Collaborative ontology building across multiple users, multiple AI agents, and user+AI combinations. Creating multiple ontologies with different participant combinations. | knowledge-graph-ontology, multi-agent-worktrees | *deferred* |
 | **proposing-decks** ✓ | Wake up to decks ready for review: (1) Knowledge decks for spaced repetition learning, (2) Project/module/system proposal decks. Learn from them and approve scopes for autonomous execution. | dreaming, spaced-repetition-learning |
 | **spaced-repetition-learning** ✓ | SRS for skill mastery and knowledge retention. The orchestrator helps you internalize patterns and skills through timed review. | knowledge-graph-ontology |
-| **auto-updating** | Other users receive updates without manually downloading from docs site. Push-based distribution of improvements. | — |
+| **auto-updating** ✓ | Other users receive updates without manually downloading from docs site. Push-based distribution of improvements via daily welcome notification. | — |
 | **ecosystem-roundup** | Collecting and organizing tools, patterns, frameworks, skills, and loops across the ecosystem. Ensuring nothing useful is orphaned. | — | *deferred*
 
 ---
@@ -163,9 +163,9 @@ Layer 0  ───────────────────────�
 | 2 | 4 | 4 | patterns-roundup ✓, scoring ✓, mece-opportunity-mapping ✓, coherence-system ✓ |
 | 3 | 2 | 3 | voice, proactive-messaging ✓, slack-integration ✓ |
 | 4 | 0 | 5 | sales-loop, ops-loop, business-model-loop (deferred), go-to-market-loop (deferred), brownfield-specialization (deferred) |
-| 5 | 3 | 6 | game-design ✓, co-op-skill-acquisition (deferred), proposing-decks ✓, spaced-repetition ✓, auto-updating, ecosystem-roundup (deferred) |
+| 5 | 4 | 6 | game-design ✓, co-op-skill-acquisition (deferred), proposing-decks ✓, spaced-repetition ✓, auto-updating ✓, ecosystem-roundup (deferred) |
 | 6 | 0 | 1 | local-first (deferred) |
-| **Complete** | **19** | **31** | **61%** |
+| **Complete** | **20** | **31** | **65%** |
 | Updates | 2 | 2 | distribution-loop ✓, InboxProcessor ✓ |
 
 ---
@@ -244,7 +244,7 @@ Phase 7: Remaining Modules ◄── YOU ARE HERE
   21. voice (Layer 3)
   22. sales-loop (Layer 4)
   23. ops-loop (Layer 4)
-  24. auto-updating (Layer 5)
+  24. auto-updating ✓ (Layer 5) — COMPLETE
 
 Deferred:
   - tech-trees (Layer 1)
@@ -306,11 +306,10 @@ Deferred:
 
 ## Next Action
 
-**Progress**: 19/31 modules complete (61%) + 8 deferred
+**Progress**: 20/31 modules complete (65%) + 8 deferred
 **Available Modules** (unblocked, not deferred):
 - Layer 3: voice
 - Layer 4: sales-loop, ops-loop
-- Layer 5: auto-updating
 
 **Recommended**: voice (completes Layer 3 interface capabilities)
 
