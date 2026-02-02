@@ -16,6 +16,15 @@ export interface GateWaitingEvent {
   approvalType: 'human' | 'auto' | 'conditional';
 }
 
+export interface LoopStartEvent {
+  type: 'loop_start';
+  loopId: string;
+  executionId: string;
+  target: string;
+  branch?: string;
+  engineer?: string;
+}
+
 export interface LoopCompleteEvent {
   type: 'loop_complete';
   loopId: string;
@@ -70,6 +79,7 @@ export interface CustomNotificationEvent {
 }
 
 export type ProactiveEvent =
+  | LoopStartEvent
   | GateWaitingEvent
   | LoopCompleteEvent
   | DreamProposalsReadyEvent
@@ -203,5 +213,7 @@ export interface FormattedMessage {
   metadata?: {
     interactionId: string;
     eventType: string;
+    executionId?: string;  // For thread-per-execution routing
   };
+  threadTs?: string;  // Slack thread timestamp for replies
 }

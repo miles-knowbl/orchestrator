@@ -16,6 +16,7 @@ import { v4 as uuidv4 } from 'uuid';
 import type {
   ProactiveEvent,
   FormattedMessage,
+  LoopStartEvent,
   GateWaitingEvent,
   LoopCompleteEvent,
   DreamProposalsReadyEvent,
@@ -32,6 +33,8 @@ export class MessageFormatter {
     const interactionId = uuidv4();
 
     switch (event.type) {
+      case 'loop_start':
+        return this.formatLoopStart(event, interactionId);
       case 'gate_waiting':
         return this.formatGateWaiting(event, interactionId);
       case 'loop_complete':
@@ -49,6 +52,46 @@ export class MessageFormatter {
       default:
         return this.formatUnknown(event as ProactiveEvent, interactionId);
     }
+  }
+
+  private formatLoopStart(event: LoopStartEvent, interactionId: string): FormattedMessage {
+    const lines: string[] = [];
+    const loopName = event.loopId.replace(/-loop$/, '');
+
+    lines.push('```');
+    lines.push(this.border());
+    lines.push(this.formatTitle('LOOP STARTED', '[ACTIVE]'));
+    lines.push(this.emptyLine());
+
+    lines.push(this.padLine(`/${event.loopId} -> ${event.target}`));
+    if (event.branch) {
+      lines.push(this.padLine(`Branch: ${event.branch}`));
+    }
+    if (event.engineer) {
+      lines.push(this.padLine(`Engineer: ${event.engineer}`));
+    }
+    lines.push(this.padLine(`Execution: ${event.executionId.slice(0, 12)}...`));
+    lines.push(this.emptyLine());
+
+    lines.push(this.padLine('This thread will receive all updates for this execution.'));
+    lines.push(this.emptyLine());
+    lines.push(this.border());
+    lines.push('```');
+
+    return {
+      text: lines.join('\n'),
+      actions: [
+        {
+          id: `view_${interactionId}`,
+          label: 'View in Dashboard',
+          value: JSON.stringify({ action: 'view_execution', interactionId, executionId: event.executionId }),
+        },
+      ],
+      metadata: {
+        interactionId,
+        eventType: 'loop_start',
+      },
+    };
   }
 
   private formatGateWaiting(event: GateWaitingEvent, interactionId: string): FormattedMessage {

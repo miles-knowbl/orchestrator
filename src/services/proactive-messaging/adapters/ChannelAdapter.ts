@@ -14,8 +14,8 @@ export interface ChannelAdapter {
   /** Initialize the adapter (connect, authenticate, etc.) */
   initialize(): Promise<void>;
 
-  /** Send a formatted message to this channel */
-  send(message: FormattedMessage): Promise<void>;
+  /** Send a formatted message to this channel. Returns message ID (e.g., Slack ts) */
+  send(message: FormattedMessage): Promise<string | undefined | void>;
 
   /** Update an existing message (for Slack message updates) */
   update?(messageId: string, message: FormattedMessage): Promise<void>;

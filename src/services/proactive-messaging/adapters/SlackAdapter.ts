@@ -23,6 +23,7 @@ interface SlackApp {
         text: string;
         blocks?: unknown[];
         metadata?: unknown;
+        thread_ts?: string;
       }): Promise<{ ts?: string }>;
       update(params: {
         channel: string;
@@ -58,6 +59,7 @@ export class SlackAdapter implements ChannelAdapter {
   private error?: string;
   private commandHandler?: (command: InboundCommand) => Promise<void>;
   private messageTimestamps: Map<string, string> = new Map(); // interactionId -> ts
+  private executionThreads: Map<string, string> = new Map(); // executionId -> threadTs
 
   constructor(config: SlackChannelConfig) {
     this.config = config;
@@ -185,16 +187,24 @@ export class SlackAdapter implements ChannelAdapter {
     }
   }
 
-  async send(message: FormattedMessage): Promise<void> {
+  async send(message: FormattedMessage): Promise<string | undefined> {
     if (!this.config.enabled || !this.app || !this.connected) return;
 
     try {
       const blocks = message.blocks || this.textToBlocks(message);
+      const executionId = message.metadata?.executionId;
+
+      // Determine thread_ts: explicit > lookup by executionId
+      let threadTs = message.threadTs;
+      if (!threadTs && executionId) {
+        threadTs = this.executionThreads.get(executionId);
+      }
 
       const result = await this.app.client.chat.postMessage({
         channel: this.config.channelId!,
         text: message.text,
         blocks,
+        thread_ts: threadTs,
         metadata: message.metadata
           ? {
               event_type: 'proactive_message',
@@ -208,11 +218,33 @@ export class SlackAdapter implements ChannelAdapter {
         this.messageTimestamps.set(message.metadata.interactionId, result.ts);
       }
 
+      // If this is a new thread (no threadTs provided but we have executionId),
+      // store the mapping for future messages in this execution
+      if (!threadTs && result.ts && executionId) {
+        this.executionThreads.set(executionId, result.ts);
+        console.log(`[ProactiveMessaging] Created thread ${result.ts} for execution ${executionId}`);
+      }
+
       this.lastMessageAt = new Date().toISOString();
+      return result.ts;
     } catch (err) {
       console.error('[ProactiveMessaging] Failed to send Slack message:', err);
       throw err;
     }
+  }
+
+  /**
+   * Get thread timestamp for an execution
+   */
+  getThreadTs(executionId: string): string | undefined {
+    return this.executionThreads.get(executionId);
+  }
+
+  /**
+   * Set thread timestamp for an execution (for external thread management)
+   */
+  setThreadTs(executionId: string, threadTs: string): void {
+    this.executionThreads.set(executionId, threadTs);
   }
 
   async update(messageId: string, message: FormattedMessage): Promise<void> {

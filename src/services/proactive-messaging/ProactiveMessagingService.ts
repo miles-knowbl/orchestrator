@@ -244,6 +244,13 @@ export class ProactiveMessagingService {
    */
   async notify(event: ProactiveEvent): Promise<string> {
     const message = this.formatter.format(event);
+
+    // Extract executionId for thread routing
+    const executionId = 'executionId' in event ? event.executionId : undefined;
+    if (executionId && message.metadata) {
+      message.metadata.executionId = executionId;
+    }
+
     const channels: string[] = [];
 
     for (const [name, adapter] of this.adapters) {
@@ -284,6 +291,23 @@ export class ProactiveMessagingService {
   // ─────────────────────────────────────────────────────────────────────────
   // Event shortcuts for common notifications
   // ─────────────────────────────────────────────────────────────────────────
+
+  async notifyLoopStart(
+    loopId: string,
+    executionId: string,
+    target: string,
+    branch?: string,
+    engineer?: string
+  ): Promise<string> {
+    return this.notify({
+      type: 'loop_start',
+      loopId,
+      executionId,
+      target,
+      branch,
+      engineer,
+    });
+  }
 
   async notifyGateWaiting(
     gateId: string,

@@ -58,6 +58,14 @@
       "decision": "Adopted 7-layer structure: L0 Foundation, L1 Visualization, L2 Autonomy, L3 Intelligence, L4 Interface, L5 Domain Loops, L6 Meta, L7 Sovereignty",
       "consequences": "Modules have clear placement. Dependencies flow upward. Layer 7 (Sovereignty/local-first) sits at the top as the architectural decision that affects all external integrations.",
       "date": "2026-01-31T00:00:00Z"
+    },
+    {
+      "id": "ADR-008",
+      "title": "Slack Autonomy Mode - Thread-per-execution",
+      "context": "Slack channel needed consistent notification behavior. Two options: (A) Full parity with terminal (every gate request), or (B) Autonomous mode (only start/complete notifications). Terminal interaction can be synchronous; Slack is inherently async.",
+      "decision": "Adopted thread-per-execution model: Each loop execution opens a new Slack thread on start. All subsequent messages for that execution go to the same thread. This keeps context grouped and allows reviewing execution history. Slack assumes autonomous mode - loops run autonomously with notifications at start and completion, reducing noise while maintaining visibility.",
+      "consequences": "Clean Slack channel with one thread per execution. Engineers can review threads for context without blocking on every gate. Reduces notification fatigue. SlackAdapter tracks executionId→threadTs mapping. ProactiveMessagingService has notifyLoopStart() in addition to notifyLoopComplete().",
+      "date": "2026-02-01T00:00:00Z"
     }
   ],
   "patterns": [
@@ -247,6 +255,17 @@
       "confidence": "high",
       "createdAt": "2026-02-01T00:00:00Z",
       "lastUsed": "2026-02-01T00:00:00Z"
+    },
+    {
+      "id": "PAT-016",
+      "name": "thread-per-execution",
+      "context": "When sending Slack notifications for loop executions to maintain context",
+      "solution": "Each loop execution opens a new Slack thread via loop_start notification. The first message (without thread_ts) creates the thread; its timestamp becomes the thread_ts for all subsequent messages. SlackAdapter tracks executionId→threadTs mapping. FormattedMessage includes metadata.executionId for automatic thread routing.",
+      "example": "notifyLoopStart(loopId, executionId, target) → first message creates thread → gate_waiting for same executionId → automatically routes to same thread → loop_complete closes the thread context",
+      "uses": 0,
+      "confidence": "high",
+      "createdAt": "2026-02-01T00:00:00Z",
+      "lastUsed": null
     }
   ],
   "calibration": {
@@ -256,5 +275,5 @@
     }
   },
   "createdAt": "2026-01-25T00:00:00Z",
-  "updatedAt": "2026-02-01T00:00:00Z"
+  "updatedAt": "2026-02-01T12:00:00Z"
 }
