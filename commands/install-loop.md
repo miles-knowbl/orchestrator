@@ -124,6 +124,25 @@ npm run build
 Skip install/update phase.
 ```
 
+**Write Config (after any install/update):**
+```bash
+# Write orchestrator config with install path and version
+CONFIG_FILE="$HOME/.claude/orchestrator.json"
+VERSION=$(node -p "require('./package.json').version")
+INSTALL_PATH=$(pwd)
+
+node -e "
+  const fs = require('fs');
+  fs.writeFileSync('$CONFIG_FILE', JSON.stringify({
+    installPath: '$INSTALL_PATH',
+    version: '$VERSION',
+    installedAt: new Date().toISOString()
+  }, null, 2));
+"
+echo "Installing to: $INSTALL_PATH"
+echo "(This will be your active orchestrator installation)"
+```
+
 ### Phase 3: REGISTER
 
 Register MCP server and auto-start hook with Claude Code:
@@ -173,7 +192,13 @@ cat > ~/.claude/hooks/ensure-orchestrator.sh << 'HOOK'
 #   Available variables: $ORCHESTRATOR_DIR
 #   Example: export ORCHESTRATOR_TERMINAL_CMD='warp -e "cd $ORCHESTRATOR_DIR && npm start"'
 
-ORCHESTRATOR_DIR="$HOME/orchestrator"
+# Read install path from config, fallback to $HOME/orchestrator
+CONFIG_FILE="$HOME/.claude/orchestrator.json"
+if [ -f "$CONFIG_FILE" ]; then
+    ORCHESTRATOR_DIR=$(node -p "require('$CONFIG_FILE').installPath" 2>/dev/null)
+fi
+ORCHESTRATOR_DIR="${ORCHESTRATOR_DIR:-$HOME/orchestrator}"
+
 HEALTH_URL="http://localhost:3002/health"
 MAX_WAIT=30
 
