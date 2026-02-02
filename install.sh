@@ -107,7 +107,13 @@ mkdir -p ~/.claude/hooks
 
 cat > ~/.claude/hooks/ensure-orchestrator.sh << 'HOOK'
 #!/bin/bash
-# ensure-orchestrator.sh - Auto-start orchestrator server in a new Terminal window
+# ensure-orchestrator.sh - Auto-start orchestrator server in a new terminal window
+#
+# Custom terminal support:
+#   Set ORCHESTRATOR_TERMINAL_CMD in your shell profile (~/.zshrc) to use a different terminal.
+#   The command should open a new terminal window and run the server.
+#   Available variables: $ORCHESTRATOR_DIR
+#   Example: export ORCHESTRATOR_TERMINAL_CMD='warp -e "cd $ORCHESTRATOR_DIR && npm start"'
 
 ORCHESTRATOR_DIR="$HOME/orchestrator"
 HEALTH_URL="http://localhost:3002/health"
@@ -119,8 +125,11 @@ if curl -s --max-time 1 "$HEALTH_URL" > /dev/null 2>&1; then
 fi
 
 # Server not running - open terminal and start it
-# Prefer iTerm2 if installed, fall back to Terminal.app
-if [ -d "/Applications/iTerm.app" ]; then
+if [ -n "$ORCHESTRATOR_TERMINAL_CMD" ]; then
+    # User's custom terminal command
+    eval "$ORCHESTRATOR_TERMINAL_CMD"
+elif [ -d "/Applications/iTerm.app" ]; then
+    # iTerm2
     osascript <<EOF
 tell application "iTerm"
     activate
@@ -131,6 +140,7 @@ tell application "iTerm"
 end tell
 EOF
 else
+    # Terminal.app (fallback)
     osascript <<EOF
 tell application "Terminal"
     activate
@@ -182,7 +192,11 @@ echo "[OK] Installed auto-start hook"
 echo ""
 echo "Starting server..."
 
-if [ -d "/Applications/iTerm.app" ]; then
+if [ -n "$ORCHESTRATOR_TERMINAL_CMD" ]; then
+    # User's custom terminal command
+    eval "$ORCHESTRATOR_TERMINAL_CMD"
+elif [ -d "/Applications/iTerm.app" ]; then
+    # iTerm2
     osascript <<EOF
 tell application "iTerm"
     activate
@@ -193,6 +207,7 @@ tell application "iTerm"
 end tell
 EOF
 else
+    # Terminal.app (fallback)
     osascript <<EOF
 tell application "Terminal"
     activate

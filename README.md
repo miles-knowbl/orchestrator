@@ -137,7 +137,13 @@ The `/install-loop` command configures MCP automatically by writing to `~/.claud
 
 This exposes 54+ tools for managing skills, loops, executions, memory, and inbox.
 
-**Auto-start hook:** A Claude Code hook (`~/.claude/hooks/ensure-orchestrator.sh`) automatically opens a Terminal and starts the server when any orchestrator tool is called.
+**Auto-start hook:** A Claude Code hook (`~/.claude/hooks/ensure-orchestrator.sh`) automatically opens a terminal and starts the server when any orchestrator tool is called. By default it uses iTerm2 if installed, otherwise Terminal.app.
+
+**Custom terminal:** Set `ORCHESTRATOR_TERMINAL_CMD` in your shell profile to use a different terminal:
+```bash
+# ~/.zshrc
+export ORCHESTRATOR_TERMINAL_CMD='warp -e "cd $ORCHESTRATOR_DIR && npm start"'
+```
 
 ## Environment Variables
 
