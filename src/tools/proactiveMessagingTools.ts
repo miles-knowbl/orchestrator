@@ -427,6 +427,23 @@ export function createProactiveMessagingToolHandlers(
       // Record interaction and check if first of day
       const { isFirstOfDay, isFreshInstall } = await installStateService.recordInteraction();
       const state = installStateService.getState();
+
+      // Check for updates from GitHub (only on first call of day to avoid rate limits)
+      if (isFirstOfDay) {
+        try {
+          const response = await fetch('https://api.github.com/repos/superorganism/orchestrator/releases/latest');
+          if (response.ok) {
+            const release = await response.json() as { tag_name?: string; name?: string };
+            const latestVersion = release.tag_name?.replace(/^v/, '') || release.name?.match(/(\d+\.\d+\.\d+)/)?.[1];
+            if (latestVersion) {
+              await installStateService.recordUpdateCheck(latestVersion);
+            }
+          }
+        } catch {
+          // Ignore fetch errors - version check is best effort
+        }
+      }
+
       const versionStatus = installStateService.getVersionStatus();
 
       // Get pending proposals count from dream engine if available
