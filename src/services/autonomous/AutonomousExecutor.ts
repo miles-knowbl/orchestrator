@@ -10,9 +10,12 @@
  * Part of the autonomous module (Layer 1).
  */
 
+import { exec } from 'child_process';
+import { existsSync } from 'fs';
 import type { ExecutionEngine } from '../ExecutionEngine.js';
 import type { LoopComposer } from '../LoopComposer.js';
 import type { LearningService } from '../LearningService.js';
+import type { ProactiveMessagingService } from '../proactive-messaging/index.js';
 import type { LoopExecution, Gate, AutonomyLevel } from '../../types.js';
 
 // ============================================================================
@@ -28,6 +31,28 @@ export interface AutonomousExecutorOptions {
   maxSkillRetries?: number;
   /** Whether to auto-start background runner. Default: false */
   autoStart?: boolean;
+  /** Delay between gate retry attempts (ms). Default: 10000 */
+  gateRetryDelayMs?: number;
+  /** Maximum gate retry attempts before Claude spawn. Default: 3 */
+  maxGateRetries?: number;
+  /** Timeout for Claude Code task (ms). Default: 300000 (5 min) */
+  claudeTaskTimeoutMs?: number;
+}
+
+/**
+ * State machine for gate retry flow
+ */
+export type GateRetryStatus = 'pending' | 'retrying' | 'awaiting_claude' | 'escalated';
+
+export interface GateRetryState {
+  gateId: string;
+  executionId: string;
+  status: GateRetryStatus;
+  retryCount: number;
+  lastAttemptAt: number;
+  claudeSpawnedAt?: number;
+  escalatedAt?: number;
+  missingFiles?: string[];
 }
 
 export interface AutonomousStatus {
@@ -66,12 +91,16 @@ export class AutonomousExecutor {
   private executionEngine: ExecutionEngine | null = null;
   private loopComposer: LoopComposer | null = null;
   private learningService: LearningService | null = null;
+  private messagingService: ProactiveMessagingService | null = null;
 
   private running = false;
   private tickTimer: ReturnType<typeof setInterval> | null = null;
   private tickInterval: number;
   private maxParallelExecutions: number;
   private maxSkillRetries: number;
+  private gateRetryDelayMs: number;
+  private maxGateRetries: number;
+  private claudeTaskTimeoutMs: number;
 
   private totalTicksProcessed = 0;
   private lastTickAt: Date | null = null;
@@ -80,10 +109,16 @@ export class AutonomousExecutor {
   // Track skill retry counts per execution
   private skillRetries: Map<string, Map<string, number>> = new Map();
 
+  // Track gate retry states: key = `${executionId}:${gateId}`
+  private gateRetries: Map<string, GateRetryState> = new Map();
+
   constructor(private options: AutonomousExecutorOptions = {}) {
     this.tickInterval = options.tickInterval || 5000;
     this.maxParallelExecutions = options.maxParallelExecutions || 3;
     this.maxSkillRetries = options.maxSkillRetries || 3;
+    this.gateRetryDelayMs = options.gateRetryDelayMs || 10000;
+    this.maxGateRetries = options.maxGateRetries || 3;
+    this.claudeTaskTimeoutMs = options.claudeTaskTimeoutMs || 300000;
   }
 
   /**
@@ -97,6 +132,14 @@ export class AutonomousExecutor {
     this.executionEngine = deps.executionEngine;
     this.loopComposer = deps.loopComposer;
     this.learningService = deps.learningService || null;
+  }
+
+  /**
+   * Set the messaging service for notifications
+   */
+  setMessagingService(service: ProactiveMessagingService): void {
+    this.messagingService = service;
+    this.log('info', 'ProactiveMessagingService attached to AutonomousExecutor');
   }
 
   /**
@@ -292,11 +335,18 @@ export class AutonomousExecutor {
   }
 
   // --------------------------------------------------------------------------
-  // Auto-Approval Logic
+  // Auto-Approval Logic (with retry and Claude Code spawning)
   // --------------------------------------------------------------------------
 
   /**
    * Try to auto-approve any pending gates
+   *
+   * Flow:
+   * 1. Check guarantees first
+   * 2. If green → auto-approve with brief notification
+   * 3. If red → start retry flow (3 attempts, 10s delay)
+   * 4. If still red → spawn Claude Code to create missing files
+   * 5. If still red → escalate to human (full notification with buttons)
    */
   private async tryAutoApproveGates(
     execution: LoopExecution,
@@ -312,26 +362,323 @@ export class AutonomousExecutor {
       const gateState = execution.gates.find(g => g.gateId === gate.id);
       if (!gateState || gateState.status === 'approved') continue;
 
-      const canApprove = this.canAutoApprove(execution, gate);
-      if (canApprove.approved) {
+      // Check if this gate is eligible for auto-approval
+      const canAutoApproveResult = this.canAutoApprove(execution, gate);
+      if (!canAutoApproveResult.approved) {
+        continue; // Not eligible for auto-approval (e.g., human gate or wrong autonomy level)
+      }
+
+      // Check current retry state
+      const retryKey = `${execution.id}:${gate.id}`;
+      let retryState = this.gateRetries.get(retryKey);
+
+      // Pre-check guarantees
+      const guaranteeStatus = await this.checkGateGuarantees(execution.id, gate.id);
+
+      if (guaranteeStatus.canApprove) {
+        // Guarantees passed! Auto-approve immediately
         try {
           await this.executionEngine!.approveGate(
             execution.id,
             gate.id,
-            `autonomous-executor (${canApprove.reason})`
+            `autonomous-executor (${canAutoApproveResult.reason})`
           );
+
+          // Determine reason for notification
+          let reason: 'guarantees_passed' | 'after_retry' | 'after_claude' = 'guarantees_passed';
+          let retryCount: number | undefined;
+
+          if (retryState) {
+            if (retryState.status === 'awaiting_claude') {
+              reason = 'after_claude';
+            } else if (retryState.retryCount > 0) {
+              reason = 'after_retry';
+              retryCount = retryState.retryCount;
+            }
+            // Clean up retry state
+            this.gateRetries.delete(retryKey);
+          }
+
+          // Send brief notification
+          await this.sendAutoApproveNotification(execution, gate.id, reason, retryCount);
+
           actions.push({
             type: 'gate_auto_approved',
             target: gate.id,
-            details: { reason: canApprove.reason },
+            details: { reason: canAutoApproveResult.reason, retryCount },
           });
+
+          // Auto-advance to next phase
+          try {
+            await this.executionEngine!.advancePhase(execution.id);
+            actions.push({
+              type: 'phase_advanced',
+              target: execution.currentPhase,
+            });
+          } catch {
+            // Advance may fail for valid reasons (e.g., not all skills complete)
+          }
+
         } catch (err) {
           errors.push(`Failed to auto-approve gate ${gate.id}: ${err instanceof Error ? err.message : String(err)}`);
         }
+      } else {
+        // Guarantees failed - process retry state machine
+        const result = await this.processGateRetryState(
+          execution,
+          gate,
+          retryState,
+          guaranteeStatus
+        );
+        actions.push(...result.actions);
+        errors.push(...result.errors);
       }
     }
 
     return { actions, errors };
+  }
+
+  /**
+   * Check gate guarantees and return status
+   */
+  private async checkGateGuarantees(
+    executionId: string,
+    gateId: string
+  ): Promise<{
+    canApprove: boolean;
+    missingFiles: string[];
+    blocking: Array<{ id: string; name: string; errors?: string[] }>;
+  }> {
+    if (!this.executionEngine) {
+      return { canApprove: true, missingFiles: [], blocking: [] };
+    }
+
+    try {
+      const status = await this.executionEngine.getGateGuaranteeStatus(executionId, gateId);
+
+      // Extract missing files from blocking guarantee errors
+      const missingFiles: string[] = [];
+      if (status.blocking) {
+        for (const g of status.blocking) {
+          if (g.errors) {
+            for (const error of g.errors) {
+              // Extract file names from error messages like 'Expected at least 1 file(s) matching "SPEC.md"'
+              const match = error.match(/matching "([^"]+)"/);
+              if (match) {
+                missingFiles.push(match[1]);
+              }
+            }
+          }
+        }
+      }
+
+      return {
+        canApprove: status.canApprove,
+        missingFiles,
+        blocking: status.blocking || [],
+      };
+    } catch (err) {
+      this.log('error', `Failed to check gate guarantees: ${err instanceof Error ? err.message : String(err)}`);
+      return { canApprove: true, missingFiles: [], blocking: [] };
+    }
+  }
+
+  /**
+   * Process the gate retry state machine
+   */
+  private async processGateRetryState(
+    execution: LoopExecution,
+    gate: Gate,
+    retryState: GateRetryState | undefined,
+    guaranteeStatus: { canApprove: boolean; missingFiles: string[]; blocking: Array<{ id: string; name: string; errors?: string[] }> }
+  ): Promise<{ actions: TickAction[]; errors: string[] }> {
+    const actions: TickAction[] = [];
+    const errors: string[] = [];
+    const retryKey = `${execution.id}:${gate.id}`;
+    const now = Date.now();
+
+    if (!retryState) {
+      // First failure - initialize retry state
+      retryState = {
+        gateId: gate.id,
+        executionId: execution.id,
+        status: 'retrying',
+        retryCount: 1,
+        lastAttemptAt: now,
+        missingFiles: guaranteeStatus.missingFiles,
+      };
+      this.gateRetries.set(retryKey, retryState);
+      this.log('info', `Gate ${gate.id} failed guarantees, starting retry flow (attempt 1/${this.maxGateRetries})`);
+      return { actions, errors };
+    }
+
+    // Check if enough time has passed for next retry
+    const timeSinceLastAttempt = now - retryState.lastAttemptAt;
+
+    switch (retryState.status) {
+      case 'retrying':
+        if (timeSinceLastAttempt < this.gateRetryDelayMs) {
+          // Not enough time passed, wait
+          return { actions, errors };
+        }
+
+        if (retryState.retryCount < this.maxGateRetries) {
+          // Increment retry count and wait for next tick
+          retryState.retryCount++;
+          retryState.lastAttemptAt = now;
+          retryState.missingFiles = guaranteeStatus.missingFiles;
+          this.log('info', `Gate ${gate.id} retry attempt ${retryState.retryCount}/${this.maxGateRetries}`);
+        } else {
+          // Max retries reached - spawn Claude Code
+          retryState.status = 'awaiting_claude';
+          retryState.claudeSpawnedAt = now;
+          this.log('info', `Gate ${gate.id} max retries reached, spawning Claude Code`);
+          await this.spawnClaudeCodeForGate(execution, gate, guaranteeStatus.missingFiles);
+        }
+        break;
+
+      case 'awaiting_claude':
+        // Check if Claude task has timed out
+        const claudeElapsed = now - (retryState.claudeSpawnedAt || now);
+        if (claudeElapsed > this.claudeTaskTimeoutMs) {
+          // Claude timed out - escalate to human
+          retryState.status = 'escalated';
+          retryState.escalatedAt = now;
+          this.log('warn', `Gate ${gate.id} Claude task timed out, escalating to human`);
+          await this.escalateToHuman(execution, gate, guaranteeStatus);
+        }
+        // Otherwise, wait for Claude to complete (guarantees will pass on next check)
+        break;
+
+      case 'escalated':
+        // Already escalated, nothing to do
+        break;
+    }
+
+    return { actions, errors };
+  }
+
+  /**
+   * Spawn Claude Code to create missing deliverables
+   */
+  private async spawnClaudeCodeForGate(
+    execution: LoopExecution,
+    gate: Gate,
+    missingFiles: string[]
+  ): Promise<void> {
+    if (missingFiles.length === 0) {
+      this.log('warn', `No missing files identified for gate ${gate.id}, escalating immediately`);
+      await this.escalateToHuman(execution, gate, { canApprove: false, missingFiles: [], blocking: [] });
+      return;
+    }
+
+    const deliverables = missingFiles.join(', ');
+    const gateName = gate.id.replace('-gate', '');
+    const cwd = process.cwd();
+
+    // Build prompt for Claude Code
+    const prompt = `AUTONOMOUS GATE RECOVERY (gate: ${gate.id}): ` +
+      `Create the missing deliverable(s): ${deliverables}. ` +
+      `This is for the ${gateName} gate in execution ${execution.id}. ` +
+      `Create real content (not placeholder). ` +
+      `The gate will auto-approve once the files exist.`;
+
+    // Notify about the spawn
+    if (this.messagingService) {
+      await this.messagingService.notify({
+        type: 'custom',
+        title: 'AUTO-RECOVERY',
+        message: `Spawning Claude Code to create: ${deliverables}`,
+      });
+    }
+
+    // Detect terminal and spawn
+    const hasITerm = existsSync('/Applications/iTerm.app');
+    const escapedPrompt = prompt.replace(/'/g, "'\\''");
+    const shellCmd = `cd '${cwd}' && claude --dangerously-skip-permissions '${escapedPrompt}'`;
+
+    let script: string;
+    if (hasITerm) {
+      script = `
+        tell application "iTerm"
+          activate
+          tell current window
+            create tab with default profile
+            tell current session
+              write text "${shellCmd.replace(/"/g, '\\"')}"
+            end tell
+          end tell
+        end tell
+      `;
+    } else {
+      script = `
+        tell application "Terminal"
+          activate
+          tell application "System Events" to keystroke "t" using command down
+          delay 0.3
+          do script "${shellCmd.replace(/"/g, '\\"')}" in front window
+        end tell
+      `;
+    }
+
+    exec(`osascript -e '${script.replace(/'/g, "'\\''")}'`, (error) => {
+      if (error) {
+        this.log('error', `Failed to spawn Claude Code: ${error.message}`);
+      } else {
+        this.log('info', `Spawned Claude Code for gate ${gate.id}`);
+      }
+    });
+  }
+
+  /**
+   * Escalate to human with full notification
+   */
+  private async escalateToHuman(
+    execution: LoopExecution,
+    gate: Gate,
+    guaranteeStatus: { canApprove: boolean; missingFiles: string[]; blocking: Array<{ id: string; name: string; errors?: string[] }> }
+  ): Promise<void> {
+    if (!this.messagingService) {
+      this.log('warn', `Cannot escalate gate ${gate.id} - no messaging service`);
+      return;
+    }
+
+    // Get deliverables from the gate definition
+    const deliverables = gate.deliverables || [];
+
+    // Send full gate_waiting notification with buttons
+    await this.messagingService.notifyGateWaiting(
+      gate.id,
+      execution.id,
+      execution.loopId,
+      execution.currentPhase,
+      deliverables,
+      gate.approvalType || 'human'
+    );
+
+    this.log('info', `Gate ${gate.id} escalated to human`);
+  }
+
+  /**
+   * Send brief auto-approve notification
+   */
+  private async sendAutoApproveNotification(
+    execution: LoopExecution,
+    gateId: string,
+    reason: 'guarantees_passed' | 'after_retry' | 'after_claude',
+    retryCount?: number
+  ): Promise<void> {
+    if (!this.messagingService) return;
+
+    await this.messagingService.notify({
+      type: 'gate_auto_approved',
+      gateId,
+      executionId: execution.id,
+      loopId: execution.loopId,
+      phase: execution.currentPhase,
+      reason,
+      retryCount,
+    });
   }
 
   /**

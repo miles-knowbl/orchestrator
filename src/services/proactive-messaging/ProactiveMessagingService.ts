@@ -358,6 +358,172 @@ export class ProactiveMessagingService {
           this.conversationState.recordResponse(interaction.id, command, 'builtin');
         }
         break;
+
+      case 'status':
+        // Query and respond with current execution state
+        await this.handleStatusQuery();
+        break;
+
+      case 'next_leverage':
+        // Propose next highest leverage move
+        await this.handleNextLeverageQuery();
+        break;
+
+      case 'skip':
+        // Skip current skill or gate
+        await this.handleSkip(command);
+        break;
+
+      case 'start_loop':
+        // Start a specific loop
+        await this.handleStartLoop(command);
+        break;
+    }
+  }
+
+  /**
+   * Handle status query - respond with current execution state
+   */
+  private async handleStatusQuery(): Promise<void> {
+    if (!this.executionEngine) {
+      await this.sendNotification('Status', 'No execution engine available');
+      return;
+    }
+
+    const active = this.executionEngine.listExecutions({ status: 'active' });
+    if (active.length === 0) {
+      await this.sendNotification('Status', 'No active executions. Say a loop name to start (e.g., "engineering-loop voice-feature")');
+      return;
+    }
+
+    const exec = active[0];
+    const details = this.executionEngine.getExecution(exec.id);
+    if (!details) {
+      await this.sendNotification('Status', 'Execution not found');
+      return;
+    }
+
+    const phase = details.currentPhase;
+    const progress = exec.progress;
+    const message = `*${exec.loopId}* → ${exec.project}\n` +
+      `Phase: *${phase}* (${progress.phasesCompleted}/${progress.phasesTotal})\n` +
+      `Skills: ${progress.skillsCompleted}/${progress.skillsTotal}\n` +
+      `Status: ${exec.status}`;
+
+    await this.sendNotification('Status', message);
+  }
+
+  /**
+   * Handle next leverage query - propose next highest leverage action
+   */
+  private async handleNextLeverageQuery(): Promise<void> {
+    // Check for active execution first
+    if (this.executionEngine) {
+      const active = this.executionEngine.listExecutions({ status: 'active' });
+      if (active.length > 0) {
+        await this.sendNotification(
+          'Next Move',
+          `Active: *${active[0].loopId}* → ${active[0].project}\nSay "go" to continue or "status" for details`
+        );
+        return;
+      }
+    }
+
+    // No active execution - suggest based on roadmap
+    // For now, suggest engineering-loop as default
+    await this.sendNotification(
+      'Next Highest Leverage',
+      'No active loop. Suggestions:\n' +
+      '• `engineering-loop [project]` - Build a feature\n' +
+      '• `bugfix-loop [issue]` - Fix a bug\n' +
+      '• `learning-loop` - Review patterns\n\n' +
+      'Say a loop name to start.'
+    );
+  }
+
+  /**
+   * Handle skip command - skip current skill or gate
+   */
+  private async handleSkip(command: { type: 'skip'; executionId?: string; skillId?: string; gateId?: string; reason: string; dangerous?: boolean }): Promise<void> {
+    if (!this.executionEngine) {
+      await this.sendNotification('Skip', 'No execution engine available');
+      return;
+    }
+
+    // Find active execution if not specified
+    let executionId = command.executionId;
+    if (!executionId) {
+      const active = this.executionEngine.listExecutions({ status: 'active' });
+      if (active.length === 0) {
+        await this.sendNotification('Skip', 'No active execution to skip');
+        return;
+      }
+      executionId = active[0].id;
+    }
+
+    const execution = this.executionEngine.getExecution(executionId);
+    if (!execution) {
+      await this.sendNotification('Skip', 'Execution not found');
+      return;
+    }
+
+    // Find the current phase and pending skill
+    const currentPhase = execution.phases.find(p => p.status === 'in-progress');
+    if (!currentPhase) {
+      await this.sendNotification('Skip', 'No in-progress phase found');
+      return;
+    }
+
+    const pendingSkill = currentPhase.skills.find(s => s.status === 'pending');
+    if (pendingSkill) {
+      try {
+        await this.executionEngine.skipSkill(executionId, pendingSkill.skillId, command.reason);
+        await this.sendNotification('Skipped', `Skipped skill: ${pendingSkill.skillId}`);
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        await this.sendNotification('Skip Failed', msg);
+      }
+    } else {
+      await this.sendNotification('Skip', 'No pending skill to skip in current phase');
+    }
+  }
+
+  /**
+   * Handle start loop command
+   */
+  private async handleStartLoop(command: { type: 'start_loop'; loopId: string; target?: string }): Promise<void> {
+    if (!this.executionEngine) {
+      await this.sendNotification('Start Loop', 'No execution engine available');
+      return;
+    }
+
+    // Check for existing active execution
+    const active = this.executionEngine.listExecutions({ status: 'active' });
+    if (active.length > 0) {
+      await this.sendNotification(
+        'Already Running',
+        `*${active[0].loopId}* → ${active[0].project} is active.\n` +
+        'Complete or abort it first, or say "status" for details.'
+      );
+      return;
+    }
+
+    const project = command.target || 'orchestrator';
+    try {
+      const execution = await this.executionEngine.startExecution({
+        loopId: command.loopId,
+        project,
+        mode: 'brownfield-polish',
+        autonomy: 'supervised',
+      });
+
+      await this.sendNotification(
+        'Loop Started',
+        `*${command.loopId}* → ${project}\nExecution: ${execution.id.slice(0, 8)}...\nSay "go" to proceed through phases.`
+      );
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      await this.sendNotification('Start Failed', msg);
     }
   }
 
@@ -590,6 +756,25 @@ export class ProactiveMessagingService {
       phaseNumber,
       totalPhases,
       skills,
+    });
+  }
+
+  async notifyGateAutoApproved(
+    gateId: string,
+    executionId: string,
+    loopId: string,
+    phase: string,
+    reason: 'guarantees_passed' | 'after_retry' | 'after_claude',
+    retryCount?: number
+  ): Promise<string> {
+    return this.notify({
+      type: 'gate_auto_approved',
+      gateId,
+      executionId,
+      loopId,
+      phase,
+      reason,
+      retryCount,
     });
   }
 

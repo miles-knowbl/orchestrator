@@ -6,6 +6,7 @@ export {
 export type {
   ProactiveEvent,
   GateWaitingEvent,
+  GateAutoApprovedEvent,
   LoopCompleteEvent,
   DreamProposalsReadyEvent,
   ExecutorBlockedEvent,

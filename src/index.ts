@@ -554,6 +554,9 @@ async function main() {
   // Wire up bidirectional connection (execution engine can send notifications)
   executionEngine.setMessagingService(proactiveMessagingService);
 
+  // Wire up autonomous executor to messaging service for auto-approve notifications
+  autonomousExecutor.setMessagingService(proactiveMessagingService);
+
   console.error(JSON.stringify({
     timestamp: new Date().toISOString(),
     level: 'info',

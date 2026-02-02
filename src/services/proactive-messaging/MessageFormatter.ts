@@ -18,6 +18,7 @@ import type {
   FormattedMessage,
   LoopStartEvent,
   GateWaitingEvent,
+  GateAutoApprovedEvent,
   LoopCompleteEvent,
   DreamProposalsReadyEvent,
   ExecutorBlockedEvent,
@@ -42,6 +43,8 @@ export class MessageFormatter {
         return this.formatLoopStart(event, interactionId);
       case 'gate_waiting':
         return this.formatGateWaiting(event, interactionId);
+      case 'gate_auto_approved':
+        return this.formatGateAutoApproved(event, interactionId);
       case 'loop_complete':
         return this.formatLoopComplete(event, interactionId);
       case 'dream_proposals_ready':
@@ -193,6 +196,31 @@ export class MessageFormatter {
       metadata: {
         interactionId,
         eventType: 'gate_waiting',
+        executionId: event.executionId,
+      },
+    };
+  }
+
+  private formatGateAutoApproved(event: GateAutoApprovedEvent, interactionId: string): FormattedMessage {
+    // Clean gate name: "spec-gate" → "Spec"
+    const gateName = event.gateId.replace('-gate', '').replace(/^\w/, c => c.toUpperCase());
+
+    // Brief notification - no buttons needed
+    let suffix = '';
+    if (event.reason === 'after_retry' && event.retryCount) {
+      suffix = ` (after ${event.retryCount} ${event.retryCount === 1 ? 'retry' : 'retries'})`;
+    } else if (event.reason === 'after_claude') {
+      suffix = ' (after Claude fix)';
+    }
+
+    const text = `✓ *${gateName} gate* passed${suffix} → advancing`;
+
+    return {
+      text,
+      notificationText: `${gateName} gate auto-approved`,
+      metadata: {
+        interactionId,
+        eventType: 'gate_auto_approved',
         executionId: event.executionId,
       },
     };

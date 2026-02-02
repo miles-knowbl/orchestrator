@@ -112,6 +112,16 @@ export interface PhaseStartEvent {
   skills: string[];
 }
 
+export interface GateAutoApprovedEvent {
+  type: 'gate_auto_approved';
+  gateId: string;
+  executionId: string;
+  loopId: string;
+  phase: string;
+  reason: 'guarantees_passed' | 'after_retry' | 'after_claude';
+  retryCount?: number;
+}
+
 export interface CustomNotificationEvent {
   type: 'custom';
   title: string;
@@ -183,6 +193,7 @@ export interface DailyWelcomeEvent {
 export type ProactiveEvent =
   | LoopStartEvent
   | GateWaitingEvent
+  | GateAutoApprovedEvent
   | LoopCompleteEvent
   | DreamProposalsReadyEvent
   | ExecutorBlockedEvent
@@ -261,6 +272,23 @@ export interface CreateDeliverablesCommand {
   missingFiles: string[];
 }
 
+export interface SkipCommand {
+  type: 'skip';
+  executionId?: string;
+  skillId?: string;
+  gateId?: string;
+  reason: string;
+  dangerous?: boolean;  // Skip even with failed guarantees
+}
+
+export interface StatusCommand {
+  type: 'status';
+}
+
+export interface NextLeverageCommand {
+  type: 'next_leverage';
+}
+
 /**
  * Pending task for Claude Code to pick up
  */
@@ -286,7 +314,10 @@ export type InboundCommand =
   | StartLoopCommand
   | ApproveAllProposalsCommand
   | StartNextLoopCommand
-  | CreateDeliverablesCommand;
+  | CreateDeliverablesCommand
+  | SkipCommand
+  | StatusCommand
+  | NextLeverageCommand;
 
 // ============================================================================
 // Interactions

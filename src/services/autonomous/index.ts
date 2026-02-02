@@ -5,4 +5,6 @@ export type {
   TickResult,
   TickAction,
   AutoApprovalResult,
+  GateRetryStatus,
+  GateRetryState,
 } from './AutonomousExecutor.js';
