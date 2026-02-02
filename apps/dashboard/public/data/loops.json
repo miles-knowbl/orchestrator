@@ -3,11 +3,11 @@
     {
       "id": "audit-loop",
       "name": "Audit Loop",
-      "version": "1.0.0",
-      "description": "Audit loop for evaluating existing systems across architecture, performance, and security dimensions. Takes audit scope through systematic review, validation, and reporting with enforced quality gates",
+      "version": "4.0.0",
+      "description": "Taste-first audit loop for evaluating existing systems. Evaluates subjective quality (taste) before technical analysis, then applies MECE failure mode taxonomy to backend and UI pipelines. Produces a ",
       "category": "development",
-      "phaseCount": 5,
-      "skillCount": 8
+      "phaseCount": 6,
+      "skillCount": 20
     },
     {
       "id": "bugfix-loop",

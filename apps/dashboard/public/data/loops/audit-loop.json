@@ -1,25 +1,57 @@
 {
   "id": "audit-loop",
   "name": "Audit Loop",
-  "version": "1.0.0",
-  "description": "Audit loop for evaluating existing systems across architecture, performance, and security dimensions. Takes audit scope through systematic review, validation, and reporting with enforced quality gates.",
+  "version": "4.0.0",
+  "description": "Taste-first audit loop for evaluating existing systems. Evaluates subjective quality (taste) before technical analysis, then applies MECE failure mode taxonomy to backend and UI pipelines. Produces a taste-ordered checklist to done.",
   "category": "development",
   "phases": [
     {
-      "name": "INIT",
+      "name": "TASTE",
       "order": 0,
+      "skills": [
+        {
+          "skillId": "taste-discovery",
+          "required": true,
+          "order": 0
+        },
+        {
+          "skillId": "taste-eval",
+          "required": true,
+          "order": 1
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "INIT",
+      "order": 1,
       "skills": [
         {
           "skillId": "requirements",
           "required": true,
           "order": 0
+        },
+        {
+          "skillId": "pipeline-discovery",
+          "required": true,
+          "order": 1
+        },
+        {
+          "skillId": "ui-pipeline-discovery",
+          "required": true,
+          "order": 2
+        },
+        {
+          "skillId": "dependency-mapping",
+          "required": true,
+          "order": 3
         }
       ],
       "required": true
     },
     {
       "name": "REVIEW",
-      "order": 1,
+      "order": 2,
       "skills": [
         {
           "skillId": "architecture-review",
@@ -35,13 +67,33 @@
           "skillId": "perf-analysis",
           "required": true,
           "order": 2
+        },
+        {
+          "skillId": "failure-mode-analysis",
+          "required": true,
+          "order": 3
+        },
+        {
+          "skillId": "ui-failure-mode-analysis",
+          "required": true,
+          "order": 4
+        },
+        {
+          "skillId": "quality-eval-design",
+          "required": true,
+          "order": 5
+        },
+        {
+          "skillId": "taste-trace",
+          "required": true,
+          "order": 6
         }
       ],
       "required": true
     },
     {
       "name": "VALIDATE",
-      "order": 2,
+      "order": 3,
       "skills": [
         {
           "skillId": "integration-test",
@@ -49,7 +101,34 @@
           "order": 0
         },
         {
+          "skillId": "ui-interaction-test",
+          "required": true,
+          "order": 1
+        },
+        {
           "skillId": "code-verification",
+          "required": true,
+          "order": 2
+        },
+        {
+          "skillId": "test-spec-generation",
+          "required": true,
+          "order": 3
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "DOCUMENT",
+      "order": 4,
+      "skills": [
+        {
+          "skillId": "document",
+          "required": true,
+          "order": 0
+        },
+        {
+          "skillId": "taste-report",
           "required": true,
           "order": 1
         }
@@ -57,20 +136,8 @@
       "required": true
     },
     {
-      "name": "DOCUMENT",
-      "order": 3,
-      "skills": [
-        {
-          "skillId": "document",
-          "required": true,
-          "order": 0
-        }
-      ],
-      "required": true
-    },
-    {
       "name": "COMPLETE",
-      "order": 4,
+      "order": 5,
       "skills": [
         {
           "skillId": "retrospective",
@@ -82,6 +149,17 @@
     }
   ],
   "gates": [
+    {
+      "id": "taste-gate",
+      "name": "Taste Evaluation Approval",
+      "afterPhase": "TASTE",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": [
+        "TASTE-EVAL.md",
+        "TASTE-GAPS.md"
+      ]
+    },
     {
       "id": "scope-gate",
       "name": "Audit Scope Approval",
@@ -101,7 +179,10 @@
       "deliverables": [
         "ARCHITECTURE-REVIEW.md",
         "SECURITY-AUDIT.md",
-        "PERF-ANALYSIS.md"
+        "PERF-ANALYSIS.md",
+        "PIPELINE-FAILURE-MODES.md",
+        "UI-FAILURE-MODES.md",
+        "TASTE-TRACE.md"
       ]
     },
     {
@@ -117,7 +198,7 @@
   ],
   "defaultMode": "greenfield",
   "defaultAutonomy": "supervised",
-  "skillCount": 8,
-  "phaseCount": 5,
+  "skillCount": 20,
+  "phaseCount": 6,
   "author": "Orchestrator"
 }

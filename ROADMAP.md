@@ -54,7 +54,7 @@ Layer 0  ───────────────────────�
 | Module | Description | Depends On |
 |--------|-------------|------------|
 | **kanban** | Linear-style visualization of the module ladder to system completion. Human-readable checklist showing scope completion, delegation-ready for worktrees. | roadmapping |
-| **ooda-clocks-visual** | Gamelan-inspired circular visualization showing when patterns, hooks, and skills fire during loop execution. Temporal awareness of the orchestration rhythm. | — |
+| **ooda-clocks-visual** ✓ | Gamelan-inspired circular visualization showing when patterns, hooks, and skills fire during loop execution. Temporal awareness of the orchestration rhythm. | — |
 | **skill-trees** | DAG-like domain-specific sequences of skills. Simultaneously illustrates skill relationships to LLMs while helping users gain familiarity by seeing each skill produce output before using it in a loop. Interface to the skill-based ontology. | knowledge-graph-ontology |
 | **tech-trees** | Macroscopic technology progressions that cultures/orgs pursue. Predictive capabilities (potentially RL-based like AlphaGo with Markov decision trees) that inspire MECE opportunity mapping at system and module levels. | knowledge-graph-ontology, mece-opportunity-mapping | *deferred* |
 | **ladder-of-abstraction-interfaces** | UI showing the same loop at different zoom levels (module/system/org). Music-gear-like looping interfaces for piloting, co-piloting, or playing co-op PvE with the orchestrator. | kanban | *deferred*
@@ -227,13 +227,14 @@ Phase 3.5: Layer 1 Continuation
   12. multi-agent-worktrees ✓
 
 Phase 4: Visualization
-  13. ooda-clocks-visual
+  13. ooda-clocks-visual ✓
   14. skill-trees ✓
-  15. ladder-of-abstraction-interfaces
+  15. ladder-of-abstraction-interfaces (deferred)
 
 Phase 5: Meta
   16. game-design ✓
-  17. spaced-repetition-learning ✓ ◄── YOU ARE HERE
+  17. spaced-repetition-learning ✓
+  18. ooda-clocks-visual ✓ ◄── YOU ARE HERE
 
 Phase 5: Interface (requires local-first decision)
   15. local-first (architecture)
@@ -300,8 +301,8 @@ Phase 7: Advanced
 
 ## Next Action
 
-**Current Module**: proactive-messaging
+**Current Module**: ooda-clocks-visual
 **Status**: Complete
-**Next**: slack-integration, voice, or ooda-clocks-visual (unblocked Layer 1/3 modules)
+**Next**: voice, brownfield-specialization, or sales-loop/ops-loop (unblocked Layer 3/4 modules)
 
 **Note**: ADIR is now captured as pattern PAT-012 in memory/orchestrator.json rather than a standalone module. It synergizes with Deep Context Protocol, Leverage Protocol, MECE Opportunity Mapping, and Terrain Check.

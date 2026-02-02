@@ -153,6 +153,14 @@
       "category": "meta"
     },
     {
+      "id": "dependency-mapping",
+      "name": "dependency-mapping",
+      "version": "1.0.0",
+      "description": "Map cross-pipeline dependencies and handoffs (X-series). Identifies where pipelines connect, share data, or have timing dependencies. Documents failure modes at integration boundaries that span multip",
+      "phase": "INIT",
+      "category": "core"
+    },
+    {
       "id": "deploy",
       "name": "deploy",
       "version": "1.0.0",
@@ -206,6 +214,14 @@
       "version": "1.0.0",
       "description": "Estimate effort, complexity, and duration for systems and features. Provides frameworks for sizing work, accounting for risk, and calibrating estimates over time. Supports planning and expectation set",
       "phase": "INIT",
+      "category": "core"
+    },
+    {
+      "id": "failure-mode-analysis",
+      "name": "failure-mode-analysis",
+      "version": "1.0.0",
+      "description": "Apply MECE failure mode taxonomy to backend pipelines. Classifies failures by Location (L1-L4), Type (T1-T5), and Severity (S1-S4). Produces comprehensive failure mode inventory with validation status",
+      "phase": "REVIEW",
       "category": "core"
     },
     {
@@ -385,6 +401,14 @@
       "category": "core"
     },
     {
+      "id": "pipeline-discovery",
+      "name": "pipeline-discovery",
+      "version": "1.0.0",
+      "description": "Identify backend data pipelines (P-series) in the codebase. Discovers server-side data flows triggered by user actions or system events, documenting triggers, steps, and outcomes. Foundation for MECE ",
+      "phase": "INIT",
+      "category": "core"
+    },
+    {
       "id": "portability",
       "name": "portability",
       "version": "1.0.0",
@@ -415,6 +439,14 @@
       "description": "Generate polished proposal documents from cultivated context and priorities. Transform insights, patterns, and ranked opportunities into compelling narratives with clear value propositions, scope defi",
       "phase": "COMPLETE",
       "category": "specialized"
+    },
+    {
+      "id": "quality-eval-design",
+      "name": "quality-eval-design",
+      "version": "1.0.0",
+      "description": "Design content and UX quality evaluation frameworks. Creates scoring rubrics, defines evaluation methodology, and produces eval documentation that can be used for ongoing quality assessment.",
+      "phase": "REVIEW",
+      "category": "core"
     },
     {
       "id": "refactor",
@@ -545,6 +577,38 @@
       "category": "specialized"
     },
     {
+      "id": "taste-discovery",
+      "name": "taste-discovery",
+      "version": "1.0.0",
+      "description": "Find and load project-specific taste evaluations. Discovers eval definitions through manifest, convention, or defaults. Provides the foundation for taste-first auditing by identifying what quality dim",
+      "phase": "TASTE",
+      "category": "core"
+    },
+    {
+      "id": "taste-eval",
+      "name": "taste-eval",
+      "version": "1.0.0",
+      "description": "Execute taste evaluation against discovered dimensions. Scores each dimension 1-5 with evidence, calculates weighted scores, identifies gaps where score falls below floor, and determines ship status. ",
+      "phase": "TASTE",
+      "category": "core"
+    },
+    {
+      "id": "taste-report",
+      "name": "taste-report",
+      "version": "1.0.0",
+      "description": "Generate taste-ordered checklist for shipping. Uses trace data to prioritize failure modes by taste impact: Tier 1 (taste-critical), Tier 2 (taste-significant), Tier 3 (technical-only). Updates AUDIT-",
+      "phase": "DOCUMENT",
+      "category": "core"
+    },
+    {
+      "id": "taste-trace",
+      "name": "taste-trace",
+      "version": "1.0.0",
+      "description": "Link taste gaps to technical failure modes. Creates traceability from subjective quality gaps to specific technical failures, enabling taste-ordered prioritization of fixes. Produces TASTE-TRACE.md wi",
+      "phase": "REVIEW",
+      "category": "core"
+    },
+    {
       "id": "test-generation",
       "name": "test-generation",
       "version": "1.0.0",
@@ -553,10 +617,42 @@
       "category": "core"
     },
     {
+      "id": "test-spec-generation",
+      "name": "test-spec-generation",
+      "version": "1.0.0",
+      "description": "Generate test specifications for unvalidated failure modes. Creates detailed test specs with setup, steps, and assertions for each unvalidated failure mode. Produces PIPELINE-TEST-SPECS.md and UI-TEST",
+      "phase": "VALIDATE",
+      "category": "core"
+    },
+    {
       "id": "triage",
       "name": "triage",
       "version": "1.0.0",
       "description": "Prioritize and re-prioritize work in the system queue based on changing conditions. Uses prioritization frameworks to order work by value, urgency, and dependencies. Responds to triggers like new requ",
+      "phase": "INIT",
+      "category": "core"
+    },
+    {
+      "id": "ui-failure-mode-analysis",
+      "name": "ui-failure-mode-analysis",
+      "version": "1.0.0",
+      "description": "Apply MECE failure mode taxonomy to UI pipelines with L5/L6 extensions. Identifies UI-specific failure patterns like Dead Click, Stale Closure, State Desync. Produces UI-FAILURE-MODES.md with coverage",
+      "phase": "REVIEW",
+      "category": "core"
+    },
+    {
+      "id": "ui-interaction-test",
+      "name": "ui-interaction-test",
+      "version": "1.0.0",
+      "description": "Validate that UI flows actually work by tracing through each U-series pipeline step by step. Documents what works, what fails, and what needs attention. Produces UI-VALIDATION.md with interaction test",
+      "phase": "VALIDATE",
+      "category": "core"
+    },
+    {
+      "id": "ui-pipeline-discovery",
+      "name": "ui-pipeline-discovery",
+      "version": "1.0.0",
+      "description": "Identify client-side UI pipelines (U-series) in the codebase. Discovers interaction flows involving chat, tool handlers, context synchronization, and real-time updates. Foundation for UI-specific fail",
       "phase": "INIT",
       "category": "core"
     }

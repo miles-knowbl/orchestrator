@@ -51,6 +51,7 @@ A self-improving meta-system where skills are the atomic primitive. Orchestrator
 | spaced-repetition | src/services/spaced-repetition/ | complete | 22/22 | 100% |
 | proposing-decks | src/services/proposing-decks/ | complete | 12/12 | 100% |
 | proactive-messaging | src/services/proactive-messaging/ | complete | 10/10 | 100% |
+| ooda-clocks-visual | src/services/ooda-clock/, apps/dashboard/app/ooda-clock/ | complete | 12/12 | 100% |
 
 ---
 
@@ -499,6 +500,22 @@ A self-improving meta-system where skills are the atomic primitive. Orchestrator
 - [x] Foundation for "work from anywhere" async loops
 - [x] See src/services/proactive-messaging/ProactiveMessagingService.ts
 
+### ooda-clocks-visual (complete)
+- [x] OODAClockService — src/services/ooda-clock/OODAClockService.ts
+- [x] RhythmAnalyzer — src/services/ooda-clock/RhythmAnalyzer.ts
+- [x] Types — src/services/ooda-clock/types.ts
+- [x] MCP tools — src/tools/oodaClockTools.ts
+- [x] Dashboard page — apps/dashboard/app/ooda-clock/page.tsx
+- [x] Execution view — apps/dashboard/app/ooda-clock/[executionId]/page.tsx
+- [x] OODAClock component — circular visualization container
+- [x] ClockFace component — SVG with OODA quadrants
+- [x] EventMarker component — individual events on clock
+- [x] EventArc component — duration arcs
+- [x] PlaybackControls component — replay functionality
+- [x] ClockLegend component — color/shape legend
+- [x] Navigation link — Added to layout.tsx
+- [x] See ARCHITECTURE.md for full design documentation
+
 ---
 
 ## Completion Algebra
@@ -516,6 +533,7 @@ System.done = ALL(Module.done)
               AND dreaming.done AND multi-agent-worktrees.done
               AND mece-opportunity-mapping.done AND coherence-system.done
               AND loop-sequencing.done AND skill-trees.done AND game-design.done
+              AND ooda-clocks-visual.done
               AND spaced-repetition.done AND proposing-decks.done
               AND proactive-messaging.done
 
