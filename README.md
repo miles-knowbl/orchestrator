@@ -10,44 +10,55 @@ A self-improving meta-system for composing AI-driven workflows. Skills are the a
 2. git — Mac: `xcode-select --install` / Others: [git-scm.com](https://git-scm.com)
 3. [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — `npm install -g @anthropic-ai/claude-code`
 
-### Install & Run
+### Install
 
 ```bash
-# One-command install
-curl -fsSL https://raw.githubusercontent.com/miles-knowbl/orchestrator/main/install.sh | bash
-
-# Start the server
-cd orchestrator
-npm start
+# Get the install command
+curl -sL https://raw.githubusercontent.com/superorganism/orchestrator/main/commands/install-loop.md \
+  > ~/.claude/commands/install-loop.md
 ```
 
-The server starts on **http://localhost:3002**. Verify with `curl http://localhost:3002/health`.
+Then in Claude Code:
 
-### Connect Claude Code
-
-In a new terminal:
-
-```bash
-# Register the orchestrator as an MCP server
-claude mcp add --transport http orchestrator http://localhost:3002/mcp
-
-# Start a session
-claude
+```
+/install-loop
 ```
 
-The installer sets up 9 slash commands. Try one:
+That's it. The installer will:
+- Clone and build the project
+- Configure Claude Code to connect via HTTP
+- Install auto-start hooks
+- Open a Terminal window with the running server
+
+### Usage
+
+Just use Claude Code normally. When you call any orchestrator tool (or run a loop), the server **starts automatically** in a Terminal window if it's not already running.
+
+**You don't need to:**
+- Manually start the server
+- Keep a terminal open
+- Remember any commands
+
+The Terminal window shows server logs and can be minimized but should stay open.
+
+### Available Commands
 
 | Command | What it does |
 |---------|-------------|
+| `/install-loop` | Install, update, and verify orchestrator setup |
 | `/engineering-loop` | **Full engineering loop** — build anything from scratch or extend existing code |
 | `/bugfix-loop` | Systematic bug fixing with reproduction and regression tests |
-| `/distribution-loop` | Distribute to all targets (local, Railway, Vercel, GitHub Releases) |
+| `/distribution-loop` | Distribute to all targets (local, Vercel, GitHub Releases) |
 | `/proposal-loop` | Create evidence-backed proposals |
 | `/transpose-loop` | Transpose architecture to a new tech stack, produce a feature spec |
 | `/infra-loop` | Infrastructure provisioning (CI/CD, databases) |
 | `/audit-loop` | Read-only system audit with prioritized findings |
 | `/deck-loop` | Generate slide decks from context and brand assets |
 | `/meta-loop` | Create new loops (the loop that makes loops) |
+
+### Updating
+
+Run `/install-loop` again. It detects the existing install and updates to the latest version.
 
 ### Dashboard (optional)
 
@@ -72,7 +83,7 @@ orchestrator/
 ├── memory/                 # Persistent learning state
 ├── apps/
 │   └── dashboard/          # Next.js monitoring UI
-└── .github/workflows/      # CI/CD (Vercel + Railway)
+└── .github/workflows/      # CI/CD (Vercel + GitHub Releases)
 ```
 
 ### How It Works
@@ -103,23 +114,30 @@ orchestrator/
 
 | Context | What runs | Purpose |
 |---------|-----------|---------|
-| **Local** (`npm start`) | Orchestrator on port 3002 | Claude Code connects here for slash commands and loops |
-| **Railway** (auto-deployed) | Same Orchestrator server | Feeds live skill/loop/execution data to the hosted dashboard |
+| **Local** (auto-started) | Orchestrator on port 3002 | Claude Code connects here for slash commands and loops |
 | **Vercel** | Next.js dashboard | Read-only monitoring UI at orchestrator-xi.vercel.app |
 | **GitHub Releases** | Tarball + SHA256 | Downloadable archive, updated on every push to main |
 
-Local usage is the primary mode — install, run `npm start`, and connect Claude Code.
-The Railway + Vercel deployment exists solely to power the public dashboard.
+Local usage is the primary mode. The server starts automatically when you use orchestrator tools.
 
 ## MCP Integration
 
-Register the orchestrator as an MCP server in Claude Code:
+The `/install-loop` command configures MCP automatically by writing to `~/.claude/mcp.json`:
 
-```bash
-claude mcp add --transport http orchestrator http://localhost:3002/mcp
+```json
+{
+  "mcpServers": {
+    "orchestrator": {
+      "type": "http",
+      "url": "http://localhost:3002/mcp"
+    }
+  }
+}
 ```
 
 This exposes 54+ tools for managing skills, loops, executions, memory, and inbox.
+
+**Auto-start hook:** A Claude Code hook (`~/.claude/hooks/ensure-orchestrator.sh`) automatically opens a Terminal and starts the server when any orchestrator tool is called.
 
 ## Environment Variables
 
@@ -161,8 +179,7 @@ npm test       # Run tests
 The hosted deployment powers the public dashboard — it is **not** required for local usage.
 
 - **Dashboard**: [orchestrator-xi.vercel.app](https://orchestrator-xi.vercel.app) — read-only monitoring UI (Vercel)
-- **API**: Railway — auto-deployed on push, serves live data to the dashboard
-- **Releases**: [GitHub Releases](https://github.com/miles-knowbl/orchestrator/releases) — tarball with SHA256 checksum
+- **Releases**: [GitHub Releases](https://github.com/superorganism/orchestrator/releases) — tarball with SHA256 checksum
 
 ## License
 

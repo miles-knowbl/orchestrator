@@ -41,7 +41,7 @@ fi
 
 # --- Clone ---
 
-git clone https://github.com/miles-knowbl/orchestrator.git
+git clone https://github.com/superorganism/orchestrator.git
 echo "[OK] Cloned orchestrator"
 
 cd orchestrator
@@ -74,6 +74,142 @@ for cmd in commands/*.md; do
 done
 echo "[OK] Installed $INSTALLED slash commands to ~/.claude/commands/"
 
+# --- Configure MCP (HTTP transport, explicit) ---
+
+MCP_FILE="$HOME/.claude/mcp.json"
+mkdir -p ~/.claude
+
+node -e "
+  const fs = require('fs');
+  const mcpFile = '$MCP_FILE';
+
+  let config = { mcpServers: {} };
+  if (fs.existsSync(mcpFile)) {
+    try {
+      config = JSON.parse(fs.readFileSync(mcpFile, 'utf8'));
+      config.mcpServers = config.mcpServers || {};
+    } catch (e) {}
+  }
+
+  config.mcpServers.orchestrator = {
+    type: 'http',
+    url: 'http://localhost:3002/mcp'
+  };
+
+  fs.writeFileSync(mcpFile, JSON.stringify(config, null, 2));
+"
+echo "[OK] Configured MCP server (HTTP transport)"
+
+# --- Install auto-start hook ---
+
+ORCHESTRATOR_DIR="$(pwd)"
+mkdir -p ~/.claude/hooks
+
+cat > ~/.claude/hooks/ensure-orchestrator.sh << 'HOOK'
+#!/bin/bash
+# ensure-orchestrator.sh - Auto-start orchestrator server in a new Terminal window
+
+ORCHESTRATOR_DIR="$HOME/orchestrator"
+HEALTH_URL="http://localhost:3002/health"
+MAX_WAIT=30
+
+# Fast path: check if server is already running
+if curl -s --max-time 1 "$HEALTH_URL" > /dev/null 2>&1; then
+    exit 0
+fi
+
+# Server not running - open terminal and start it
+# Prefer iTerm2 if installed, fall back to Terminal.app
+if [ -d "/Applications/iTerm.app" ]; then
+    osascript <<EOF
+tell application "iTerm"
+    activate
+    set newWindow to (create window with default profile)
+    tell current session of newWindow
+        write text "cd \"$ORCHESTRATOR_DIR\" && echo '🚀 Starting Orchestrator...' && npm start"
+    end tell
+end tell
+EOF
+else
+    osascript <<EOF
+tell application "Terminal"
+    activate
+    set newTab to do script "cd \"$ORCHESTRATOR_DIR\" && echo '🚀 Starting Orchestrator...' && npm start"
+    set custom title of front window to "Orchestrator Server"
+end tell
+EOF
+fi
+
+# Wait for server to be ready
+waited=0
+while [ $waited -lt $MAX_WAIT ]; do
+    if curl -s --max-time 1 "$HEALTH_URL" > /dev/null 2>&1; then
+        exit 0
+    fi
+    sleep 1
+    waited=$((waited + 1))
+done
+
+exit 1
+HOOK
+
+chmod +x ~/.claude/hooks/ensure-orchestrator.sh
+
+# Add hook to hooks.json
+HOOKS_FILE="$HOME/.claude/hooks.json"
+if [ ! -f "$HOOKS_FILE" ]; then
+  echo '{"hooks":{}}' > "$HOOKS_FILE"
+fi
+
+if ! grep -q "ensure-orchestrator" "$HOOKS_FILE" 2>/dev/null; then
+  node -e "
+    const fs = require('fs');
+    const config = JSON.parse(fs.readFileSync('$HOOKS_FILE', 'utf8'));
+    config.hooks = config.hooks || {};
+    config.hooks.PreToolUse = config.hooks.PreToolUse || [];
+    config.hooks.PreToolUse.unshift({
+      name: 'ensure-orchestrator',
+      matcher: { toolNames: ['mcp__orchestrator__*'] },
+      command: '~/.claude/hooks/ensure-orchestrator.sh'
+    });
+    fs.writeFileSync('$HOOKS_FILE', JSON.stringify(config, null, 2));
+  "
+fi
+echo "[OK] Installed auto-start hook"
+
+# --- Start server in terminal ---
+
+echo ""
+echo "Starting server..."
+
+if [ -d "/Applications/iTerm.app" ]; then
+    osascript <<EOF
+tell application "iTerm"
+    activate
+    set newWindow to (create window with default profile)
+    tell current session of newWindow
+        write text "cd '$ORCHESTRATOR_DIR' && echo '🚀 Starting Orchestrator...' && npm start"
+    end tell
+end tell
+EOF
+else
+    osascript <<EOF
+tell application "Terminal"
+    activate
+    set newTab to do script "cd '$ORCHESTRATOR_DIR' && echo '🚀 Starting Orchestrator...' && npm start"
+    set custom title of front window to "Orchestrator Server"
+end tell
+EOF
+fi
+
+# Wait for server
+for i in {1..30}; do
+  if curl -s http://localhost:3002/health > /dev/null 2>&1; then
+    break
+  fi
+  sleep 1
+done
+
 # --- Done ---
 
 echo ""
@@ -81,36 +217,26 @@ echo "========================================"
 echo "  Installation complete!"
 echo "========================================"
 echo ""
-echo "  STEP 1: Start the server"
+echo "  Server: http://localhost:3002 (running in Terminal)"
+echo "  MCP:    Configured (HTTP transport)"
+echo "  Hooks:  Auto-start enabled"
 echo ""
-echo "    cd orchestrator"
-echo "    npm start"
+echo "  The server starts automatically when you use any"
+echo "  orchestrator tool in Claude Code. Just run:"
 echo ""
-echo "  STEP 2: Verify it works (in a new terminal)"
+echo "    claude"
 echo ""
-echo "    curl http://localhost:3002/health"
+echo "  Then try a slash command:"
 echo ""
-echo "  STEP 3: Connect Claude Code"
+echo "    /engineering-loop    Full engineering loop (build anything)"
+echo "    /bugfix-loop         Systematic bug fixing"
+echo "    /distribution-loop   Distribute to all targets"
+echo "    /proposal-loop       Create evidence-backed proposals"
+echo "    /transpose-loop      Transpose architecture to new stack"
+echo "    /infra-loop          Infrastructure provisioning"
+echo "    /audit-loop          System audit (read-only)"
+echo "    /deck-loop           Generate slide decks"
+echo "    /meta-loop           Create new loops"
 echo ""
-echo "    If you don't have Claude Code:"
-echo "      npm install -g @anthropic-ai/claude-code"
-echo ""
-echo "    Register the orchestrator:"
-echo "      claude mcp add --transport http orchestrator http://localhost:3002/mcp"
-echo ""
-echo "  STEP 4: Use it"
-echo ""
-echo "    Start a Claude Code session:"
-echo "      claude"
-echo ""
-echo "    Then try a slash command:"
-echo "      /engineering-loop    Full engineering loop (build anything)"
-echo "      /bugfix-loop        Systematic bug fixing"
-echo "      /distribution-loop  Distribute to all targets"
-echo "      /proposal-loop      Create evidence-backed proposals"
-echo "      /transpose-loop     Transpose architecture to new stack"
-echo "      /infra-loop         Infrastructure provisioning"
-echo "      /audit-loop         System audit (read-only)"
-echo "      /deck-loop          Generate slide decks"
-echo "      /meta-loop          Create new loops"
+echo "  To update later, run: /install-loop"
 echo ""

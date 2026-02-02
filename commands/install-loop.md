@@ -126,22 +126,126 @@ Skip install/update phase.
 
 ### Phase 3: REGISTER
 
-Register MCP server with Claude Code (if not already):
+Register MCP server and auto-start hook with Claude Code:
 
 ```bash
-# Check if already registered
-if ! claude mcp list 2>/dev/null | grep -q "orchestrator"; then
-  # Register the MCP server
-  claude mcp add --transport http orchestrator http://localhost:3002/mcp
-  echo "MCP server registered"
+# Register MCP server (HTTP transport, explicit config)
+MCP_FILE="$HOME/.claude/mcp.json"
+mkdir -p ~/.claude
+
+node -e "
+  const fs = require('fs');
+  const mcpFile = '$MCP_FILE';
+
+  // Load existing config or create new
+  let config = { mcpServers: {} };
+  if (fs.existsSync(mcpFile)) {
+    try {
+      config = JSON.parse(fs.readFileSync(mcpFile, 'utf8'));
+      config.mcpServers = config.mcpServers || {};
+    } catch (e) {
+      console.log('Warning: Could not parse existing mcp.json, creating new');
+    }
+  }
+
+  // Set orchestrator to HTTP transport (explicit, not stdio)
+  config.mcpServers.orchestrator = {
+    type: 'http',
+    url: 'http://localhost:3002/mcp'
+  };
+
+  fs.writeFileSync(mcpFile, JSON.stringify(config, null, 2));
+  console.log('MCP server registered (HTTP transport)');
+"
+
+# Install auto-start hook (opens Terminal when MCP tools are called)
+mkdir -p ~/.claude/hooks
+
+# Create the ensure-orchestrator.sh script
+cat > ~/.claude/hooks/ensure-orchestrator.sh << 'HOOK'
+#!/bin/bash
+# ensure-orchestrator.sh - Auto-start orchestrator server in a new Terminal window
+# Triggered by PreToolUse hook on mcp__orchestrator__* tools
+
+ORCHESTRATOR_DIR="$HOME/orchestrator"
+HEALTH_URL="http://localhost:3002/health"
+MAX_WAIT=30
+
+# Fast path: check if server is already running
+if curl -s --max-time 1 "$HEALTH_URL" > /dev/null 2>&1; then
+    exit 0
+fi
+
+# Server not running - open terminal and start it
+# Prefer iTerm2 if installed, fall back to Terminal.app
+if [ -d "/Applications/iTerm.app" ]; then
+    osascript <<EOF
+tell application "iTerm"
+    activate
+    set newWindow to (create window with default profile)
+    tell current session of newWindow
+        write text "cd \"$ORCHESTRATOR_DIR\" && echo '🚀 Starting Orchestrator...' && npm start"
+    end tell
+end tell
+EOF
 else
-  echo "MCP server already registered"
+    osascript <<EOF
+tell application "Terminal"
+    activate
+    set newTab to do script "cd \"$ORCHESTRATOR_DIR\" && echo '🚀 Starting Orchestrator...' && npm start"
+    set custom title of front window to "Orchestrator Server"
+end tell
+EOF
+fi
+
+# Wait for server to be ready
+echo "Waiting for orchestrator to start..."
+waited=0
+while [ $waited -lt $MAX_WAIT ]; do
+    if curl -s --max-time 1 "$HEALTH_URL" > /dev/null 2>&1; then
+        echo "Orchestrator is ready"
+        exit 0
+    fi
+    sleep 1
+    waited=$((waited + 1))
+done
+
+echo "Warning: Orchestrator did not start within ${MAX_WAIT}s"
+exit 1
+HOOK
+
+chmod +x ~/.claude/hooks/ensure-orchestrator.sh
+
+# Add PreToolUse hook to hooks.json (if not already)
+HOOKS_FILE="$HOME/.claude/hooks.json"
+if [ ! -f "$HOOKS_FILE" ]; then
+  echo '{"hooks":{}}' > "$HOOKS_FILE"
+fi
+
+# Check if hook already exists
+if ! grep -q "ensure-orchestrator" "$HOOKS_FILE" 2>/dev/null; then
+  # Use node to safely merge the hook into existing config
+  node -e "
+    const fs = require('fs');
+    const config = JSON.parse(fs.readFileSync('$HOOKS_FILE', 'utf8'));
+    config.hooks = config.hooks || {};
+    config.hooks.PreToolUse = config.hooks.PreToolUse || [];
+    config.hooks.PreToolUse.unshift({
+      name: 'ensure-orchestrator',
+      matcher: { toolNames: ['mcp__orchestrator__*'] },
+      command: '~/.claude/hooks/ensure-orchestrator.sh'
+    });
+    fs.writeFileSync('$HOOKS_FILE', JSON.stringify(config, null, 2));
+  "
+  echo "Auto-start hook installed"
+else
+  echo "Auto-start hook already installed"
 fi
 ```
 
 ### Phase 4: START
 
-Start the orchestrator server:
+Start the orchestrator server in a visible Terminal window:
 
 ```bash
 cd ~/orchestrator
@@ -149,8 +253,27 @@ cd ~/orchestrator
 # Kill existing process if running
 lsof -ti:3002 | xargs kill -9 2>/dev/null || true
 
-# Start server in background
-nohup npm start > /tmp/orchestrator.log 2>&1 &
+# Open terminal and start the server (user can see logs)
+# Prefer iTerm2 if installed, fall back to Terminal.app
+if [ -d "/Applications/iTerm.app" ]; then
+    osascript <<EOF
+tell application "iTerm"
+    activate
+    set newWindow to (create window with default profile)
+    tell current session of newWindow
+        write text "cd '$HOME/orchestrator' && echo '🚀 Starting Orchestrator...' && npm start"
+    end tell
+end tell
+EOF
+else
+    osascript <<EOF
+tell application "Terminal"
+    activate
+    set newTab to do script "cd '$HOME/orchestrator' && echo '🚀 Starting Orchestrator...' && npm start"
+    set custom title of front window to "Orchestrator Server"
+end tell
+EOF
+fi
 
 # Wait for server to be ready
 for i in {1..30}; do
@@ -192,9 +315,10 @@ Show completion summary:
 
   Version:   1.2.0
   Location:  ~/orchestrator
-  Server:    http://localhost:3002
+  Server:    http://localhost:3002 (running in Terminal)
   Dashboard: http://localhost:3002
   MCP:       Connected ✓
+  Auto-start: Enabled (server will start automatically)
 
   You're ready to go!
 
@@ -294,20 +418,25 @@ lsof -ti:3002 | xargs kill -9
 
 **MCP not connecting:**
 ```bash
-# Verify registration
-claude mcp list
+# Verify ~/.claude/mcp.json has the correct config:
+cat ~/.claude/mcp.json
+# Should contain:
+# {
+#   "mcpServers": {
+#     "orchestrator": {
+#       "type": "http",
+#       "url": "http://localhost:3002/mcp"
+#     }
+#   }
+# }
 
-# Re-register if needed
-claude mcp remove orchestrator
-claude mcp add --transport http orchestrator http://localhost:3002/mcp
+# If wrong, fix it manually or re-run /install-loop
 ```
 
 **Server won't start:**
 ```bash
-# Check logs
-cat /tmp/orchestrator.log
-
-# Try manual start to see errors
+# The server runs in a visible Terminal window, so check that window for errors
+# If the Terminal window closed, start manually:
 cd ~/orchestrator && npm start
 ```
 
@@ -352,7 +481,8 @@ Install Loop: Registering MCP...
 
 Install Loop: Starting server...
 
-  ✓ Server running at http://localhost:3002
+  Opening Terminal window...
+  ✓ Server running at http://localhost:3002 (visible in Terminal)
 
 Install Loop: Verifying connection...
 
@@ -393,5 +523,5 @@ The daily message is sent to both terminal and Slack (if configured).
 ## References
 
 - GitHub Releases API: `https://api.github.com/repos/superorganism/orchestrator/releases/latest`
-- Claude MCP CLI: `claude mcp --help`
+- Claude MCP config: `~/.claude/mcp.json`
 - Orchestrator docs: https://orchestrator.dev

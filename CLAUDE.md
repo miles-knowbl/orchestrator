@@ -6,13 +6,14 @@ Orchestrator is a self-improving meta-system where **skills are the atomic primi
 
 ## Quick Start
 
-```bash
-# Build and run the server
-npm run build && npm start
+For new users: Run `/install-loop` in Claude Code. It handles everything.
 
-# Server runs on http://localhost:3002
-# Dashboard at http://localhost:3003 (cd apps/dashboard && npm run dev)
+For development:
+```bash
+npm run build && npm start   # Server runs on http://localhost:3002
 ```
+
+The server auto-starts in a Terminal window when any orchestrator MCP tool is called (via the `ensure-orchestrator.sh` hook).
 
 ## Distribution (LOCAL-FIRST - NOT Railway)
 
@@ -38,7 +39,7 @@ Then commit/push to trigger the full distribution workflow.
 
 Slack notifications allow running loops while mobile (jogging, driving). All notifications @mention the user and include actionable buttons.
 
-**Config file:** `memory/proactive-messaging-config.json`
+**Config file:** `data/proactive-messaging/proactive-messaging-config.json`
 
 ### Solo Mode (current setup)
 ```json
