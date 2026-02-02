@@ -82,7 +82,7 @@ Layer 0  ───────────────────────�
 |--------|-------------|------------|
 | **voice** | Voice input and output for piloting the orchestrator. Naturalistic speech for contexts where you can't hold long documents in your head (driving, jogging). Dictate requirements, hear status. | — |
 | **proactive-messaging** ✓ | System reaches out across channels: terminal, Slack, email, text. Alerts you to completions, proposals, blockers. | — |
-| **slack-integration** | Bidirectional: receive commands and capture to inbox, plus send proactive messages. | proactive-messaging |
+| **slack-integration** ✓ | Bidirectional: receive commands and capture to inbox, plus send proactive messages. | proactive-messaging |
 
 ---
 

@@ -51,6 +51,7 @@ A self-improving meta-system where skills are the atomic primitive. Orchestrator
 | spaced-repetition | src/services/spaced-repetition/ | complete | 22/22 | 100% |
 | proposing-decks | src/services/proposing-decks/ | complete | 12/12 | 100% |
 | proactive-messaging | src/services/proactive-messaging/ | complete | 10/10 | 100% |
+| slack-integration | src/services/slack-integration/ | complete | 15/15 | 100% |
 | ooda-clocks-visual | src/services/ooda-clock/, apps/dashboard/app/ooda-clock/ | complete | 12/12 | 100% |
 
 ---
@@ -500,6 +501,23 @@ A self-improving meta-system where skills are the atomic primitive. Orchestrator
 - [x] Foundation for "work from anywhere" async loops
 - [x] See src/services/proactive-messaging/ProactiveMessagingService.ts
 
+### slack-integration (complete)
+- [x] SlackIntegrationService — src/services/slack-integration/SlackIntegrationService.ts
+- [x] SlackCommandParser — semantic command parsing from text
+- [x] SlackThreadManager — thread-per-execution tracking
+- [x] SlackMergeWorkflow — merge/rebase coordination
+- [x] types — SlackChannelConfig, SemanticCommand, ExecutionThread, EngineerStatus
+- [x] handleMessage — route incoming messages to handlers
+- [x] handleButtonClick — handle Slack button interactions
+- [x] handleStartLoop — start loop from Slack command
+- [x] handleApproval — approve gates from Slack
+- [x] handleMerge/handleRebase — git operations from Slack
+- [x] handleCapture — inbox capture from Slack
+- [x] API endpoints — /api/slack/* (8 endpoints)
+- [x] MCP tools — 15 tools for Slack integration
+- [x] Tests — 55 tests passing (slackIntegration.test.ts)
+- [x] See src/services/slack-integration/SlackIntegrationService.ts
+
 ### ooda-clocks-visual (complete)
 - [x] OODAClockService — src/services/ooda-clock/OODAClockService.ts
 - [x] RhythmAnalyzer — src/services/ooda-clock/RhythmAnalyzer.ts
@@ -533,11 +551,11 @@ System.done = ALL(Module.done)
               AND dreaming.done AND multi-agent-worktrees.done
               AND mece-opportunity-mapping.done AND coherence-system.done
               AND loop-sequencing.done AND skill-trees.done AND game-design.done
-              AND ooda-clocks-visual.done
+              AND ooda-clocks-visual.done AND slack-integration.done
               AND spaced-repetition.done AND proposing-decks.done
               AND proactive-messaging.done
 
-Current: 33/33 modules complete (100%)
+Current: 34/34 modules complete (100%)
 Pending: None
 Status: Core operational + autonomy layer + intelligence layer
 Version: 1.2.0
@@ -559,6 +577,7 @@ Version: 1.2.0
 
 | Date | Loop | Scope | Outcome | Key Deliverables |
 |------|------|-------|---------|------------------|
+| 2026-02-02 | engineering-loop | slack-integration | success | SlackIntegrationService, 8 API endpoints, 15 MCP tools, full bidirectional control |
 | 2026-02-01 | engineering-loop | proactive-messaging | success | ProactiveMessagingService, 6 API endpoints, 10 MCP tools, Slack bidirectional |
 | 2026-02-01 | engineering-loop | proposing-decks | success | ProposingDecksService, 10 API endpoints, 12 MCP tools, morning review decks |
 | 2026-02-01 | engineering-loop | spaced-repetition | success | SpacedRepetitionService, 19 API endpoints, 22 MCP tools, SM-2 algorithm |
@@ -816,3 +835,17 @@ Version: 1.2.0
   - Foundation for internalized skill knowledge through timed review
   - Unlocks proposing-decks module capability
   - See src/services/spaced-repetition/SpacedRepetitionService.ts
+- Slack Integration Module (v1.0.0 - 2026-02-02)
+  - SlackIntegrationService for full bidirectional Slack control
+  - SlackCommandParser for semantic command parsing
+  - SlackThreadManager for thread-per-execution tracking
+  - SlackMergeWorkflow for merge/rebase coordination
+  - Command types: start_loop, go, approved, reject, merge, rebase, status, show, capture
+  - Engineer status tracking with activity timestamps
+  - Channel = Engineer = Worktree = Branch model
+  - Conflict detection and cross-engineer coordination
+  - 8 API endpoints at /api/slack/*
+  - 15 MCP tools for Slack integration
+  - 55 tests covering all components
+  - Foundation for "work from Slack" async orchestration
+  - See src/services/slack-integration/SlackIntegrationService.ts
