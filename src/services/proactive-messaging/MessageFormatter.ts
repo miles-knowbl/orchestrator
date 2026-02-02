@@ -96,6 +96,7 @@ export class MessageFormatter {
       metadata: {
         interactionId,
         eventType: 'loop_start',
+        executionId: event.executionId,
       },
     };
   }
@@ -166,6 +167,7 @@ export class MessageFormatter {
       metadata: {
         interactionId,
         eventType: 'gate_waiting',
+        executionId: event.executionId,
       },
     };
   }
@@ -218,6 +220,7 @@ export class MessageFormatter {
       metadata: {
         interactionId,
         eventType: 'loop_complete',
+        executionId: event.executionId,
       },
     };
   }
@@ -314,6 +317,7 @@ export class MessageFormatter {
       metadata: {
         interactionId,
         eventType: 'executor_blocked',
+        executionId: event.executionId,
       },
     };
   }

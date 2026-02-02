@@ -537,6 +537,36 @@ export class ExecutionEngine {
     phaseState.completedAt = new Date();
     execution.updatedAt = new Date();
 
+    // Check if there's a gate after this phase and send notification
+    const loop = this.loopComposer.getLoop(execution.loopId);
+    if (loop && this.messagingService) {
+      const gate = loop.gates.find(g => g.afterPhase === execution.currentPhase);
+      if (gate) {
+        const gateState = execution.gates.find(g => g.gateId === gate.id);
+        if (gateState && gateState.status === 'pending') {
+          // Collect deliverables from this phase
+          const phaseDeliverables = execution.skillExecutions
+            .filter(s => s.phase === execution.currentPhase)
+            .flatMap(s => s.deliverables || [])
+            .filter(Boolean);
+
+          try {
+            await this.messagingService.notifyGateWaiting(
+              gate.id,
+              executionId,
+              execution.loopId,
+              execution.currentPhase,
+              phaseDeliverables,
+              gate.approvalType || 'human'
+            );
+            this.log('info', `Gate notification sent for ${gate.id}`);
+          } catch (err) {
+            this.log('warn', `Failed to send gate notification: ${err}`);
+          }
+        }
+      }
+    }
+
     await this.saveExecution(execution);
     return execution;
   }
