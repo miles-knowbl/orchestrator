@@ -29,4 +29,5 @@ export type {
 
 export { MessageFormatter } from './MessageFormatter.js';
 export { ConversationState } from './ConversationState.js';
-export { ChannelAdapter, TerminalAdapter, SlackAdapter } from './adapters/index.js';
+export { TerminalAdapter, SlackAdapter } from './adapters/index.js';
+export type { ChannelAdapter } from './adapters/index.js';

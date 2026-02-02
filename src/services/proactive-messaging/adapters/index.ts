@@ -1,3 +1,3 @@
-export { ChannelAdapter } from './ChannelAdapter.js';
+export type { ChannelAdapter } from './ChannelAdapter.js';
 export { TerminalAdapter } from './TerminalAdapter.js';
 export { SlackAdapter } from './SlackAdapter.js';

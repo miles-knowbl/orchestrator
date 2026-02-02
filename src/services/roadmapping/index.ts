@@ -1,14 +1,17 @@
 export {
   RoadmapService,
+  RoadmapSchema,
+  ModuleSchema,
+  ModuleStatusSchema,
+  UpdateSchema,
+} from './RoadmapService.js';
+
+export type {
   RoadmapServiceOptions,
   Roadmap,
-  RoadmapSchema,
   Module,
-  ModuleSchema,
   ModuleStatus,
-  ModuleStatusSchema,
   Update,
-  UpdateSchema,
   LayerProgress,
   RoadmapProgress,
   LeverageScore,

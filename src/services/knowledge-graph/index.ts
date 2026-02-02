@@ -1,16 +1,19 @@
 export {
   KnowledgeGraphService,
+  KnowledgeGraphSchema,
+  SkillNodeSchema,
+  EdgeSchema,
+  EdgeTypeSchema,
+  ClusterSchema,
+} from './KnowledgeGraphService.js';
+
+export type {
   KnowledgeGraphServiceOptions,
   KnowledgeGraph,
-  KnowledgeGraphSchema,
   SkillNode,
-  SkillNodeSchema,
   Edge,
-  EdgeSchema,
   EdgeType,
-  EdgeTypeSchema,
   Cluster,
-  ClusterSchema,
   GraphPath,
   GapAnalysis,
 } from './KnowledgeGraphService.js';
