@@ -259,22 +259,32 @@ fi
 
 # Check if hook already exists
 if ! grep -q "ensure-orchestrator" "$HOOKS_FILE" 2>/dev/null; then
-  # Use node to safely merge the hook into existing config
+  # Use node to safely merge the hooks into existing config
   node -e "
     const fs = require('fs');
     const config = JSON.parse(fs.readFileSync('$HOOKS_FILE', 'utf8'));
     config.hooks = config.hooks || {};
+
+    // SessionStart hook - check server when Claude Code opens
+    config.hooks.SessionStart = config.hooks.SessionStart || [];
+    config.hooks.SessionStart.unshift({
+      name: 'ensure-orchestrator-on-start',
+      command: '~/.claude/hooks/ensure-orchestrator.sh'
+    });
+
+    // PreToolUse hook - check server before MCP tool calls
     config.hooks.PreToolUse = config.hooks.PreToolUse || [];
     config.hooks.PreToolUse.unshift({
       name: 'ensure-orchestrator',
       matcher: { toolNames: ['mcp__orchestrator__*'] },
       command: '~/.claude/hooks/ensure-orchestrator.sh'
     });
+
     fs.writeFileSync('$HOOKS_FILE', JSON.stringify(config, null, 2));
   "
-  echo "Auto-start hook installed"
+  echo "Auto-start hooks installed (SessionStart + PreToolUse)"
 else
-  echo "Auto-start hook already installed"
+  echo "Auto-start hooks already installed"
 fi
 ```
 
