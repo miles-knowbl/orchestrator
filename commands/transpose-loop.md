@@ -24,6 +24,34 @@ Works for:
 - `--resume`: Resume from existing transpose-state.json
 - `--phase=PHASE`: Start from specific phase (EXTRACT | MAP | SPEC | COMPLETE)
 
+---
+
+## Prerequisites (MUST DO FIRST)
+
+**Before starting the loop, ensure the orchestrator server is running.**
+
+### Step 1: Check Server Health
+
+```bash
+curl -s http://localhost:3002/health
+```
+
+**Expected response:** `{"status":"ok","timestamp":"...","version":"..."}`
+
+### Step 2: If Server Not Running
+
+If the health check fails, **DO NOT manually start the server**. The `ensure-orchestrator.sh` hook will automatically:
+
+1. Open a new Terminal/iTerm window
+2. Start the server there (with visible logs)
+3. Wait for it to become healthy
+
+**Just proceed to call an MCP tool** (like `start_execution`) — the hook triggers on any `mcp__orchestrator__*` call and handles server startup automatically.
+
+**NEVER run `npm start &` in background.** The server needs its own Terminal window for persistent operation and log visibility.
+
+---
+
 ## Execution Flow
 
 ### Step 1: Cold Start Detection

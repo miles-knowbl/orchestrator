@@ -25,7 +25,9 @@ This command orchestrates a comprehensive system audit: **evaluating taste first
 | v2.0.0 | Added pipeline validation (PASS/PARTIAL/FAIL) |
 | v3.0.0 | MECE failure modes, coverage %, quality evals, test specs |
 | v3.1.0 | UI pipelines (U-series), interaction validation, L5/L6 locations |
-| **v4.0.0** | **TASTE phase as entry point, taste-ordered checklist, eval discovery** |
+| v4.0.0 | TASTE phase as entry point, taste-ordered checklist, eval discovery |
+| v4.0.1 | Added Prerequisites section: server health check before loop start |
+| **v4.0.2** | **Fixed: Don't manually start server — hook auto-opens Terminal window** |
 
 ## Usage
 
@@ -36,6 +38,35 @@ This command orchestrates a comprehensive system audit: **evaluating taste first
 **Options:**
 - `--resume`: Resume from existing audit-state.json
 - `--phase=PHASE`: Start from specific phase (TASTE | INIT | REVIEW | VALIDATE | DOCUMENT | COMPLETE)
+
+---
+
+## Prerequisites (MUST DO FIRST)
+
+**Before starting the audit, ensure the orchestrator server is running.**
+
+### Step 1: Check Server Health
+
+```bash
+curl -s http://localhost:3002/health
+```
+
+**Expected response:**
+```json
+{"status":"ok","timestamp":"...","version":"..."}
+```
+
+### Step 2: If Server Not Running
+
+If the health check fails, **DO NOT manually start the server**. The `ensure-orchestrator.sh` hook will automatically:
+
+1. Open a new Terminal/iTerm window
+2. Start the server there (with visible logs)
+3. Wait for it to become healthy
+
+**Just proceed to call an MCP tool** (like `start_execution`) — the hook triggers on any `mcp__orchestrator__*` call and handles server startup automatically.
+
+**NEVER run `npm start &` in background.** The server needs its own Terminal window for persistent operation and log visibility.
 
 ---
 
