@@ -4635,6 +4635,30 @@ export function createApiRoutes(options: ApiRoutesOptions): Router {
     });
 
     /**
+     * Send loop complete notification
+     */
+    router.post('/messaging/loop-complete', async (req: Request, res: Response) => {
+      const { loopId, executionId, module, summary, deliverables } = req.body;
+      if (!loopId || !executionId || !module || !summary) {
+        res.status(400).json({ error: 'loopId, executionId, module, and summary are required' });
+        return;
+      }
+
+      try {
+        const interactionId = await proactiveMessagingService.notifyLoopComplete(
+          loopId,
+          executionId,
+          module,
+          summary,
+          deliverables || []
+        );
+        res.json({ success: true, interactionId });
+      } catch (err) {
+        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+      }
+    });
+
+    /**
      * Slack event webhook (for external Slack events if not using Socket Mode)
      */
     router.post('/messaging/slack/events', (req: Request, res: Response) => {

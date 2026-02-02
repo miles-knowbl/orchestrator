@@ -106,20 +106,54 @@ export class SlackAdapter implements ChannelAdapter {
     // Handle button clicks
     this.app.action(/^pm_action_/, async ({ ack, body, say }) => {
       await ack();
+      console.log('[ProactiveMessaging] Button click received');
 
       const action = body.actions[0];
-      if (!action) return;
+      if (!action) {
+        console.error('[ProactiveMessaging] No action in body.actions');
+        await say('❌ Error: No action received');
+        return;
+      }
+
+      // Debug: log the raw action
+      console.log('[ProactiveMessaging] Action:', JSON.stringify(action, null, 2));
 
       try {
-        const payload = JSON.parse(action.value);
-        const command = this.parseActionToCommand(payload);
-
-        if (command && this.commandHandler) {
-          await this.commandHandler(command);
-          await say(`✓ Action received: ${payload.action}`);
+        // Ensure value exists and is a string
+        if (!action.value || typeof action.value !== 'string') {
+          console.error('[ProactiveMessaging] Invalid action.value:', action.value);
+          await say('❌ Error: Button has no value payload');
+          return;
         }
+
+        const payload = JSON.parse(action.value);
+        console.log('[ProactiveMessaging] Parsed payload:', JSON.stringify(payload, null, 2));
+
+        const command = this.parseActionToCommand(payload);
+        if (!command) {
+          console.error('[ProactiveMessaging] Failed to parse command from payload');
+          await say(`❌ Error: Unknown action type "${payload.action}"`);
+          return;
+        }
+
+        if (!this.commandHandler) {
+          console.error('[ProactiveMessaging] No command handler registered');
+          await say('❌ Error: Command handler not configured');
+          return;
+        }
+
+        console.log('[ProactiveMessaging] Executing command:', command.type);
+        await this.commandHandler(command);
+
+        // Send success feedback
+        const actionLabel = payload.action === 'approve' ? 'Approved' :
+                           payload.action === 'reject' ? 'Rejected' :
+                           payload.action;
+        await say(`✅ ${actionLabel} — ${payload.gateId || payload.action}`);
       } catch (err) {
-        console.error('[ProactiveMessaging] Error handling Slack action:', err);
+        const errorMsg = err instanceof Error ? err.message : String(err);
+        console.error('[ProactiveMessaging] Error handling Slack action:', errorMsg);
+        await say(`❌ Error: ${errorMsg}`);
       }
     });
 

@@ -141,6 +141,8 @@ export class ProactiveMessagingService {
    * Handle inbound commands from any channel
    */
   private async handleInboundCommand(command: InboundCommand): Promise<void> {
+    console.log('[ProactiveMessaging] Handling inbound command:', command.type);
+
     // Resolve "latest" interaction ID
     if ('interactionId' in command && command.interactionId === 'latest') {
       const resolved = this.conversationState.resolveInteractionId('latest');
@@ -153,9 +155,11 @@ export class ProactiveMessagingService {
     let interaction: PendingInteraction | undefined;
     if ('interactionId' in command) {
       interaction = this.conversationState.getInteraction(command.interactionId);
+      console.log('[ProactiveMessaging] Found interaction:', !!interaction);
     }
 
     // Execute built-in handlers
+    console.log('[ProactiveMessaging] Executing built-in handler for:', command.type);
     await this.executeBuiltInHandler(command, interaction);
 
     // Notify external handlers
@@ -174,54 +178,86 @@ export class ProactiveMessagingService {
   ): Promise<void> {
     switch (command.type) {
       case 'approve':
+        console.log('[ProactiveMessaging] Approve command - gateId:', command.context.gateId,
+          'executionId:', command.context.executionId,
+          'hasExecutionEngine:', !!this.executionEngine);
+
         if (command.context.gateId && command.context.executionId && this.executionEngine) {
           try {
+            console.log('[ProactiveMessaging] Calling executionEngine.approveGate...');
             await this.executionEngine.approveGate(command.context.executionId, command.context.gateId);
+            console.log('[ProactiveMessaging] Gate approved successfully');
             if (interaction) {
               this.conversationState.recordResponse(interaction.id, command, 'builtin');
             }
           } catch (err) {
             console.error('[ProactiveMessaging] Failed to approve gate:', err);
+            throw err; // Re-throw so caller can report to user
           }
+        } else {
+          const missing = [];
+          if (!command.context.gateId) missing.push('gateId');
+          if (!command.context.executionId) missing.push('executionId');
+          if (!this.executionEngine) missing.push('executionEngine');
+          console.error('[ProactiveMessaging] Cannot approve gate - missing:', missing.join(', '));
         }
         if (command.context.proposalId && this.dreamEngine) {
           try {
+            console.log('[ProactiveMessaging] Calling dreamEngine.approveProposal...');
             await this.dreamEngine.approveProposal(command.context.proposalId);
+            console.log('[ProactiveMessaging] Proposal approved successfully');
             if (interaction) {
               this.conversationState.recordResponse(interaction.id, command, 'builtin');
             }
           } catch (err) {
             console.error('[ProactiveMessaging] Failed to approve proposal:', err);
+            throw err;
           }
         }
         break;
 
       case 'reject':
+        console.log('[ProactiveMessaging] Reject command - gateId:', command.context.gateId,
+          'executionId:', command.context.executionId,
+          'hasExecutionEngine:', !!this.executionEngine);
+
         if (command.context.gateId && command.context.executionId && this.executionEngine) {
           try {
+            console.log('[ProactiveMessaging] Calling executionEngine.rejectGate...');
             await this.executionEngine.rejectGate(
               command.context.executionId,
               command.context.gateId,
               command.reason || 'Rejected via proactive messaging'
             );
+            console.log('[ProactiveMessaging] Gate rejected successfully');
             if (interaction) {
               this.conversationState.recordResponse(interaction.id, command, 'builtin');
             }
           } catch (err) {
             console.error('[ProactiveMessaging] Failed to reject gate:', err);
+            throw err;
           }
+        } else {
+          const missing = [];
+          if (!command.context.gateId) missing.push('gateId');
+          if (!command.context.executionId) missing.push('executionId');
+          if (!this.executionEngine) missing.push('executionEngine');
+          console.error('[ProactiveMessaging] Cannot reject gate - missing:', missing.join(', '));
         }
         if (command.context.proposalId && this.dreamEngine) {
           try {
+            console.log('[ProactiveMessaging] Calling dreamEngine.rejectProposal...');
             await this.dreamEngine.rejectProposal(
               command.context.proposalId,
               command.reason || 'Rejected via proactive messaging'
             );
+            console.log('[ProactiveMessaging] Proposal rejected successfully');
             if (interaction) {
               this.conversationState.recordResponse(interaction.id, command, 'builtin');
             }
           } catch (err) {
             console.error('[ProactiveMessaging] Failed to reject proposal:', err);
+            throw err;
           }
         }
         break;

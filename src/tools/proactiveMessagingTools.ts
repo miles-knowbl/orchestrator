@@ -80,6 +80,37 @@ export const proactiveMessagingTools: Tool[] = [
       required: ['gateId', 'executionId', 'loopId', 'phase'],
     },
   },
+  {
+    name: 'notify_loop_complete',
+    description: 'Send notification that a loop has completed.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        loopId: {
+          type: 'string',
+          description: 'Loop identifier (e.g., "engineering-loop")',
+        },
+        executionId: {
+          type: 'string',
+          description: 'Execution identifier',
+        },
+        module: {
+          type: 'string',
+          description: 'Module that was completed',
+        },
+        summary: {
+          type: 'string',
+          description: 'Brief summary of what was accomplished',
+        },
+        deliverables: {
+          type: 'array',
+          items: { type: 'string' },
+          description: 'List of deliverables produced',
+        },
+      },
+      required: ['loopId', 'executionId', 'module', 'summary'],
+    },
+  },
 
   // ─────────────────────────────────────────────────────────────────────────
   // Pending Interactions
@@ -278,6 +309,33 @@ export function createProactiveMessagingToolHandlers(
         success: true,
         interactionId,
         message: `Gate notification sent for ${args.gateId}`,
+      };
+    },
+
+    notify_loop_complete: async (params: unknown) => {
+      const args = params as {
+        loopId: string;
+        executionId: string;
+        module: string;
+        summary: string;
+        deliverables?: string[];
+      };
+      if (!args?.loopId || !args?.executionId || !args?.module || !args?.summary) {
+        return { error: 'loopId, executionId, module, and summary are required' };
+      }
+
+      const interactionId = await service.notifyLoopComplete(
+        args.loopId,
+        args.executionId,
+        args.module,
+        args.summary,
+        args.deliverables || []
+      );
+
+      return {
+        success: true,
+        interactionId,
+        message: `Loop complete notification sent for ${args.loopId} -> ${args.module}`,
       };
     },
 
