@@ -191,7 +191,7 @@ export default function DistributePage() {
                 <div className="w-full">
                   <p className="text-sm text-gray-300 mb-2">Get the install command</p>
                   <p className="text-xs text-gray-500 mb-1.5">One-time setup &middot; any directory</p>
-                  <CodeBlock command={`curl -sL https://raw.githubusercontent.com/${GITHUB_REPO}/main/commands/install-loop.md > ~/.claude/commands/install-loop.md`} />
+                  <CodeBlock command={`curl -sL https://raw.githubusercontent.com/${GITHUB_REPO}/main/commands/orchestrator-start-loop.md > ~/.claude/commands/orchestrator-start-loop.md`} />
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -199,7 +199,7 @@ export default function DistributePage() {
                 <div className="w-full">
                   <p className="text-sm text-gray-300 mb-2">Run the installer in Claude Code</p>
                   <p className="text-xs text-gray-500 mb-1.5">Start Claude Code and run:</p>
-                  <CodeBlock command="/install-loop" />
+                  <CodeBlock command="/orchestrator-start-loop" />
                   <p className="text-xs text-gray-500 mt-2">This clones the repo, builds it, configures MCP, and opens a Terminal window with the running server.</p>
                 </div>
               </div>
@@ -220,7 +220,7 @@ export default function DistributePage() {
                   <div className="bg-[#0a0a0a] border border-[#222] rounded-lg px-4 py-3">
                     <p className="text-xs text-gray-500 mb-2">Available commands:</p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5 text-sm">
-                      <div><code className="text-orch-400">/install-loop</code> <span className="text-gray-500">— install/update</span></div>
+                      <div><code className="text-orch-400">/orchestrator-start-loop</code> <span className="text-gray-500">— install/update</span></div>
                       <div><code className="text-orch-400">/engineering-loop</code> <span className="text-gray-500">— build anything</span></div>
                       <div><code className="text-orch-400">/bugfix-loop</code> <span className="text-gray-500">— fix bugs</span></div>
                       <div><code className="text-orch-400">/distribution-loop</code> <span className="text-gray-500">— distribute</span></div>

@@ -6,7 +6,7 @@ Orchestrator is a self-improving meta-system where **skills are the atomic primi
 
 ## Quick Start
 
-For new users: Run `/install-loop` in Claude Code. It handles everything.
+For new users: Run `/orchestrator-start-loop` in Claude Code. It handles everything.
 
 For development:
 ```bash

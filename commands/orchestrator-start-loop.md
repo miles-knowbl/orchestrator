@@ -1,20 +1,20 @@
-# /install-loop Command
+# /orchestrator-start-loop Command
 
-**Bootstrap and update orchestrator.** One command to install, update, and connect.
+**Bootstrap, update, and start orchestrator.** One command for everything.
 
 ## Purpose
 
 This command handles the complete orchestrator lifecycle:
 - **Fresh install**: Clone, build, register MCP, start server
 - **Update**: Check for new version, download, rebuild, restart
-- **Verify**: Ensure everything is connected and working
+- **Start session**: Ensure server running, show daily status (fast path)
 
-Run this once to get started, then periodically to stay up to date.
+Run this at the start of each session. It's smart about what needs to happen.
 
 ## Usage
 
 ```
-/install-loop [--check] [--path=PATH]
+/orchestrator-start-loop [--check] [--path=PATH]
 ```
 
 **Options:**
@@ -26,12 +26,12 @@ Run this once to get started, then periodically to stay up to date.
 If you don't have this command yet:
 
 ```bash
-# One-liner to install the install-loop command
-curl -sL https://raw.githubusercontent.com/superorganism/orchestrator/main/commands/install-loop.md \
-  > ~/.claude/commands/install-loop.md
+# One-liner to install the orchestrator-start-loop command
+curl -sL https://raw.githubusercontent.com/superorganism/orchestrator/main/commands/orchestrator-start-loop.md \
+  > ~/.claude/commands/orchestrator-start-loop.md
 ```
 
-Then run `/install-loop` in Claude Code.
+Then run `/orchestrator-start-loop` in Claude Code.
 
 ## Execution Flow
 
@@ -59,6 +59,76 @@ Assess current state:
 - `isGitRepo`: boolean
 - `mcpRegistered`: boolean
 - `serverRunning`: boolean
+
+---
+
+## Fast Path: Already Current
+
+**When `installType: 'current'` (already installed + up-to-date), skip to streamlined flow:**
+
+```bash
+# Check if server is running
+HEALTH_URL="http://localhost:3002/health"
+
+if curl -s --max-time 1 "$HEALTH_URL" > /dev/null 2>&1; then
+    echo "Server running."
+else
+    # Start server
+    if [ -n "$ORCHESTRATOR_TERMINAL_CMD" ]; then
+        eval "$ORCHESTRATOR_TERMINAL_CMD"
+    elif [ -d "/Applications/iTerm.app" ]; then
+        osascript <<EOF
+tell application "iTerm"
+    activate
+    set newWindow to (create window with default profile)
+    tell current session of newWindow
+        write text "cd \"$ORCHESTRATOR_DIR\" && npm start"
+    end tell
+end tell
+EOF
+    else
+        osascript <<EOF
+tell application "Terminal"
+    activate
+    do script "cd \"$ORCHESTRATOR_DIR\" && npm start"
+end tell
+EOF
+    fi
+
+    # Wait for server (max 15s)
+    for i in {1..15}; do
+        if curl -s --max-time 1 "$HEALTH_URL" > /dev/null 2>&1; then
+            echo "Server started."
+            break
+        fi
+        sleep 1
+    done
+fi
+```
+
+**Then show daily status:**
+```
+mcp__orchestrator__check_daily_status()
+```
+
+**Example output (fast path):**
+```
+Server running.
+
+Good morning!
+
+Dream State: my-project (12/20 modules - 60%)
+Proposals: 2 pending review
+Version: 1.3.1 ✓
+
+Recommended: /engineering-loop → auth-service
+```
+
+---
+
+## Full Flow: Fresh Install or Update
+
+When `installType` is 'fresh' or 'update', run all phases:
 
 ### Phase 2: INSTALL/UPDATE
 
@@ -117,11 +187,6 @@ rm -rf data.backup .claude.backup
 # Rebuild
 npm install
 npm run build
-```
-
-**Already Current:**
-```
-Skip install/update phase.
 ```
 
 **Write Config (after any install/update):**
@@ -372,7 +437,7 @@ Show completion summary:
 
 ## State File
 
-The install-loop tracks state in `~/orchestrator/data/install-state.json`:
+The loop tracks state in `~/orchestrator/data/install-state.json`:
 
 ```json
 {
@@ -420,7 +485,7 @@ On first MCP tool call of each day, orchestrator shows a contextual welcome:
 │                                                             │
 │ Current: 1.2.0 → Latest: 1.3.0                              │
 │                                                             │
-│ Run /install-loop to update.                                │
+│ Run /orchestrator-start-loop to update.                     │
 │                                                             │
 │ What's new in 1.3.0:                                        │
 │   • Improved Slack integration                              │
@@ -470,7 +535,7 @@ cat ~/.claude/mcp.json
 #   }
 # }
 
-# If wrong, fix it manually or re-run /install-loop
+# If wrong, fix it manually or re-run /orchestrator-start-loop
 ```
 
 **Server won't start:**
@@ -489,25 +554,21 @@ npm install
 npm run build
 ```
 
-## Example Session
+## Example Sessions
 
+### Fresh Install
 ```
-User: /install-loop
+User: /orchestrator-start-loop
 
-Install Loop: Detecting current state...
+Orchestrator Start Loop: Detecting current state...
 
-  Orchestrator found at ~/orchestrator
-  Current version: 1.1.0
-  Latest version: 1.2.0
-  Update available!
+  No orchestrator installation found.
+  Latest version: 1.3.0
 
-  MCP: not registered
-  Server: not running
+Orchestrator Start Loop: Installing...
 
-Install Loop: Updating...
-
-  Pulling latest changes...
-  ✓ Updated to 1.2.0
+  Cloning repository...
+  ✓ Cloned to ~/orchestrator
 
   Installing dependencies...
   ✓ npm install complete
@@ -515,50 +576,80 @@ Install Loop: Updating...
   Building...
   ✓ Build complete
 
-Install Loop: Registering MCP...
+Orchestrator Start Loop: Registering MCP...
 
   ✓ MCP server registered
+  ✓ Auto-start hook installed
 
-Install Loop: Starting server...
+Orchestrator Start Loop: Starting server...
 
   Opening Terminal window...
-  ✓ Server running at http://localhost:3002 (visible in Terminal)
+  ✓ Server running at http://localhost:3002
 
-Install Loop: Verifying connection...
+Orchestrator Start Loop: Verifying...
 
   ✓ Health check passed
   ✓ MCP connection verified
-  ✓ 86 skills loaded
-  ✓ 11 loops available
 
 ═══════════════════════════════════════════════════════════════
   INSTALL COMPLETE
 
-  Version:   1.2.0 (updated from 1.1.0)
+  Version:   1.3.0
   Location:  ~/orchestrator
   Server:    http://localhost:3002
   MCP:       Connected ✓
 
   You're ready to go!
-  Run /dream-loop to establish your vision, or
-  Run /engineering-loop → your-module to start building.
+  Run /dream-loop to establish your vision.
 ═══════════════════════════════════════════════════════════════
 ```
 
-## Session Startup
-
-After installation, each Claude Code session should start by calling:
-
+### Daily Session Start (Already Current)
 ```
-mcp__orchestrator__check_daily_status()
+User: /orchestrator-start-loop
+
+Server running.
+
+Good morning!
+
+Dream State: my-project (12/20 modules - 60%)
+Proposals: 2 pending review
+Version: 1.3.1 ✓
+
+Recommended: /engineering-loop → auth-service
 ```
 
-This shows a contextual welcome message on first call of each day:
-- Fresh install: Suggests running `/dream-loop`
-- Update available: Shows version diff and suggests `/install-loop`
-- Normal day: Shows Dream State progress, pending proposals, recommended loop
+### Update Available
+```
+User: /orchestrator-start-loop
 
-The daily message is sent to both terminal and Slack (if configured).
+Orchestrator Start Loop: Detecting current state...
+
+  Current version: 1.2.0
+  Latest version: 1.3.0
+  Update available!
+
+Orchestrator Start Loop: Updating...
+
+  Pulling latest changes...
+  ✓ Updated to 1.3.0
+
+  Rebuilding...
+  ✓ Build complete
+
+Orchestrator Start Loop: Starting server...
+
+  ✓ Server running at http://localhost:3002
+
+═══════════════════════════════════════════════════════════════
+  UPDATE COMPLETE
+
+  Version:   1.3.0 (updated from 1.2.0)
+  Location:  ~/orchestrator
+  Server:    http://localhost:3002
+  MCP:       Connected ✓
+═══════════════════════════════════════════════════════════════
+```
 
 ## References
 

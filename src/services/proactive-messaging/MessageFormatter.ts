@@ -677,7 +677,7 @@ export class MessageFormatter {
       lines.push(this.padLine(`Current: ${event.version} -> Latest: ${event.latestVersion}`));
       lines.push(this.emptyLine());
 
-      lines.push(this.padLine('Run /install-loop to update.'));
+      lines.push(this.padLine('Run /orchestrator-start-loop to update.'));
       lines.push(this.emptyLine());
 
       if (event.updateNotes && event.updateNotes.length > 0) {

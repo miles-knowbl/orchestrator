@@ -13,15 +13,15 @@ A self-improving meta-system for composing AI-driven workflows. Skills are the a
 ### Install
 
 ```bash
-# Get the install command
-curl -sL https://raw.githubusercontent.com/superorganism/orchestrator/main/commands/install-loop.md \
-  > ~/.claude/commands/install-loop.md
+# Get the start command
+curl -sL https://raw.githubusercontent.com/superorganism/orchestrator/main/commands/orchestrator-start-loop.md \
+  > ~/.claude/commands/orchestrator-start-loop.md
 ```
 
 Then in Claude Code:
 
 ```
-/install-loop
+/orchestrator-start-loop
 ```
 
 That's it. The installer will:
@@ -45,7 +45,7 @@ The Terminal window shows server logs and can be minimized but should stay open.
 
 | Command | What it does |
 |---------|-------------|
-| `/install-loop` | Install, update, and verify orchestrator setup |
+| `/orchestrator-start-loop` | Start session, install, or update orchestrator |
 | `/engineering-loop` | **Full engineering loop** — build anything from scratch or extend existing code |
 | `/bugfix-loop` | Systematic bug fixing with reproduction and regression tests |
 | `/distribution-loop` | Distribute to all targets (local, Vercel, GitHub Releases) |
@@ -58,7 +58,7 @@ The Terminal window shows server logs and can be minimized but should stay open.
 
 ### Updating
 
-Run `/install-loop` again. It detects the existing install and updates to the latest version.
+Run `/orchestrator-start-loop` again. It detects the existing install and updates to the latest version.
 
 ### Dashboard (optional)
 
@@ -122,7 +122,7 @@ Local usage is the primary mode. The server starts automatically when you use or
 
 ## MCP Integration
 
-The `/install-loop` command configures MCP automatically by writing to `~/.claude/mcp.json`:
+The `/orchestrator-start-loop` command configures MCP automatically by writing to `~/.claude/mcp.json`:
 
 ```json
 {
