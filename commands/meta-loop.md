@@ -307,6 +307,95 @@ User: approved
 
 ---
 
+## MCP Execution Protocol (REQUIRED for Slack Notifications)
+
+**CRITICAL: All loop executions MUST be tracked through the MCP server to enable Slack thread notifications and execution history.**
+
+### On Loop Start
+
+When the loop begins, call:
+
+```
+mcp__orchestrator__start_execution({
+  loopId: "meta-loop",
+  project: "[new loop name being created]"
+})
+```
+
+**Store the returned `executionId`** — you'll need it for all subsequent calls.
+
+### Pre-Loop Context Loading (MANDATORY)
+
+**CRITICAL: Before proceeding with any phase, you MUST process the `preLoopContext` returned by start_execution.**
+
+The response includes:
+```json
+{
+  "executionId": "...",
+  "preLoopContext": {
+    "requiredDeliverables": [
+      { "phase": "DESIGN", "skill": "loop-design", "deliverables": ["LOOP-SPEC.md"] }
+    ],
+    "skillGuarantees": [
+      { "skill": "loop-design", "guaranteeCount": 3, "guaranteeNames": ["..."] }
+    ],
+    "dreamStatePath": ".claude/DREAM-STATE.md",
+    "roadmapPath": "ROADMAP.md"
+  }
+}
+```
+
+**You MUST:**
+1. **Read the Dream State** (if `dreamStatePath` provided) — understand the vision and checklist
+2. **Read the ROADMAP** (if `roadmapPath` provided) — see available next moves for completion proposal
+3. **Note all required deliverables** — know what each skill must produce
+4. **Note guarantee counts** — understand what will be validated
+
+**DO NOT proceed to DESIGN phase until you have loaded this context.** Skipping this step causes poor loop execution (missing deliverables, no completion proposal, etc.).
+
+### During Execution
+
+**After completing each skill**, call:
+```
+mcp__orchestrator__complete_skill({
+  executionId: "[stored executionId]",
+  skillId: "[skill name]",
+  deliverables: ["new-loop.md"]  // optional
+})
+```
+
+**After completing all skills in a phase**, call:
+```
+mcp__orchestrator__complete_phase({ executionId: "[stored executionId]" })
+```
+
+### At Gates
+
+**When user approves a gate**, call:
+```
+mcp__orchestrator__approve_gate({
+  executionId: "[stored executionId]",
+  gateId: "[gate name]",
+  approvedBy: "user"
+})
+```
+
+### Phase Transitions
+
+**To advance to the next phase**, call:
+```
+mcp__orchestrator__advance_phase({ executionId: "[stored executionId]" })
+```
+
+### Why This Matters
+
+Without MCP execution tracking:
+- No Slack notifications (thread-per-execution)
+- No execution history
+- No calibration data collection
+
+---
+
 ## Clarification Protocol
 
 This loop follows the **Deep Context Protocol**. Before proceeding past INIT:
@@ -359,15 +448,27 @@ When this loop initializes, it automatically loads:
 
 When this loop reaches COMPLETE phase and finishes:
 
-### 1. Archive Run
+### 1. Archive Run (Full Artifacts)
 
-**Location:** `~/.claude/runs/{year-month}/{system}-meta-loop-{timestamp}.json`
+**Location:** `~/.claude/runs/{year-month}/{project}-meta-loop-{timestamp}/`
 
-**Contents:** Full state + summary including:
-- Loop requirements defined
-- Skills created
-- Gates passed
-- Deliverables produced
+Create a directory containing ALL loop artifacts:
+
+```bash
+ARCHIVE_DIR=~/.claude/runs/$(date +%Y-%m)/${PROJECT}-meta-loop-$(date +%Y%m%d-%H%M)
+mkdir -p "$ARCHIVE_DIR"
+
+mv meta-state.json "$ARCHIVE_DIR/" 2>/dev/null || true
+cp LOOP-REQUIREMENTS.md RETROSPECTIVE.md \
+   "$ARCHIVE_DIR/" 2>/dev/null || true
+```
+
+**Artifact organization:**
+| Category | Location | Files |
+|----------|----------|-------|
+| **Permanent** | `~/.claude/commands/` | Generated `{name}-loop.md` |
+| **Permanent** | skills-library | New `skills/*/SKILL.md` files |
+| **Transient** | `~/.claude/runs/` | `meta-state.json`, `LOOP-REQUIREMENTS.md`, `RETROSPECTIVE.md` |
 
 ### 2. Update Dream State
 
@@ -375,13 +476,30 @@ At the System level (`{repo}/.claude/DREAM-STATE.md`):
 - Update "Recent Completions" section
 - Note new loops/skills added
 
-### 3. Prune Active State
+### 3. Commit All Artifacts
 
-**Delete:** `meta-state.json` from working directory.
+**Principle:** A completed loop leaves no orphaned files.
+
+```bash
+git add -A
+git diff --cached --quiet || git commit -m "Meta-loop complete: [description]
+
+Co-Authored-By: Claude <noreply@anthropic.com>"
+```
+
+**Note:** This step commits but does NOT push. Use `/distribution-loop` to push to remote and trigger CI/CD.
+
+### 4. Clean Project Directory
+
+Remove transient artifacts that have been archived:
+
+```bash
+rm -f LOOP-REQUIREMENTS.md RETROSPECTIVE.md meta-state.json 2>/dev/null || true
+```
 
 **Result:** Next `/meta-loop` invocation starts fresh with context gathering.
 
-### 4. Leverage Proposal (REQUIRED)
+### 5. Leverage Proposal (REQUIRED)
 
 Before showing completion, evaluate and propose the next highest leverage move.
 

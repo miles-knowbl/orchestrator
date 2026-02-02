@@ -328,6 +328,95 @@ User: approved
 
 ---
 
+## MCP Execution Protocol (REQUIRED for Slack Notifications)
+
+**CRITICAL: All loop executions MUST be tracked through the MCP server to enable Slack thread notifications and execution history.**
+
+### On Loop Start
+
+When the loop begins, call:
+
+```
+mcp__orchestrator__start_execution({
+  loopId: "learning-loop",
+  project: "[learning target]"
+})
+```
+
+**Store the returned `executionId`** — you'll need it for all subsequent calls.
+
+### Pre-Loop Context Loading (MANDATORY)
+
+**CRITICAL: Before proceeding with any phase, you MUST process the `preLoopContext` returned by start_execution.**
+
+The response includes:
+```json
+{
+  "executionId": "...",
+  "preLoopContext": {
+    "requiredDeliverables": [
+      { "phase": "ANALYZE", "skill": "run-analyzer", "deliverables": ["RUN-ANALYSIS.md"] }
+    ],
+    "skillGuarantees": [
+      { "skill": "run-analyzer", "guaranteeCount": 3, "guaranteeNames": ["..."] }
+    ],
+    "dreamStatePath": ".claude/DREAM-STATE.md",
+    "roadmapPath": "ROADMAP.md"
+  }
+}
+```
+
+**You MUST:**
+1. **Read the Dream State** (if `dreamStatePath` provided) — understand the vision and checklist
+2. **Read the ROADMAP** (if `roadmapPath` provided) — see available next moves for completion proposal
+3. **Note all required deliverables** — know what each skill must produce
+4. **Note guarantee counts** — understand what will be validated
+
+**DO NOT proceed to ANALYZE phase until you have loaded this context.** Skipping this step causes poor loop execution (missing deliverables, no completion proposal, etc.).
+
+### During Execution
+
+**After completing each skill**, call:
+```
+mcp__orchestrator__complete_skill({
+  executionId: "[stored executionId]",
+  skillId: "[skill name]",
+  deliverables: ["IMPROVEMENT-PLAN.md"]  // optional
+})
+```
+
+**After completing all skills in a phase**, call:
+```
+mcp__orchestrator__complete_phase({ executionId: "[stored executionId]" })
+```
+
+### At Gates
+
+**When user approves a gate**, call:
+```
+mcp__orchestrator__approve_gate({
+  executionId: "[stored executionId]",
+  gateId: "[gate name]",
+  approvedBy: "user"
+})
+```
+
+### Phase Transitions
+
+**To advance to the next phase**, call:
+```
+mcp__orchestrator__advance_phase({ executionId: "[stored executionId]" })
+```
+
+### Why This Matters
+
+Without MCP execution tracking:
+- No Slack notifications (thread-per-execution)
+- No execution history
+- No calibration data collection
+
+---
+
 ## Clarification Protocol
 
 This loop follows the **Deep Context Protocol**. Before proceeding past INIT:
@@ -388,15 +477,26 @@ The learning-loop has special context requirements:
 
 When this loop reaches COMPLETE phase:
 
-### 1. Archive Run
+### 1. Archive Run (Full Artifacts)
 
-**Location:** `~/.claude/runs/{year-month}/{system}-learning-loop-{timestamp}.json`
+**Location:** `~/.claude/runs/{year-month}/{project}-learning-loop-{timestamp}/`
 
-**Contents:** Full state + summary including:
-- Patterns identified
-- Skills created/updated
-- Calibrations adjusted
-- Executions analyzed
+Create a directory containing ALL loop artifacts:
+
+```bash
+ARCHIVE_DIR=~/.claude/runs/$(date +%Y-%m)/${PROJECT}-learning-loop-$(date +%Y%m%d-%H%M)
+mkdir -p "$ARCHIVE_DIR"
+
+mv learning-state.json "$ARCHIVE_DIR/" 2>/dev/null || true
+cp ANALYSIS-FINDINGS.md CHANGELOG.md RETROSPECTIVE.md \
+   "$ARCHIVE_DIR/" 2>/dev/null || true
+```
+
+**Artifact organization:**
+| Category | Location | Files |
+|----------|----------|-------|
+| **Permanent** | skills-library | Updated SKILL.md files |
+| **Transient** | `~/.claude/runs/` | `learning-state.json`, `ANALYSIS-FINDINGS.md`, `CHANGELOG.md`, `RETROSPECTIVE.md` |
 
 ### 2. Update Dream State
 
@@ -408,13 +508,30 @@ At the Organization level (if org-wide patterns):
 - Add to org patterns list
 - Update calibration data
 
-### 3. Prune Active State
+### 3. Commit All Artifacts
 
-**Delete:** `learning-state.json` from working directory.
+**Principle:** A completed loop leaves no orphaned files.
+
+```bash
+git add -A
+git diff --cached --quiet || git commit -m "Learning complete: [description]
+
+Co-Authored-By: Claude <noreply@anthropic.com>"
+```
+
+**Note:** This step commits but does NOT push. Use `/distribution-loop` to push to remote and trigger CI/CD.
+
+### 4. Clean Project Directory
+
+Remove transient artifacts that have been archived:
+
+```bash
+rm -f ANALYSIS-FINDINGS.md CHANGELOG.md RETROSPECTIVE.md learning-state.json 2>/dev/null || true
+```
 
 **Result:** Next `/learning-loop` invocation starts fresh with context gathering.
 
-### 4. Leverage Proposal (REQUIRED)
+### 5. Leverage Proposal (REQUIRED)
 
 Before showing completion, evaluate and propose the next highest leverage move.
 

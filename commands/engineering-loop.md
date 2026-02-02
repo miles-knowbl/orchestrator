@@ -418,24 +418,46 @@ At each gate, verify:
 - [ ] Documentation updated (not duplicated)
 - [ ] No breaking changes to existing APIs
 
-## State Files
+## State Files & Artifact Organization
 
-| File | Purpose |
-|------|---------|
-| `dream-state.md` | Vision document — the end goal |
-| `system-queue.json` | Systems to build, dependencies, status |
-| `config.json` | Autonomy configuration for the domain |
-| `loop-state.json` | Current phase, gate status, progress |
-| `SCOPE-DISCOVERY.md` | Gap analysis and system queue (brownfield) |
-| `CODEBASE-ANALYSIS.md` | Discovered patterns (brownfield) |
-| `REQUIREMENTS.md` | Structured requirements (per system) |
-| `FEATURESPEC.md` | Feature specification (per system) |
-| `ARCHITECTURE.md` | Architecture decisions |
-| `VERIFICATION.md` | Build/test/lint results |
-| `VALIDATION.md` | Semantic validation findings |
-| `SECURITY-AUDIT.md` | Security audit results |
-| `CODE-REVIEW.md` | Code review findings |
-| `RETROSPECTIVE.md` | Loop retrospective and learnings |
+### Permanent Project Files (stay in repo)
+
+| File | Location | Purpose |
+|------|----------|---------|
+| `ARCHITECTURE.md` | Project root | Architecture decisions |
+| `DREAM-STATE.md` | `.claude/` | Vision document — the end goal |
+| `system-queue.json` | `.claude/` | Systems/modules to build, progress tracking |
+
+### Transient Loop Artifacts (archived to `~/.claude/runs/`)
+
+| File | Purpose | Archived On |
+|------|---------|-------------|
+| `loop-state.json` | Current phase, gate status | Completion |
+| `REQUIREMENTS.md` | Structured requirements | Completion |
+| `FEATURESPEC.md` | Feature specification | Completion |
+| `SCOPE-DISCOVERY.md` | Gap analysis (brownfield) | Completion |
+| `CODEBASE-ANALYSIS.md` | Discovered patterns | Completion |
+| `VERIFICATION.md` | Build/test/lint results | Completion |
+| `VALIDATION.md` | Semantic validation findings | Completion |
+| `SECURITY-AUDIT.md` | Security audit results | Completion |
+| `CODE-REVIEW.md` | Code review findings | Completion |
+| `RETROSPECTIVE.md` | Loop retrospective | Completion |
+
+### Archive Structure
+
+```
+~/.claude/runs/
+└── {year-month}/
+    └── {project}-engineering-loop-{timestamp}/
+        ├── summary.json           # Metadata
+        ├── loop-state.json        # Final state
+        ├── REQUIREMENTS.md
+        ├── FEATURESPEC.md
+        ├── VERIFICATION.md
+        └── RETROSPECTIVE.md
+```
+
+**Principle:** Project stays clean; loop history lives in `~/.claude/runs/`
 
 ## Example Session
 
@@ -889,15 +911,44 @@ Each system in the `system-queue.json` represents a **module** within the curren
 
 When this loop reaches COMPLETE phase and finishes ALL systems in the queue:
 
-### 1. Archive Run
+### 1. Archive Run (Full Artifacts)
 
-**Location:** `~/.claude/runs/{year-month}/{system}-engineering-loop-{timestamp}.json`
+**Location:** `~/.claude/runs/{year-month}/{project}-engineering-loop-{timestamp}/`
 
-**Contents:** Full state + summary including:
-- All systems completed
-- Gates passed
-- Deliverables produced
-- Duration and outcome
+Create a directory containing ALL loop artifacts (not just a JSON summary):
+
+```bash
+# Create archive directory
+ARCHIVE_DIR=~/.claude/runs/$(date +%Y-%m)/${PROJECT}-engineering-loop-$(date +%Y%m%d-%H%M)
+mkdir -p "$ARCHIVE_DIR"
+
+# Archive loop artifacts (transient docs that don't belong in project permanently)
+mv loop-state.json "$ARCHIVE_DIR/" 2>/dev/null || true
+cp REQUIREMENTS.md FEATURESPEC.md VERIFICATION.md VALIDATION.md \
+   SECURITY-AUDIT.md CODE-REVIEW.md RETROSPECTIVE.md \
+   SCOPE-DISCOVERY.md CODEBASE-ANALYSIS.md \
+   "$ARCHIVE_DIR/" 2>/dev/null || true
+
+# Create summary.json with metadata
+cat > "$ARCHIVE_DIR/summary.json" << EOF
+{
+  "loop": "engineering-loop",
+  "project": "${PROJECT}",
+  "completed_at": "$(date -Iseconds)",
+  "systems_completed": [...],
+  "gates_passed": [...],
+  "artifacts": [list of files]
+}
+EOF
+```
+
+**Artifact categories:**
+
+| Category | Location | Examples |
+|----------|----------|----------|
+| **Permanent project docs** | Project root | `ARCHITECTURE.md`, `README.md` |
+| **Vision docs** | `{project}/.claude/` | `DREAM-STATE.md`, `system-queue.json` |
+| **Loop artifacts** | `~/.claude/runs/` | `RETROSPECTIVE.md`, `VERIFICATION.md`, `*-state.json` |
 
 ### 2. Update Dream State
 
@@ -910,53 +961,65 @@ At the Organization level (`~/.claude/DREAM-STATE.md`):
 - Update system status
 - Roll up progress
 
-### 3. Prune Active State
+### 3. Commit All Artifacts
 
-**Delete:** `loop-state.json` and `system-queue.json` from working directory.
+**Principle:** A completed loop leaves no orphaned files.
 
-**Result:** Next `/engineering-loop` invocation starts fresh with context gathering.
+Before archiving, commit permanent project artifacts:
 
-### 4. Leverage Proposal (REQUIRED)
+```bash
+# Stage permanent project artifacts only
+git add ARCHITECTURE.md README.md .claude/ 2>/dev/null || true
 
-Before showing completion, evaluate and propose the next highest leverage move.
+# Commit if there are staged changes
+git diff --cached --quiet || git commit -m "Loop [N] complete: [system-name]
 
-**Process:**
-1. Load dream state checklist (what's incomplete?)
-2. Enumerate available loops (static catalog + meta-loop wildcard)
-3. Score each candidate:
-   ```
-          (DSA × 0.40) + (Downstream Unlock × 0.25) + (Likelihood × 0.15)
-   V = ─────────────────────────────────────────────────────────────────────
-                       (Time × 0.10) + (Effort × 0.10)
-   ```
-4. Present proposal with reasoning
-
-**Output:**
-```
-══════════════════════════════════════════════════════════════
-  NEXT HIGHEST LEVERAGE MOVE
-
-  Recommended: /{loop} → {target}
-
-  Reasoning:
-    • Dream State: {alignment explanation}
-    • Downstream Unlock: {what this enables}
-    • Likelihood: {confidence level}
-    • Time/Effort: {estimate}
-
-  Value Score: X.X/10
-
-  Alternatives considered:
-    2. /{loop} → {target} (V: X.X)
-    3. /{loop} → {target} (V: X.X)
-
-  Say 'go' to start, or specify a different loop.
-══════════════════════════════════════════════════════════════
+Co-Authored-By: Claude <noreply@anthropic.com>"
 ```
 
-Record the decision in both the archived run JSON and `memory/leverage/decisions.json`.
+**Note:** This step commits but does NOT push. Use `/distribution-loop` to push to remote and trigger CI/CD.
 
-See `commands/_shared/leverage-protocol.md` for full details.
+### 4. Clean Project Directory
+
+Remove transient loop artifacts from project root (they're now in the archive):
+
+```bash
+# Remove transient artifacts (already archived)
+rm -f REQUIREMENTS.md FEATURESPEC.md VERIFICATION.md VALIDATION.md \
+      SECURITY-AUDIT.md CODE-REVIEW.md RETROSPECTIVE.md \
+      SCOPE-DISCOVERY.md CODEBASE-ANALYSIS.md \
+      loop-state.json 2>/dev/null || true
+```
+
+**Keep in project:**
+- `ARCHITECTURE.md` - permanent project documentation
+- `.claude/DREAM-STATE.md` - vision document
+- `.claude/system-queue.json` - module tracking (if modules remain)
+
+**Result:** Project stays clean; all loop history is in `~/.claude/runs/`
+
+### 5. Completion Format (REQUIRED)
+
+Follow the **Completion Format Protocol** (`commands/_shared/completion-format.md`).
+
+**For engineering-loop, this means:**
+1. Show completion banner: `/engineering-loop` → `{module}`: COMPLETE
+2. List key deliverables (service, tools, endpoints, etc.)
+3. Present next highest leverage move with full reasoning (Dream State, Downstream Unlock, Likelihood)
+4. Show top 3-4 alternatives considered with scores
+5. Display **available moves (unblocked only)** grouped by ROADMAP layer
+6. Deferred items go to Layer 7 (not a separate section)
+7. Clear call-to-action: "Say 'go' to start /engineering-loop → {recommended}, or specify a different target."
+
+**Leverage scoring** uses the standard formula:
+```
+       (DSA × 0.40) + (Downstream Unlock × 0.25) + (Likelihood × 0.15)
+V = ─────────────────────────────────────────────────────────────────────
+                    (Time × 0.10) + (Effort × 0.10)
+```
+
+See `commands/_shared/leverage-protocol.md` for scoring details.
+See `commands/_shared/completion-format.md` for full format specification.
 
 ### 5. Completion Message
 
@@ -993,6 +1056,145 @@ Available references (8 total):
 | pattern-matching.md | Pattern identification guide |
 | brownfield-spec-template.md | 18-section brownfield template |
 | parallel-agents.md | Multi-agent coordination |
+
+---
+
+## MCP Execution Protocol (REQUIRED for Slack Notifications)
+
+**CRITICAL: All loop executions MUST be tracked through the MCP server to enable Slack thread notifications and execution history.**
+
+### On Loop Start
+
+When the loop begins (after mode detection, before INIT phase), call:
+
+```
+mcp__orchestrator__start_execution({
+  loopId: "engineering-loop",
+  project: "[current project/module name]",
+  mode: "[greenfield|brownfield-polish|brownfield-enterprise]"
+})
+```
+
+**Store the returned `executionId`** — you'll need it for all subsequent calls.
+
+### Pre-Loop Context Loading (MANDATORY)
+
+**CRITICAL: Before proceeding with any phase, you MUST process the `preLoopContext` returned by start_execution.**
+
+The response includes:
+```json
+{
+  "executionId": "...",
+  "preLoopContext": {
+    "requiredDeliverables": [
+      { "phase": "INIT", "skill": "requirements", "deliverables": ["REQUIREMENTS.md"] },
+      { "phase": "INIT", "skill": "spec", "deliverables": ["FEATURESPEC.md"] }
+    ],
+    "skillGuarantees": [
+      { "skill": "requirements", "guaranteeCount": 3, "guaranteeNames": ["..."] }
+    ],
+    "dreamStatePath": ".claude/DREAM-STATE.md",
+    "roadmapPath": "ROADMAP.md"
+  }
+}
+```
+
+**You MUST:**
+1. **Read the Dream State** (if `dreamStatePath` provided) — understand the vision and checklist
+2. **Read the ROADMAP** (if `roadmapPath` provided) — see available next moves for completion proposal
+3. **Note all required deliverables** — know what each skill must produce
+4. **Note guarantee counts** — understand what will be validated
+
+**DO NOT proceed to INIT phase until you have loaded this context.** Skipping this step causes poor loop execution (missing deliverables, no completion proposal, etc.).
+
+### During Phase Execution
+
+**After completing each skill**, call:
+```
+mcp__orchestrator__complete_skill({
+  executionId: "[stored executionId]",
+  skillId: "[skill name, e.g., 'requirements', 'spec', 'implement']",
+  deliverables: ["REQUIREMENTS.md", "FEATURESPEC.md"]  // optional
+})
+```
+
+**After completing all skills in a phase**, call:
+```
+mcp__orchestrator__complete_phase({
+  executionId: "[stored executionId]"
+})
+```
+
+### At Gates
+
+**When user approves a gate**, call:
+```
+mcp__orchestrator__approve_gate({
+  executionId: "[stored executionId]",
+  gateId: "[gate name, e.g., 'spec-gate', 'architecture-gate']",
+  approvedBy: "user"
+})
+```
+
+**When auto-gate passes**, call:
+```
+mcp__orchestrator__approve_gate({
+  executionId: "[stored executionId]",
+  gateId: "verification-gate",
+  approvedBy: "auto"
+})
+```
+
+### Phase Transitions
+
+**To advance to the next phase**, call:
+```
+mcp__orchestrator__advance_phase({
+  executionId: "[stored executionId]"
+})
+```
+
+### Full Execution Flow Example
+
+```
+1. Loop invoked: /engineering-loop ooda-clocks
+   → start_execution(loopId="engineering-loop", project="ooda-clocks")
+   → Store executionId="exec-abc123"
+   → Slack: New thread opened "🔄 engineering-loop started: ooda-clocks"
+
+2. INIT phase begins
+   → complete_skill(executionId, "entry-portal")
+   → complete_skill(executionId, "requirements", deliverables=["REQUIREMENTS.md"])
+   → complete_skill(executionId, "spec", deliverables=["FEATURESPEC.md"])
+   → complete_phase(executionId)
+   → Slack: "✅ INIT complete"
+
+3. Spec gate approval
+   → User says "approved"
+   → approve_gate(executionId, "spec-gate", approvedBy="user")
+   → advance_phase(executionId)
+   → Slack: "🚦 spec-gate approved"
+
+4. SCAFFOLD phase...
+   [repeat pattern]
+
+5. Loop completion
+   → Slack: "🎉 engineering-loop complete: ooda-clocks (42m)"
+```
+
+### Why This Matters
+
+Without MCP execution tracking:
+- No Slack notifications
+- No execution history
+- No calibration data collection
+- No cross-loop analytics
+
+With MCP execution tracking:
+- Thread-per-execution in Slack (all updates in one thread)
+- Full execution history and replay
+- Calibration metrics for estimates
+- Dream state progress tracking
 
 ---
 

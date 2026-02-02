@@ -654,6 +654,95 @@ Tier 3: Technical-Only (no taste link, ordered by S1→S4)
 
 ---
 
+## MCP Execution Protocol (REQUIRED for Slack Notifications)
+
+**CRITICAL: All loop executions MUST be tracked through the MCP server to enable Slack thread notifications and execution history.**
+
+### On Loop Start
+
+When the loop begins, call:
+
+```
+mcp__orchestrator__start_execution({
+  loopId: "audit-loop",
+  project: "[system being audited]"
+})
+```
+
+**Store the returned `executionId`** — you'll need it for all subsequent calls.
+
+### Pre-Loop Context Loading (MANDATORY)
+
+**CRITICAL: Before proceeding with any phase, you MUST process the `preLoopContext` returned by start_execution.**
+
+The response includes:
+```json
+{
+  "executionId": "...",
+  "preLoopContext": {
+    "requiredDeliverables": [
+      { "phase": "DISCOVER", "skill": "taste-eval", "deliverables": ["TASTE-EVAL.md"] }
+    ],
+    "skillGuarantees": [
+      { "skill": "taste-eval", "guaranteeCount": 3, "guaranteeNames": ["..."] }
+    ],
+    "dreamStatePath": ".claude/DREAM-STATE.md",
+    "roadmapPath": "ROADMAP.md"
+  }
+}
+```
+
+**You MUST:**
+1. **Read the Dream State** (if `dreamStatePath` provided) — understand the vision and checklist
+2. **Read the ROADMAP** (if `roadmapPath` provided) — see available next moves for completion proposal
+3. **Note all required deliverables** — know what each skill must produce
+4. **Note guarantee counts** — understand what will be validated
+
+**DO NOT proceed to DISCOVER phase until you have loaded this context.** Skipping this step causes poor loop execution (missing deliverables, no completion proposal, etc.).
+
+### During Execution
+
+**After completing each skill**, call:
+```
+mcp__orchestrator__complete_skill({
+  executionId: "[stored executionId]",
+  skillId: "[skill name]",
+  deliverables: ["TASTE-EVAL.md", "AUDIT-REPORT.md"]  // optional
+})
+```
+
+**After completing all skills in a phase**, call:
+```
+mcp__orchestrator__complete_phase({ executionId: "[stored executionId]" })
+```
+
+### At Gates
+
+**When user approves a gate**, call:
+```
+mcp__orchestrator__approve_gate({
+  executionId: "[stored executionId]",
+  gateId: "[gate name]",
+  approvedBy: "user"
+})
+```
+
+### Phase Transitions
+
+**To advance to the next phase**, call:
+```
+mcp__orchestrator__advance_phase({ executionId: "[stored executionId]" })
+```
+
+### Why This Matters
+
+Without MCP execution tracking:
+- No Slack notifications (thread-per-execution)
+- No execution history
+- No calibration data collection
+
+---
+
 ## On Completion
 
 When this loop reaches COMPLETE phase:

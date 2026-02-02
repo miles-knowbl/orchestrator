@@ -360,6 +360,95 @@ User: approved
 
 ---
 
+## MCP Execution Protocol (REQUIRED for Slack Notifications)
+
+**CRITICAL: All loop executions MUST be tracked through the MCP server to enable Slack thread notifications and execution history.**
+
+### On Loop Start
+
+When the loop begins, call:
+
+```
+mcp__orchestrator__start_execution({
+  loopId: "infra-loop",
+  project: "[infrastructure target]"
+})
+```
+
+**Store the returned `executionId`** — you'll need it for all subsequent calls.
+
+### Pre-Loop Context Loading (MANDATORY)
+
+**CRITICAL: Before proceeding with any phase, you MUST process the `preLoopContext` returned by start_execution.**
+
+The response includes:
+```json
+{
+  "executionId": "...",
+  "preLoopContext": {
+    "requiredDeliverables": [
+      { "phase": "ANALYZE", "skill": "infra-audit", "deliverables": ["INFRA-SPEC.md"] }
+    ],
+    "skillGuarantees": [
+      { "skill": "infra-audit", "guaranteeCount": 3, "guaranteeNames": ["..."] }
+    ],
+    "dreamStatePath": ".claude/DREAM-STATE.md",
+    "roadmapPath": "ROADMAP.md"
+  }
+}
+```
+
+**You MUST:**
+1. **Read the Dream State** (if `dreamStatePath` provided) — understand the vision and checklist
+2. **Read the ROADMAP** (if `roadmapPath` provided) — see available next moves for completion proposal
+3. **Note all required deliverables** — know what each skill must produce
+4. **Note guarantee counts** — understand what will be validated
+
+**DO NOT proceed to ANALYZE phase until you have loaded this context.** Skipping this step causes poor loop execution (missing deliverables, no completion proposal, etc.).
+
+### During Execution
+
+**After completing each skill**, call:
+```
+mcp__orchestrator__complete_skill({
+  executionId: "[stored executionId]",
+  skillId: "[skill name]",
+  deliverables: ["INFRA-SPEC.md"]  // optional
+})
+```
+
+**After completing all skills in a phase**, call:
+```
+mcp__orchestrator__complete_phase({ executionId: "[stored executionId]" })
+```
+
+### At Gates
+
+**When user approves a gate**, call:
+```
+mcp__orchestrator__approve_gate({
+  executionId: "[stored executionId]",
+  gateId: "[gate name]",
+  approvedBy: "user"
+})
+```
+
+### Phase Transitions
+
+**To advance to the next phase**, call:
+```
+mcp__orchestrator__advance_phase({ executionId: "[stored executionId]" })
+```
+
+### Why This Matters
+
+Without MCP execution tracking:
+- No Slack notifications (thread-per-execution)
+- No execution history
+- No calibration data collection
+
+---
+
 ## Clarification Protocol
 
 This loop follows the **Deep Context Protocol**. Before proceeding past INIT:
@@ -412,15 +501,22 @@ When this loop initializes, it automatically loads:
 
 When this loop reaches COMPLETE phase and finishes:
 
-### 1. Archive Run
+### 1. Archive Run (Full Artifacts)
 
-**Location:** `~/.claude/runs/{year-month}/{system}-infra-loop-{timestamp}.json`
+**Location:** `~/.claude/runs/{year-month}/{project}-infra-loop-{timestamp}/`
 
-**Contents:** Full state + summary including:
-- Infrastructure requirements
-- Services provisioned
-- Gates passed
-- Deployment status
+```bash
+ARCHIVE_DIR=~/.claude/runs/$(date +%Y-%m)/${PROJECT}-infra-loop-$(date +%Y%m%d-%H%M)
+mkdir -p "$ARCHIVE_DIR"
+mv infra-state.json "$ARCHIVE_DIR/" 2>/dev/null || true
+cp INFRA-REQUIREMENTS.md RETROSPECTIVE.md "$ARCHIVE_DIR/" 2>/dev/null || true
+```
+
+**Artifact organization:**
+| Category | Location | Files |
+|----------|----------|-------|
+| **Permanent** | Project root | Dockerfiles, CI/CD configs, infra code |
+| **Transient** | `~/.claude/runs/` | `infra-state.json`, planning docs |
 
 ### 2. Update Dream State
 
@@ -428,13 +524,24 @@ At the System level (`{repo}/.claude/DREAM-STATE.md`):
 - Update "Recent Completions" section
 - Note infrastructure changes
 
-### 3. Prune Active State
+### 3. Commit Infra Changes
 
-**Delete:** `infra-state.json` from working directory.
+```bash
+git add -A
+git diff --cached --quiet || git commit -m "Infra complete: [description]
 
-**Result:** Next `/infra-loop` invocation starts fresh with context gathering.
+Co-Authored-By: Claude <noreply@anthropic.com>"
+```
 
-### 4. Leverage Proposal (REQUIRED)
+**Note:** Commits before archiving. Use `/distribution-loop` to push.
+
+### 4. Clean Project Directory
+
+```bash
+rm -f INFRA-REQUIREMENTS.md RETROSPECTIVE.md infra-state.json 2>/dev/null || true
+```
+
+### 5. Leverage Proposal (REQUIRED)
 
 Before showing completion, evaluate and propose the next highest leverage move.
 

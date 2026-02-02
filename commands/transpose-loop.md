@@ -456,6 +456,95 @@ mcp__skills-library__get_skill(name: "retrospective", includeReferences: true)
 
 ---
 
+## MCP Execution Protocol (REQUIRED for Slack Notifications)
+
+**CRITICAL: All loop executions MUST be tracked through the MCP server to enable Slack thread notifications and execution history.**
+
+### On Loop Start
+
+When the loop begins, call:
+
+```
+mcp__orchestrator__start_execution({
+  loopId: "transpose-loop",
+  project: "[source → target description]"
+})
+```
+
+**Store the returned `executionId`** — you'll need it for all subsequent calls.
+
+### Pre-Loop Context Loading (MANDATORY)
+
+**CRITICAL: Before proceeding with any phase, you MUST process the `preLoopContext` returned by start_execution.**
+
+The response includes:
+```json
+{
+  "executionId": "...",
+  "preLoopContext": {
+    "requiredDeliverables": [
+      { "phase": "ANALYZE", "skill": "structure-analysis", "deliverables": ["TRANSPOSE-SPEC.md"] }
+    ],
+    "skillGuarantees": [
+      { "skill": "structure-analysis", "guaranteeCount": 3, "guaranteeNames": ["..."] }
+    ],
+    "dreamStatePath": ".claude/DREAM-STATE.md",
+    "roadmapPath": "ROADMAP.md"
+  }
+}
+```
+
+**You MUST:**
+1. **Read the Dream State** (if `dreamStatePath` provided) — understand the vision and checklist
+2. **Read the ROADMAP** (if `roadmapPath` provided) — see available next moves for completion proposal
+3. **Note all required deliverables** — know what each skill must produce
+4. **Note guarantee counts** — understand what will be validated
+
+**DO NOT proceed to ANALYZE phase until you have loaded this context.** Skipping this step causes poor loop execution (missing deliverables, no completion proposal, etc.).
+
+### During Execution
+
+**After completing each skill**, call:
+```
+mcp__orchestrator__complete_skill({
+  executionId: "[stored executionId]",
+  skillId: "[skill name]",
+  deliverables: ["TRANSPOSE-SPEC.md"]  // optional
+})
+```
+
+**After completing all skills in a phase**, call:
+```
+mcp__orchestrator__complete_phase({ executionId: "[stored executionId]" })
+```
+
+### At Gates
+
+**When user approves a gate**, call:
+```
+mcp__orchestrator__approve_gate({
+  executionId: "[stored executionId]",
+  gateId: "[gate name]",
+  approvedBy: "user"
+})
+```
+
+### Phase Transitions
+
+**To advance to the next phase**, call:
+```
+mcp__orchestrator__advance_phase({ executionId: "[stored executionId]" })
+```
+
+### Why This Matters
+
+Without MCP execution tracking:
+- No Slack notifications (thread-per-execution)
+- No execution history
+- No calibration data collection
+
+---
+
 ## Clarification Protocol
 
 This loop follows the **Deep Context Protocol**. Before proceeding past EXTRACT:
@@ -508,15 +597,27 @@ When this loop initializes, it automatically loads:
 
 When this loop reaches COMPLETE phase and finishes:
 
-### 1. Archive Run
+### 1. Archive Run (Full Artifacts)
 
-**Location:** `~/.claude/runs/{year-month}/{system}-transpose-loop-{timestamp}.json`
+**Location:** `~/.claude/runs/{year-month}/{project}-transpose-loop-{timestamp}/`
 
-**Contents:** Full state + summary including:
-- Source and target stacks
-- Architecture components mapped
-- Gates passed
-- Feature spec produced
+Create a directory containing ALL loop artifacts:
+
+```bash
+ARCHIVE_DIR=~/.claude/runs/$(date +%Y-%m)/${PROJECT}-transpose-loop-$(date +%Y%m%d-%H%M)
+mkdir -p "$ARCHIVE_DIR"
+
+mv transpose-state.json "$ARCHIVE_DIR/" 2>/dev/null || true
+cp ARCHITECTURE.md STACK-MAP.md RETROSPECTIVE.md \
+   "$ARCHIVE_DIR/" 2>/dev/null || true
+cp -r docs/adr "$ARCHIVE_DIR/" 2>/dev/null || true
+```
+
+**Artifact organization:**
+| Category | Location | Files |
+|----------|----------|-------|
+| **Permanent** | Project root | `FEATURESPEC.md`, `docs/adr/*.md` |
+| **Transient** | `~/.claude/runs/` | `transpose-state.json`, `ARCHITECTURE.md`, `STACK-MAP.md`, `RETROSPECTIVE.md` |
 
 ### 2. Update Dream State
 
@@ -524,13 +625,32 @@ At the System level (`{repo}/.claude/DREAM-STATE.md`):
 - Update "Recent Completions" section
 - Note transposition completed
 
-### 3. Prune Active State
+### 3. Commit All Artifacts
 
-**Delete:** `transpose-state.json` from working directory.
+**Principle:** A completed loop leaves no orphaned files.
+
+```bash
+git add -A
+git diff --cached --quiet || git commit -m "Transpose complete: [description]
+
+Co-Authored-By: Claude <noreply@anthropic.com>"
+```
+
+**Note:** This step commits but does NOT push. Use `/distribution-loop` to push to remote and trigger CI/CD.
+
+### 4. Clean Project Directory
+
+Remove transient artifacts that have been archived:
+
+```bash
+rm -f ARCHITECTURE.md STACK-MAP.md RETROSPECTIVE.md transpose-state.json 2>/dev/null || true
+```
+
+**Note:** ADRs in `docs/adr/` are permanent project artifacts and are NOT removed.
 
 **Result:** Next `/transpose-loop` invocation starts fresh with context gathering.
 
-### 4. Leverage Proposal (REQUIRED)
+### 5. Leverage Proposal (REQUIRED)
 
 Before showing completion, evaluate and propose the next highest leverage move.
 

@@ -398,6 +398,104 @@ User: approved
 
 ---
 
+## MCP Execution Protocol (REQUIRED for Slack Notifications)
+
+**CRITICAL: All loop executions MUST be tracked through the MCP server to enable Slack thread notifications and execution history.**
+
+### On Loop Start
+
+When the loop begins, call:
+
+```
+mcp__orchestrator__start_execution({
+  loopId: "bugfix-loop",
+  project: "[bug id or description]"
+})
+```
+
+**Store the returned `executionId`** — you'll need it for all subsequent calls.
+
+### Pre-Loop Context Loading (MANDATORY)
+
+**CRITICAL: Before proceeding with any phase, you MUST process the `preLoopContext` returned by start_execution.**
+
+The response includes:
+```json
+{
+  "executionId": "...",
+  "preLoopContext": {
+    "requiredDeliverables": [
+      { "phase": "DIAGNOSE", "skill": "bug-reproduction", "deliverables": ["BUG-REPRODUCTION.md"] }
+    ],
+    "skillGuarantees": [
+      { "skill": "bug-reproduction", "guaranteeCount": 3, "guaranteeNames": ["..."] }
+    ],
+    "dreamStatePath": ".claude/DREAM-STATE.md",
+    "roadmapPath": "ROADMAP.md"
+  }
+}
+```
+
+**You MUST:**
+1. **Read the Dream State** (if `dreamStatePath` provided) — understand the vision and checklist
+2. **Read the ROADMAP** (if `roadmapPath` provided) — see available next moves for completion proposal
+3. **Note all required deliverables** — know what each skill must produce
+4. **Note guarantee counts** — understand what will be validated
+
+**DO NOT proceed to DIAGNOSE phase until you have loaded this context.** Skipping this step causes poor loop execution (missing deliverables, no completion proposal, etc.).
+
+### During Execution
+
+**After completing each skill**, call:
+```
+mcp__orchestrator__complete_skill({
+  executionId: "[stored executionId]",
+  skillId: "[skill name]",
+  deliverables: ["BUG-REPRODUCTION.md"]  // optional
+})
+```
+
+**After completing all skills in a phase**, call:
+```
+mcp__orchestrator__complete_phase({ executionId: "[stored executionId]" })
+```
+
+### At Gates
+
+**When user approves a gate**, call:
+```
+mcp__orchestrator__approve_gate({
+  executionId: "[stored executionId]",
+  gateId: "[gate name, e.g., 'repro-gate']",
+  approvedBy: "user"
+})
+```
+
+**When auto-gate passes**, call:
+```
+mcp__orchestrator__approve_gate({
+  executionId: "[stored executionId]",
+  gateId: "verification-gate",
+  approvedBy: "auto"
+})
+```
+
+### Phase Transitions
+
+**To advance to the next phase**, call:
+```
+mcp__orchestrator__advance_phase({ executionId: "[stored executionId]" })
+```
+
+### Why This Matters
+
+Without MCP execution tracking:
+- No Slack notifications (thread-per-execution)
+- No execution history
+- No calibration data collection
+
+---
+
 ## Clarification Protocol
 
 This loop follows the **Deep Context Protocol**. Before proceeding past INIT:
@@ -452,14 +550,24 @@ When this loop reaches COMPLETE phase and finishes:
 
 ### 1. Archive Run
 
-**Location:** `~/.claude/runs/{year-month}/{system}-bugfix-loop-{timestamp}.json`
+**Location:** `~/.claude/runs/{year-month}/{project}-bugfix-loop-{timestamp}/`
 
-**Contents:** Full state + summary including:
-- Bug reproduction details
-- Root cause analysis
-- Fix applied
-- Gates passed
-- Regression tests added
+Create a directory containing ALL loop artifacts:
+
+```bash
+ARCHIVE_DIR=~/.claude/runs/$(date +%Y-%m)/${PROJECT}-bugfix-loop-$(date +%Y%m%d-%H%M)
+mkdir -p "$ARCHIVE_DIR"
+
+# Archive loop artifacts
+mv bugfix-state.json "$ARCHIVE_DIR/" 2>/dev/null || true
+cp BUG-REPRODUCTION.md RETROSPECTIVE.md "$ARCHIVE_DIR/" 2>/dev/null || true
+```
+
+**Artifact organization:**
+| Category | Location | Files |
+|----------|----------|-------|
+| **Permanent** | Project root | Code fixes, test files |
+| **Transient** | `~/.claude/runs/` | `bugfix-state.json`, `BUG-REPRODUCTION.md`, `RETROSPECTIVE.md` |
 
 ### 2. Update Dream State
 
@@ -467,13 +575,32 @@ At the System level (`{repo}/.claude/DREAM-STATE.md`):
 - Update "Recent Completions" section
 - Note any patterns learned
 
-### 3. Prune Active State
+### 3. Commit Code Changes
 
-**Delete:** `bugfix-state.json` from working directory.
+**Principle:** A completed loop leaves no orphaned files.
 
-**Result:** Next `/bugfix-loop` invocation starts fresh with context gathering.
+Commit the actual bug fix (code + tests):
 
-### 4. Leverage Proposal (REQUIRED)
+```bash
+git add -A
+git diff --cached --quiet || git commit -m "Bugfix complete: [bug-id] [description]
+
+Co-Authored-By: Claude <noreply@anthropic.com>"
+```
+
+**Note:** This commits code changes. Use `/distribution-loop` to push.
+
+### 4. Clean Project Directory
+
+Remove transient artifacts (already archived):
+
+```bash
+rm -f BUG-REPRODUCTION.md RETROSPECTIVE.md bugfix-state.json 2>/dev/null || true
+```
+
+**Result:** Project stays clean; bugfix history in `~/.claude/runs/`
+
+### 5. Leverage Proposal (REQUIRED)
 
 Before showing completion, evaluate and propose the next highest leverage move.
 
