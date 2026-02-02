@@ -15,7 +15,8 @@ export const GUARANTEE_TYPES = [
   'deliverable',
   'step_proof',
   'content',
-  'quality'
+  'quality',
+  'git_state'
 ] as const;
 
 export type GuaranteeType = typeof GUARANTEE_TYPES[number];
@@ -70,6 +71,15 @@ export interface GuaranteeValidation {
 
   // For quality type
   qualityThresholds?: QualityThreshold[];
+
+  // For git_state type
+  gitChecks?: GitStateCheck[];
+}
+
+export interface GitStateCheck {
+  check: 'no_uncommitted' | 'no_unpushed' | 'branch_pushed' | 'worktree_clean';
+  branch?: string;         // Specific branch to check (default: current)
+  remote?: string;         // Remote to check against (default: origin)
 }
 
 export interface FilePattern {

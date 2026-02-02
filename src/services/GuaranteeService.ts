@@ -19,7 +19,12 @@ import type {
   StepProofArtifact,
   GuaranteeFailureRecord,
   GuaranteeType,
+  GitStateCheck,
 } from '../types/guarantee.js';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+
+const execAsync = promisify(exec);
 import type { Phase, LoopMode } from '../types.js';
 import { StepProofCollector } from './StepProofCollector.js';
 import type { LoopGuaranteeAggregator } from './LoopGuaranteeAggregator.js';
@@ -272,6 +277,9 @@ export class GuaranteeService {
           break;
         case 'quality':
           await this.validateQuality(guarantee.validation, context, result);
+          break;
+        case 'git_state':
+          await this.validateGitState(guarantee.validation, context, result);
           break;
       }
     } catch (error) {
@@ -585,6 +593,148 @@ export class GuaranteeService {
         result.errors.push(
           `Metric "${threshold.metric}" = ${actualValue}, expected ${threshold.operator} ${threshold.value}`
         );
+      }
+    }
+  }
+
+  private async validateGitState(
+    validation: GuaranteeValidation,
+    context: ValidationContext,
+    result: GuaranteeResult
+  ): Promise<void> {
+    const cwd = context.projectPath;
+
+    for (const check of validation.gitChecks || []) {
+      const remote = check.remote || 'origin';
+      const branch = check.branch || 'HEAD';
+
+      try {
+        switch (check.check) {
+          case 'no_uncommitted': {
+            // Check for uncommitted changes (staged or unstaged)
+            const { stdout } = await execAsync('git status --porcelain', { cwd });
+            const changes = stdout.trim().split('\n').filter(l => l.length > 0);
+
+            result.evidence.push({
+              type: 'proof',
+              path: 'git status',
+              value: changes.length,
+              details: { uncommittedFiles: changes.slice(0, 10) },
+            });
+
+            if (changes.length > 0) {
+              result.errors.push(
+                `Found ${changes.length} uncommitted change(s): ${changes.slice(0, 3).join(', ')}${changes.length > 3 ? '...' : ''}`
+              );
+            }
+            break;
+          }
+
+          case 'no_unpushed': {
+            // Check for unpushed commits on current branch
+            try {
+              const { stdout } = await execAsync(
+                `git log ${remote}/${branch === 'HEAD' ? '$(git rev-parse --abbrev-ref HEAD)' : branch}..HEAD --oneline`,
+                { cwd }
+              );
+              const commits = stdout.trim().split('\n').filter(l => l.length > 0);
+
+              result.evidence.push({
+                type: 'proof',
+                path: 'git log unpushed',
+                value: commits.length,
+                details: { unpushedCommits: commits.slice(0, 10) },
+              });
+
+              if (commits.length > 0) {
+                result.errors.push(
+                  `Found ${commits.length} unpushed commit(s): ${commits.slice(0, 2).join(', ')}${commits.length > 2 ? '...' : ''}`
+                );
+              }
+            } catch (err) {
+              // No upstream tracking branch - check if any local commits exist
+              result.warnings.push(
+                `No upstream tracking branch for ${branch}. Skipping unpushed check.`
+              );
+            }
+            break;
+          }
+
+          case 'branch_pushed': {
+            // Verify a specific branch has been pushed to remote
+            const branchName = branch === 'HEAD'
+              ? (await execAsync('git rev-parse --abbrev-ref HEAD', { cwd })).stdout.trim()
+              : branch;
+
+            try {
+              const localRef = (await execAsync(`git rev-parse ${branchName}`, { cwd })).stdout.trim();
+              const remoteRef = (await execAsync(`git rev-parse ${remote}/${branchName}`, { cwd })).stdout.trim();
+
+              result.evidence.push({
+                type: 'proof',
+                path: `branch ${branchName}`,
+                value: localRef === remoteRef ? 1 : 0,
+                details: { localRef, remoteRef, branch: branchName },
+              });
+
+              if (localRef !== remoteRef) {
+                result.errors.push(
+                  `Branch "${branchName}" not fully pushed to ${remote}. Local: ${localRef.slice(0, 7)}, Remote: ${remoteRef.slice(0, 7)}`
+                );
+              }
+            } catch {
+              result.errors.push(
+                `Branch "${branchName}" does not exist on remote ${remote}`
+              );
+            }
+            break;
+          }
+
+          case 'worktree_clean': {
+            // Check all worktrees for uncommitted changes
+            try {
+              const { stdout } = await execAsync('git worktree list --porcelain', { cwd });
+              const worktrees = stdout.split('\n\n').filter(w => w.includes('worktree'));
+              const dirtyWorktrees: string[] = [];
+
+              for (const wt of worktrees) {
+                const pathMatch = wt.match(/^worktree (.+)$/m);
+                if (pathMatch) {
+                  const wtPath = pathMatch[1];
+                  try {
+                    const { stdout: status } = await execAsync('git status --porcelain', { cwd: wtPath });
+                    if (status.trim().length > 0) {
+                      dirtyWorktrees.push(wtPath);
+                    }
+                  } catch {
+                    // Worktree might not be accessible
+                  }
+                }
+              }
+
+              result.evidence.push({
+                type: 'proof',
+                path: 'worktree status',
+                value: dirtyWorktrees.length,
+                details: {
+                  totalWorktrees: worktrees.length,
+                  dirtyWorktrees
+                },
+              });
+
+              if (dirtyWorktrees.length > 0) {
+                result.errors.push(
+                  `Found ${dirtyWorktrees.length} worktree(s) with uncommitted changes`
+                );
+              }
+            } catch {
+              result.warnings.push('Could not enumerate worktrees');
+            }
+            break;
+          }
+        }
+      } catch (error) {
+        result.errors.push(`Git check "${check.check}" failed: ${error}`);
       }
     }
   }

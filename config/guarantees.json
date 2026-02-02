@@ -4234,6 +4234,113 @@
           }
         ]
       }
+    },
+    "distribution-loop": {
+      "loopId": "distribution-loop",
+      "phaseGuarantees": {
+        "VERIFY": [
+          {
+            "id": "GUA-DIST-VER-001",
+            "name": "Build compiles without errors",
+            "type": "quality",
+            "required": true,
+            "validation": {
+              "qualityThresholds": [
+                {
+                  "metric": "build_success",
+                  "operator": "eq",
+                  "value": 1,
+                  "source": "command",
+                  "path": "npm run build"
+                }
+              ]
+            }
+          }
+        ],
+        "SHIP": [
+          {
+            "id": "GUA-DIST-SHIP-001",
+            "name": "No uncommitted changes",
+            "type": "git_state",
+            "required": true,
+            "validation": {
+              "gitChecks": [
+                {
+                  "check": "no_uncommitted"
+                }
+              ]
+            }
+          },
+          {
+            "id": "GUA-DIST-SHIP-002",
+            "name": "No unpushed commits",
+            "type": "git_state",
+            "required": true,
+            "validation": {
+              "gitChecks": [
+                {
+                  "check": "no_unpushed"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "gateGuarantees": {
+        "readiness-gate": [
+          {
+            "id": "GUA-GATE-READY-001",
+            "name": "Build passes for distribution",
+            "type": "quality",
+            "required": true,
+            "validation": {
+              "qualityThresholds": [
+                {
+                  "metric": "build_success",
+                  "operator": "eq",
+                  "value": 1,
+                  "source": "file",
+                  "path": "VERIFICATION.md"
+                }
+              ]
+            }
+          }
+        ],
+        "distribution-gate": [
+          {
+            "id": "GUA-GATE-DIST-001",
+            "name": "All commits pushed to remote",
+            "type": "git_state",
+            "required": true,
+            "validation": {
+              "gitChecks": [
+                {
+                  "check": "no_uncommitted"
+                },
+                {
+                  "check": "no_unpushed"
+                },
+                {
+                  "check": "branch_pushed"
+                }
+              ]
+            }
+          },
+          {
+            "id": "GUA-GATE-DIST-002",
+            "name": "All worktrees clean",
+            "type": "git_state",
+            "required": false,
+            "validation": {
+              "gitChecks": [
+                {
+                  "check": "worktree_clean"
+                }
+              ]
+            }
+          }
+        ]
+      }
     }
   },
   "phases": {}

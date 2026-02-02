@@ -8,7 +8,7 @@
 
 **System**: Orchestrator — Self-improving meta-system where skills are the atomic primitive
 **Dream State**: Autonomous, coherent, local-first system that compounds leverage through skill-based ontology
-**Modules**: 32 new modules + 2 updates across 7 layers
+**Modules**: 31 new modules + 2 updates across 7 layers
 
 ---
 
@@ -28,7 +28,7 @@ Layer 3  ───────────────────────�
          voice, proactive-messaging, slack-integration
 
 Layer 2  ───────────────────────────────────────────────────────────────────────
-         patterns-roundup, scoring, ADIR-loop, mece-opportunity-mapping, coherence-system
+         patterns-roundup, scoring, mece-opportunity-mapping, coherence-system
 
 Layer 1  ───────────────────────────────────────────────────────────────────────
          autonomous, dreaming, multi-agent-worktrees, loop-sequencing, kanban, ooda-clocks, skill-trees, tech-trees, ladder-of-abstraction
@@ -56,8 +56,8 @@ Layer 0  ───────────────────────�
 | **kanban** | Linear-style visualization of the module ladder to system completion. Human-readable checklist showing scope completion, delegation-ready for worktrees. | roadmapping |
 | **ooda-clocks-visual** | Gamelan-inspired circular visualization showing when patterns, hooks, and skills fire during loop execution. Temporal awareness of the orchestration rhythm. | — |
 | **skill-trees** | DAG-like domain-specific sequences of skills. Simultaneously illustrates skill relationships to LLMs while helping users gain familiarity by seeing each skill produce output before using it in a loop. Interface to the skill-based ontology. | knowledge-graph-ontology |
-| **tech-trees** | Macroscopic technology progressions that cultures/orgs pursue. Predictive capabilities (potentially RL-based like AlphaGo with Markov decision trees) that inspire MECE opportunity mapping at system and module levels. | knowledge-graph-ontology, mece-opportunity-mapping |
-| **ladder-of-abstraction-interfaces** | UI showing the same loop at different zoom levels (module/system/org). Music-gear-like looping interfaces for piloting, co-piloting, or playing co-op PvE with the orchestrator. | kanban |
+| **tech-trees** | Macroscopic technology progressions that cultures/orgs pursue. Predictive capabilities (potentially RL-based like AlphaGo with Markov decision trees) that inspire MECE opportunity mapping at system and module levels. | knowledge-graph-ontology, mece-opportunity-mapping | *deferred* |
+| **ladder-of-abstraction-interfaces** | UI showing the same loop at different zoom levels (module/system/org). Music-gear-like looping interfaces for piloting, co-piloting, or playing co-op PvE with the orchestrator. | kanban | *deferred*
 | **autonomous** | Full loop execution without human gates + background continuous operation. "It works while I sleep." The orchestrator advances dream state while you're away. | 2-layer-orchestration, proactive-messaging |
 | **dreaming** | Sleep/background processing mode for proposing new modules→system and systems→org. The system "dreams up" new work while idle, ready for review when you return. | autonomous |
 | **multi-agent-worktrees** | Multiple sets of parallel agents across two hierarchy levels and multiple humans. Thoughtful coordination when collaborators each have their own agent sets working on isolated git worktrees. | 2-layer-orchestration |
@@ -71,7 +71,6 @@ Layer 0  ───────────────────────�
 |--------|-------------|------------|
 | **patterns-roundup** | Two functions: (1) Round up existing patterns not yet formalized into memory/patterns, (2) Automatic pattern detection and proposal from observed behaviors. | analytics (exists) |
 | **scoring** | System-level evaluation around module-specific value. Quantifies how much each module contributes to dream state advancement. | analytics (exists) |
-| **ADIR-loop** | Abductive→Deductive→Inductive→Reflexive reasoning cycle. The Reflexive phase produces a Context Delta (keep/discard/add/reweight/next_tests/guardrails) that improves the instruction set, not just conclusions. | scoring |
 | **mece-opportunity-mapping** | Mutually Exclusive, Collectively Exhaustive opportunity analysis at system and module levels. Ensures no blind spots in roadmap coverage. | knowledge-graph-ontology |
 | **coherence-system** | Alignment of all orchestrator components. Skill-based ontology + dream state + roadmapping form the spine of a "spec-driven organization." Ensures modules don't drift or conflict. | roadmapping, knowledge-graph-ontology |
 
@@ -81,9 +80,9 @@ Layer 0  ───────────────────────�
 
 | Module | Description | Depends On |
 |--------|-------------|------------|
-| **voice** | Voice input and output for piloting the orchestrator. Naturalistic speech for contexts where you can't hold long documents in your head (driving, jogging). Dictate requirements, hear status. | local-first |
-| **proactive-messaging** | System reaches out across channels: terminal, Slack, email, text. Needs careful design to reconcile with local-first architecture. Alerts you to completions, proposals, blockers. | local-first |
-| **slack-integration** | Bidirectional: receive commands and capture to inbox, plus send proactive messages. One of the non-local-first externalities requiring careful interaction pattern design. | local-first, proactive-messaging |
+| **voice** | Voice input and output for piloting the orchestrator. Naturalistic speech for contexts where you can't hold long documents in your head (driving, jogging). Dictate requirements, hear status. | — |
+| **proactive-messaging** ✓ | System reaches out across channels: terminal, Slack, email, text. Alerts you to completions, proposals, blockers. | — |
+| **slack-integration** | Bidirectional: receive commands and capture to inbox, plus send proactive messages. | proactive-messaging |
 
 ---
 
@@ -93,8 +92,8 @@ Layer 0  ───────────────────────�
 |--------|-------------|------------|
 | **sales-loop** | MECE loop for sales workflows. Structured process from lead to close with artifacts at each phase. | — |
 | **ops-loop** | MECE loop for operations workflows. Structured process for operational excellence with tracking artifacts. | — |
-| **business-model-loop** | Full loop for creating business model artifacts. Structured exploration of value proposition, revenue streams, cost structure, channels. | — |
-| **go-to-market-loop** | Full loop for GTM strategy artifacts. Market analysis, positioning, launch planning, channel strategy. | — |
+| **business-model-loop** | Full loop for creating business model artifacts. Structured exploration of value proposition, revenue streams, cost structure, channels. | — | *deferred* |
+| **go-to-market-loop** | Full loop for GTM strategy artifacts. Market analysis, positioning, launch planning, channel strategy. | — | *deferred* |
 | **brownfield-specialization** | Special patterns and loops for brownfield contexts. Making orchestrator as good at brownfield as it is at greenfield — essential for getting systems to "completion" for launch or checkpoint. | — |
 
 ---
@@ -103,12 +102,12 @@ Layer 0  ───────────────────────�
 
 | Module | Description | Depends On |
 |--------|-------------|------------|
-| **game-design** | Framing the dream state ladder at each of the two levels (module→system, system→org) as finite games with clear win conditions. Understanding the infinite game the org plays in a cosmic, mission sense. | coherence-system |
-| **co-op-skill-acquisition** | Collaborative ontology building across multiple users, multiple AI agents, and user+AI combinations. Creating multiple ontologies with different participant combinations. | knowledge-graph-ontology, multi-agent-worktrees |
-| **proposing-decks** | Wake up to decks ready for review: (1) Knowledge decks for spaced repetition learning, (2) Project/module/system proposal decks. Learn from them and approve scopes for autonomous execution. | dreaming, spaced-repetition-learning |
-| **spaced-repetition-learning** | SRS for skill mastery and knowledge retention. The orchestrator helps you internalize patterns and skills through timed review. | knowledge-graph-ontology |
-| **auto-updating** | Other users receive updates without manually downloading from docs site. Push-based distribution of improvements. | local-first |
-| **custom-tool-roundup** | Collecting and organizing custom MCP tools across the ecosystem. Ensuring nothing useful is orphaned. | — |
+| **game-design** ✓ | Framing the dream state ladder at each of the two levels (module→system, system→org) as finite games with clear win conditions. Understanding the infinite game the org plays in a cosmic, mission sense. | coherence-system |
+| **co-op-skill-acquisition** | Collaborative ontology building across multiple users, multiple AI agents, and user+AI combinations. Creating multiple ontologies with different participant combinations. | knowledge-graph-ontology, multi-agent-worktrees | *deferred* |
+| **proposing-decks** ✓ | Wake up to decks ready for review: (1) Knowledge decks for spaced repetition learning, (2) Project/module/system proposal decks. Learn from them and approve scopes for autonomous execution. | dreaming, spaced-repetition-learning |
+| **spaced-repetition-learning** ✓ | SRS for skill mastery and knowledge retention. The orchestrator helps you internalize patterns and skills through timed review. | knowledge-graph-ontology |
+| **auto-updating** | Other users receive updates without manually downloading from docs site. Push-based distribution of improvements. | — |
+| **ecosystem-roundup** | Collecting and organizing tools, patterns, frameworks, skills, and loops across the ecosystem. Ensuring nothing useful is orphaned. | — | *deferred*
 
 ---
 
@@ -116,16 +115,32 @@ Layer 0  ───────────────────────�
 
 | Module | Description | Depends On |
 |--------|-------------|------------|
-| **local-first** | Architecture ensuring orchestrator works without internet. Encryption, sync protocols, and security for the journey from local to public apps. The foundation for true ownership. Affects all external integrations. | — |
+| **local-first** | Architecture ensuring orchestrator works without internet. Encryption, sync protocols, and security for the journey from local to public apps. The foundation for true ownership. Affects all external integrations. | — | *deferred*
 
 ---
 
 ## Updates to Existing Modules
 
-| Target | Update | Priority |
-|--------|--------|----------|
-| **distribution-loop** | Guarantee that all commits are rounded up and pushed. No orphaned local commits after distribution completes. | High |
-| **InboxProcessor** | Finish the second brain inbox implementation. Complete the skill harvesting pipeline. | Medium |
+| Target | Update | Priority | Status |
+|--------|--------|----------|--------|
+| **distribution-loop** | Guarantee that all commits are rounded up and pushed. No orphaned local commits after distribution completes. | High | ✓ Complete |
+| **InboxProcessor** | Finish the second brain inbox implementation. Complete the skill harvesting pipeline. | Medium | ✓ Complete |
+
+---
+
+## Deferred Items
+
+> Modules explicitly deferred. Check this section before presenting available moves.
+
+| Module | Reason | Revisit When |
+|--------|--------|--------------|
+| tech-trees | Complex RL/prediction scope | After core system stable |
+| business-model-loop | Domain loop, not core | When domain loops prioritized |
+| go-to-market-loop | Domain loop, not core | When domain loops prioritized |
+| co-op-skill-acquisition | Multi-user complexity | After local-first architecture |
+| local-first | Significant architecture scope | When external integrations need offline support |
+| ladder-of-abstraction-interfaces | UI complexity, requires stable core | After core visualization (ooda-clocks) |
+| ecosystem-roundup | Broad scope across all primitives | When ecosystem has more content to round up |
 
 ---
 
@@ -143,12 +158,12 @@ Layer 0  ───────────────────────�
 |-------|-------|---------|
 | 0 | 3 | roadmapping, 2-layer-orchestration, knowledge-graph-ontology |
 | 1 | 9 | kanban, ooda-clocks, skill-trees, tech-trees, ladder-of-abstraction, autonomous, dreaming, multi-agent-worktrees, loop-sequencing |
-| 2 | 5 | patterns-roundup, scoring, ADIR-loop, mece-opportunity-mapping, coherence-system |
+| 2 | 4 | patterns-roundup, scoring, mece-opportunity-mapping, coherence-system |
 | 3 | 3 | voice, proactive-messaging, slack-integration |
 | 4 | 5 | sales-loop, ops-loop, business-model-loop, go-to-market-loop, brownfield-specialization |
-| 5 | 6 | game-design, co-op-skill-acquisition, proposing-decks, spaced-repetition, auto-updating, custom-tool-roundup |
+| 5 | 6 | game-design ✓, co-op-skill-acquisition, proposing-decks ✓, spaced-repetition ✓, auto-updating, ecosystem-roundup |
 | 6 | 1 | local-first |
-| **Total** | **32** | |
+| **Total** | **31** | |
 | Updates | 2 | distribution-loop, InboxProcessor |
 
 ---
@@ -191,27 +206,34 @@ Layer 0  ───────────────────────�
 Based on dependencies and leverage:
 
 ```
-Phase 1: Foundation
+Phase 1: Foundation ✓
   1. roadmapping ✓
   2. knowledge-graph-ontology ✓
-  3. 2-layer-orchestration ◄── YOU ARE HERE
+  3. 2-layer-orchestration ✓
 
 Phase 2: Core Capabilities
-  4. kanban
-  5. patterns-roundup
-  6. scoring
-  7. autonomous
+  4. kanban ✓
+  5. patterns-roundup ✓
+  6. scoring ✓
+  7. autonomous ✓
 
-Phase 3: Intelligence
-  8. ADIR-loop
-  9. mece-opportunity-mapping
-  10. coherence-system
-  11. loop-sequencing
+Phase 3: Intelligence ✓
+  8. mece-opportunity-mapping ✓
+  9. coherence-system ✓
+  10. loop-sequencing ✓
+
+Phase 3.5: Layer 1 Continuation
+  11. dreaming ✓
+  12. multi-agent-worktrees ✓
 
 Phase 4: Visualization
-  12. ooda-clocks-visual
-  13. skill-trees
-  14. ladder-of-abstraction-interfaces
+  13. ooda-clocks-visual
+  14. skill-trees ✓
+  15. ladder-of-abstraction-interfaces
+
+Phase 5: Meta
+  16. game-design ✓
+  17. spaced-repetition-learning ✓ ◄── YOU ARE HERE
 
 Phase 5: Interface (requires local-first decision)
   15. local-first (architecture)
@@ -233,7 +255,9 @@ Phase 7: Advanced
 
 ## Key Concepts
 
-### ADIR Loop (Abductive → Deductive → Inductive → Reflexive)
+### ADIR Loop (Abductive → Deductive → Inductive → Reflexive) — Pattern PAT-012
+
+> **Note**: ADIR is a reasoning pattern (PAT-012), not a standalone module. It synergizes with other patterns.
 
 | Phase | Output | Core Question |
 |-------|--------|---------------|
@@ -276,6 +300,8 @@ Phase 7: Advanced
 
 ## Next Action
 
-**Current Module**: knowledge-graph-ontology
+**Current Module**: proactive-messaging
 **Status**: Complete
-**Next**: 2-layer-orchestration (unlocks autonomous, dreaming, multi-agent-worktrees)
+**Next**: slack-integration, voice, or ooda-clocks-visual (unblocked Layer 1/3 modules)
+
+**Note**: ADIR is now captured as pattern PAT-012 in memory/orchestrator.json rather than a standalone module. It synergizes with Deep Context Protocol, Leverage Protocol, MECE Opportunity Mapping, and Terrain Check.
