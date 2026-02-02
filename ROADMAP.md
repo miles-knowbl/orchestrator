@@ -8,7 +8,8 @@
 
 **System**: Orchestrator — Self-improving meta-system where skills are the atomic primitive
 **Dream State**: Autonomous, coherent, local-first system that compounds leverage through skill-based ontology
-**Modules**: 31 new modules + 2 updates across 7 layers
+**Progress**: 19/31 modules complete (61%) + 7 deferred
+**Remaining**: voice, brownfield-specialization, sales-loop, ops-loop, auto-updating
 
 ---
 
@@ -16,25 +17,25 @@
 
 ```
 Layer 6  ───────────────────────────────────────────────────────────────────────
-         local-first
+         local-first (deferred)
 
 Layer 5  ───────────────────────────────────────────────────────────────────────
-         game-design, co-op, proposing-decks, spaced-repetition, auto-updating, custom-tool-roundup
+         game-design ✓, co-op (deferred), proposing-decks ✓, spaced-repetition ✓, auto-updating, ecosystem-roundup (deferred)
 
 Layer 4  ───────────────────────────────────────────────────────────────────────
-         sales-loop, ops-loop, business-model-loop, go-to-market-loop, brownfield-specialization
+         sales-loop, ops-loop, business-model-loop (deferred), go-to-market-loop (deferred), brownfield-specialization
 
 Layer 3  ───────────────────────────────────────────────────────────────────────
-         voice, proactive-messaging, slack-integration
+         voice, proactive-messaging ✓, slack-integration ✓
 
 Layer 2  ───────────────────────────────────────────────────────────────────────
-         patterns-roundup, scoring, mece-opportunity-mapping, coherence-system
+         patterns-roundup ✓, scoring ✓, mece-opportunity-mapping ✓, coherence-system ✓
 
 Layer 1  ───────────────────────────────────────────────────────────────────────
-         autonomous, dreaming, multi-agent-worktrees, loop-sequencing, kanban, ooda-clocks, skill-trees, tech-trees, ladder-of-abstraction
+         autonomous ✓, dreaming ✓, multi-agent-worktrees ✓, loop-sequencing ✓, kanban ✓, ooda-clocks ✓, skill-trees ✓, tech-trees (deferred), ladder-of-abstraction (deferred)
 
 Layer 0  ───────────────────────────────────────────────────────────────────────
-         roadmapping, 2-layer-orchestration, knowledge-graph-ontology
+         roadmapping ✓, 2-layer-orchestration ✓, knowledge-graph-ontology ✓
 ```
 
 ---
@@ -43,9 +44,9 @@ Layer 0  ───────────────────────�
 
 | Module | Description | Unlocks |
 |--------|-------------|---------|
-| **roadmapping** | System-level visibility into module progress, dependencies, and completion status. The spine that makes everything else trackable. | kanban, coherence-system |
-| **2-layer-orchestration** | Orchestrator that spawns and manages sub-agents. One orchestrator per system, capable of spinning up/down any number of agents running any combination of loops to advance toward dream state. | autonomous, dreaming, multi-agent-worktrees |
-| **knowledge-graph-ontology** | The skill-based knowledge graph where compound leverage accumulates. Skills, patterns, loops, and learnings form nodes; relationships form edges. This is the second brain's actual structure. | skill-trees, tech-trees, co-op-skill-acquisition, mece-opportunity-mapping, spaced-repetition |
+| **roadmapping** ✓ | System-level visibility into module progress, dependencies, and completion status. The spine that makes everything else trackable. | kanban, coherence-system |
+| **2-layer-orchestration** ✓ | Orchestrator that spawns and manages sub-agents. One orchestrator per system, capable of spinning up/down any number of agents running any combination of loops to advance toward dream state. | autonomous, dreaming, multi-agent-worktrees |
+| **knowledge-graph-ontology** ✓ | The skill-based knowledge graph where compound leverage accumulates. Skills, patterns, loops, and learnings form nodes; relationships form edges. This is the second brain's actual structure. | skill-trees, tech-trees, co-op-skill-acquisition, mece-opportunity-mapping, spaced-repetition |
 
 ---
 
@@ -53,15 +54,15 @@ Layer 0  ───────────────────────�
 
 | Module | Description | Depends On |
 |--------|-------------|------------|
-| **kanban** | Linear-style visualization of the module ladder to system completion. Human-readable checklist showing scope completion, delegation-ready for worktrees. | roadmapping |
+| **kanban** ✓ | Linear-style visualization of the module ladder to system completion. Human-readable checklist showing scope completion, delegation-ready for worktrees. | roadmapping |
 | **ooda-clocks-visual** ✓ | Gamelan-inspired circular visualization showing when patterns, hooks, and skills fire during loop execution. Temporal awareness of the orchestration rhythm. | — |
-| **skill-trees** | DAG-like domain-specific sequences of skills. Simultaneously illustrates skill relationships to LLMs while helping users gain familiarity by seeing each skill produce output before using it in a loop. Interface to the skill-based ontology. | knowledge-graph-ontology |
+| **skill-trees** ✓ | DAG-like domain-specific sequences of skills. Simultaneously illustrates skill relationships to LLMs while helping users gain familiarity by seeing each skill produce output before using it in a loop. Interface to the skill-based ontology. | knowledge-graph-ontology |
 | **tech-trees** | Macroscopic technology progressions that cultures/orgs pursue. Predictive capabilities (potentially RL-based like AlphaGo with Markov decision trees) that inspire MECE opportunity mapping at system and module levels. | knowledge-graph-ontology, mece-opportunity-mapping | *deferred* |
 | **ladder-of-abstraction-interfaces** | UI showing the same loop at different zoom levels (module/system/org). Music-gear-like looping interfaces for piloting, co-piloting, or playing co-op PvE with the orchestrator. | kanban | *deferred*
-| **autonomous** | Full loop execution without human gates + background continuous operation. "It works while I sleep." The orchestrator advances dream state while you're away. | 2-layer-orchestration, proactive-messaging |
-| **dreaming** | Sleep/background processing mode for proposing new modules→system and systems→org. The system "dreams up" new work while idle, ready for review when you return. | autonomous |
-| **multi-agent-worktrees** | Multiple sets of parallel agents across two hierarchy levels and multiple humans. Thoughtful coordination when collaborators each have their own agent sets working on isolated git worktrees. | 2-layer-orchestration |
-| **loop-sequencing** | Developing intuition for which loops commonly run together (like NLP pattern detection) and using that to look multiple moves ahead in the "line" (chess-inspired). Beyond single-move leverage protocol to multi-move planning. | leverage-protocol (exists) |
+| **autonomous** ✓ | Full loop execution without human gates + background continuous operation. "It works while I sleep." The orchestrator advances dream state while you're away. | 2-layer-orchestration, proactive-messaging |
+| **dreaming** ✓ | Sleep/background processing mode for proposing new modules→system and systems→org. The system "dreams up" new work while idle, ready for review when you return. | autonomous |
+| **multi-agent-worktrees** ✓ | Multiple sets of parallel agents across two hierarchy levels and multiple humans. Thoughtful coordination when collaborators each have their own agent sets working on isolated git worktrees. | 2-layer-orchestration |
+| **loop-sequencing** ✓ | Developing intuition for which loops commonly run together (like NLP pattern detection) and using that to look multiple moves ahead in the "line" (chess-inspired). Beyond single-move leverage protocol to multi-move planning. | leverage-protocol (exists) |
 
 ---
 
@@ -69,10 +70,10 @@ Layer 0  ───────────────────────�
 
 | Module | Description | Depends On |
 |--------|-------------|------------|
-| **patterns-roundup** | Two functions: (1) Round up existing patterns not yet formalized into memory/patterns, (2) Automatic pattern detection and proposal from observed behaviors. | analytics (exists) |
-| **scoring** | System-level evaluation around module-specific value. Quantifies how much each module contributes to dream state advancement. | analytics (exists) |
-| **mece-opportunity-mapping** | Mutually Exclusive, Collectively Exhaustive opportunity analysis at system and module levels. Ensures no blind spots in roadmap coverage. | knowledge-graph-ontology |
-| **coherence-system** | Alignment of all orchestrator components. Skill-based ontology + dream state + roadmapping form the spine of a "spec-driven organization." Ensures modules don't drift or conflict. | roadmapping, knowledge-graph-ontology |
+| **patterns-roundup** ✓ | Two functions: (1) Round up existing patterns not yet formalized into memory/patterns, (2) Automatic pattern detection and proposal from observed behaviors. | analytics (exists) |
+| **scoring** ✓ | System-level evaluation around module-specific value. Quantifies how much each module contributes to dream state advancement. | analytics (exists) |
+| **mece-opportunity-mapping** ✓ | Mutually Exclusive, Collectively Exhaustive opportunity analysis at system and module levels. Ensures no blind spots in roadmap coverage. | knowledge-graph-ontology |
+| **coherence-system** ✓ | Alignment of all orchestrator components. Skill-based ontology + dream state + roadmapping form the spine of a "spec-driven organization." Ensures modules don't drift or conflict. | roadmapping, knowledge-graph-ontology |
 
 ---
 
@@ -154,17 +155,17 @@ Layer 0  ───────────────────────�
 
 ## Module Count Summary
 
-| Layer | Count | Modules |
-|-------|-------|---------|
-| 0 | 3 | roadmapping, 2-layer-orchestration, knowledge-graph-ontology |
-| 1 | 9 | kanban, ooda-clocks, skill-trees, tech-trees, ladder-of-abstraction, autonomous, dreaming, multi-agent-worktrees, loop-sequencing |
-| 2 | 4 | patterns-roundup, scoring, mece-opportunity-mapping, coherence-system |
-| 3 | 3 | voice, proactive-messaging, slack-integration |
-| 4 | 5 | sales-loop, ops-loop, business-model-loop, go-to-market-loop, brownfield-specialization |
-| 5 | 6 | game-design ✓, co-op-skill-acquisition, proposing-decks ✓, spaced-repetition ✓, auto-updating, ecosystem-roundup |
-| 6 | 1 | local-first |
-| **Total** | **31** | |
-| Updates | 2 | distribution-loop, InboxProcessor |
+| Layer | Complete | Total | Modules |
+|-------|----------|-------|---------|
+| 0 | 3 | 3 | roadmapping ✓, 2-layer-orchestration ✓, knowledge-graph-ontology ✓ |
+| 1 | 7 | 9 | kanban ✓, ooda-clocks ✓, skill-trees ✓, tech-trees (deferred), ladder-of-abstraction (deferred), autonomous ✓, dreaming ✓, multi-agent-worktrees ✓, loop-sequencing ✓ |
+| 2 | 4 | 4 | patterns-roundup ✓, scoring ✓, mece-opportunity-mapping ✓, coherence-system ✓ |
+| 3 | 2 | 3 | voice, proactive-messaging ✓, slack-integration ✓ |
+| 4 | 0 | 5 | sales-loop, ops-loop, business-model-loop (deferred), go-to-market-loop (deferred), brownfield-specialization |
+| 5 | 3 | 6 | game-design ✓, co-op-skill-acquisition (deferred), proposing-decks ✓, spaced-repetition ✓, auto-updating, ecosystem-roundup (deferred) |
+| 6 | 0 | 1 | local-first (deferred) |
+| **Complete** | **19** | **31** | **61%** |
+| Updates | 2 | 2 | distribution-loop ✓, InboxProcessor ✓ |
 
 ---
 
@@ -206,50 +207,53 @@ Layer 0  ───────────────────────�
 Based on dependencies and leverage:
 
 ```
-Phase 1: Foundation ✓
+Phase 1: Foundation ✓ COMPLETE
   1. roadmapping ✓
   2. knowledge-graph-ontology ✓
   3. 2-layer-orchestration ✓
 
-Phase 2: Core Capabilities
+Phase 2: Core Capabilities ✓ COMPLETE
   4. kanban ✓
   5. patterns-roundup ✓
   6. scoring ✓
   7. autonomous ✓
 
-Phase 3: Intelligence ✓
+Phase 3: Intelligence ✓ COMPLETE
   8. mece-opportunity-mapping ✓
   9. coherence-system ✓
   10. loop-sequencing ✓
 
-Phase 3.5: Layer 1 Continuation
+Phase 4: Layer 1 Continuation ✓ COMPLETE
   11. dreaming ✓
   12. multi-agent-worktrees ✓
 
-Phase 4: Visualization
+Phase 5: Visualization ✓ COMPLETE
   13. ooda-clocks-visual ✓
   14. skill-trees ✓
   15. ladder-of-abstraction-interfaces (deferred)
 
-Phase 5: Meta
+Phase 6: Meta & Interface ✓ COMPLETE
   16. game-design ✓
   17. spaced-repetition-learning ✓
-  18. ooda-clocks-visual ✓ ◄── YOU ARE HERE
+  18. proposing-decks ✓
+  19. proactive-messaging ✓
+  20. slack-integration ✓
 
-Phase 5: Interface (requires local-first decision)
-  15. local-first (architecture)
-  16. voice
-  17. proactive-messaging
-  18. slack-integration
+Phase 7: Remaining Modules ◄── YOU ARE HERE
+  21. voice (Layer 3)
+  22. brownfield-specialization (Layer 4)
+  23. sales-loop (Layer 4)
+  24. ops-loop (Layer 4)
+  25. auto-updating (Layer 5)
 
-Phase 6: Domain & Meta
-  19-23. Domain loops (parallel)
-  24-29. Meta modules (as needed)
-
-Phase 7: Advanced
-  30. tech-trees
-  31. dreaming
-  32. proposing-decks
+Deferred:
+  - tech-trees (Layer 1)
+  - ladder-of-abstraction-interfaces (Layer 1)
+  - business-model-loop (Layer 4)
+  - go-to-market-loop (Layer 4)
+  - co-op-skill-acquisition (Layer 5)
+  - ecosystem-roundup (Layer 5)
+  - local-first (Layer 6)
 ```
 
 ---
@@ -301,8 +305,12 @@ Phase 7: Advanced
 
 ## Next Action
 
-**Current Module**: ooda-clocks-visual
-**Status**: Complete
-**Next**: voice, brownfield-specialization, or sales-loop/ops-loop (unblocked Layer 3/4 modules)
+**Progress**: 19/31 modules complete (61%) + 7 deferred
+**Available Modules** (unblocked, not deferred):
+- Layer 3: voice
+- Layer 4: sales-loop, ops-loop, brownfield-specialization
+- Layer 5: auto-updating
+
+**Recommended**: voice or brownfield-specialization (highest leverage for current needs)
 
 **Note**: ADIR is now captured as pattern PAT-012 in memory/orchestrator.json rather than a standalone module. It synergizes with Deep Context Protocol, Leverage Protocol, MECE Opportunity Mapping, and Terrain Check.
