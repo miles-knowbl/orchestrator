@@ -305,7 +305,7 @@ export class GuaranteeService {
         continue;
       }
 
-      let matches: string[] = [];
+      const matches: string[] = [];
       const allFiles: string[] = [];
 
       // Source 1: Check traditional project path

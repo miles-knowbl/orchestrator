@@ -86,6 +86,8 @@ export interface RoadmapProgress {
 export interface LeverageScore {
   moduleId: string;
   moduleName: string;
+  layer: number;
+  description: string;
   score: number;
   reasoning: {
     dreamStateAlignment: number;
@@ -389,6 +391,8 @@ export class RoadmapService {
       return {
         moduleId: module.id,
         moduleName: module.name,
+        layer: module.layer,
+        description: module.description,
         score: Math.round(score * 10) / 10,
         reasoning: {
           dreamStateAlignment: dsa,
@@ -703,5 +707,91 @@ export class RoadmapService {
 
     // Higher layers often build on existing work
     return Math.max(3, 7 - module.layer);
+  }
+
+  // --------------------------------------------------------------------------
+  // Sync Operations
+  // --------------------------------------------------------------------------
+
+  /**
+   * Mark a module as complete by name (fuzzy match)
+   * Used by loop completion hook to auto-sync roadmap
+   */
+  async markModuleCompleteByName(moduleName: string): Promise<Module | null> {
+    if (!this.roadmap) return null;
+
+    // Try exact match first
+    let module = this.roadmap.modules.find(
+      m => m.id === moduleName || m.name.toLowerCase() === moduleName.toLowerCase()
+    );
+
+    // Try fuzzy match (contains)
+    if (!module) {
+      const normalized = moduleName.toLowerCase().replace(/[-_\s]/g, '');
+      module = this.roadmap.modules.find(m => {
+        const normalizedId = m.id.toLowerCase().replace(/[-_\s]/g, '');
+        const normalizedName = m.name.toLowerCase().replace(/[-_\s]/g, '');
+        return normalizedId.includes(normalized) || normalized.includes(normalizedId) ||
+               normalizedName.includes(normalized) || normalized.includes(normalizedName);
+      });
+    }
+
+    if (module && module.status !== 'complete') {
+      return await this.updateModuleStatus(module.id, 'complete');
+    }
+
+    return module || null;
+  }
+
+  /**
+   * Get drift status between roadmap and an external completion count
+   */
+  getDriftStatus(externalComplete: number, externalTotal: number): {
+    hasDrift: boolean;
+    roadmapComplete: number;
+    roadmapTotal: number;
+    roadmapPercentage: number;
+    externalComplete: number;
+    externalTotal: number;
+    externalPercentage: number;
+    driftAmount: number;
+  } {
+    const progress = this.getProgress();
+    const roadmapPct = progress.overallPercentage;
+    const externalPct = externalTotal > 0 ? Math.round((externalComplete / externalTotal) * 100) : 0;
+
+    // Drift is significant if difference is > 3 modules or > 10%
+    const driftAmount = Math.abs(progress.completeModules - externalComplete);
+    const hasDrift = driftAmount >= 3 || Math.abs(roadmapPct - externalPct) >= 10;
+
+    return {
+      hasDrift,
+      roadmapComplete: progress.completeModules,
+      roadmapTotal: progress.totalModules,
+      roadmapPercentage: roadmapPct,
+      externalComplete,
+      externalTotal,
+      externalPercentage: externalPct,
+      driftAmount,
+    };
+  }
+
+  /**
+   * Bulk sync: mark multiple modules as complete
+   */
+  async syncCompletedModules(moduleIds: string[]): Promise<{ synced: string[]; notFound: string[] }> {
+    const synced: string[] = [];
+    const notFound: string[] = [];
+
+    for (const moduleId of moduleIds) {
+      const result = await this.markModuleCompleteByName(moduleId);
+      if (result) {
+        synced.push(result.id);
+      } else {
+        notFound.push(moduleId);
+      }
+    }
+
+    return { synced, notFound };
   }
 }

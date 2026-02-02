@@ -11,6 +11,7 @@ import type { ClockEvent, RhythmPattern, ClockExecutionSummary } from './types.j
 import { PHASE_ANGLES, CLOCK_COLORS, LAYER_RADII } from './types.js';
 import { RhythmAnalyzer } from './RhythmAnalyzer.js';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface OODAClockServiceOptions {
   // Future options
 }

@@ -94,6 +94,26 @@ export interface StartupWelcomeEvent {
   availableLoops: string[];
 }
 
+export interface RoadmapMove {
+  moduleId: string;
+  moduleName: string;
+  score: number;
+  layer: number;
+  description: string;
+}
+
+export interface RoadmapDriftStatus {
+  hasDrift: boolean;
+  roadmapComplete: number;
+  roadmapTotal: number;
+  roadmapPercentage: number;
+  dreamStateComplete: number;
+  dreamStateTotal: number;
+  dreamStatePercentage: number;
+  driftAmount: number;  // How many modules differ
+  lastSyncAt?: string;
+}
+
 export interface DailyWelcomeEvent {
   type: 'daily_welcome';
   greeting: string;
@@ -110,6 +130,10 @@ export interface DailyWelcomeEvent {
   recommendedLoop: string;
   recommendedTarget?: string;
   updateNotes?: string[];
+  // Roadmap status (new)
+  hasRoadmap: boolean;
+  roadmapDrift?: RoadmapDriftStatus;
+  availableMoves?: RoadmapMove[];
 }
 
 export type ProactiveEvent =

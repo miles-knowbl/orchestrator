@@ -357,7 +357,7 @@ export class AutonomousExecutor {
           gateId: gate.id,
         };
 
-      case 'conditional':
+      case 'conditional': {
         // Conditional gates auto-approve if condition is met
         // For now, we check if there's no deploy target configured
         // This can be extended with more sophisticated condition checking
@@ -367,6 +367,7 @@ export class AutonomousExecutor {
           reason: conditionMet ? 'conditional gate condition met' : 'conditional gate condition not met',
           gateId: gate.id,
         };
+      }
 
       case 'human':
         // Human gates never auto-approve

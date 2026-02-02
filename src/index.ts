@@ -609,7 +609,8 @@ async function main() {
     proactiveMessagingService,
     installStateService,
     dreamEngine,
-    config.repoPath
+    config.repoPath,
+    roadmapService
   );
   const slackIntegrationHandlers = createSlackIntegrationToolHandlers(slackIntegrationService);
 

@@ -547,17 +547,42 @@ export class MessageFormatter {
       lines.push(this.formatTitle(event.greeting));
       lines.push(this.emptyLine());
 
+      // Dream State progress
       if (event.dreamStateProgress) {
         const progress = event.dreamStateProgress;
         const pct = Math.round((progress.modulesComplete / progress.modulesTotal) * 100);
-        lines.push(this.padLine(`Dream State: ${progress.name} (${progress.modulesComplete}/${progress.modulesTotal} modules)`));
+        lines.push(this.padLine(`Dream State: ${progress.name}`));
+        lines.push(this.padLine(`  ${progress.modulesComplete}/${progress.modulesTotal} modules (${pct}%)`));
 
         // Progress bar
         const barWidth = 30;
         const filled = Math.round((pct / 100) * barWidth);
         const bar = '[' + '='.repeat(filled) + ' '.repeat(barWidth - filled) + ']';
-        lines.push(this.padLine(`${bar} ${pct}%`));
+        lines.push(this.padLine(`  ${bar}`));
       }
+
+      // Roadmap drift warning
+      if (event.hasRoadmap && event.roadmapDrift?.hasDrift) {
+        lines.push(this.emptyLine());
+        lines.push(this.padLine('ROADMAP DRIFT DETECTED'));
+        lines.push(this.padLine(`  Roadmap: ${event.roadmapDrift.roadmapComplete}/${event.roadmapDrift.roadmapTotal} (${event.roadmapDrift.roadmapPercentage}%)`));
+        lines.push(this.padLine(`  Dream State: ${event.roadmapDrift.dreamStateComplete}/${event.roadmapDrift.dreamStateTotal} (${event.roadmapDrift.dreamStatePercentage}%)`));
+        lines.push(this.padLine(`  Drift: ${event.roadmapDrift.driftAmount} modules out of sync`));
+        lines.push(this.emptyLine());
+        lines.push(this.padLine('Run update_roadmap_status to sync.'));
+      }
+
+      // Available moves
+      if (event.availableMoves && event.availableMoves.length > 0) {
+        lines.push(this.emptyLine());
+        lines.push(this.padLine('AVAILABLE MOVES'));
+        for (const move of event.availableMoves.slice(0, 3)) {
+          const scoreStr = move.score.toFixed(1);
+          lines.push(this.padLine(`  ${move.moduleName} (L${move.layer}) - ${scoreStr}`));
+        }
+      }
+
+      lines.push(this.emptyLine());
 
       if (event.pendingProposals > 0) {
         lines.push(this.padLine(`Proposals: ${event.pendingProposals} pending review`));

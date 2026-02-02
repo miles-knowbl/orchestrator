@@ -465,6 +465,25 @@ export class ExecutionEngine {
         }
       }
 
+      // Auto-sync roadmap: mark module as complete if it matches
+      if (this.roadmapService) {
+        try {
+          const moduleId = execution.project;
+          const updated = await this.roadmapService.markModuleCompleteByName(moduleId);
+          if (updated) {
+            this.log('info', `Roadmap synced: marked module "${updated.id}" as complete`);
+            this.addExecutionLog(execution, {
+              level: 'info',
+              category: 'system',
+              message: `Roadmap auto-synced: ${updated.name} marked complete`,
+              details: { moduleId: updated.id, moduleName: updated.name },
+            });
+          }
+        } catch (err) {
+          this.log('warn', `Failed to auto-sync roadmap: ${err}`);
+        }
+      }
+
       this.log('info', `Execution ${executionId} completed`);
       return execution;
     }

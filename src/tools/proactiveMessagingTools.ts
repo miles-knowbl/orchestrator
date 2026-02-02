@@ -8,6 +8,8 @@ import type { Tool } from '@modelcontextprotocol/sdk/types.js';
 import type { ProactiveMessagingService } from '../services/proactive-messaging/index.js';
 import type { InstallStateService } from '../services/InstallStateService.js';
 import type { DreamEngine } from '../services/dreaming/index.js';
+import type { RoadmapService } from '../services/roadmapping/RoadmapService.js';
+import type { RoadmapDriftStatus, RoadmapMove } from '../services/proactive-messaging/types.js';
 
 // ============================================================================
 // Tool Definitions
@@ -234,7 +236,8 @@ export function createProactiveMessagingToolHandlers(
   service: ProactiveMessagingService,
   installStateService?: InstallStateService,
   dreamEngine?: DreamEngine,
-  repoPath?: string
+  repoPath?: string,
+  roadmapService?: RoadmapService
 ) {
   return {
     send_notification: async (params: unknown) => {
@@ -437,6 +440,61 @@ export function createProactiveMessagingToolHandlers(
         }
       }
 
+      // Get roadmap status if available
+      let hasRoadmap = false;
+      let roadmapDrift: RoadmapDriftStatus | undefined;
+      let availableMoves: RoadmapMove[] | undefined;
+      let dreamStateComplete = 0;
+      let dreamStateTotal = 0;
+
+      if (roadmapService && repoPath) {
+        try {
+          const progress = roadmapService.getProgress();
+          hasRoadmap = progress.totalModules > 0;
+
+          if (hasRoadmap) {
+            // Get available moves (leverage scores)
+            const leverageScores = roadmapService.calculateLeverageScores();
+            availableMoves = leverageScores.slice(0, 3).map(s => ({
+              moduleId: s.moduleId,
+              moduleName: s.moduleName,
+              score: s.score,
+              layer: s.layer,
+              description: s.description,
+            }));
+
+            // Parse Dream State to get completion for drift detection
+            const fs = await import('fs/promises');
+            const path = await import('path');
+            const dreamStatePath = path.join(repoPath, '.claude', 'DREAM-STATE.md');
+            try {
+              const content = await fs.readFile(dreamStatePath, 'utf-8');
+              const moduleLines = content.match(/^\|[^|]+\|[^|]+\|\s*(complete|in-progress|pending|blocked)\s*\|/gmi) || [];
+              dreamStateTotal = moduleLines.length;
+              dreamStateComplete = moduleLines.filter(l => /complete/i.test(l)).length;
+            } catch {
+              // Dream State doesn't exist or can't be read
+            }
+
+            // Calculate drift
+            const driftAmount = Math.abs(progress.completeModules - dreamStateComplete);
+            roadmapDrift = {
+              hasDrift: driftAmount > 0,
+              roadmapComplete: progress.completeModules,
+              roadmapTotal: progress.totalModules,
+              roadmapPercentage: progress.overallPercentage,
+              dreamStateComplete,
+              dreamStateTotal,
+              dreamStatePercentage: dreamStateTotal > 0 ? Math.round((dreamStateComplete / dreamStateTotal) * 100) : 0,
+              driftAmount,
+              lastSyncAt: installStateService.getLastRoadmapSync().syncedAt,
+            };
+          }
+        } catch {
+          // Ignore roadmap errors
+        }
+      }
+
       // If first call of day or fresh install, send welcome message
       if (isFirstOfDay && repoPath) {
         await service.sendDailyWelcome({
@@ -446,6 +504,9 @@ export function createProactiveMessagingToolHandlers(
           latestVersion: versionStatus.latestVersion,
           repoPath,
           pendingProposals,
+          hasRoadmap,
+          roadmapDrift,
+          availableMoves,
         });
       }
 
@@ -461,6 +522,9 @@ export function createProactiveMessagingToolHandlers(
         lastInteractionDate: state.lastInteractionDate,
         pendingProposals,
         welcomeMessageSent: isFirstOfDay,
+        hasRoadmap,
+        roadmapDrift,
+        availableMoves,
       };
     },
   };

@@ -33,6 +33,10 @@ export interface InstallState {
     channel: 'stable' | 'beta';
     checkInterval: 'daily' | 'weekly' | 'manual';
   };
+
+  // Roadmap sync tracking
+  lastRoadmapSyncAt?: string;
+  lastRoadmapSyncVersion?: string;
 }
 
 const DEFAULT_STATE: InstallState = {
@@ -223,5 +227,36 @@ export class InstallStateService {
   async configureAutoUpdate(config: InstallState['autoUpdate']): Promise<void> {
     this.state.autoUpdate = config;
     await this.save();
+  }
+
+  /**
+   * Record a roadmap sync event
+   */
+  async recordRoadmapSync(version: string): Promise<void> {
+    this.state.lastRoadmapSyncAt = new Date().toISOString();
+    this.state.lastRoadmapSyncVersion = version;
+    await this.save();
+  }
+
+  /**
+   * Check if roadmap sync is needed (last sync > 7 days ago or never synced)
+   */
+  needsRoadmapSync(): boolean {
+    if (!this.state.lastRoadmapSyncAt) {
+      return true;
+    }
+    const lastSync = new Date(this.state.lastRoadmapSyncAt);
+    const daysSinceSync = (Date.now() - lastSync.getTime()) / (1000 * 60 * 60 * 24);
+    return daysSinceSync > 7;
+  }
+
+  /**
+   * Get last roadmap sync info
+   */
+  getLastRoadmapSync(): { syncedAt?: string; version?: string } {
+    return {
+      syncedAt: this.state.lastRoadmapSyncAt,
+      version: this.state.lastRoadmapSyncVersion,
+    };
   }
 }

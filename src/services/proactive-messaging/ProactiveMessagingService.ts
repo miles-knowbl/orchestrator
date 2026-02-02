@@ -13,6 +13,8 @@ import type {
   ChannelStatus,
   PendingInteraction,
   InboundCommand,
+  RoadmapDriftStatus,
+  RoadmapMove,
 } from './types.js';
 import { ChannelAdapter, TerminalAdapter, SlackAdapter } from './adapters/index.js';
 import { MessageFormatter } from './MessageFormatter.js';
@@ -477,8 +479,12 @@ export class ProactiveMessagingService {
     repoPath: string;
     pendingProposals: number;
     updateNotes?: string[];
+    // Roadmap status
+    hasRoadmap?: boolean;
+    roadmapDrift?: RoadmapDriftStatus;
+    availableMoves?: RoadmapMove[];
   }): Promise<string> {
-    const { greeting, version, versionStatus, latestVersion, repoPath, pendingProposals, updateNotes } = options;
+    const { greeting, version, versionStatus, latestVersion, repoPath, pendingProposals, updateNotes, hasRoadmap, roadmapDrift, availableMoves } = options;
 
     // Check for Dream State (same logic as sendStartupWelcome)
     const dreamStatePath = path.join(repoPath, '.claude', 'DREAM-STATE.md');
@@ -528,6 +534,10 @@ export class ProactiveMessagingService {
       recommendedLoop,
       recommendedTarget,
       updateNotes,
+      // Roadmap status
+      hasRoadmap: hasRoadmap ?? false,
+      roadmapDrift,
+      availableMoves,
     });
   }
 

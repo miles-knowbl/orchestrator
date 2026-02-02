@@ -14,6 +14,8 @@ export type {
   CustomNotificationEvent,
   StartupWelcomeEvent,
   DailyWelcomeEvent,
+  RoadmapMove,
+  RoadmapDriftStatus,
   InboundCommand,
   ApproveCommand,
   RejectCommand,
