@@ -23,6 +23,9 @@ import type {
   ExecutorBlockedEvent,
   ErrorEvent,
   DeckReadyEvent,
+  SkillCompleteEvent,
+  PhaseCompleteEvent,
+  PhaseStartEvent,
   CustomNotificationEvent,
   StartupWelcomeEvent,
   DailyWelcomeEvent,
@@ -49,6 +52,12 @@ export class MessageFormatter {
         return this.formatError(event, interactionId);
       case 'deck_ready':
         return this.formatDeckReady(event, interactionId);
+      case 'skill_complete':
+        return this.formatSkillComplete(event, interactionId);
+      case 'phase_complete':
+        return this.formatPhaseComplete(event, interactionId);
+      case 'phase_start':
+        return this.formatPhaseStart(event, interactionId);
       case 'custom':
         return this.formatCustom(event, interactionId);
       case 'startup_welcome':
@@ -202,19 +211,29 @@ export class MessageFormatter {
     lines.push(this.border());
     lines.push('```');
 
-    const continuePayload = JSON.stringify({
-      action: 'continue',
-      interactionId,
-      executionId: event.executionId,
-    });
-
     return {
       text: lines.join('\n'),
       actions: [
         {
-          id: `continue_${interactionId}`,
+          id: `next_loop_${interactionId}`,
+          label: 'Start Next Loop',
+          style: 'primary',
+          value: JSON.stringify({
+            action: 'start_next_loop',
+            interactionId,
+            executionId: event.executionId,
+            completedLoopId: event.loopId,
+            completedModule: event.module,
+          }),
+        },
+        {
+          id: `view_${interactionId}`,
           label: 'View Details',
-          value: continuePayload,
+          value: JSON.stringify({
+            action: 'view_execution',
+            interactionId,
+            executionId: event.executionId,
+          }),
         },
       ],
       metadata: {
@@ -265,16 +284,42 @@ export class MessageFormatter {
     lines.push(this.border());
     lines.push('```');
 
+    // Build actions: Approve All for quick mobile approval, plus individual high-priority approvals
+    const actions: Array<{ id: string; label: string; style?: 'primary' | 'danger'; value: string }> = [
+      {
+        id: `approve_all_${interactionId}`,
+        label: 'Approve All',
+        style: 'primary',
+        value: JSON.stringify({
+          action: 'approve_all_proposals',
+          interactionId,
+          proposalIds: event.proposals.map(p => p.id),
+        }),
+      },
+    ];
+
+    // Add individual approve buttons for high priority proposals (max 2 for mobile usability)
+    for (const proposal of high.slice(0, 2)) {
+      actions.push({
+        id: `approve_${proposal.id}_${interactionId}`,
+        label: `✓ ${proposal.title.slice(0, 20)}`,
+        value: JSON.stringify({
+          action: 'approve',
+          interactionId,
+          proposalId: proposal.id,
+        }),
+      });
+    }
+
+    actions.push({
+      id: `review_${interactionId}`,
+      label: 'Review',
+      value: JSON.stringify({ action: 'review_proposals', interactionId }),
+    });
+
     return {
       text: lines.join('\n'),
-      actions: [
-        {
-          id: `review_${interactionId}`,
-          label: 'Review Proposals',
-          style: 'primary',
-          value: JSON.stringify({ action: 'review_proposals', interactionId }),
-        },
-      ],
+      actions,
       metadata: {
         interactionId,
         eventType: 'dream_proposals_ready',
@@ -397,6 +442,83 @@ export class MessageFormatter {
       metadata: {
         interactionId,
         eventType: 'deck_ready',
+      },
+    };
+  }
+
+  private formatSkillComplete(event: SkillCompleteEvent, interactionId: string): FormattedMessage {
+    const lines: string[] = [];
+
+    // Compact format for thread updates
+    lines.push(`\`[${event.phase}]\` Skill complete: **${event.skillId}**`);
+
+    if (event.deliverables && event.deliverables.length > 0) {
+      const delivs = event.deliverables.slice(0, 3).join(', ');
+      lines.push(`  → ${delivs}`);
+    }
+
+    return {
+      text: lines.join('\n'),
+      metadata: {
+        interactionId,
+        eventType: 'skill_complete',
+        executionId: event.executionId,
+      },
+    };
+  }
+
+  private formatPhaseComplete(event: PhaseCompleteEvent, interactionId: string): FormattedMessage {
+    const lines: string[] = [];
+
+    if (event.hasGate) {
+      // Gate waiting will send its own notification
+      lines.push(`\`[${event.phase}]\` Phase complete (${event.skillsCompleted} skills) → Gate: ${event.gateId}`);
+    } else {
+      lines.push(`\`[${event.phase}]\` Phase complete (${event.skillsCompleted} skills)`);
+    }
+
+    // Add Continue button when there's no gate blocking
+    const actions = event.hasGate ? undefined : [
+      {
+        id: `continue_${interactionId}`,
+        label: 'Continue',
+        style: 'primary' as const,
+        value: JSON.stringify({
+          action: 'continue',
+          interactionId,
+          executionId: event.executionId,
+        }),
+      },
+    ];
+
+    return {
+      text: lines.join('\n'),
+      actions,
+      metadata: {
+        interactionId,
+        eventType: 'phase_complete',
+        executionId: event.executionId,
+      },
+    };
+  }
+
+  private formatPhaseStart(event: PhaseStartEvent, interactionId: string): FormattedMessage {
+    const lines: string[] = [];
+
+    lines.push(`\`[${event.phaseNumber}/${event.totalPhases}]\` Entering phase: **${event.phase}**`);
+
+    if (event.skills.length > 0) {
+      const skillList = event.skills.slice(0, 5).join(', ');
+      const suffix = event.skills.length > 5 ? `, +${event.skills.length - 5} more` : '';
+      lines.push(`  Skills: ${skillList}${suffix}`);
+    }
+
+    return {
+      text: lines.join('\n'),
+      metadata: {
+        interactionId,
+        eventType: 'phase_start',
+        executionId: event.executionId,
       },
     };
   }

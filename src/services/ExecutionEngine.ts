@@ -503,6 +503,22 @@ export class ExecutionEngine {
       details: { skills: nextPhase.skills.map(s => s.skillId) },
     });
 
+    // Send phase start notification to Slack thread
+    if (this.messagingService) {
+      try {
+        await this.messagingService.notifyPhaseStart(
+          executionId,
+          execution.loopId,
+          nextPhase.name,
+          currentIndex + 2, // 1-indexed for display
+          loop.phases.length,
+          nextPhase.skills.map(s => s.skillId)
+        );
+      } catch (err) {
+        this.log('warn', `Failed to send phase start notification: ${err}`);
+      }
+    }
+
     await this.saveExecution(execution);
     this.log('info', `Execution ${executionId} advanced to phase ${nextPhase.name}`);
     return execution;
@@ -537,10 +553,30 @@ export class ExecutionEngine {
     phaseState.completedAt = new Date();
     execution.updatedAt = new Date();
 
+    // Count completed skills for the notification
+    const completedSkillsCount = phaseState.skills.filter(
+      s => s.status === 'completed'
+    ).length;
+
     // Check if there's a gate after this phase and send notification
     const loop = this.loopComposer.getLoop(execution.loopId);
     if (loop && this.messagingService) {
       const gate = loop.gates.find(g => g.afterPhase === execution.currentPhase);
+
+      // Send phase complete notification
+      try {
+        await this.messagingService.notifyPhaseComplete(
+          executionId,
+          execution.loopId,
+          execution.currentPhase,
+          completedSkillsCount,
+          !!gate,
+          gate?.id
+        );
+      } catch (err) {
+        this.log('warn', `Failed to send phase complete notification: ${err}`);
+      }
+
       if (gate) {
         const gateState = execution.gates.find(g => g.gateId === gate.id);
         if (gateState && gateState.status === 'pending') {
@@ -731,6 +767,21 @@ export class ExecutionEngine {
         outcome: result?.outcome,
       },
     });
+
+    // Send skill complete notification to Slack thread
+    if (this.messagingService) {
+      try {
+        await this.messagingService.notifySkillComplete(
+          executionId,
+          execution.loopId,
+          execution.currentPhase,
+          skillId,
+          result?.deliverables
+        );
+      } catch (err) {
+        this.log('warn', `Failed to send skill complete notification: ${err}`);
+      }
+    }
 
     await this.saveExecution(execution);
     return execution;

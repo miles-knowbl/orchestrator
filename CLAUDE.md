@@ -8,16 +8,90 @@ Orchestrator is a self-improving meta-system where **skills are the atomic primi
 
 ```bash
 # Build and run the server
-npm run build && node dist/index.js
+npm run build && npm start
 
 # Server runs on http://localhost:3002
 # Dashboard at http://localhost:3003 (cd apps/dashboard && npm run dev)
 ```
 
+## Distribution (LOCAL-FIRST - NOT Railway)
+
+**Orchestrator runs locally, NOT on Railway.** Do not suggest Railway deployment.
+
+Distribution flow:
+1. Commit and push to main
+2. GitHub Actions runs `.github/workflows/distribute.yml`:
+   - Builds and tests
+   - Deploys **dashboard** to Vercel (orchestrator-xi.vercel.app)
+   - Creates rolling GitHub Release tarball
+3. Users download tarball or clone repo and run locally
+
+To dogfood changes:
+```bash
+npm run build   # Compile TypeScript
+npm start       # Restart server with new code
+```
+
+Then commit/push to trigger the full distribution workflow.
+
+## Slack Integration (Mobile Loop Control)
+
+Slack notifications allow running loops while mobile (jogging, driving). All notifications @mention the user and include actionable buttons.
+
+**Config file:** `memory/proactive-messaging-config.json`
+
+### Solo Mode (current setup)
+```json
+{
+  "channels": {
+    "slack": {
+      "enabled": true,
+      "botToken": "xoxb-...",
+      "appToken": "xapp-...",
+      "channelId": "C0XXXXXXX",
+      "socketMode": true,
+      "slackUserId": "U0AC9T1HP9Q"
+    }
+  }
+}
+```
+
+### Multi-Engineer Mode
+```json
+{
+  "channels": {
+    "slack": {
+      "enabled": true,
+      "botToken": "xoxb-...",
+      "appToken": "xapp-...",
+      "socketMode": true,
+      "engineers": [
+        { "name": "alice", "slackUserId": "U123", "channelId": "C_ALICE" },
+        { "name": "bob", "slackUserId": "U456", "channelId": "C_BOB" }
+      ]
+    }
+  }
+}
+```
+
+Notifications route to engineer's channel based on `engineer` field in events.
+
+### Environment Variables
+```bash
+SLACK_BOT_TOKEN=xoxb-...    # Bot User OAuth Token
+SLACK_APP_TOKEN=xapp-...    # App-Level Token (Socket Mode)
+```
+
+### Code Location
+- **USE THIS:** `src/services/proactive-messaging/adapters/SlackAdapter.ts`
+- **DEPRECATED:** `src/services/slack-integration/` (over-engineered, will be removed)
+
 ## Directory Structure
 
 - `src/` - TypeScript source code
-  - `services/` - Core services (SkillRegistry, LoopComposer, ExecutionEngine, MemoryService, LearningService, CalibrationService, InboxProcessor, SlackIntegrationService)
+  - `services/` - Core services (SkillRegistry, LoopComposer, ExecutionEngine, MemoryService, LearningService, CalibrationService, InboxProcessor, ProactiveMessagingService)
+  - `services/proactive-messaging/` - Slack/notification system (USE THIS)
+  - `services/slack-integration/` - DEPRECATED, do not use
   - `tools/` - MCP tool handlers
   - `server/` - HTTP server and API routes
   - `generator/` - Loop App generation
@@ -26,7 +100,7 @@ npm run build && node dist/index.js
 - `memory/` - Persistent learning state
 - `inbox/` - Second brain capture directory
 - `apps/` - Generated applications
-  - `dashboard/` - Real-time monitoring UI
+  - `dashboard/` - Real-time monitoring UI (deployed to Vercel, not used in local dev)
 
 ## MCP Tools (54+ tools)
 

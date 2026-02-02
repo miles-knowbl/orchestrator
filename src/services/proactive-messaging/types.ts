@@ -68,6 +68,35 @@ export interface DeckReadyEvent {
   estimatedMinutes: number;
 }
 
+export interface SkillCompleteEvent {
+  type: 'skill_complete';
+  executionId: string;
+  loopId: string;
+  phase: string;
+  skillId: string;
+  deliverables?: string[];
+}
+
+export interface PhaseCompleteEvent {
+  type: 'phase_complete';
+  executionId: string;
+  loopId: string;
+  phase: string;
+  skillsCompleted: number;
+  hasGate: boolean;
+  gateId?: string;
+}
+
+export interface PhaseStartEvent {
+  type: 'phase_start';
+  executionId: string;
+  loopId: string;
+  phase: string;
+  phaseNumber: number;
+  totalPhases: number;
+  skills: string[];
+}
+
 export interface CustomNotificationEvent {
   type: 'custom';
   title: string;
@@ -144,6 +173,9 @@ export type ProactiveEvent =
   | ExecutorBlockedEvent
   | ErrorEvent
   | DeckReadyEvent
+  | SkillCompleteEvent
+  | PhaseCompleteEvent
+  | PhaseStartEvent
   | CustomNotificationEvent
   | StartupWelcomeEvent
   | DailyWelcomeEvent;
@@ -191,12 +223,28 @@ export interface StartLoopCommand {
   target?: string;
 }
 
+export interface ApproveAllProposalsCommand {
+  type: 'approve_all_proposals';
+  interactionId: string;
+  proposalIds: string[];
+}
+
+export interface StartNextLoopCommand {
+  type: 'start_next_loop';
+  interactionId: string;
+  executionId: string;
+  completedLoopId: string;
+  completedModule: string;
+}
+
 export type InboundCommand =
   | ApproveCommand
   | RejectCommand
   | FeedbackCommand
   | ContinueCommand
-  | StartLoopCommand;
+  | StartLoopCommand
+  | ApproveAllProposalsCommand
+  | StartNextLoopCommand;
 
 // ============================================================================
 // Interactions
@@ -225,12 +273,24 @@ export interface TerminalChannelConfig {
   osNotifications: boolean;
 }
 
+export interface SlackEngineerConfig {
+  name: string;           // Engineer identifier (e.g., "alice")
+  slackUserId: string;    // Slack member ID for @mentions (e.g., U12345678)
+  channelId: string;      // Their dedicated channel
+}
+
 export interface SlackChannelConfig {
   enabled: boolean;
   botToken?: string;
   appToken?: string;
-  channelId?: string;
   socketMode: boolean;
+
+  // Solo mode (single engineer)
+  channelId?: string;
+  slackUserId?: string;   // Slack member ID (e.g., U12345678) for @mentions
+
+  // Multi-engineer mode
+  engineers?: SlackEngineerConfig[];
 }
 
 export interface ChannelConfig {
@@ -274,6 +334,7 @@ export interface FormattedMessage {
     interactionId: string;
     eventType: string;
     executionId?: string;  // For thread-per-execution routing
+    engineer?: string;     // For multi-engineer routing
   };
   threadTs?: string;  // Slack thread timestamp for replies
 }

@@ -238,6 +238,33 @@ export class ProactiveMessagingService {
           }
         }
         break;
+
+      case 'approve_all_proposals':
+        if (this.dreamEngine && command.proposalIds.length > 0) {
+          try {
+            for (const proposalId of command.proposalIds) {
+              await this.dreamEngine.approveProposal(proposalId);
+            }
+            if (interaction) {
+              this.conversationState.recordResponse(interaction.id, command, 'builtin');
+            }
+            console.log(`[ProactiveMessaging] Approved ${command.proposalIds.length} proposals`);
+          } catch (err) {
+            console.error('[ProactiveMessaging] Failed to approve proposals:', err);
+          }
+        }
+        break;
+
+      case 'start_next_loop':
+        // Emit event for external handling - the leverage protocol determines next loop
+        // This will be picked up by command handlers registered via onCommand()
+        console.log(`[ProactiveMessaging] Start next loop requested after ${command.completedLoopId} -> ${command.completedModule}`);
+        if (interaction) {
+          this.conversationState.recordResponse(interaction.id, command, 'builtin');
+        }
+        // Note: Actual loop starting is delegated to external handlers that have
+        // access to the leverage protocol and can determine the best next move
+        break;
     }
   }
 
@@ -397,6 +424,61 @@ export class ProactiveMessagingService {
       deckType,
       itemCount,
       estimatedMinutes,
+    });
+  }
+
+  async notifySkillComplete(
+    executionId: string,
+    loopId: string,
+    phase: string,
+    skillId: string,
+    deliverables?: string[]
+  ): Promise<string> {
+    return this.notify({
+      type: 'skill_complete',
+      executionId,
+      loopId,
+      phase,
+      skillId,
+      deliverables,
+    });
+  }
+
+  async notifyPhaseComplete(
+    executionId: string,
+    loopId: string,
+    phase: string,
+    skillsCompleted: number,
+    hasGate: boolean,
+    gateId?: string
+  ): Promise<string> {
+    return this.notify({
+      type: 'phase_complete',
+      executionId,
+      loopId,
+      phase,
+      skillsCompleted,
+      hasGate,
+      gateId,
+    });
+  }
+
+  async notifyPhaseStart(
+    executionId: string,
+    loopId: string,
+    phase: string,
+    phaseNumber: number,
+    totalPhases: number,
+    skills: string[]
+  ): Promise<string> {
+    return this.notify({
+      type: 'phase_start',
+      executionId,
+      loopId,
+      phase,
+      phaseNumber,
+      totalPhases,
+      skills,
     });
   }
 

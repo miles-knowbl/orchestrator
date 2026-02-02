@@ -1,9 +1,21 @@
 /**
  * Slack Integration Module
  *
- * Full bidirectional Slack control with channel parity.
- * Enables loop invocation, gate approvals, merge workflows,
- * and cross-engineer coordination from Slack.
+ * @deprecated Use proactive-messaging/SlackAdapter instead.
+ * This module is over-engineered for most use cases.
+ * The proactive-messaging system now supports multi-engineer routing
+ * with a simpler config:
+ *
+ * ```typescript
+ * {
+ *   engineers: [
+ *     { name: "alice", slackUserId: "U123", channelId: "C123" },
+ *     { name: "bob", slackUserId: "U456", channelId: "C456" },
+ *   ]
+ * }
+ * ```
+ *
+ * This module will be removed in a future version.
  */
 
 export * from './types.js';

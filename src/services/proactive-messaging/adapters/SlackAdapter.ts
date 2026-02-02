@@ -68,8 +68,10 @@ export class SlackAdapter implements ChannelAdapter {
   async initialize(): Promise<void> {
     if (!this.config.enabled) return;
 
-    if (!this.config.botToken || !this.config.appToken || !this.config.channelId) {
-      this.error = 'Missing Slack configuration (botToken, appToken, or channelId)';
+    // Need tokens and either a default channel or engineers configured
+    const hasChannel = this.config.channelId || (this.config.engineers && this.config.engineers.length > 0);
+    if (!this.config.botToken || !this.config.appToken || !hasChannel) {
+      this.error = 'Missing Slack configuration (botToken, appToken, and channelId or engineers)';
       console.warn(`[ProactiveMessaging] ${this.error}`);
       return;
     }
@@ -155,6 +157,9 @@ export class SlackAdapter implements ChannelAdapter {
     gateId?: string;
     executionId?: string;
     proposalId?: string;
+    proposalIds?: string[];
+    completedLoopId?: string;
+    completedModule?: string;
   }): InboundCommand | null {
     switch (payload.action) {
       case 'approve':
@@ -182,6 +187,20 @@ export class SlackAdapter implements ChannelAdapter {
           type: 'continue',
           executionId: payload.executionId,
         };
+      case 'approve_all_proposals':
+        return {
+          type: 'approve_all_proposals',
+          interactionId: payload.interactionId,
+          proposalIds: payload.proposalIds || [],
+        };
+      case 'start_next_loop':
+        return {
+          type: 'start_next_loop',
+          interactionId: payload.interactionId,
+          executionId: payload.executionId || '',
+          completedLoopId: payload.completedLoopId || '',
+          completedModule: payload.completedModule || '',
+        };
       default:
         return null;
     }
@@ -193,6 +212,21 @@ export class SlackAdapter implements ChannelAdapter {
     try {
       const blocks = message.blocks || this.textToBlocks(message);
       const executionId = message.metadata?.executionId;
+      const engineer = message.metadata?.engineer;
+
+      // Resolve channel and user for multi-engineer routing
+      const { channelId, slackUserId } = this.resolveEngineerConfig(engineer);
+
+      if (!channelId) {
+        console.error('[ProactiveMessaging] No channel configured for engineer:', engineer);
+        return;
+      }
+
+      // Add @mention for notifications
+      let text = message.text;
+      if (slackUserId && this.shouldMention(message.metadata?.eventType)) {
+        text = `<@${slackUserId}> ${text}`;
+      }
 
       // Determine thread_ts: explicit > lookup by executionId
       let threadTs = message.threadTs;
@@ -201,8 +235,8 @@ export class SlackAdapter implements ChannelAdapter {
       }
 
       const result = await this.app.client.chat.postMessage({
-        channel: this.config.channelId!,
-        text: message.text,
+        channel: channelId,
+        text,
         blocks,
         thread_ts: threadTs,
         metadata: message.metadata
@@ -234,6 +268,29 @@ export class SlackAdapter implements ChannelAdapter {
   }
 
   /**
+   * Resolve channel and user ID for an engineer
+   * Falls back to default config if engineer not found or not specified
+   */
+  private resolveEngineerConfig(engineer?: string): { channelId?: string; slackUserId?: string } {
+    // If engineer specified and we have engineers config, look them up
+    if (engineer && this.config.engineers) {
+      const engineerConfig = this.config.engineers.find(e => e.name === engineer);
+      if (engineerConfig) {
+        return {
+          channelId: engineerConfig.channelId,
+          slackUserId: engineerConfig.slackUserId,
+        };
+      }
+    }
+
+    // Fall back to default config
+    return {
+      channelId: this.config.channelId,
+      slackUserId: this.config.slackUserId,
+    };
+  }
+
+  /**
    * Get thread timestamp for an execution
    */
   getThreadTs(executionId: string): string | undefined {
@@ -245,6 +302,46 @@ export class SlackAdapter implements ChannelAdapter {
    */
   setThreadTs(executionId: string, threadTs: string): void {
     this.executionThreads.set(executionId, threadTs);
+  }
+
+  /**
+   * Determine if an event type should trigger a user @mention
+   * All notifications mention the user for maximum visibility on mobile
+   */
+  private shouldMention(eventType?: string): boolean {
+    // Mention on all notifications for mobile visibility
+    return !!eventType;
+  }
+
+  /**
+   * Send a message to all configured engineers (broadcast)
+   */
+  async broadcast(message: FormattedMessage): Promise<void> {
+    if (!this.config.enabled || !this.app || !this.connected) return;
+
+    // If we have engineers configured, send to each
+    if (this.config.engineers && this.config.engineers.length > 0) {
+      for (const engineer of this.config.engineers) {
+        const engineerMessage = {
+          ...message,
+          metadata: {
+            ...message.metadata,
+            engineer: engineer.name,
+          },
+        } as FormattedMessage;
+        await this.send(engineerMessage);
+      }
+    } else if (this.config.channelId) {
+      // Fall back to default channel
+      await this.send(message);
+    }
+  }
+
+  /**
+   * Get list of configured engineer names
+   */
+  getEngineers(): string[] {
+    return this.config.engineers?.map(e => e.name) || [];
   }
 
   async update(messageId: string, message: FormattedMessage): Promise<void> {
@@ -259,9 +356,15 @@ export class SlackAdapter implements ChannelAdapter {
 
     try {
       const blocks = message.blocks || this.textToBlocks(message);
+      const { channelId } = this.resolveEngineerConfig(message.metadata?.engineer);
+
+      if (!channelId) {
+        console.error('[ProactiveMessaging] No channel for update');
+        return;
+      }
 
       await this.app.client.chat.update({
-        channel: this.config.channelId!,
+        channel: channelId,
         ts,
         text: message.text,
         blocks,
