@@ -22,6 +22,7 @@ import type {
   Phase,
   LoopMode,
   AutonomyLevel,
+  PreLoopContext,
 } from '../types.js';
 import type { ValidationContext } from '../types/guarantee.js';
 import { GuaranteeViolationError } from '../errors/GuaranteeViolationError.js';
@@ -217,7 +218,84 @@ export class ExecutionEngine {
     }
 
     this.log('info', `Started execution ${id} for loop ${params.loopId}`);
+
+    // Gather pre-loop context for caller (required deliverables, guarantees)
+    execution.preLoopContext = await this.gatherPreLoopContext(loop, execution);
+
     return execution;
+  }
+
+  /**
+   * Gather pre-loop context including required deliverables and guarantees
+   * This helps callers understand what's required BEFORE they start executing
+   */
+  private async gatherPreLoopContext(loop: Loop, execution: LoopExecution): Promise<PreLoopContext> {
+    const requiredDeliverables: Array<{ phase: string; skill: string; deliverables: string[] }> = [];
+    const skillGuarantees: Array<{ skill: string; guaranteeCount: number; guaranteeNames: string[] }> = [];
+
+    // Get guarantees from GuaranteeService if available
+    if (this.guaranteeService) {
+      for (const phase of loop.phases) {
+        for (const skill of phase.skills) {
+          try {
+            const guarantees = this.guaranteeService.getSkillGuarantees(skill.skillId);
+            if (guarantees && guarantees.length > 0) {
+              // Extract deliverable requirements
+              const deliverableGuarantees = guarantees.filter(g => g.type === 'deliverable');
+              const deliverables = deliverableGuarantees.flatMap(g =>
+                g.validation?.files?.map(f => f.pattern) || []
+              );
+
+              if (deliverables.length > 0) {
+                requiredDeliverables.push({
+                  phase: phase.name,
+                  skill: skill.skillId,
+                  deliverables
+                });
+              }
+
+              skillGuarantees.push({
+                skill: skill.skillId,
+                guaranteeCount: guarantees.length,
+                guaranteeNames: guarantees.map(g => g.name)
+              });
+            }
+          } catch {
+            // Skill may not have guarantees defined
+          }
+        }
+      }
+    }
+
+    // Check for Dream State and ROADMAP in project
+    const projectPath = this.getProjectPath(execution);
+    let dreamStatePath: string | null = null;
+    let roadmapPath: string | null = null;
+
+    try {
+      const { stat } = await import('fs/promises');
+      const dsPath = join(projectPath, '.claude', 'DREAM-STATE.md');
+      await stat(dsPath);
+      dreamStatePath = dsPath;
+    } catch {
+      // Dream State doesn't exist
+    }
+
+    try {
+      const { stat } = await import('fs/promises');
+      const rmPath = join(projectPath, 'ROADMAP.md');
+      await stat(rmPath);
+      roadmapPath = rmPath;
+    } catch {
+      // ROADMAP doesn't exist
+    }
+
+    return {
+      requiredDeliverables,
+      skillGuarantees,
+      dreamStatePath,
+      roadmapPath
+    };
   }
 
   /**

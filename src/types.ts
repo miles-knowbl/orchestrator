@@ -428,6 +428,28 @@ export interface LoopExecution {
 
   // Memory link
   memoryId: string;
+
+  // Pre-loop context (only present on startExecution response)
+  preLoopContext?: PreLoopContext;
+}
+
+/**
+ * Pre-loop context returned with startExecution
+ * Helps callers understand requirements BEFORE executing
+ */
+export interface PreLoopContext {
+  requiredDeliverables: Array<{
+    phase: string;
+    skill: string;
+    deliverables: string[];
+  }>;
+  skillGuarantees: Array<{
+    skill: string;
+    guaranteeCount: number;
+    guaranteeNames: string[];
+  }>;
+  dreamStatePath: string | null;
+  roadmapPath: string | null;
 }
 
 export type ExecutionStatus =
