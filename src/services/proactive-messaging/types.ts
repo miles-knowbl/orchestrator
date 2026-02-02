@@ -6,6 +6,13 @@
 // Events
 // ============================================================================
 
+export interface GuaranteeStatus {
+  id: string;
+  name: string;
+  passed: boolean;
+  errors?: string[];
+}
+
 export interface GateWaitingEvent {
   type: 'gate_waiting';
   gateId: string;
@@ -14,6 +21,14 @@ export interface GateWaitingEvent {
   phase: string;
   deliverables: string[];
   approvalType: 'human' | 'auto' | 'conditional';
+  // Guarantee pre-check status
+  guarantees?: {
+    total: number;
+    passed: number;
+    failed: number;
+    canApprove: boolean;
+    blocking?: GuaranteeStatus[];
+  };
 }
 
 export interface LoopStartEvent {
@@ -191,6 +206,7 @@ export interface ApproveCommand {
     gateId?: string;
     executionId?: string;
     proposalId?: string;
+    skipGuarantees?: boolean;  // Force approve despite failed guarantees
   };
 }
 
@@ -237,6 +253,31 @@ export interface StartNextLoopCommand {
   completedModule: string;
 }
 
+export interface CreateDeliverablesCommand {
+  type: 'create_deliverables';
+  interactionId: string;
+  executionId: string;
+  gateId: string;
+  missingFiles: string[];
+}
+
+/**
+ * Pending task for Claude Code to pick up
+ */
+export interface PendingClaudeTask {
+  id: string;
+  type: 'create_deliverable' | 'run_skill';
+  createdAt: string;
+  executionId: string;
+  gateId?: string;
+  skillId?: string;
+  deliverables?: string[];
+  status: 'pending' | 'in_progress' | 'completed' | 'failed';
+  requestedVia: 'slack' | 'terminal' | 'api';
+  completedAt?: string;
+  error?: string;
+}
+
 export type InboundCommand =
   | ApproveCommand
   | RejectCommand
@@ -244,7 +285,8 @@ export type InboundCommand =
   | ContinueCommand
   | StartLoopCommand
   | ApproveAllProposalsCommand
-  | StartNextLoopCommand;
+  | StartNextLoopCommand
+  | CreateDeliverablesCommand;
 
 // ============================================================================
 // Interactions
@@ -293,9 +335,14 @@ export interface SlackChannelConfig {
   engineers?: SlackEngineerConfig[];
 }
 
+// Re-export voice types for convenience
+export type { VoiceChannelConfig } from '../voice/types.js';
+import type { VoiceChannelConfig } from '../voice/types.js';
+
 export interface ChannelConfig {
   terminal: TerminalChannelConfig;
   slack: SlackChannelConfig;
+  voice?: VoiceChannelConfig;
 }
 
 export interface ProactiveMessagingConfig {

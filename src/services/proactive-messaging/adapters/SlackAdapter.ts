@@ -37,17 +37,29 @@ interface SlackApp {
     actionId: string | RegExp,
     handler: (args: {
       ack: () => Promise<void>;
-      body: { actions: Array<{ value: string }> };
+      body: SlackActionBody;
       say: (text: string) => Promise<void>;
     }) => Promise<void>
   ): void;
   message(
     pattern: RegExp,
     handler: (args: {
-      message: { text: string };
+      message: { text: string; thread_ts?: string };
       say: (text: string) => Promise<void>;
     }) => Promise<void>
   ): void;
+}
+
+interface SlackActionBody {
+  actions: Array<{ value: string; action_id: string }>;
+  channel: { id: string };
+  message: {
+    ts: string;
+    thread_ts?: string;
+    text: string;
+    blocks?: unknown[];
+  };
+  user: { id: string };
 }
 
 export class SlackAdapter implements ChannelAdapter {
@@ -104,85 +116,179 @@ export class SlackAdapter implements ChannelAdapter {
     if (!this.app) return;
 
     // Handle button clicks
-    this.app.action(/^pm_action_/, async ({ ack, body, say }) => {
+    this.app.action(/^pm_action_/, async ({ ack, body }) => {
       await ack();
-      console.log('[ProactiveMessaging] Button click received');
 
       const action = body.actions[0];
-      if (!action) {
-        console.error('[ProactiveMessaging] No action in body.actions');
-        await say('❌ Error: No action received');
+      if (!action?.value) {
+        console.error('[SlackAdapter] No action value');
         return;
       }
 
-      // Debug: log the raw action
-      console.log('[ProactiveMessaging] Action:', JSON.stringify(action, null, 2));
+      const channelId = body.channel.id;
+      const messageTs = body.message.ts;
+      const threadTs = body.message.thread_ts || messageTs;
 
       try {
-        // Ensure value exists and is a string
-        if (!action.value || typeof action.value !== 'string') {
-          console.error('[ProactiveMessaging] Invalid action.value:', action.value);
-          await say('❌ Error: Button has no value payload');
-          return;
-        }
-
         const payload = JSON.parse(action.value);
-        console.log('[ProactiveMessaging] Parsed payload:', JSON.stringify(payload, null, 2));
-
         const command = this.parseActionToCommand(payload);
-        if (!command) {
-          console.error('[ProactiveMessaging] Failed to parse command from payload');
-          await say(`❌ Error: Unknown action type "${payload.action}"`);
+
+        if (!command || !this.commandHandler) {
+          await this.postThreadReply(channelId, threadTs, `Something went wrong. Try again.`);
           return;
         }
 
-        if (!this.commandHandler) {
-          console.error('[ProactiveMessaging] No command handler registered');
-          await say('❌ Error: Command handler not configured');
-          return;
-        }
-
-        console.log('[ProactiveMessaging] Executing command:', command.type);
+        // Execute the command
         await this.commandHandler(command);
 
-        // Send success feedback
-        const actionLabel = payload.action === 'approve' ? 'Approved' :
-                           payload.action === 'reject' ? 'Rejected' :
-                           payload.action;
-        await say(`✅ ${actionLabel} — ${payload.gateId || payload.action}`);
+        // Update original message to remove buttons and show result
+        await this.updateMessageAfterAction(channelId, messageTs, body.message, payload);
+
+        // Post natural feedback in thread
+        const feedback = this.getActionFeedback(payload);
+        await this.postThreadReply(channelId, threadTs, feedback);
+
       } catch (err) {
         const errorMsg = err instanceof Error ? err.message : String(err);
-        console.error('[ProactiveMessaging] Error handling Slack action:', errorMsg);
-        await say(`❌ Error: ${errorMsg}`);
+        console.error('[SlackAdapter] Action error:', errorMsg);
+
+        // Provide actionable feedback for guarantee failures
+        let userMessage = `Something went wrong: ${errorMsg}`;
+        if (errorMsg.includes('guarantee') || errorMsg.includes('Guarantee')) {
+          // Parse guarantee error for cleaner message
+          const match = errorMsg.match(/(\d+)\s*guarantee/i);
+          const count = match ? match[1] : 'some';
+          userMessage = `Cannot approve: ${count} guarantee(s) not satisfied.\n\nCheck the notification above for details on what's blocking, or run the loop from Claude Code to see full diagnostics.`;
+        }
+
+        await this.postThreadReply(channelId, threadTs, userMessage);
       }
     });
 
     // Handle text messages
     this.app.message(/.*/, async ({ message, say }) => {
-      const text = (message as { text?: string }).text?.toLowerCase().trim();
+      let text = (message as { text?: string }).text?.toLowerCase().trim();
+      if (!text) return;
+
+      // Strip Slack @mentions
+      text = text.replace(/<@[A-Z0-9]+>/gi, '').trim();
       if (!text) return;
 
       let command: InboundCommand | null = null;
+      let feedback: string | null = null;
 
       if (text === 'go' || text === 'continue') {
         command = { type: 'continue' };
+        feedback = 'Continuing...';
       } else if (text === 'approved' || text === 'approve') {
-        // Need context - for now just acknowledge
-        await say('Please use the [Approve] button on a specific notification.');
-        return;
+        command = { type: 'approve', interactionId: 'latest', context: {} };
+        feedback = 'Approving...';
       } else if (text.startsWith('feedback:')) {
         command = {
           type: 'feedback',
-          interactionId: 'latest', // Will be resolved by service
+          interactionId: 'latest',
           text: text.replace('feedback:', '').trim(),
           context: {},
         };
+        feedback = 'Got your feedback.';
       }
 
       if (command && this.commandHandler) {
-        await this.commandHandler(command);
+        try {
+          await this.commandHandler(command);
+          if (feedback) await say(feedback);
+        } catch (err) {
+          const errorMsg = err instanceof Error ? err.message : String(err);
+          await say(`Problem: ${errorMsg}`);
+        }
       }
     });
+  }
+
+  /**
+   * Update the original message to remove buttons after action
+   */
+  private async updateMessageAfterAction(
+    channelId: string,
+    messageTs: string,
+    originalMessage: { text: string; blocks?: unknown[] },
+    payload: { action: string; gateId?: string }
+  ): Promise<void> {
+    if (!this.app) return;
+
+    try {
+      // Keep text blocks, remove action blocks
+      const updatedBlocks = (originalMessage.blocks || []).filter(
+        (block: unknown) => (block as { type: string }).type !== 'actions'
+      );
+
+      // Add a context block showing what happened
+      const actionText = payload.action === 'approve' ? '✓ Approved' :
+                        payload.action === 'reject' ? '✗ Rejected' :
+                        `✓ ${payload.action}`;
+
+      updatedBlocks.push({
+        type: 'context',
+        elements: [{ type: 'mrkdwn', text: actionText }],
+      });
+
+      await this.app.client.chat.update({
+        channel: channelId,
+        ts: messageTs,
+        text: originalMessage.text,
+        blocks: updatedBlocks,
+      });
+    } catch (err) {
+      console.error('[SlackAdapter] Failed to update message:', err);
+    }
+  }
+
+  /**
+   * Post a reply in the thread
+   */
+  private async postThreadReply(channelId: string, threadTs: string, text: string): Promise<void> {
+    if (!this.app) return;
+
+    try {
+      await this.app.client.chat.postMessage({
+        channel: channelId,
+        text,
+        thread_ts: threadTs,
+      });
+    } catch (err) {
+      console.error('[SlackAdapter] Failed to post reply:', err);
+    }
+  }
+
+  /**
+   * Get natural feedback text for an action
+   */
+  private getActionFeedback(payload: { action: string; gateId?: string; phase?: string; missingFiles?: string[] }): string {
+    switch (payload.action) {
+      case 'approve':
+        return payload.gateId
+          ? `Got it. Approved ${payload.gateId.replace('-gate', '')} gate, continuing to next phase.`
+          : 'Approved, continuing...';
+      case 'force_approve':
+        return payload.gateId
+          ? `Force approved ${payload.gateId.replace('-gate', '')} gate (skipped guarantees), continuing...`
+          : 'Force approved, continuing...';
+      case 'reject':
+        return payload.gateId
+          ? `Rejected ${payload.gateId.replace('-gate', '')} gate. Loop paused.`
+          : 'Rejected. Loop paused.';
+      case 'start_next':
+        return 'Starting next phase...';
+      case 'continue':
+        return 'Continuing...';
+      case 'start_next_loop':
+        return 'Starting next loop...';
+      case 'create_deliverables':
+        const files = payload.missingFiles?.join(', ') || 'missing files';
+        return `Queued task for Claude Code to create: ${files}. Run \`get_pending_interactions\` in Claude Code or wait for it to pick up the task.`;
+      default:
+        return 'Done.';
+    }
   }
 
   private parseActionToCommand(payload: {
@@ -194,6 +300,8 @@ export class SlackAdapter implements ChannelAdapter {
     proposalIds?: string[];
     completedLoopId?: string;
     completedModule?: string;
+    missingFiles?: string[];
+    value?: string; // For custom notifications that wrap the original value
   }): InboundCommand | null {
     switch (payload.action) {
       case 'approve':
@@ -204,6 +312,17 @@ export class SlackAdapter implements ChannelAdapter {
             gateId: payload.gateId,
             executionId: payload.executionId,
             proposalId: payload.proposalId,
+          },
+        };
+      case 'force_approve':
+        // Approve with skipGuarantees flag
+        return {
+          type: 'approve',
+          interactionId: payload.interactionId,
+          context: {
+            gateId: payload.gateId,
+            executionId: payload.executionId,
+            skipGuarantees: true,
           },
         };
       case 'reject':
@@ -235,6 +354,34 @@ export class SlackAdapter implements ChannelAdapter {
           completedLoopId: payload.completedLoopId || '',
           completedModule: payload.completedModule || '',
         };
+      case 'start_next':
+        // User clicked "Start Next" on a phase_start notification
+        // This is an acknowledgment that they're ready for the phase to proceed
+        return {
+          type: 'continue',
+          executionId: payload.executionId,
+        };
+      case 'create_deliverables':
+        return {
+          type: 'create_deliverables',
+          interactionId: payload.interactionId,
+          executionId: payload.executionId || '',
+          gateId: payload.gateId || '',
+          missingFiles: payload.missingFiles || [],
+        };
+      case 'custom':
+        // Custom notifications wrap the original value - unwrap and re-parse
+        if (payload.value) {
+          try {
+            const innerPayload = typeof payload.value === 'string'
+              ? JSON.parse(payload.value)
+              : payload.value;
+            return this.parseActionToCommand({ ...innerPayload, interactionId: payload.interactionId });
+          } catch {
+            return null;
+          }
+        }
+        return null;
       default:
         return null;
     }

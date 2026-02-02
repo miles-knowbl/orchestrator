@@ -1,4 +1,19 @@
-# OODA Clocks Visual - Architecture
+# Orchestrator - Architecture
+
+## System Overview
+
+This document covers the architectural design for various Orchestrator modules.
+
+## Components
+
+The Orchestrator consists of several key modules:
+- **OODA Clocks**: Gamelan-inspired circular visualization for loop execution timing
+- **Voice Module**: Text-to-speech output for hands-free notifications
+- **ProactiveMessaging**: Multi-channel notification system (Terminal, Slack, Voice)
+
+---
+
+# OODA Clocks Module
 
 ## Overview
 
@@ -366,3 +381,94 @@ apps/dashboard/
 | HTTP Server | New API endpoints |
 | Dashboard Layout | Nav link to /ooda-clock |
 | MCP Tools | get_clock_events, get_rhythm_patterns |
+
+---
+
+# Voice Module
+
+## Overview
+
+The Voice Module adds text-to-speech (TTS) output capabilities to the Orchestrator, enabling hands-free interaction during driving, jogging, or quick capture scenarios.
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         ProactiveMessagingService                        │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────────────────┐  │
+│  │ Terminal    │  │ Slack       │  │ Voice                           │  │
+│  │ Adapter     │  │ Adapter     │  │ Adapter                         │  │
+│  └─────────────┘  └─────────────┘  └─────────────────────────────────┘  │
+└───────────────────────────────────────────────────────────────────────────┘
+                                                │
+                                                ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                          VoiceOutputService                              │
+│  ┌────────────────┐  ┌────────────────┐  ┌────────────────────────────┐ │
+│  │ EventFormatter │  │ SpeechQueue    │  │ QuietHoursManager          │ │
+│  └────────────────┘  └────────────────┘  └────────────────────────────┘ │
+│                              │                                           │
+│                              ▼                                           │
+│  ┌───────────────────────────────────────────────────────────────────┐  │
+│  │                      macOS TTS Engine                              │  │
+│  │                   child_process.spawn('say')                       │  │
+│  └───────────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+## Key Components
+
+| Component | Responsibility |
+|-----------|----------------|
+| VoiceAdapter | Implements ChannelAdapter, routes messages to VoiceOutputService |
+| VoiceOutputService | Core service managing TTS output and queue |
+| SpeechQueue | Priority-based queue (urgent messages go first) |
+| QuietHoursManager | Time-based filtering with urgent bypass |
+| EventFormatter | Converts notifications to speech-friendly text |
+| MacOSTTS | Wrapper around macOS `say` command |
+
+## Design Decisions
+
+See `docs/adr/ADR-001-voice-output-macos-tts.md` for the decision to use macOS native TTS.
+
+Key trade-offs:
+- **macOS only**: Acceptable for local-first development tool
+- **Sub-100ms latency**: Native CoreAudio integration
+- **No cloud dependency**: Works offline, no API keys
+
+## File Structure
+
+```
+src/services/voice/
+├── VoiceOutputService.ts    # Main service
+├── MacOSTTS.ts              # macOS say wrapper
+├── SpeechQueue.ts           # Priority queue
+├── QuietHoursManager.ts     # Time-based filtering
+├── EventFormatter.ts        # Event→speech conversion
+├── types.ts                 # VoiceConfig, VoiceStatus
+└── index.ts                 # Exports
+
+src/services/proactive-messaging/adapters/
+└── VoiceAdapter.ts          # ChannelAdapter implementation
+
+src/tools/
+└── voiceTools.ts            # MCP tool handlers
+```
+
+## API Endpoints
+
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| /api/voice/status | GET | Current voice status |
+| /api/voice/config | GET/PUT | Voice configuration |
+| /api/voice/test | POST | Test voice output |
+| /api/voice/voices | GET | Available macOS voices |
+
+## MCP Tools
+
+| Tool | Purpose |
+|------|---------|
+| configure_voice | Set voice, rate, event filtering |
+| test_voice | Test TTS with custom text |
+| get_voice_status | Get queue length, speaking state |
+| list_voices | Available system voices |

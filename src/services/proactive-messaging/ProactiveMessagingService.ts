@@ -6,7 +6,9 @@
  */
 
 import * as fs from 'fs/promises';
+import { existsSync } from 'fs';
 import * as path from 'path';
+import { exec } from 'child_process';
 import type {
   ProactiveEvent,
   ProactiveMessagingConfig,
@@ -15,8 +17,9 @@ import type {
   InboundCommand,
   RoadmapDriftStatus,
   RoadmapMove,
+  PendingClaudeTask,
 } from './types.js';
-import { ChannelAdapter, TerminalAdapter, SlackAdapter } from './adapters/index.js';
+import { ChannelAdapter, TerminalAdapter, SlackAdapter, VoiceAdapter } from './adapters/index.js';
 import { MessageFormatter } from './MessageFormatter.js';
 import { ConversationState } from './ConversationState.js';
 
@@ -61,6 +64,9 @@ export class ProactiveMessagingService {
 
   // Event handlers registered by consumers
   private commandHandlers: Array<(command: InboundCommand, interaction?: PendingInteraction) => Promise<void>> = [];
+
+  // Task queue for Claude Code to pick up
+  private pendingTasks: Map<string, PendingClaudeTask> = new Map();
 
   constructor(options: ProactiveMessagingServiceOptions) {
     this.dataDir = options.dataDir;
@@ -111,6 +117,8 @@ export class ProactiveMessagingService {
             ...DEFAULT_CONFIG.channels.slack,
             ...loaded.channels?.slack,
           },
+          // Voice is optional, only include if configured
+          ...(loaded.channels?.voice && { voice: loaded.channels.voice }),
         },
       };
     } catch {
@@ -135,6 +143,14 @@ export class ProactiveMessagingService {
     await slackAdapter.initialize();
     slackAdapter.onCommand(this.handleInboundCommand.bind(this));
     this.adapters.set('slack', slackAdapter);
+
+    // Voice adapter (if configured)
+    if (this.config.channels.voice?.enabled) {
+      const voiceAdapter = new VoiceAdapter(this.config.channels.voice);
+      await voiceAdapter.initialize();
+      voiceAdapter.onCommand(this.handleInboundCommand.bind(this));
+      this.adapters.set('voice', voiceAdapter);
+    }
   }
 
   /**
@@ -184,9 +200,26 @@ export class ProactiveMessagingService {
 
         if (command.context.gateId && command.context.executionId && this.executionEngine) {
           try {
-            console.log('[ProactiveMessaging] Calling executionEngine.approveGate...');
-            await this.executionEngine.approveGate(command.context.executionId, command.context.gateId);
+            const skipGuarantees = command.context.skipGuarantees ?? false;
+            console.log('[ProactiveMessaging] Calling executionEngine.approveGate...', { skipGuarantees });
+            await this.executionEngine.approveGate(
+              command.context.executionId,
+              command.context.gateId,
+              skipGuarantees ? 'force-approved-via-slack' : undefined,
+              { skipGuarantees }
+            );
             console.log('[ProactiveMessaging] Gate approved successfully');
+
+            // Advance to the next phase after gate approval
+            try {
+              console.log('[ProactiveMessaging] Advancing to next phase...');
+              await this.executionEngine.advancePhase(command.context.executionId);
+              console.log('[ProactiveMessaging] Phase advanced successfully');
+            } catch (advanceErr) {
+              // Log but don't fail - gate was approved, advance may fail for valid reasons
+              console.log('[ProactiveMessaging] Could not advance phase:', advanceErr);
+            }
+
             if (interaction) {
               this.conversationState.recordResponse(interaction.id, command, 'builtin');
             }
@@ -301,6 +334,30 @@ export class ProactiveMessagingService {
         // Note: Actual loop starting is delegated to external handlers that have
         // access to the leverage protocol and can determine the best next move
         break;
+
+      case 'create_deliverables':
+        // Queue a task for Claude Code to create the missing deliverables
+        const taskId = `task-${Date.now()}`;
+        const task: PendingClaudeTask = {
+          id: taskId,
+          type: 'create_deliverable',
+          createdAt: new Date().toISOString(),
+          executionId: command.executionId,
+          gateId: command.gateId,
+          deliverables: command.missingFiles,
+          status: 'pending',
+          requestedVia: 'slack',
+        };
+        this.pendingTasks.set(taskId, task);
+        console.log(`[ProactiveMessaging] Queued task ${taskId} for Claude Code: create ${command.missingFiles.join(', ')}`);
+
+        // Auto-start Claude Code to pick up the task
+        this.spawnClaudeCode(task);
+
+        if (interaction) {
+          this.conversationState.recordResponse(interaction.id, command, 'builtin');
+        }
+        break;
     }
   }
 
@@ -382,6 +439,23 @@ export class ProactiveMessagingService {
     deliverables: string[],
     approvalType: 'human' | 'auto' | 'conditional' = 'human'
   ): Promise<string> {
+    // Pre-check guarantees if execution engine is available
+    let guarantees: {
+      total: number;
+      passed: number;
+      failed: number;
+      canApprove: boolean;
+      blocking?: Array<{ id: string; name: string; passed: boolean; errors?: string[] }>;
+    } | undefined;
+
+    if (this.executionEngine) {
+      try {
+        guarantees = await this.executionEngine.getGateGuaranteeStatus(executionId, gateId);
+      } catch (err) {
+        console.error('[ProactiveMessaging] Failed to check guarantees:', err);
+      }
+    }
+
     return this.notify({
       type: 'gate_waiting',
       gateId,
@@ -390,6 +464,7 @@ export class ProactiveMessagingService {
       phase,
       deliverables,
       approvalType,
+      guarantees,
     });
   }
 
@@ -710,6 +785,187 @@ export class ProactiveMessagingService {
     return this.conversationState.getInteraction(interactionId);
   }
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // Pending Tasks (for Claude Code)
+  // ─────────────────────────────────────────────────────────────────────────
+
+  /**
+   * Get pending tasks that Claude Code should pick up
+   */
+  getPendingTasks(): PendingClaudeTask[] {
+    return Array.from(this.pendingTasks.values())
+      .filter(t => t.status === 'pending')
+      .sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+  }
+
+  /**
+   * Get a specific task by ID
+   */
+  getTask(taskId: string): PendingClaudeTask | undefined {
+    return this.pendingTasks.get(taskId);
+  }
+
+  /**
+   * Mark a task as in progress
+   */
+  startTask(taskId: string): void {
+    const task = this.pendingTasks.get(taskId);
+    if (task) {
+      task.status = 'in_progress';
+    }
+  }
+
+  /**
+   * Mark a task as completed
+   */
+  completeTask(taskId: string): void {
+    const task = this.pendingTasks.get(taskId);
+    if (task) {
+      task.status = 'completed';
+      task.completedAt = new Date().toISOString();
+    }
+  }
+
+  /**
+   * Mark a task as failed
+   */
+  failTask(taskId: string, error: string): void {
+    const task = this.pendingTasks.get(taskId);
+    if (task) {
+      task.status = 'failed';
+      task.completedAt = new Date().toISOString();
+      task.error = error;
+    }
+  }
+
+  /**
+   * Clear completed/failed tasks older than specified hours
+   */
+  cleanupTasks(olderThanHours = 24): void {
+    const cutoff = Date.now() - olderThanHours * 60 * 60 * 1000;
+    for (const [id, task] of this.pendingTasks) {
+      if ((task.status === 'completed' || task.status === 'failed') &&
+          task.completedAt && new Date(task.completedAt).getTime() < cutoff) {
+        this.pendingTasks.delete(id);
+      }
+    }
+  }
+
+  /**
+   * Spawn Claude Code in a new Terminal to pick up a task
+   * Only spawns if no active execution is running (assumes Claude Code is already handling it)
+   */
+  private spawnClaudeCode(task: PendingClaudeTask): void {
+    const deliverables = task.deliverables?.join(', ') || 'missing deliverables';
+    const gateId = task.gateId || 'unknown-gate';
+    const gateName = gateId.replace('-gate', '');
+    const executionId = task.executionId;
+    const cwd = process.cwd();
+
+    // Check if there's an active execution
+    const hasActiveLoop = this.executionEngine &&
+      this.executionEngine.listExecutions({ status: 'active' }).length > 0;
+
+    // Build prompt for Claude Code - includes full context for autonomous operation
+    const prompt = hasActiveLoop
+      ? // Task runner mode: focused, non-interactive, advances the loop
+        `TASK FROM SLACK (task ${task.id}): Create ${deliverables} for the ${gateName} gate. ` +
+        `This is a background task for REMOTE loop operation. Steps: ` +
+        `1. Create the file with real content (not placeholder). ` +
+        `2. Call mcp__orchestrator__complete_slack_task with taskId="${task.id}". ` +
+        `3. Call mcp__orchestrator__approve_gate with executionId="${executionId}" gateId="${gateId}". ` +
+        `4. Call mcp__orchestrator__advance_phase with executionId="${executionId}" to move to next phase. ` +
+        `5. Exit when done. The next Slack notification will be sent automatically.`
+      : // Interactive mode: full loop context
+        `Create the missing deliverable(s) for the ${gateName} gate: ${deliverables}. ` +
+        `This was requested via Slack. After creating the file(s), approve the gate.`;
+
+    // Escape for shell
+    const escapedPrompt = prompt.replace(/"/g, '\\"').replace(/'/g, "'\\''");
+
+    // Notify the running session about the incoming task
+    if (hasActiveLoop) {
+      console.log('[ProactiveMessaging] Active execution found - spawning task runner in new tab.');
+      this.notify({
+        type: 'custom',
+        title: 'SLACK TASK SPAWNING',
+        message: `Opening new terminal to create ${deliverables}. Gate will auto-approve when ready.`,
+      });
+    }
+
+    // Detect terminal: ORCHESTRATOR_TERMINAL_CMD > iTerm > Terminal.app
+    const customTerminalCmd = process.env.ORCHESTRATOR_TERMINAL_CMD;
+    const hasITerm = existsSync('/Applications/iTerm.app');
+
+    // Build the shell command - escape for embedding in AppleScript
+    const shellCmd = hasActiveLoop
+      ? `cd '${cwd}' && claude --dangerously-skip-permissions '${prompt.replace(/'/g, "'\\''")}'`
+      : `cd '${cwd}' && claude '${prompt.replace(/'/g, "'\\''")}'`;
+
+    let script: string;
+
+    if (customTerminalCmd) {
+      // User's custom terminal command - replace placeholders
+      const cmd = customTerminalCmd
+        .replace('$ORCHESTRATOR_DIR', cwd)
+        .replace(/\$CMD/g, shellCmd);
+      exec(cmd, (error) => {
+        if (error) {
+          console.error('[ProactiveMessaging] Custom terminal command failed:', error.message);
+        } else {
+          console.log('[ProactiveMessaging] Spawned Claude Code via custom terminal:', task.id);
+          task.status = 'in_progress';
+        }
+      });
+      return;
+    } else if (hasITerm) {
+      // iTerm2 - open new tab
+      script = `
+        tell application "iTerm"
+          activate
+          tell current window
+            create tab with default profile
+            tell current session
+              write text "${shellCmd.replace(/"/g, '\\"')}"
+            end tell
+          end tell
+        end tell
+      `;
+    } else {
+      // Terminal.app fallback
+      script = hasActiveLoop
+        ? `
+          tell application "Terminal"
+            activate
+            tell application "System Events" to keystroke "t" using command down
+            delay 0.3
+            do script "${shellCmd.replace(/"/g, '\\"')}" in front window
+          end tell
+        `
+        : `
+          tell application "Terminal"
+            activate
+            do script "${shellCmd.replace(/"/g, '\\"')}"
+          end tell
+        `;
+    }
+
+    exec(`osascript -e '${script.replace(/'/g, "'\\''")}'`, (error) => {
+      if (error) {
+        console.error('[ProactiveMessaging] Failed to spawn Claude Code:', error.message);
+        // Fallback: just queue the task
+        this.notify({
+          type: 'custom',
+          title: 'TASK QUEUED',
+          message: `Could not spawn terminal. Task queued: create ${deliverables}`,
+        });
+      } else {
+        console.log('[ProactiveMessaging] Spawned Claude Code to handle task:', task.id);
+        task.status = 'in_progress';
+      }
+    });
+  }
+
   getStats(): {
     channels: ChannelStatus[];
     interactions: {
@@ -723,6 +979,14 @@ export class ProactiveMessagingService {
       channels: this.getChannelStatus(),
       interactions: this.conversationState.getStats(),
     };
+  }
+
+  /**
+   * Get the voice adapter for direct access (used by MCP tools and API)
+   */
+  getVoiceAdapter(): VoiceAdapter | null {
+    const adapter = this.adapters.get('voice');
+    return adapter instanceof VoiceAdapter ? adapter : null;
   }
 
   // ─────────────────────────────────────────────────────────────────────────

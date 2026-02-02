@@ -903,6 +903,17 @@ export class ExecutionEngine {
     gateState.approvedAt = new Date();
     execution.updatedAt = new Date();
 
+    // Resume execution if it was blocked (gate approval unblocks)
+    if (execution.status === 'blocked') {
+      execution.status = 'active';
+      this.addExecutionLog(execution, {
+        level: 'info',
+        category: 'system',
+        message: 'Execution unblocked by gate approval',
+        details: { gateId },
+      });
+    }
+
     this.addExecutionLog(execution, {
       level: 'info',
       category: 'gate',
@@ -952,6 +963,65 @@ export class ExecutionEngine {
     await this.saveExecution(execution);
     this.log('info', `Gate ${gateId} rejected for execution ${executionId}`);
     return execution;
+  }
+
+  /**
+   * Pre-check gate guarantees without approving
+   * Returns status of all guarantees for the gate
+   */
+  async getGateGuaranteeStatus(
+    executionId: string,
+    gateId: string
+  ): Promise<{
+    total: number;
+    passed: number;
+    failed: number;
+    canApprove: boolean;
+    blocking?: Array<{
+      id: string;
+      name: string;
+      passed: boolean;
+      errors?: string[];
+    }>;
+  }> {
+    const execution = this.executions.get(executionId);
+    if (!execution) {
+      return { total: 0, passed: 0, failed: 0, canApprove: true };
+    }
+
+    if (!this.guaranteeService) {
+      return { total: 0, passed: 0, failed: 0, canApprove: true };
+    }
+
+    const context: ValidationContext = {
+      executionId,
+      loopId: execution.loopId,
+      skillId: '',  // Gate-level validation
+      phase: execution.currentPhase,
+      mode: execution.mode,
+      projectPath: this.getProjectPath(execution),
+    };
+
+    const result = await this.guaranteeService.validateGateGuarantees(
+      execution.loopId,
+      gateId,
+      context
+    );
+
+    const blocking = result.blocking.map(g => ({
+      id: g.guaranteeId,
+      name: g.name,
+      passed: false,
+      errors: g.errors,
+    }));
+
+    return {
+      total: result.results.length,
+      passed: result.results.filter(r => r.passed).length,
+      failed: result.blocking.length,
+      canApprove: result.passed,
+      blocking: blocking.length > 0 ? blocking : undefined,
+    };
   }
 
   // ==========================================================================

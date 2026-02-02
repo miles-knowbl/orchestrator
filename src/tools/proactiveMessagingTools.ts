@@ -257,6 +257,32 @@ export const proactiveMessagingTools: Tool[] = [
       properties: {},
     },
   },
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Pending Tasks (from Slack)
+  // ─────────────────────────────────────────────────────────────────────────
+  {
+    name: 'get_pending_slack_tasks',
+    description: 'Get tasks queued from Slack that need to be handled. Call this when you receive a notification about queued tasks, or periodically during a loop to check for async requests.',
+    inputSchema: {
+      type: 'object',
+      properties: {},
+    },
+  },
+  {
+    name: 'complete_slack_task',
+    description: 'Mark a Slack-queued task as completed after handling it.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        taskId: {
+          type: 'string',
+          description: 'Task ID to mark as completed',
+        },
+      },
+      required: ['taskId'],
+    },
+  },
 ];
 
 // ============================================================================
@@ -600,6 +626,53 @@ export function createProactiveMessagingToolHandlers(
         hasRoadmap,
         roadmapDrift,
         availableMoves,
+      };
+    },
+
+    get_pending_slack_tasks: async () => {
+      const tasks = service.getPendingTasks();
+      if (tasks.length === 0) {
+        return {
+          success: true,
+          count: 0,
+          tasks: [],
+          message: 'No pending tasks from Slack',
+        };
+      }
+
+      return {
+        success: true,
+        count: tasks.length,
+        tasks: tasks.map(t => ({
+          id: t.id,
+          type: t.type,
+          executionId: t.executionId,
+          gateId: t.gateId,
+          deliverables: t.deliverables,
+          createdAt: t.createdAt,
+          requestedVia: t.requestedVia,
+        })),
+        message: `${tasks.length} pending task(s) from Slack. Handle them and call complete_slack_task when done.`,
+      };
+    },
+
+    complete_slack_task: async (params: unknown) => {
+      const args = params as { taskId: string };
+      if (!args?.taskId) {
+        return { error: 'taskId is required' };
+      }
+
+      const task = service.getTask(args.taskId);
+      if (!task) {
+        return { error: `Task not found: ${args.taskId}` };
+      }
+
+      service.completeTask(args.taskId);
+
+      return {
+        success: true,
+        taskId: args.taskId,
+        message: `Task ${args.taskId} marked as completed`,
       };
     },
   };

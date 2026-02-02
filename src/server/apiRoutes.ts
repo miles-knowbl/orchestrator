@@ -4900,6 +4900,80 @@ export function createApiRoutes(options: ApiRoutesOptions): Router {
     });
   }
 
+  // ==========================================================================
+  // VOICE
+  // ==========================================================================
+
+  if (proactiveMessagingService) {
+    /**
+     * Get voice status
+     */
+    router.get('/voice/status', (_req: Request, res: Response) => {
+      const voiceAdapter = proactiveMessagingService.getVoiceAdapter();
+      if (!voiceAdapter) {
+        res.json({ enabled: false, error: 'Voice adapter not configured' });
+        return;
+      }
+      res.json(voiceAdapter.getService().getStatus());
+    });
+
+    /**
+     * Get voice config
+     */
+    router.get('/voice/config', (_req: Request, res: Response) => {
+      const voiceAdapter = proactiveMessagingService.getVoiceAdapter();
+      if (!voiceAdapter) {
+        res.json({ enabled: false, error: 'Voice adapter not configured' });
+        return;
+      }
+      res.json(voiceAdapter.getService().getConfig());
+    });
+
+    /**
+     * Update voice config
+     */
+    router.put('/voice/config', (req: Request, res: Response) => {
+      const voiceAdapter = proactiveMessagingService.getVoiceAdapter();
+      if (!voiceAdapter) {
+        res.status(400).json({ error: 'Voice adapter not configured' });
+        return;
+      }
+      voiceAdapter.getService().configure(req.body);
+      res.json(voiceAdapter.getService().getConfig());
+    });
+
+    /**
+     * Test voice output
+     */
+    router.post('/voice/test', async (req: Request, res: Response) => {
+      const voiceAdapter = proactiveMessagingService.getVoiceAdapter();
+      if (!voiceAdapter) {
+        res.status(400).json({ error: 'Voice adapter not configured' });
+        return;
+      }
+      const text = req.body.text || 'Voice test successful';
+      try {
+        await voiceAdapter.getService().speakNow(text, { priority: 'urgent' });
+        res.json({ success: true, message: `Spoke: "${text}"` });
+      } catch (err) {
+        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+      }
+    });
+
+    /**
+     * List available voices
+     */
+    router.get('/voice/voices', async (_req: Request, res: Response) => {
+      try {
+        const { MacOSTTS } = await import('../services/voice/index.js');
+        const voices = await MacOSTTS.listVoices();
+        res.json({ voices });
+      } catch (err) {
+        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+      }
+    });
+  }
+
   return router;
 }
 

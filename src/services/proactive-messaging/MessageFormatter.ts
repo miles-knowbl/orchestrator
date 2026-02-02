@@ -70,39 +70,18 @@ export class MessageFormatter {
   }
 
   private formatLoopStart(event: LoopStartEvent, interactionId: string): FormattedMessage {
-    const lines: string[] = [];
     const loopName = event.loopId.replace(/-loop$/, '');
 
-    lines.push('```');
-    lines.push(this.border());
-    lines.push(this.formatTitle('LOOP STARTED', '[ACTIVE]'));
-    lines.push(this.emptyLine());
-
-    lines.push(this.padLine(`/${event.loopId} -> ${event.target}`));
+    // Concise message
+    const lines: string[] = [];
+    lines.push(`*${loopName} loop* started → *${event.target}*`);
     if (event.branch) {
-      lines.push(this.padLine(`Branch: ${event.branch}`));
+      lines.push(`Branch: \`${event.branch}\``);
     }
-    if (event.engineer) {
-      lines.push(this.padLine(`Engineer: ${event.engineer}`));
-    }
-    lines.push(this.padLine(`Execution: ${event.executionId.slice(0, 12)}...`));
-    lines.push(this.emptyLine());
-
-    lines.push(this.padLine('This thread will receive all updates for this execution.'));
-    lines.push(this.emptyLine());
-    lines.push(this.border());
-    lines.push('```');
 
     return {
       text: lines.join('\n'),
-      notificationText: `Loop started: ${event.loopId} → ${event.target}`,
-      actions: [
-        {
-          id: `view_${interactionId}`,
-          label: 'View in Dashboard',
-          value: JSON.stringify({ action: 'view_execution', interactionId, executionId: event.executionId }),
-        },
-      ],
+      notificationText: `${loopName} loop started: ${event.target}`,
       metadata: {
         interactionId,
         eventType: 'loop_start',
@@ -112,37 +91,37 @@ export class MessageFormatter {
   }
 
   private formatGateWaiting(event: GateWaitingEvent, interactionId: string): FormattedMessage {
+    // Clean gate name: "spec-gate" → "Spec"
+    const gateName = event.gateId.replace('-gate', '').replace(/^\w/, c => c.toUpperCase());
+
+    // Concise message for Slack
     const lines: string[] = [];
-    const typeTag = `[${event.approvalType.toUpperCase()}]`;
-    const title = this.formatTitle(event.gateId.toUpperCase().replace('-', ' '), typeTag);
+    lines.push(`*${gateName} Gate* needs approval`);
+    lines.push(`Phase: ${event.phase}`);
 
-    lines.push('```');
-    lines.push(this.border());
-    lines.push(title);
-    lines.push(this.emptyLine());
-
-    // Deliverables section
     if (event.deliverables.length > 0) {
-      lines.push(this.padLine('Deliverables:'));
-      for (const d of event.deliverables) {
-        lines.push(this.padLine(`  - ${d}`));
-      }
-      lines.push(this.emptyLine());
+      const delivs = event.deliverables.slice(0, 3).join(', ');
+      const more = event.deliverables.length > 3 ? ` +${event.deliverables.length - 3} more` : '';
+      lines.push(`Files: ${delivs}${more}`);
     }
 
-    // Summary section
-    lines.push(this.padLine('Summary:'));
-    lines.push(this.padLine(`  Loop: ${event.loopId}`));
-    lines.push(this.padLine(`  Phase: ${event.phase}`));
-    lines.push(this.padLine(`  Execution: ${event.executionId.slice(0, 12)}...`));
-    lines.push(this.emptyLine());
-
-    // Commands section
-    lines.push(this.padLine('Commands:'));
-    lines.push(this.padLine('  approved      - Pass gate, continue'));
-    lines.push(this.padLine('  changes: ...  - Request modifications'));
-    lines.push(this.border());
-    lines.push('```');
+    // Show guarantee status if available
+    if (event.guarantees) {
+      const { passed, failed, canApprove, blocking } = event.guarantees;
+      if (!canApprove && blocking && blocking.length > 0) {
+        lines.push('');
+        lines.push(`*Blocked:* ${failed} guarantee${failed !== 1 ? 's' : ''} failed`);
+        for (const g of blocking.slice(0, 3)) {
+          const errorHint = g.errors?.[0] ? `: ${g.errors[0].slice(0, 50)}` : '';
+          lines.push(`  • ${g.name}${errorHint}`);
+        }
+        if (blocking.length > 3) {
+          lines.push(`  ...and ${blocking.length - 3} more`);
+        }
+      } else if (canApprove && passed > 0) {
+        lines.push(`*Ready:* ${passed}/${passed + failed} guarantees passed`);
+      }
+    }
 
     const actionPayload = JSON.stringify({
       action: 'approve',
@@ -158,23 +137,59 @@ export class MessageFormatter {
       executionId: event.executionId,
     });
 
+    // Adjust notification text based on guarantee status
+    const canApprove = event.guarantees?.canApprove ?? true;
+    const notificationText = canApprove
+      ? `${gateName} gate ready for review`
+      : `${gateName} gate BLOCKED - ${event.guarantees?.failed} guarantee${event.guarantees?.failed !== 1 ? 's' : ''} failed`;
+
+    // Build actions list
+    const actions: Array<{ id: string; label: string; style?: 'primary' | 'danger'; value: string }> = [];
+
+    if (canApprove) {
+      actions.push({
+        id: `approve_${interactionId}`,
+        label: 'Approve',
+        style: 'primary',
+        value: actionPayload,
+      });
+    } else {
+      // When blocked, offer "Create Deliverables" to fix missing files
+      const missingFiles = event.guarantees?.blocking
+        ?.flatMap(g => {
+          // Extract file names from error messages like "Expected at least 1 file(s) matching \"CODE-REVIEW.md\""
+          const match = g.errors?.[0]?.match(/matching "([^"]+)"/);
+          return match ? [match[1]] : [];
+        })
+        .filter(Boolean) || [];
+
+      if (missingFiles.length > 0) {
+        actions.push({
+          id: `create_deliverables_${interactionId}`,
+          label: 'Create Missing Files',
+          style: 'primary',
+          value: JSON.stringify({
+            action: 'create_deliverables',
+            interactionId,
+            gateId: event.gateId,
+            executionId: event.executionId,
+            missingFiles,
+          }),
+        });
+      }
+    }
+
+    actions.push({
+      id: `reject_${interactionId}`,
+      label: 'Reject',
+      style: 'danger',
+      value: rejectPayload,
+    });
+
     return {
       text: lines.join('\n'),
-      notificationText: `🚦 ${event.gateId} needs approval (${event.phase}) — Reply: approve / reject / changes`,
-      actions: [
-        {
-          id: `approve_${interactionId}`,
-          label: 'Approve',
-          style: 'primary',
-          value: actionPayload,
-        },
-        {
-          id: `reject_${interactionId}`,
-          label: 'Reject',
-          style: 'danger',
-          value: rejectPayload,
-        },
-      ],
+      notificationText,
+      actions,
       metadata: {
         interactionId,
         eventType: 'gate_waiting',
@@ -184,42 +199,26 @@ export class MessageFormatter {
   }
 
   private formatLoopComplete(event: LoopCompleteEvent, interactionId: string): FormattedMessage {
+    const loopName = event.loopId.replace(/-loop$/, '');
+
+    // Concise completion message
     const lines: string[] = [];
-
-    lines.push('```');
-    lines.push(this.border());
-    lines.push(this.formatTitle('LOOP COMPLETE'));
-    lines.push(this.emptyLine());
-
-    lines.push(this.padLine(`/${event.loopId} -> ${event.module}`));
-    lines.push(this.emptyLine());
-
-    // Summary
-    const summaryLines = this.wrapText(event.summary, this.width - 6);
-    for (const line of summaryLines) {
-      lines.push(this.padLine(line));
+    lines.push(`*${loopName} loop complete* → ${event.module}`);
+    if (event.summary) {
+      lines.push(event.summary.slice(0, 200));
     }
-    lines.push(this.emptyLine());
-
-    // Deliverables
     if (event.deliverables.length > 0) {
-      lines.push(this.padLine('Deliverables:'));
-      for (const d of event.deliverables) {
-        lines.push(this.padLine(`  - ${d}`));
-      }
-      lines.push(this.emptyLine());
+      const delivs = event.deliverables.slice(0, 3).join(', ');
+      lines.push(`Deliverables: ${delivs}`);
     }
-
-    lines.push(this.border());
-    lines.push('```');
 
     return {
       text: lines.join('\n'),
-      notificationText: `✅ Loop complete: ${event.loopId} → ${event.module}`,
+      notificationText: `${loopName} loop complete: ${event.module}`,
       actions: [
         {
           id: `next_loop_${interactionId}`,
-          label: 'Start Next Loop',
+          label: 'Start Next',
           style: 'primary',
           value: JSON.stringify({
             action: 'start_next_loop',
@@ -227,15 +226,6 @@ export class MessageFormatter {
             executionId: event.executionId,
             completedLoopId: event.loopId,
             completedModule: event.module,
-          }),
-        },
-        {
-          id: `view_${interactionId}`,
-          label: 'View Details',
-          value: JSON.stringify({
-            action: 'view_execution',
-            interactionId,
-            executionId: event.executionId,
           }),
         },
       ],
@@ -456,19 +446,12 @@ export class MessageFormatter {
   }
 
   private formatSkillComplete(event: SkillCompleteEvent, interactionId: string): FormattedMessage {
-    const lines: string[] = [];
-
-    // Compact format for thread updates
-    lines.push(`\`[${event.phase}]\` Skill complete: **${event.skillId}**`);
-
-    if (event.deliverables && event.deliverables.length > 0) {
-      const delivs = event.deliverables.slice(0, 3).join(', ');
-      lines.push(`  → ${delivs}`);
-    }
+    // Very compact - just skill name
+    const text = `✓ ${event.skillId}`;
 
     return {
-      text: lines.join('\n'),
-      notificationText: `[${event.phase}] Skill complete: ${event.skillId}`,
+      text,
+      notificationText: `${event.skillId} done`,
       metadata: {
         interactionId,
         eventType: 'skill_complete',
@@ -478,34 +461,14 @@ export class MessageFormatter {
   }
 
   private formatPhaseComplete(event: PhaseCompleteEvent, interactionId: string): FormattedMessage {
-    const lines: string[] = [];
+    // Simple completion notification - gate will send its own message if needed
+    const gateName = event.gateId?.replace('-gate', '') || '';
+    const gateNote = event.hasGate ? ` → ${gateName} gate` : '';
+    const text = `✓ *${event.phase}* complete${gateNote}`;
 
-    if (event.hasGate) {
-      // Gate waiting will send its own notification
-      lines.push(`\`[${event.phase}]\` Phase complete (${event.skillsCompleted} skills) → Gate: ${event.gateId}`);
-    } else {
-      lines.push(`\`[${event.phase}]\` Phase complete (${event.skillsCompleted} skills)`);
-    }
-
-    // Add Continue button when there's no gate blocking
-    const actions = event.hasGate ? undefined : [
-      {
-        id: `continue_${interactionId}`,
-        label: 'Continue',
-        style: 'primary' as const,
-        value: JSON.stringify({
-          action: 'continue',
-          interactionId,
-          executionId: event.executionId,
-        }),
-      },
-    ];
-
-    const gateNote = event.hasGate ? ` → Gate: ${event.gateId}` : '';
     return {
-      text: lines.join('\n'),
-      notificationText: `[${event.phase}] Phase complete (${event.skillsCompleted} skills)${gateNote}`,
-      actions,
+      text,
+      notificationText: `${event.phase} phase done`,
       metadata: {
         interactionId,
         eventType: 'phase_complete',
@@ -515,19 +478,13 @@ export class MessageFormatter {
   }
 
   private formatPhaseStart(event: PhaseStartEvent, interactionId: string): FormattedMessage {
-    const lines: string[] = [];
-
-    lines.push(`\`[${event.phaseNumber}/${event.totalPhases}]\` Entering phase: **${event.phase}**`);
-
-    if (event.skills.length > 0) {
-      const skillList = event.skills.slice(0, 5).join(', ');
-      const suffix = event.skills.length > 5 ? `, +${event.skills.length - 5} more` : '';
-      lines.push(`  Skills: ${skillList}${suffix}`);
-    }
+    // Simple phase notification - no buttons needed
+    const skillCount = event.skills.length;
+    const text = `*${event.phase}* [${event.phaseNumber}/${event.totalPhases}] — ${skillCount} skill${skillCount !== 1 ? 's' : ''}`;
 
     return {
-      text: lines.join('\n'),
-      notificationText: `[${event.phaseNumber}/${event.totalPhases}] Starting: ${event.phase}`,
+      text,
+      notificationText: `${event.phase} phase starting`,
       metadata: {
         interactionId,
         eventType: 'phase_start',
