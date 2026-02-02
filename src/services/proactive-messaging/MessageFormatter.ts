@@ -24,6 +24,7 @@ import type {
   ErrorEvent,
   DeckReadyEvent,
   CustomNotificationEvent,
+  StartupWelcomeEvent,
 } from './types.js';
 
 export class MessageFormatter {
@@ -49,6 +50,8 @@ export class MessageFormatter {
         return this.formatDeckReady(event, interactionId);
       case 'custom':
         return this.formatCustom(event, interactionId);
+      case 'startup_welcome':
+        return this.formatStartupWelcome(event, interactionId);
       default:
         return this.formatUnknown(event as ProactiveEvent, interactionId);
     }
@@ -420,6 +423,83 @@ export class MessageFormatter {
       metadata: {
         interactionId,
         eventType: 'custom',
+      },
+    };
+  }
+
+  private formatStartupWelcome(event: StartupWelcomeEvent, interactionId: string): FormattedMessage {
+    const lines: string[] = [];
+
+    if (event.hasDreamState && event.dreamStateProgress) {
+      // Returning user with Dream State
+      const progress = event.dreamStateProgress;
+      const pct = Math.round((progress.modulesComplete / progress.modulesTotal) * 100);
+
+      lines.push('```');
+      lines.push(this.border());
+      lines.push(this.formatTitle('ORCHESTRATOR READY'));
+      lines.push(this.emptyLine());
+
+      lines.push(this.padLine(`Version: ${event.version}`));
+      lines.push(this.padLine(`Skills: ${event.skillCount} | Loops: ${event.loopCount}`));
+      lines.push(this.emptyLine());
+
+      lines.push(this.padLine(`Dream State: ${progress.name}`));
+      lines.push(this.padLine(`Progress: ${progress.modulesComplete}/${progress.modulesTotal} modules (${pct}%)`));
+      lines.push(this.emptyLine());
+
+      lines.push(this.padLine('Next highest leverage move:'));
+      if (event.recommendedTarget) {
+        lines.push(this.padLine(`  /${event.recommendedLoop} -> ${event.recommendedTarget}`));
+      } else {
+        lines.push(this.padLine(`  /${event.recommendedLoop}`));
+      }
+      lines.push(this.emptyLine());
+
+      lines.push(this.padLine('Available loops:'));
+      const loopList = event.availableLoops.map(l => `/${l}`).join(', ');
+      const wrappedLoops = this.wrapText(loopList, this.width - 6);
+      for (const line of wrappedLoops) {
+        lines.push(this.padLine(`  ${line}`));
+      }
+
+      lines.push(this.emptyLine());
+      lines.push(this.border());
+      lines.push('```');
+    } else {
+      // Fresh install - no Dream State
+      lines.push('```');
+      lines.push(this.border());
+      lines.push(this.formatTitle('WELCOME TO ORCHESTRATOR'));
+      lines.push(this.emptyLine());
+
+      lines.push(this.padLine(`Version: ${event.version}`));
+      lines.push(this.padLine(`Skills: ${event.skillCount} | Loops: ${event.loopCount}`));
+      lines.push(this.emptyLine());
+
+      lines.push(this.padLine('No Dream State found.'));
+      lines.push(this.padLine('Start by defining your vision:'));
+      lines.push(this.emptyLine());
+
+      lines.push(this.padLine('Recommended: /dream-loop'));
+      lines.push(this.emptyLine());
+
+      lines.push(this.padLine('This will capture your end goal and decompose'));
+      lines.push(this.padLine('it into actionable systems and modules.'));
+      lines.push(this.emptyLine());
+
+      lines.push(this.padLine("Say 'go' in Claude Code to begin."));
+
+      lines.push(this.emptyLine());
+      lines.push(this.border());
+      lines.push('```');
+    }
+
+    return {
+      text: lines.join('\n'),
+      metadata: {
+        interactionId,
+        eventType: 'startup_welcome',
       },
     };
   }

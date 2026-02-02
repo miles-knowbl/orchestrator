@@ -78,6 +78,22 @@ export interface CustomNotificationEvent {
   }>;
 }
 
+export interface StartupWelcomeEvent {
+  type: 'startup_welcome';
+  version: string;
+  skillCount: number;
+  loopCount: number;
+  hasDreamState: boolean;
+  dreamStateProgress?: {
+    name: string;
+    modulesComplete: number;
+    modulesTotal: number;
+  };
+  recommendedLoop: string;
+  recommendedTarget?: string;
+  availableLoops: string[];
+}
+
 export type ProactiveEvent =
   | LoopStartEvent
   | GateWaitingEvent
@@ -86,7 +102,8 @@ export type ProactiveEvent =
   | ExecutorBlockedEvent
   | ErrorEvent
   | DeckReadyEvent
-  | CustomNotificationEvent;
+  | CustomNotificationEvent
+  | StartupWelcomeEvent;
 
 // ============================================================================
 // Commands (Inbound)

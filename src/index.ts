@@ -741,6 +741,16 @@ async function main() {
     '',
   ].join('\n'));
 
+  // Send startup welcome message (shows recommended next moves)
+  const availableLoops = loopComposer.listLoops().map(l => l.id);
+  await proactiveMessagingService.sendStartupWelcome({
+    version: getVersion(),
+    skillCount: skillRegistry.skillCount,
+    loopCount: loopComposer.loopCount,
+    repoPath: config.repoPath,
+    availableLoops,
+  });
+
   // Handle graceful shutdown
   const shutdown = () => {
     skillRegistry.destroy();

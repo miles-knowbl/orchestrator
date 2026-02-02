@@ -398,6 +398,73 @@ export class ProactiveMessagingService {
     });
   }
 
+  /**
+   * Send startup welcome message
+   * Shows available next moves based on Dream State
+   */
+  async sendStartupWelcome(options: {
+    version: string;
+    skillCount: number;
+    loopCount: number;
+    repoPath: string;
+    availableLoops: string[];
+  }): Promise<string> {
+    const { version, skillCount, loopCount, repoPath, availableLoops } = options;
+
+    // Check for Dream State
+    const dreamStatePath = path.join(repoPath, '.claude', 'DREAM-STATE.md');
+    let hasDreamState = false;
+    let dreamStateProgress: { name: string; modulesComplete: number; modulesTotal: number } | undefined;
+
+    try {
+      const content = await fs.readFile(dreamStatePath, 'utf-8');
+      hasDreamState = true;
+
+      // Parse Dream State for progress
+      // Look for: "# System Dream State: {name}"
+      const nameMatch = content.match(/^#\s+(?:System\s+)?Dream State:\s*(.+)$/mi);
+      const name = nameMatch ? nameMatch[1].trim() : 'Unknown';
+
+      // Count complete vs total modules from the table
+      // Look for status column with "complete" or progress percentage
+      const moduleLines = content.match(/^\|[^|]+\|[^|]+\|\s*(complete|in-progress|pending|blocked)\s*\|/gmi) || [];
+      const modulesTotal = moduleLines.length;
+      const modulesComplete = moduleLines.filter(l => /complete/i.test(l)).length;
+
+      if (modulesTotal > 0) {
+        dreamStateProgress = { name, modulesComplete, modulesTotal };
+      }
+    } catch {
+      // No Dream State file
+    }
+
+    // Determine recommended loop
+    let recommendedLoop = 'dream-loop';
+    let recommendedTarget: string | undefined;
+
+    if (hasDreamState && dreamStateProgress) {
+      // Has Dream State - recommend engineering-loop or distribution-loop
+      if (dreamStateProgress.modulesComplete < dreamStateProgress.modulesTotal) {
+        recommendedLoop = 'engineering-loop';
+        recommendedTarget = 'next module';
+      } else {
+        recommendedLoop = 'distribution-loop';
+      }
+    }
+
+    return this.notify({
+      type: 'startup_welcome',
+      version,
+      skillCount,
+      loopCount,
+      hasDreamState,
+      dreamStateProgress,
+      recommendedLoop,
+      recommendedTarget,
+      availableLoops,
+    });
+  }
+
   // ─────────────────────────────────────────────────────────────────────────
   // Configuration
   // ─────────────────────────────────────────────────────────────────────────
