@@ -322,7 +322,8 @@ export interface ChannelStatus {
 // ============================================================================
 
 export interface FormattedMessage {
-  text: string;  // Plain text fallback
+  text: string;  // Full formatted text (terminal display, Slack blocks fallback)
+  notificationText?: string;  // Clean summary for Slack notification banner (no ASCII art)
   blocks?: unknown[];  // Slack Block Kit blocks
   actions?: Array<{
     id: string;

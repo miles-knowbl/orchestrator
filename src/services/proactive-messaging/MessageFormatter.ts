@@ -95,6 +95,7 @@ export class MessageFormatter {
 
     return {
       text: lines.join('\n'),
+      notificationText: `Loop started: ${event.loopId} → ${event.target}`,
       actions: [
         {
           id: `view_${interactionId}`,
@@ -159,6 +160,7 @@ export class MessageFormatter {
 
     return {
       text: lines.join('\n'),
+      notificationText: `🚦 ${event.gateId} needs approval (${event.phase}) — Reply: approve / reject / changes`,
       actions: [
         {
           id: `approve_${interactionId}`,
@@ -213,6 +215,7 @@ export class MessageFormatter {
 
     return {
       text: lines.join('\n'),
+      notificationText: `✅ Loop complete: ${event.loopId} → ${event.module}`,
       actions: [
         {
           id: `next_loop_${interactionId}`,
@@ -317,8 +320,10 @@ export class MessageFormatter {
       value: JSON.stringify({ action: 'review_proposals', interactionId }),
     });
 
+    const highCount = high.length;
     return {
       text: lines.join('\n'),
+      notificationText: `📋 ${event.count} proposals ready${highCount > 0 ? ` (${highCount} high priority)` : ''} — Review or Approve All`,
       actions,
       metadata: {
         interactionId,
@@ -352,6 +357,7 @@ export class MessageFormatter {
 
     return {
       text: lines.join('\n'),
+      notificationText: `⛔ Blocked: ${event.reason.slice(0, 60)}${event.reason.length > 60 ? '...' : ''}`,
       actions: [
         {
           id: `investigate_${interactionId}`,
@@ -394,8 +400,10 @@ export class MessageFormatter {
     lines.push(this.border());
     lines.push('```');
 
+    const icon = event.severity === 'critical' ? '🚨' : event.severity === 'warning' ? '⚠️' : 'ℹ️';
     return {
       text: lines.join('\n'),
+      notificationText: `${icon} ${event.severity.toUpperCase()}: ${event.message.slice(0, 60)}${event.message.length > 60 ? '...' : ''}`,
       metadata: {
         interactionId,
         eventType: 'error',
@@ -426,6 +434,7 @@ export class MessageFormatter {
 
     return {
       text: lines.join('\n'),
+      notificationText: `🃏 ${event.deckType} deck ready: ${event.itemCount} items (~${event.estimatedMinutes} min)`,
       actions: [
         {
           id: `start_review_${interactionId}`,
@@ -459,6 +468,7 @@ export class MessageFormatter {
 
     return {
       text: lines.join('\n'),
+      notificationText: `[${event.phase}] Skill complete: ${event.skillId}`,
       metadata: {
         interactionId,
         eventType: 'skill_complete',
@@ -491,8 +501,10 @@ export class MessageFormatter {
       },
     ];
 
+    const gateNote = event.hasGate ? ` → Gate: ${event.gateId}` : '';
     return {
       text: lines.join('\n'),
+      notificationText: `[${event.phase}] Phase complete (${event.skillsCompleted} skills)${gateNote}`,
       actions,
       metadata: {
         interactionId,
@@ -515,6 +527,7 @@ export class MessageFormatter {
 
     return {
       text: lines.join('\n'),
+      notificationText: `[${event.phaseNumber}/${event.totalPhases}] Starting: ${event.phase}`,
       metadata: {
         interactionId,
         eventType: 'phase_start',
@@ -548,6 +561,7 @@ export class MessageFormatter {
 
     return {
       text: lines.join('\n'),
+      notificationText: `${event.title}: ${event.message.slice(0, 50)}${event.message.length > 50 ? '...' : ''}`,
       actions,
       metadata: {
         interactionId,
@@ -624,8 +638,12 @@ export class MessageFormatter {
       lines.push('```');
     }
 
+    const statusText = event.hasDreamState && event.dreamStateProgress
+      ? `${event.dreamStateProgress.modulesComplete}/${event.dreamStateProgress.modulesTotal} modules`
+      : 'No Dream State';
     return {
       text: lines.join('\n'),
+      notificationText: `Orchestrator v${event.version} ready — ${statusText}`,
       metadata: {
         interactionId,
         eventType: 'startup_welcome',
@@ -729,8 +747,12 @@ export class MessageFormatter {
     lines.push(this.border());
     lines.push('```');
 
+    const progressText = event.dreamStateProgress
+      ? ` — ${event.dreamStateProgress.modulesComplete}/${event.dreamStateProgress.modulesTotal} modules`
+      : '';
     return {
       text: lines.join('\n'),
+      notificationText: `${event.greeting}${progressText}`,
       metadata: {
         interactionId,
         eventType: 'daily_welcome',

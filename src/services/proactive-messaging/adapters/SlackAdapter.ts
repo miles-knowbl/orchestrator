@@ -222,8 +222,9 @@ export class SlackAdapter implements ChannelAdapter {
         return;
       }
 
+      // Use notificationText for banner (clean, no ASCII art), fall back to text
       // Add @mention for notifications
-      let text = message.text;
+      let text = message.notificationText || message.text;
       if (slackUserId && this.shouldMention(message.metadata?.eventType)) {
         text = `<@${slackUserId}> ${text}`;
       }
