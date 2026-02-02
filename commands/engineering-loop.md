@@ -40,7 +40,58 @@ elif loop-state.json exists:
   → Show current phase, pending gates, progress
   → Ask: "Resume from {phase}? [Y/n]"
 else:
-  → Fresh start, proceed to dream state discovery
+  → Fresh start
+  → Display roadmap status (if ROADMAP.md exists)
+  → Proceed to dream state discovery OR select from available moves
+```
+
+### Step 1.5: Roadmap Status Display (Fresh Start)
+
+**CRITICAL: On fresh start, ALWAYS display roadmap status before proceeding.**
+
+Call `mcp__orchestrator__start_execution` to get `preLoopContext.roadmapStatus`, then display:
+
+```
+═══════════════════════════════════════════════════════════════════════════
+  ORCHESTRATOR ROADMAP — AVAILABLE MOVES
+═══════════════════════════════════════════════════════════════════════════
+
+  Dream State: {completeModules}/{totalModules} modules ({percentage}%)
+
+  ─────────────────────────────────────────────────────────────────────────
+  LAYER PROGRESS
+  ─────────────────────────────────────────────────────────────────────────
+  [For each layer in layerSummary]:
+    Layer {layer}: {complete}/{total} complete
+
+  ─────────────────────────────────────────────────────────────────────────
+  AVAILABLE MOVES (Top 5 by leverage)
+  ─────────────────────────────────────────────────────────────────────────
+  [For each move in availableMoves]:
+    {moduleName} (Layer {layer})           Score: {score}
+      {description}
+
+  ─────────────────────────────────────────────────────────────────────────
+  NEXT HIGHEST LEVERAGE MOVE
+  ─────────────────────────────────────────────────────────────────────────
+
+  Recommended: /engineering-loop → {availableMoves[0].moduleName}
+  Value Score: {availableMoves[0].score}/10
+
+  Say 'go' to start, or specify a different target.
+═══════════════════════════════════════════════════════════════════════════
+```
+
+**If roadmapStatus is null** (no ROADMAP.md), proceed directly to dream state discovery.
+
+**If all modules complete** (percentage === 100), display:
+```
+  Dream State: ACHIEVED ✓ ({totalModules}/{totalModules} modules)
+
+  All roadmap modules are complete. Options:
+    1. Start a new project in a different directory
+    2. Add new modules to ROADMAP.md
+    3. Work on deferred items ({deferredCount} deferred)
 ```
 
 ### Step 2: Dream State Discovery (New Domains)

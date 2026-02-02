@@ -434,6 +434,44 @@ export interface LoopExecution {
 }
 
 /**
+ * Leverage score for a module
+ */
+export interface ModuleLeverageScore {
+  moduleId: string;
+  moduleName: string;
+  score: number;
+  layer: number;
+  description: string;
+  reasoning: {
+    dreamStateAlignment: number;
+    downstreamUnlock: number;
+    likelihood: number;
+    time: number;
+    effort: number;
+  };
+}
+
+/**
+ * Roadmap status summary included in PreLoopContext
+ */
+export interface RoadmapStatus {
+  totalModules: number;
+  completeModules: number;
+  inProgressModules: number;
+  pendingModules: number;
+  blockedModules: number;
+  percentage: number;
+  currentModule: string | null;
+  availableMoves: ModuleLeverageScore[];
+  deferredCount: number;
+  layerSummary: Array<{
+    layer: number;
+    complete: number;
+    total: number;
+  }>;
+}
+
+/**
  * Pre-loop context returned with startExecution
  * Helps callers understand requirements BEFORE executing
  */
@@ -450,6 +488,7 @@ export interface PreLoopContext {
   }>;
   dreamStatePath: string | null;
   roadmapPath: string | null;
+  roadmapStatus: RoadmapStatus | null;
 }
 
 export type ExecutionStatus =

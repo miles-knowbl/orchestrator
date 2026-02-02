@@ -291,6 +291,8 @@ async function main() {
       level: 'info',
       message: `Roadmap service initialized (${progress.completeModules}/${progress.totalModules} modules complete)`,
     }));
+    // Wire roadmap service to execution engine for pre-loop context
+    executionEngine.setRoadmapService(roadmapService);
   } catch (err) {
     console.error(JSON.stringify({
       timestamp: new Date().toISOString(),

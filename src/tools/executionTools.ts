@@ -471,6 +471,7 @@ export function createExecutionToolHandlers(
         status: execution.status,
         currentPhase: execution.currentPhase,
         message: `Execution started for ${validated.loopId}`,
+        preLoopContext: execution.preLoopContext,
       };
     },
 

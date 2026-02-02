@@ -10,6 +10,7 @@ import type { SkillRegistry } from './SkillRegistry.js';
 import type { GuaranteeService } from './GuaranteeService.js';
 import type { DeliverableManager } from './DeliverableManager.js';
 import type { ProactiveMessagingService } from './proactive-messaging/index.js';
+import type { RoadmapService } from './roadmapping/index.js';
 import type {
   Loop,
   LoopExecution,
@@ -23,6 +24,8 @@ import type {
   LoopMode,
   AutonomyLevel,
   PreLoopContext,
+  RoadmapStatus,
+  ModuleLeverageScore,
 } from '../types.js';
 import type { ValidationContext } from '../types/guarantee.js';
 import { GuaranteeViolationError } from '../errors/GuaranteeViolationError.js';
@@ -37,6 +40,7 @@ export class ExecutionEngine {
   private guaranteeService: GuaranteeService | null = null;
   private deliverableManager: DeliverableManager | null = null;
   private messagingService: ProactiveMessagingService | null = null;
+  private roadmapService: RoadmapService | null = null;
 
   constructor(
     private options: ExecutionEngineOptions,
@@ -66,6 +70,14 @@ export class ExecutionEngine {
   setMessagingService(service: ProactiveMessagingService): void {
     this.messagingService = service;
     this.log('info', 'ProactiveMessagingService attached to ExecutionEngine');
+  }
+
+  /**
+   * Set the RoadmapService for roadmap status in pre-loop context
+   */
+  setRoadmapService(service: RoadmapService): void {
+    this.roadmapService = service;
+    this.log('info', 'RoadmapService attached to ExecutionEngine');
   }
 
   /**
@@ -290,11 +302,60 @@ export class ExecutionEngine {
       // ROADMAP doesn't exist
     }
 
+    // Gather roadmap status if RoadmapService is available
+    let roadmapStatus: RoadmapStatus | null = null;
+    if (this.roadmapService) {
+      try {
+        const progress = this.roadmapService.getProgress();
+        const leverageScores = this.roadmapService.calculateLeverageScores();
+        const roadmap = this.roadmapService.getRoadmap();
+
+        // Count deferred modules (those with *deferred* marker in description or status)
+        const deferredCount = roadmap.modules.filter(m =>
+          m.description?.toLowerCase().includes('deferred') ||
+          m.status === 'blocked'
+        ).length;
+
+        // Transform leverage scores to include more context
+        const availableMoves: ModuleLeverageScore[] = leverageScores.slice(0, 5).map(score => {
+          const module = this.roadmapService!.getModule(score.moduleId);
+          return {
+            moduleId: score.moduleId,
+            moduleName: score.moduleName,
+            score: score.score,
+            layer: module?.layer ?? 0,
+            description: module?.description ?? '',
+            reasoning: score.reasoning,
+          };
+        });
+
+        roadmapStatus = {
+          totalModules: progress.totalModules,
+          completeModules: progress.completeModules,
+          inProgressModules: progress.inProgressModules,
+          pendingModules: progress.pendingModules,
+          blockedModules: progress.blockedModules,
+          percentage: progress.overallPercentage,
+          currentModule: progress.currentModule?.id ?? null,
+          availableMoves,
+          deferredCount,
+          layerSummary: progress.layerProgress.map(lp => ({
+            layer: lp.layer,
+            complete: lp.complete,
+            total: lp.total,
+          })),
+        };
+      } catch (err) {
+        this.log('warn', `Failed to gather roadmap status: ${err}`);
+      }
+    }
+
     return {
       requiredDeliverables,
       skillGuarantees,
       dreamStatePath,
-      roadmapPath
+      roadmapPath,
+      roadmapStatus,
     };
   }
 
