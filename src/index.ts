@@ -43,6 +43,7 @@ import { SpacedRepetitionService } from './services/spaced-repetition/index.js';
 import { ProposingDecksService } from './services/proposing-decks/index.js';
 import { ProactiveMessagingService } from './services/proactive-messaging/index.js';
 import { SlackIntegrationService } from './services/slack-integration/index.js';
+import { InstallStateService } from './services/InstallStateService.js';
 import { skillToolDefinitions, createSkillToolHandlers } from './tools/skillTools.js';
 import { loopToolDefinitions, createLoopToolHandlers } from './tools/loopTools.js';
 import { executionToolDefinitions, createExecutionToolHandlers } from './tools/executionTools.js';
@@ -569,6 +570,20 @@ async function main() {
     message: 'Slack integration service initialized',
   }));
 
+  // Initialize install state service (tracks daily interactions)
+  const installStateService = new InstallStateService({
+    dataPath: join(config.repoPath, 'data'),
+    currentVersion: getVersion(),
+    installPath: config.repoPath,
+  });
+  await installStateService.initialize();
+
+  console.error(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    level: 'info',
+    message: 'Install state service initialized',
+  }));
+
   // Create tool handlers
   const skillHandlers = createSkillToolHandlers(skillRegistry, learningService);
   const loopHandlers = createLoopToolHandlers(loopComposer);
@@ -588,7 +603,12 @@ async function main() {
   const gameDesignHandlers = createGameDesignToolHandlers(gameDesignService);
   const spacedRepetitionHandlers = createSpacedRepetitionToolHandlers(spacedRepetitionService);
   const proposingDecksHandlers = createProposingDecksToolHandlers(proposingDecksService);
-  const proactiveMessagingHandlers = createProactiveMessagingToolHandlers(proactiveMessagingService);
+  const proactiveMessagingHandlers = createProactiveMessagingToolHandlers(
+    proactiveMessagingService,
+    installStateService,
+    dreamEngine,
+    config.repoPath
+  );
   const slackIntegrationHandlers = createSlackIntegrationToolHandlers(slackIntegrationService);
 
   // Combine all handlers

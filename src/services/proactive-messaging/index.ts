@@ -12,6 +12,8 @@ export type {
   ErrorEvent,
   DeckReadyEvent,
   CustomNotificationEvent,
+  StartupWelcomeEvent,
+  DailyWelcomeEvent,
   InboundCommand,
   ApproveCommand,
   RejectCommand,

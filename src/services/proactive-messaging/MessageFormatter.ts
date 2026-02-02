@@ -25,6 +25,7 @@ import type {
   DeckReadyEvent,
   CustomNotificationEvent,
   StartupWelcomeEvent,
+  DailyWelcomeEvent,
 } from './types.js';
 
 export class MessageFormatter {
@@ -52,6 +53,8 @@ export class MessageFormatter {
         return this.formatCustom(event, interactionId);
       case 'startup_welcome':
         return this.formatStartupWelcome(event, interactionId);
+      case 'daily_welcome':
+        return this.formatDailyWelcome(event, interactionId);
       default:
         return this.formatUnknown(event as ProactiveEvent, interactionId);
     }
@@ -500,6 +503,86 @@ export class MessageFormatter {
       metadata: {
         interactionId,
         eventType: 'startup_welcome',
+      },
+    };
+  }
+
+  private formatDailyWelcome(event: DailyWelcomeEvent, interactionId: string): FormattedMessage {
+    const lines: string[] = [];
+
+    lines.push('```');
+    lines.push(this.border());
+
+    if (!event.hasDreamState) {
+      // Fresh install - no Dream State
+      lines.push(this.formatTitle('WELCOME TO ORCHESTRATOR'));
+      lines.push(this.emptyLine());
+
+      lines.push(this.padLine(`Version: ${event.version}`));
+      lines.push(this.emptyLine());
+
+      lines.push(this.padLine('No Dream State found.'));
+      lines.push(this.emptyLine());
+
+      lines.push(this.padLine('Run /dream-loop to establish your vision and roadmap.'));
+    } else if (event.versionStatus === 'update_available') {
+      // Update available
+      lines.push(this.formatTitle('UPDATE AVAILABLE'));
+      lines.push(this.emptyLine());
+
+      lines.push(this.padLine(`Current: ${event.version} -> Latest: ${event.latestVersion}`));
+      lines.push(this.emptyLine());
+
+      lines.push(this.padLine('Run /install-loop to update.'));
+      lines.push(this.emptyLine());
+
+      if (event.updateNotes && event.updateNotes.length > 0) {
+        lines.push(this.padLine(`What's new in ${event.latestVersion}:`));
+        for (const note of event.updateNotes.slice(0, 3)) {
+          lines.push(this.padLine(`  - ${note}`));
+        }
+      }
+    } else {
+      // Normal daily welcome
+      lines.push(this.formatTitle(event.greeting));
+      lines.push(this.emptyLine());
+
+      if (event.dreamStateProgress) {
+        const progress = event.dreamStateProgress;
+        const pct = Math.round((progress.modulesComplete / progress.modulesTotal) * 100);
+        lines.push(this.padLine(`Dream State: ${progress.name} (${progress.modulesComplete}/${progress.modulesTotal} modules)`));
+
+        // Progress bar
+        const barWidth = 30;
+        const filled = Math.round((pct / 100) * barWidth);
+        const bar = '[' + '='.repeat(filled) + ' '.repeat(barWidth - filled) + ']';
+        lines.push(this.padLine(`${bar} ${pct}%`));
+      }
+
+      if (event.pendingProposals > 0) {
+        lines.push(this.padLine(`Proposals: ${event.pendingProposals} pending review`));
+      }
+
+      lines.push(this.padLine(`Version: ${event.version} (up to date)`));
+      lines.push(this.emptyLine());
+
+      lines.push(this.padLine('Recommended:'));
+      if (event.recommendedTarget) {
+        lines.push(this.padLine(`  /${event.recommendedLoop} -> ${event.recommendedTarget}`));
+      } else {
+        lines.push(this.padLine(`  /${event.recommendedLoop}`));
+      }
+    }
+
+    lines.push(this.emptyLine());
+    lines.push(this.border());
+    lines.push('```');
+
+    return {
+      text: lines.join('\n'),
+      metadata: {
+        interactionId,
+        eventType: 'daily_welcome',
       },
     };
   }

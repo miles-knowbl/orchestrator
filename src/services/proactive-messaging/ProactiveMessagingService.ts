@@ -465,6 +465,72 @@ export class ProactiveMessagingService {
     });
   }
 
+  /**
+   * Send daily welcome message
+   * Shows contextual greeting on first MCP call of the day
+   */
+  async sendDailyWelcome(options: {
+    greeting: string;
+    version: string;
+    versionStatus: 'current' | 'update_available';
+    latestVersion?: string;
+    repoPath: string;
+    pendingProposals: number;
+    updateNotes?: string[];
+  }): Promise<string> {
+    const { greeting, version, versionStatus, latestVersion, repoPath, pendingProposals, updateNotes } = options;
+
+    // Check for Dream State (same logic as sendStartupWelcome)
+    const dreamStatePath = path.join(repoPath, '.claude', 'DREAM-STATE.md');
+    let hasDreamState = false;
+    let dreamStateProgress: { name: string; modulesComplete: number; modulesTotal: number } | undefined;
+
+    try {
+      const content = await fs.readFile(dreamStatePath, 'utf-8');
+      hasDreamState = true;
+
+      const nameMatch = content.match(/^#\s+(?:System\s+)?Dream State:\s*(.+)$/mi);
+      const name = nameMatch ? nameMatch[1].trim() : 'Unknown';
+
+      const moduleLines = content.match(/^\|[^|]+\|[^|]+\|\s*(complete|in-progress|pending|blocked)\s*\|/gmi) || [];
+      const modulesTotal = moduleLines.length;
+      const modulesComplete = moduleLines.filter(l => /complete/i.test(l)).length;
+
+      if (modulesTotal > 0) {
+        dreamStateProgress = { name, modulesComplete, modulesTotal };
+      }
+    } catch {
+      // No Dream State file
+    }
+
+    // Determine recommended loop
+    let recommendedLoop = 'dream-loop';
+    let recommendedTarget: string | undefined;
+
+    if (hasDreamState && dreamStateProgress) {
+      if (dreamStateProgress.modulesComplete < dreamStateProgress.modulesTotal) {
+        recommendedLoop = 'engineering-loop';
+        recommendedTarget = 'next module';
+      } else {
+        recommendedLoop = 'distribution-loop';
+      }
+    }
+
+    return this.notify({
+      type: 'daily_welcome',
+      greeting,
+      version,
+      versionStatus,
+      latestVersion,
+      hasDreamState,
+      dreamStateProgress,
+      pendingProposals,
+      recommendedLoop,
+      recommendedTarget,
+      updateNotes,
+    });
+  }
+
   // ─────────────────────────────────────────────────────────────────────────
   // Configuration
   // ─────────────────────────────────────────────────────────────────────────

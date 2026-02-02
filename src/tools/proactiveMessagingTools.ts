@@ -6,6 +6,8 @@
 
 import type { Tool } from '@modelcontextprotocol/sdk/types.js';
 import type { ProactiveMessagingService } from '../services/proactive-messaging/index.js';
+import type { InstallStateService } from '../services/InstallStateService.js';
+import type { DreamEngine } from '../services/dreaming/index.js';
 
 // ============================================================================
 // Tool Definitions
@@ -210,13 +212,30 @@ export const proactiveMessagingTools: Tool[] = [
       properties: {},
     },
   },
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Daily Status
+  // ─────────────────────────────────────────────────────────────────────────
+  {
+    name: 'check_daily_status',
+    description: 'Check daily status and show welcome message if first call of day. Call this at the start of each session.',
+    inputSchema: {
+      type: 'object',
+      properties: {},
+    },
+  },
 ];
 
 // ============================================================================
 // Tool Handlers
 // ============================================================================
 
-export function createProactiveMessagingToolHandlers(service: ProactiveMessagingService) {
+export function createProactiveMessagingToolHandlers(
+  service: ProactiveMessagingService,
+  installStateService?: InstallStateService,
+  dreamEngine?: DreamEngine,
+  repoPath?: string
+) {
   return {
     send_notification: async (params: unknown) => {
       const args = params as { title: string; message: string; actions?: Array<{ label: string; value: string }> };
@@ -392,6 +411,57 @@ export function createProactiveMessagingToolHandlers(service: ProactiveMessaging
     get_messaging_stats: async () => {
       const stats = service.getStats();
       return { success: true, stats };
+    },
+
+    check_daily_status: async () => {
+      if (!installStateService) {
+        return {
+          success: false,
+          error: 'Install state service not available',
+        };
+      }
+
+      // Record interaction and check if first of day
+      const { isFirstOfDay, isFreshInstall } = await installStateService.recordInteraction();
+      const state = installStateService.getState();
+      const versionStatus = installStateService.getVersionStatus();
+
+      // Get pending proposals count from dream engine if available
+      let pendingProposals = 0;
+      if (dreamEngine) {
+        try {
+          const proposals = dreamEngine.listProposals({ status: 'pending' });
+          pendingProposals = proposals.length;
+        } catch {
+          // Ignore errors
+        }
+      }
+
+      // If first call of day or fresh install, send welcome message
+      if (isFirstOfDay && repoPath) {
+        await service.sendDailyWelcome({
+          greeting: installStateService.getGreeting(),
+          version: state.installedVersion,
+          versionStatus: versionStatus.status === 'unknown' ? 'current' : versionStatus.status,
+          latestVersion: versionStatus.latestVersion,
+          repoPath,
+          pendingProposals,
+        });
+      }
+
+      return {
+        success: true,
+        isFirstOfDay,
+        isFreshInstall,
+        greeting: installStateService.getGreeting(),
+        version: state.installedVersion,
+        versionStatus: versionStatus.status,
+        latestVersion: versionStatus.latestVersion,
+        totalInteractions: state.totalInteractions,
+        lastInteractionDate: state.lastInteractionDate,
+        pendingProposals,
+        welcomeMessageSent: isFirstOfDay,
+      };
     },
   };
 }

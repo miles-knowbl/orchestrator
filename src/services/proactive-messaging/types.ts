@@ -94,6 +94,24 @@ export interface StartupWelcomeEvent {
   availableLoops: string[];
 }
 
+export interface DailyWelcomeEvent {
+  type: 'daily_welcome';
+  greeting: string;
+  version: string;
+  versionStatus: 'current' | 'update_available';
+  latestVersion?: string;
+  hasDreamState: boolean;
+  dreamStateProgress?: {
+    name: string;
+    modulesComplete: number;
+    modulesTotal: number;
+  };
+  pendingProposals: number;
+  recommendedLoop: string;
+  recommendedTarget?: string;
+  updateNotes?: string[];
+}
+
 export type ProactiveEvent =
   | LoopStartEvent
   | GateWaitingEvent
@@ -103,7 +121,8 @@ export type ProactiveEvent =
   | ErrorEvent
   | DeckReadyEvent
   | CustomNotificationEvent
-  | StartupWelcomeEvent;
+  | StartupWelcomeEvent
+  | DailyWelcomeEvent;
 
 // ============================================================================
 // Commands (Inbound)
