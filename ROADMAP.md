@@ -8,8 +8,8 @@
 
 **System**: Orchestrator — Self-improving meta-system where skills are the atomic primitive
 **Dream State**: Autonomous, coherent, local-first system that compounds leverage through skill-based ontology
-**Progress**: 19/31 modules complete (61%) + 7 deferred
-**Remaining**: voice, brownfield-specialization, sales-loop, ops-loop, auto-updating
+**Progress**: 19/31 modules complete (61%) + 8 deferred
+**Remaining**: voice, sales-loop, ops-loop, auto-updating
 
 ---
 
@@ -23,7 +23,7 @@ Layer 5  ───────────────────────�
          game-design ✓, co-op (deferred), proposing-decks ✓, spaced-repetition ✓, auto-updating, ecosystem-roundup (deferred)
 
 Layer 4  ───────────────────────────────────────────────────────────────────────
-         sales-loop, ops-loop, business-model-loop (deferred), go-to-market-loop (deferred), brownfield-specialization
+         sales-loop, ops-loop, business-model-loop (deferred), go-to-market-loop (deferred), brownfield-specialization (deferred)
 
 Layer 3  ───────────────────────────────────────────────────────────────────────
          voice, proactive-messaging ✓, slack-integration ✓
@@ -95,7 +95,7 @@ Layer 0  ───────────────────────�
 | **ops-loop** | MECE loop for operations workflows. Structured process for operational excellence with tracking artifacts. | — |
 | **business-model-loop** | Full loop for creating business model artifacts. Structured exploration of value proposition, revenue streams, cost structure, channels. | — | *deferred* |
 | **go-to-market-loop** | Full loop for GTM strategy artifacts. Market analysis, positioning, launch planning, channel strategy. | — | *deferred* |
-| **brownfield-specialization** | Special patterns and loops for brownfield contexts. Making orchestrator as good at brownfield as it is at greenfield — essential for getting systems to "completion" for launch or checkpoint. | — |
+| **brownfield-specialization** | Special patterns and loops for brownfield contexts. Making orchestrator as good at brownfield as it is at greenfield — essential for getting systems to "completion" for launch or checkpoint. | — | *deferred*
 
 ---
 
@@ -142,6 +142,7 @@ Layer 0  ───────────────────────�
 | local-first | Significant architecture scope | When external integrations need offline support |
 | ladder-of-abstraction-interfaces | UI complexity, requires stable core | After core visualization (ooda-clocks) |
 | ecosystem-roundup | Broad scope across all primitives | When ecosystem has more content to round up |
+| brownfield-specialization | Patterns exist, needs formalization | When brownfield work increases |
 
 ---
 
@@ -161,7 +162,7 @@ Layer 0  ───────────────────────�
 | 1 | 7 | 9 | kanban ✓, ooda-clocks ✓, skill-trees ✓, tech-trees (deferred), ladder-of-abstraction (deferred), autonomous ✓, dreaming ✓, multi-agent-worktrees ✓, loop-sequencing ✓ |
 | 2 | 4 | 4 | patterns-roundup ✓, scoring ✓, mece-opportunity-mapping ✓, coherence-system ✓ |
 | 3 | 2 | 3 | voice, proactive-messaging ✓, slack-integration ✓ |
-| 4 | 0 | 5 | sales-loop, ops-loop, business-model-loop (deferred), go-to-market-loop (deferred), brownfield-specialization |
+| 4 | 0 | 5 | sales-loop, ops-loop, business-model-loop (deferred), go-to-market-loop (deferred), brownfield-specialization (deferred) |
 | 5 | 3 | 6 | game-design ✓, co-op-skill-acquisition (deferred), proposing-decks ✓, spaced-repetition ✓, auto-updating, ecosystem-roundup (deferred) |
 | 6 | 0 | 1 | local-first (deferred) |
 | **Complete** | **19** | **31** | **61%** |
@@ -241,14 +242,14 @@ Phase 6: Meta & Interface ✓ COMPLETE
 
 Phase 7: Remaining Modules ◄── YOU ARE HERE
   21. voice (Layer 3)
-  22. brownfield-specialization (Layer 4)
-  23. sales-loop (Layer 4)
-  24. ops-loop (Layer 4)
-  25. auto-updating (Layer 5)
+  22. sales-loop (Layer 4)
+  23. ops-loop (Layer 4)
+  24. auto-updating (Layer 5)
 
 Deferred:
   - tech-trees (Layer 1)
   - ladder-of-abstraction-interfaces (Layer 1)
+  - brownfield-specialization (Layer 4)
   - business-model-loop (Layer 4)
   - go-to-market-loop (Layer 4)
   - co-op-skill-acquisition (Layer 5)
@@ -305,12 +306,12 @@ Deferred:
 
 ## Next Action
 
-**Progress**: 19/31 modules complete (61%) + 7 deferred
+**Progress**: 19/31 modules complete (61%) + 8 deferred
 **Available Modules** (unblocked, not deferred):
 - Layer 3: voice
-- Layer 4: sales-loop, ops-loop, brownfield-specialization
+- Layer 4: sales-loop, ops-loop
 - Layer 5: auto-updating
 
-**Recommended**: voice or brownfield-specialization (highest leverage for current needs)
+**Recommended**: voice (completes Layer 3 interface capabilities)
 
 **Note**: ADIR is now captured as pattern PAT-012 in memory/orchestrator.json rather than a standalone module. It synergizes with Deep Context Protocol, Leverage Protocol, MECE Opportunity Mapping, and Terrain Check.
