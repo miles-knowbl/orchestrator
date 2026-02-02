@@ -465,6 +465,14 @@
       "category": "meta"
     },
     {
+      "id": "roadmapping",
+      "name": "roadmapping",
+      "version": "1.0.0",
+      "description": "System-level visibility into module progress, dependencies, and completion status. Creates and maintains ROADMAP.md as the spine that makes everything else trackable. Integrates with engineering-loop ",
+      "phase": "INIT",
+      "category": "planning"
+    },
+    {
       "id": "rollback-validator",
       "name": "rollback-validator",
       "version": "1.0.0",

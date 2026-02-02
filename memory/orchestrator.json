@@ -185,12 +185,33 @@
     {
       "id": "PAT-012",
       "name": "ADIR-reasoning-cycle",
-      "context": "When running strategic loops that need to improve their own reasoning, not just conclusions",
-      "solution": "Four phases: Abductive (hypotheses from observations), Deductive (testable predictions), Inductive (updated beliefs from results), Reflexive (frame audit producing Context Delta). The Reflexive phase outputs keep/discard/add/reweight/next_tests/guardrails to improve the instruction set.",
-      "example": "Abductive: 'Users might want voice' → Deductive: 'If true, usage should spike on mobile' → Inductive: '80% mobile usage confirms' → Reflexive: {keep: 'mobile-first', add: 'voice input', next_tests: ['dictation UX']}",
+      "context": "When reasoning needs to improve itself, not just reach conclusions. Synergizes with Deep Context Protocol, Leverage Protocol, MECE Opportunity Mapping, and Terrain Check.",
+      "solution": "Four phases that form a meta-cognitive loop: (A) Abductive - generate hypotheses from observations, (D) Deductive - derive testable predictions, (I) Inductive - update beliefs from results, (R) Reflexive - audit the frame itself and produce Context Delta. The Reflexive phase outputs {keep, discard, add, reweight, next_tests, guardrails} to improve the instruction set, not just conclusions.",
+      "synergies": {
+        "deep-context-protocol": "ADIR's Abductive phase IS context gathering. Ask questions to generate hypotheses. The Reflexive phase identifies which context questions should be added or removed from future gathering.",
+        "leverage-protocol": "ADIR's Inductive phase updates belief weights used in leverage scoring. Reflexive phase can reweight the value equation factors (DSA, Unlock, Likelihood, Time, Effort) based on observed accuracy.",
+        "mece-opportunity-mapping": "ADIR's Deductive phase generates testable predictions that can be organized MECE. Reflexive phase identifies gaps in the opportunity space that need new categories.",
+        "terrain-check": "ADIR's Reflexive phase produces explicit uphill/downhill markers. 'keep' = downhill (verified), 'discard' = was uphill and proved wrong, 'add' = new uphill territory identified."
+      },
+      "contextDelta": {
+        "keep": "stable truths that survived testing",
+        "discard": "assumptions invalidated by evidence",
+        "add": "newly discovered constraints or opportunities",
+        "reweight": "belief updates with confidence levels",
+        "next_tests": "1-3 highest-leverage experiments to run",
+        "guardrails": "failure modes to avoid going forward"
+      },
+      "example": "Abductive: 'Users might want voice' → Deductive: 'If true, mobile usage > 70%' → Inductive: '80% confirms, update belief' → Reflexive: {keep: 'mobile-first', discard: 'desktop-only viable', add: 'voice input priority', reweight: {voice: 0.8, typing: 0.5}, next_tests: ['dictation accuracy', 'noise handling'], guardrails: ['dont ship voice without offline mode']}",
+      "antiPatterns": [
+        "Running only A-D-I without R (conclusions but no meta-learning)",
+        "Skipping straight to R without A-D-I (opinions without evidence)",
+        "Treating R as optional (missing the improvement opportunity)",
+        "Keeping Context Delta in your head instead of externalizing it"
+      ],
       "uses": 0,
-      "confidence": "medium",
+      "confidence": "high",
       "createdAt": "2026-01-31T00:00:00Z",
+      "updatedAt": "2026-02-01T00:00:00Z",
       "lastUsed": null
     },
     {
@@ -214,6 +235,18 @@
       "confidence": "low",
       "createdAt": "2026-01-31T00:00:00Z",
       "lastUsed": null
+    },
+    {
+      "id": "PAT-015",
+      "name": "completion-format-protocol",
+      "context": "When any loop iteration completes and needs to present results and next steps",
+      "solution": "Use standard completion format: (1) Completion banner with loop + primitive, (2) Key deliverables summary, (3) Next highest leverage move with FULL reasoning (Dream State, Downstream Unlock, Likelihood), (4) Alternatives Considered with scores, (5) Available moves (UNBLOCKED ONLY) grouped by category/layer, (6) Deferred items go to last layer (not separate section), (7) Clear call-to-action. Hide completed and blocked items from menu.",
+      "example": "/engineering-loop → spaced-repetition: COMPLETE → [deliverables box] → NEXT: proposing-decks (V: 6.05) with reasoning → Alternatives Considered: ooda-clocks (5.60) → Available Moves (unblocked): Layer 1: ooda-clocks, Layer 5: proposing-decks → 'Say go to start'",
+      "reference": "commands/_shared/completion-format.md",
+      "uses": 2,
+      "confidence": "high",
+      "createdAt": "2026-02-01T00:00:00Z",
+      "lastUsed": "2026-02-01T00:00:00Z"
     }
   ],
   "calibration": {
@@ -223,5 +256,5 @@
     }
   },
   "createdAt": "2026-01-25T00:00:00Z",
-  "updatedAt": "2026-01-31T00:00:00Z"
+  "updatedAt": "2026-02-01T00:00:00Z"
 }
