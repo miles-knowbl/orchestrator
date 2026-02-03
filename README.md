@@ -47,8 +47,11 @@ The Terminal window shows server logs and can be minimized but should stay open.
 |---------|-------------|
 | `/orchestrator-start-loop` | Start session, install, or update orchestrator |
 | `/engineering-loop` | **Full engineering loop** — build anything from scratch or extend existing code |
+| `/async-loop` | **Prepare for mobile/Slack operation** — builds work queue for autonomous execution |
 | `/bugfix-loop` | Systematic bug fixing with reproduction and regression tests |
 | `/distribution-loop` | Distribute to all targets (local, Vercel, GitHub Releases) |
+| `/learning-loop` | Review past work, improve skills, calibrate estimates |
+| `/dream-loop` | Define or update the dream state (vision and checklist) |
 | `/proposal-loop` | Create evidence-backed proposals |
 | `/transpose-loop` | Transpose architecture to a new tech stack, produce a feature spec |
 | `/infra-loop` | Infrastructure provisioning (CI/CD, databases) |
