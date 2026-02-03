@@ -1,0 +1,55 @@
+{
+  "id": "deal-intake-loop",
+  "name": "Deal Intake Loop",
+  "description": "Standardized process for bringing new deals into the pipeline with proper structure, initial research, and qualification.",
+  "version": "1.0.0",
+  "category": "sales",
+  "phases": [
+    {
+      "id": "INIT",
+      "name": "Initialize",
+      "description": "Set up deal and gather initial context",
+      "skills": ["deal-create"],
+      "requiredDeliverables": ["deal.json", "DEAL.md"]
+    },
+    {
+      "id": "RESEARCH",
+      "name": "Research",
+      "description": "Research the lead and assess fit",
+      "skills": ["lead-research"],
+      "requiredDeliverables": ["research.json"]
+    },
+    {
+      "id": "CAPTURE",
+      "name": "Capture Intelligence",
+      "description": "Capture any existing communications and add stakeholders",
+      "skills": ["communication-capture", "stakeholder-add"],
+      "requiredDeliverables": ["stakeholders.json"]
+    },
+    {
+      "id": "COMPLETE",
+      "name": "Complete",
+      "description": "Finalize deal intake and recommend next actions",
+      "skills": ["next-best-action"],
+      "requiredDeliverables": ["nba output"]
+    }
+  ],
+  "gates": [
+    {
+      "id": "qualification-gate",
+      "name": "Qualification Gate",
+      "afterPhase": "RESEARCH",
+      "type": "manual",
+      "criteria": ["AI fit score > 40", "Champion potential identified", "No disqualifying factors"]
+    }
+  ],
+  "defaults": {
+    "timeout": 3600000,
+    "retryAttempts": 0
+  },
+  "metadata": {
+    "author": "KnoPilot",
+    "createdAt": "2026-02-03",
+    "tags": ["sales", "intake", "qualification"]
+  }
+}

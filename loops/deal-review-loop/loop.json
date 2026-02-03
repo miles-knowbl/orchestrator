@@ -1,0 +1,55 @@
+{
+  "id": "deal-review-loop",
+  "name": "Deal Review Loop",
+  "description": "Comprehensive review of a single deal including scoring, risk assessment, and strategic recommendations.",
+  "version": "1.0.0",
+  "category": "sales",
+  "phases": [
+    {
+      "id": "GATHER",
+      "name": "Gather Context",
+      "description": "Review all deal intelligence and communications",
+      "skills": ["communication-parse"],
+      "requiredDeliverables": ["context summary"]
+    },
+    {
+      "id": "SCORE",
+      "name": "Score Deal",
+      "description": "Calculate comprehensive deal scores",
+      "skills": ["deal-scoring", "champion-scoring", "use-case-clarity"],
+      "requiredDeliverables": ["updated scores"]
+    },
+    {
+      "id": "ASSESS",
+      "name": "Assess Risks",
+      "description": "Identify and assess deal risks",
+      "skills": ["risk-assessment"],
+      "requiredDeliverables": ["risk assessment"]
+    },
+    {
+      "id": "COMPLETE",
+      "name": "Complete",
+      "description": "Generate strategic recommendations",
+      "skills": ["next-best-action"],
+      "requiredDeliverables": ["deal review summary"]
+    }
+  ],
+  "gates": [
+    {
+      "id": "deal-health-gate",
+      "name": "Deal Health Gate",
+      "afterPhase": "SCORE",
+      "type": "manual",
+      "criteria": ["Deal Health > 40 to continue", "Critical risks identified"]
+    }
+  ],
+  "defaults": {
+    "timeout": 3600000,
+    "retryAttempts": 0
+  },
+  "metadata": {
+    "author": "KnoPilot",
+    "createdAt": "2026-02-03",
+    "tags": ["sales", "review", "strategy"]
+  }
+}

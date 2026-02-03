@@ -1,0 +1,47 @@
+{
+  "id": "intelligence-loop",
+  "name": "Intelligence Loop",
+  "description": "Process communications to extract and consolidate deal intelligence including pain points, budget, timeline, stakeholders, and competitive signals.",
+  "version": "1.0.0",
+  "category": "sales",
+  "phases": [
+    {
+      "id": "CAPTURE",
+      "name": "Capture",
+      "description": "Capture and parse new communications",
+      "skills": ["communication-capture", "communication-parse"],
+      "requiredDeliverables": ["parsed signals"]
+    },
+    {
+      "id": "EXTRACT",
+      "name": "Extract Intelligence",
+      "description": "Extract structured intelligence from signals",
+      "skills": ["pain-point-extraction", "budget-timeline-extraction", "stakeholder-sentiment", "competitive-intel", "ai-maturity-assessment"],
+      "requiredDeliverables": ["intelligence files"]
+    },
+    {
+      "id": "SCORE",
+      "name": "Update Scores",
+      "description": "Recalculate deal scores with new intelligence",
+      "skills": ["deal-scoring", "champion-scoring", "use-case-clarity", "risk-assessment"],
+      "requiredDeliverables": ["updated scores"]
+    },
+    {
+      "id": "COMPLETE",
+      "name": "Complete",
+      "description": "Generate action recommendations",
+      "skills": ["next-best-action"],
+      "requiredDeliverables": ["NBA output"]
+    }
+  ],
+  "gates": [],
+  "defaults": {
+    "timeout": 3600000,
+    "retryAttempts": 0
+  },
+  "metadata": {
+    "author": "KnoPilot",
+    "createdAt": "2026-02-03",
+    "tags": ["sales", "intelligence", "extraction"]
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "id": "close-prep-loop",
+  "name": "Close Prep Loop",
+  "description": "Prepare deals for close including prototype scoping, contract support, and final push to signature.",
+  "version": "1.0.0",
+  "category": "sales",
+  "phases": [
+    {
+      "id": "ASSESS",
+      "name": "Close Readiness",
+      "description": "Assess readiness for close",
+      "skills": ["deal-scoring", "risk-assessment"],
+      "requiredDeliverables": ["close readiness assessment"]
+    },
+    {
+      "id": "SCOPE",
+      "name": "Scope Pilot",
+      "description": "Define pilot/prototype scope if needed",
+      "skills": ["prototype-scoping"],
+      "requiredDeliverables": ["pilot scope"]
+    },
+    {
+      "id": "CONTRACT",
+      "name": "Contract Support",
+      "description": "Track and manage contracting",
+      "skills": ["contract-support"],
+      "requiredDeliverables": ["contract tracker"]
+    },
+    {
+      "id": "COMPLETE",
+      "name": "Complete",
+      "description": "Final close actions",
+      "skills": ["next-best-action"],
+      "requiredDeliverables": ["close plan"]
+    }
+  ],
+  "gates": [
+    {
+      "id": "close-readiness-gate",
+      "name": "Close Readiness Gate",
+      "afterPhase": "ASSESS",
+      "type": "manual",
+      "criteria": ["Deal Health > 70", "No critical unresolved risks", "Champion confirmed"]
+    }
+  ],
+  "defaults": {
+    "timeout": 3600000,
+    "retryAttempts": 0
+  },
+  "metadata": {
+    "author": "KnoPilot",
+    "createdAt": "2026-02-03",
+    "tags": ["sales", "close", "contract", "pilot"]
+  }
+}

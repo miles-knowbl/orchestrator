@@ -1,6 +1,22 @@
 {
   "skills": [
     {
+      "id": "action-impact-analysis",
+      "name": "action-impact-analysis",
+      "version": "1.0.0",
+      "description": "Analyze the impact of completed actions on deal progress. Tracks which actions moved scores, identifies effective patterns, and calibrates future action recommendations.",
+      "phase": "ACT",
+      "category": "sales"
+    },
+    {
+      "id": "ai-maturity-assessment",
+      "name": "ai-maturity-assessment",
+      "version": "1.0.0",
+      "description": "Assess prospect's AI maturity level from communications. Evaluates prior AI experience, internal capabilities, strategic alignment, and readiness for AI implementation.",
+      "phase": "ANALYZE",
+      "category": "sales"
+    },
+    {
       "id": "architect",
       "name": "architect",
       "version": "1.0.0",
@@ -25,6 +41,14 @@
       "category": "core"
     },
     {
+      "id": "budget-timeline-extraction",
+      "name": "budget-timeline-extraction",
+      "version": "1.0.0",
+      "description": "Extract budget signals and timeline indicators from parsed communications. Identifies explicit amounts, approval status, fiscal constraints, deadlines, and urgency levels.",
+      "phase": "ANALYZE",
+      "category": "sales"
+    },
+    {
       "id": "bug-reproducer",
       "name": "bug-reproducer",
       "version": "1.0.0",
@@ -39,6 +63,22 @@
       "description": "Tracks estimate accuracy over time and adjusts future estimates based on historical data. Compares estimated vs actual effort, identifies systematic biases, and generates calibration adjustments. Enab",
       "phase": "COMPLETE",
       "category": "meta"
+    },
+    {
+      "id": "champion-enablement-asset",
+      "name": "champion-enablement-asset",
+      "version": "1.0.0",
+      "description": "Create materials that enable champions to sell internally. Generates ROI models, executive one-pagers, objection responses, and business cases tailored to the deal context.",
+      "phase": "ACT",
+      "category": "sales"
+    },
+    {
+      "id": "champion-scoring",
+      "name": "champion-scoring",
+      "version": "1.0.0",
+      "description": "Assess champion effectiveness and strength. Evaluates seniority, engagement level, authority, and advocacy behaviors to determine champion quality.",
+      "phase": "ANALYZE",
+      "category": "sales"
     },
     {
       "id": "changelog-generator",
@@ -81,12 +121,36 @@
       "category": "operations"
     },
     {
+      "id": "communication-capture",
+      "name": "communication-capture",
+      "version": "1.0.0",
+      "description": "Ingest emails, meeting notes, and other communications into a deal's context. Captures raw content with metadata for later parsing and intelligence extraction.",
+      "phase": "INIT",
+      "category": "sales"
+    },
+    {
+      "id": "communication-parse",
+      "name": "communication-parse",
+      "version": "1.0.0",
+      "description": "Extract structured intelligence from captured communications using Claude-powered analysis. Identifies pain points, budget signals, timeline indicators, stakeholder sentiment, and technical requiremen",
+      "phase": "IMPLEMENT",
+      "category": "sales"
+    },
+    {
       "id": "compatibility-checker",
       "name": "compatibility-checker",
       "version": "1.0.0",
       "description": "Verify API, schema, and interface compatibility between old and new versions during migrations. Tests backward compatibility, data format changes, and integration contracts.",
       "phase": "SCAFFOLD",
       "category": "core"
+    },
+    {
+      "id": "competitive-intel",
+      "name": "competitive-intel",
+      "version": "1.0.0",
+      "description": "Extract and track competitive intelligence from communications. Identifies active evaluations, past experiences, preferences, and competitive positioning.",
+      "phase": "ANALYZE",
+      "category": "sales"
     },
     {
       "id": "content-analysis",
@@ -113,12 +177,44 @@
       "category": "specialized"
     },
     {
+      "id": "contract-support",
+      "name": "contract-support",
+      "version": "1.0.0",
+      "description": "Support contracting phase by tracking negotiations, managing redlines, preparing for legal review, and ensuring smooth progression from agreement to signature.",
+      "phase": "IMPLEMENT",
+      "category": "sales"
+    },
+    {
       "id": "coordination-protocol",
       "name": "coordination-protocol",
       "version": "1.0.0",
       "description": "Define communication patterns and handoff protocols for multi-agent orchestration with locks, heartbeats, and conflict resolution.",
       "phase": "COMPLETE",
       "category": "meta"
+    },
+    {
+      "id": "deal-create",
+      "name": "deal-create",
+      "version": "1.0.0",
+      "description": "Initialize a new deal with basic information. Creates the deal directory structure, captures initial contact info, company details, and source. Sets initial stage to Lead.",
+      "phase": "INIT",
+      "category": "sales"
+    },
+    {
+      "id": "deal-prioritization",
+      "name": "deal-prioritization",
+      "version": "1.0.0",
+      "description": "Prioritize deals for time allocation using value, health, and urgency factors. Generates ranked list of where to focus effort for maximum pipeline impact.",
+      "phase": "ACT",
+      "category": "sales"
+    },
+    {
+      "id": "deal-scoring",
+      "name": "deal-scoring",
+      "version": "1.0.0",
+      "description": "Calculate comprehensive deal scores including AI Readiness, Deal Confidence, Champion Strength, and Use Case Clarity. Produces composite health score to prioritize pipeline.",
+      "phase": "ANALYZE",
+      "category": "sales"
     },
     {
       "id": "debug-assist",
@@ -167,6 +263,22 @@
       "description": "Guides deployment of systems to production environments. Covers deployment strategies, production validation, rollback procedures, and monitoring setup. Completes the engineering loop by bridging the ",
       "phase": "SHIP",
       "category": "core"
+    },
+    {
+      "id": "discovery-debrief",
+      "name": "discovery-debrief",
+      "version": "1.0.0",
+      "description": "Debrief after discovery meetings to capture insights, update deal intelligence, identify action items, and assess deal progression. Ensures no intelligence is lost.",
+      "phase": "IMPLEMENT",
+      "category": "sales"
+    },
+    {
+      "id": "discovery-prep",
+      "name": "discovery-prep",
+      "version": "1.0.0",
+      "description": "Prepare for discovery meetings by reviewing all deal intelligence, identifying key questions, setting objectives, and creating meeting agendas tailored to stakeholders.",
+      "phase": "IMPLEMENT",
+      "category": "sales"
     },
     {
       "id": "distribute",
@@ -313,6 +425,14 @@
       "category": "meta"
     },
     {
+      "id": "lead-research",
+      "name": "lead-research",
+      "version": "1.0.0",
+      "description": "Research leads before outreach. Gathers company background, identifies likely pain points, finds stakeholders, and determines AI fit to prioritize and personalize engagement.",
+      "phase": "INIT",
+      "category": "sales"
+    },
+    {
       "id": "loop-composer",
       "name": "loop-composer",
       "version": "1.0.0",
@@ -377,6 +497,14 @@
       "category": "core"
     },
     {
+      "id": "next-best-action",
+      "name": "next-best-action",
+      "version": "1.0.0",
+      "description": "Generate prioritized action recommendations using the NBA Engine. Scores actions by likelihood of success, effort required, and champion value to identify highest-impact next moves.",
+      "phase": "ACT",
+      "category": "sales"
+    },
+    {
       "id": "observe",
       "name": "observe",
       "version": "1.0.0",
@@ -393,6 +521,14 @@
       "category": "meta"
     },
     {
+      "id": "pain-point-extraction",
+      "name": "pain-point-extraction",
+      "version": "1.0.0",
+      "description": "Extract and categorize pain points from parsed communications. Identifies volume, cost, quality, speed, compliance, security, experience, talent, legacy, and integration issues with severity assessmen",
+      "phase": "ANALYZE",
+      "category": "sales"
+    },
+    {
       "id": "perf-analysis",
       "name": "perf-analysis",
       "version": "1.0.0",
@@ -407,6 +543,14 @@
       "description": "Identify backend data pipelines (P-series) in the codebase. Discovers server-side data flows triggered by user actions or system events, documenting triggers, steps, and outcomes. Foundation for MECE ",
       "phase": "INIT",
       "category": "core"
+    },
+    {
+      "id": "pipeline-snapshot",
+      "name": "pipeline-snapshot",
+      "version": "1.0.0",
+      "description": "Generate a snapshot view of the entire sales pipeline. Summarizes all deals by stage, identifies at-risk deals, calculates pipeline value, and provides health metrics.",
+      "phase": "ANALYZE",
+      "category": "sales"
     },
     {
       "id": "portability",
@@ -439,6 +583,14 @@
       "description": "Generate polished proposal documents from cultivated context and priorities. Transform insights, patterns, and ranked opportunities into compelling narratives with clear value propositions, scope defi",
       "phase": "COMPLETE",
       "category": "specialized"
+    },
+    {
+      "id": "prototype-scoping",
+      "name": "prototype-scoping",
+      "version": "1.0.0",
+      "description": "Scope pilot/prototype projects for deals approaching Production stage. Defines success criteria, timeline, scope boundaries, and resources needed for technical validation.",
+      "phase": "IMPLEMENT",
+      "category": "sales"
     },
     {
       "id": "quality-eval-design",
@@ -487,6 +639,14 @@
       "description": "Analyzes completed journeys to extract learning and propose improvements. Identifies what worked, what didn't, and why. Generates skill amendment proposals, calibration adjustments, and pattern candid",
       "phase": "COMPLETE",
       "category": "meta"
+    },
+    {
+      "id": "risk-assessment",
+      "name": "risk-assessment",
+      "version": "1.0.0",
+      "description": "Identify and assess deal risks across multiple dimensions. Evaluates champion, competition, budget, timeline, technical, and organizational risks to inform deal strategy.",
+      "phase": "ANALYZE",
+      "category": "sales"
     },
     {
       "id": "roadmap-tracker",
@@ -577,6 +737,22 @@
       "category": "specialized"
     },
     {
+      "id": "stakeholder-add",
+      "name": "stakeholder-add",
+      "version": "1.0.0",
+      "description": "Add a stakeholder to a deal's stakeholder map with role, sentiment, authority level, and relationship notes. Essential for understanding the buying committee.",
+      "phase": "INIT",
+      "category": "sales"
+    },
+    {
+      "id": "stakeholder-sentiment",
+      "name": "stakeholder-sentiment",
+      "version": "1.0.0",
+      "description": "Track and analyze stakeholder sentiment changes over time. Identifies sentiment shifts, red flags, and provides relationship health scoring for the buying committee.",
+      "phase": "ANALYZE",
+      "category": "sales"
+    },
+    {
       "id": "taste-discovery",
       "name": "taste-discovery",
       "version": "1.0.0",
@@ -655,6 +831,22 @@
       "description": "Identify client-side UI pipelines (U-series) in the codebase. Discovers interaction flows involving chat, tool handlers, context synchronization, and real-time updates. Foundation for UI-specific fail",
       "phase": "INIT",
       "category": "core"
+    },
+    {
+      "id": "use-case-clarity",
+      "name": "use-case-clarity",
+      "version": "1.0.0",
+      "description": "Assess how well-defined the prospect's use case is. Evaluates specificity, scope definition, and success criteria to determine implementation readiness.",
+      "phase": "ANALYZE",
+      "category": "sales"
+    },
+    {
+      "id": "weekly-focus",
+      "name": "weekly-focus",
+      "version": "1.0.0",
+      "description": "Generate weekly focus plan with top priorities, scheduled actions, and success criteria. Creates actionable weekly agenda for sales execution.",
+      "phase": "ACT",
+      "category": "sales"
     }
   ]
 }

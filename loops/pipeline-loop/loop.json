@@ -1,0 +1,55 @@
+{
+  "id": "pipeline-loop",
+  "name": "Pipeline Loop",
+  "description": "Weekly pipeline review across all deals including snapshot, prioritization, and weekly focus planning.",
+  "version": "1.0.0",
+  "category": "sales",
+  "phases": [
+    {
+      "id": "SNAPSHOT",
+      "name": "Pipeline Snapshot",
+      "description": "Generate current pipeline state",
+      "skills": ["pipeline-snapshot"],
+      "requiredDeliverables": ["pipeline snapshot"]
+    },
+    {
+      "id": "PRIORITIZE",
+      "name": "Prioritize",
+      "description": "Rank and tier all deals",
+      "skills": ["deal-prioritization"],
+      "requiredDeliverables": ["priority ranking"]
+    },
+    {
+      "id": "FOCUS",
+      "name": "Weekly Focus",
+      "description": "Create weekly execution plan",
+      "skills": ["weekly-focus"],
+      "requiredDeliverables": ["weekly plan"]
+    },
+    {
+      "id": "COMPLETE",
+      "name": "Complete",
+      "description": "Finalize and commit to plan",
+      "skills": [],
+      "requiredDeliverables": ["committed plan"]
+    }
+  ],
+  "gates": [
+    {
+      "id": "pipeline-health-gate",
+      "name": "Pipeline Health Gate",
+      "afterPhase": "SNAPSHOT",
+      "type": "auto",
+      "criteria": ["Pipeline snapshot generated", "Alerts reviewed"]
+    }
+  ],
+  "defaults": {
+    "timeout": 3600000,
+    "retryAttempts": 0
+  },
+  "metadata": {
+    "author": "KnoPilot",
+    "createdAt": "2026-02-03",
+    "tags": ["sales", "pipeline", "planning"]
+  }
+}

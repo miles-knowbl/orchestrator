@@ -1,0 +1,62 @@
+{
+  "id": "discovery-loop",
+  "name": "Discovery Loop",
+  "description": "Complete discovery meeting workflow including preparation, meeting execution guidance, and post-meeting debrief with intelligence extraction.",
+  "version": "1.0.0",
+  "category": "sales",
+  "phases": [
+    {
+      "id": "PREP",
+      "name": "Prepare",
+      "description": "Prepare for discovery meeting",
+      "skills": ["discovery-prep"],
+      "requiredDeliverables": ["meeting prep document"]
+    },
+    {
+      "id": "MEETING",
+      "name": "Meeting",
+      "description": "Meeting execution guidance and capture",
+      "skills": ["communication-capture"],
+      "requiredDeliverables": ["meeting notes"]
+    },
+    {
+      "id": "DEBRIEF",
+      "name": "Debrief",
+      "description": "Post-meeting debrief and intelligence extraction",
+      "skills": ["discovery-debrief", "communication-parse"],
+      "requiredDeliverables": ["debrief document"]
+    },
+    {
+      "id": "UPDATE",
+      "name": "Update",
+      "description": "Update deal intelligence and scores",
+      "skills": ["pain-point-extraction", "budget-timeline-extraction", "stakeholder-sentiment", "deal-scoring"],
+      "requiredDeliverables": ["updated intelligence"]
+    },
+    {
+      "id": "COMPLETE",
+      "name": "Complete",
+      "description": "Generate follow-up actions",
+      "skills": ["next-best-action"],
+      "requiredDeliverables": ["NBA and follow-up plan"]
+    }
+  ],
+  "gates": [
+    {
+      "id": "meeting-readiness-gate",
+      "name": "Meeting Readiness Gate",
+      "afterPhase": "PREP",
+      "type": "auto",
+      "criteria": ["Objectives defined", "Questions prepared", "Attendee research complete"]
+    }
+  ],
+  "defaults": {
+    "timeout": 3600000,
+    "retryAttempts": 0
+  },
+  "metadata": {
+    "author": "KnoPilot",
+    "createdAt": "2026-02-03",
+    "tags": ["sales", "discovery", "meetings"]
+  }
+}

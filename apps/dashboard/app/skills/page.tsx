@@ -254,6 +254,29 @@ export default function SkillsPage() {
         </div>
       </div>
 
+      {/* Featured: Sales Framework */}
+      <a
+        href="/skills/sales"
+        className="block mb-6 p-4 bg-gradient-to-r from-orch-500/10 to-purple-500/10 border border-orch-500/30 rounded-xl hover:border-orch-500/50 transition-all group"
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-orch-500/20 rounded-lg">
+              <Sparkles className="w-5 h-5 text-orch-400" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-base font-medium text-white">KnoPilot Sales Framework</span>
+                <span className="text-xs px-2 py-0.5 bg-orch-500/20 text-orch-400 rounded">24 skills</span>
+                <span className="text-xs px-2 py-0.5 bg-purple-500/20 text-purple-400 rounded">7 loops</span>
+              </div>
+              <p className="text-sm text-gray-400">AI-Powered Sales Intelligence System</p>
+            </div>
+          </div>
+          <ChevronRight className="w-5 h-5 text-gray-500 group-hover:text-white transition-colors" />
+        </div>
+      </a>
+
       {/* Filters */}
       <div className="flex items-center gap-4 mb-6">
         <div className="relative flex-1 max-w-md">

@@ -1,6 +1,15 @@
 {
   "loops": [
     {
+      "id": "async-loop",
+      "name": "Async Preparation Loop",
+      "version": "1.0.0",
+      "description": "Prepares the system for autonomous Slack-based operation. Run this before going mobile.",
+      "category": "meta",
+      "phaseCount": 6,
+      "skillCount": 13
+    },
+    {
       "id": "audit-loop",
       "name": "Audit Loop",
       "version": "4.0.0",
@@ -19,6 +28,42 @@
       "skillCount": 8
     },
     {
+      "id": "champion-loop",
+      "name": "Champion Loop",
+      "version": "1.0.0",
+      "description": "Focus on champion assessment and enablement to strengthen internal advocacy and deal momentum.",
+      "category": "development",
+      "phaseCount": 4,
+      "skillCount": 5
+    },
+    {
+      "id": "close-prep-loop",
+      "name": "Close Prep Loop",
+      "version": "1.0.0",
+      "description": "Prepare deals for close including prototype scoping, contract support, and final push to signature.",
+      "category": "development",
+      "phaseCount": 4,
+      "skillCount": 5
+    },
+    {
+      "id": "deal-intake-loop",
+      "name": "Deal Intake Loop",
+      "version": "1.0.0",
+      "description": "Standardized process for bringing new deals into the pipeline with proper structure, initial research, and qualification.",
+      "category": "development",
+      "phaseCount": 4,
+      "skillCount": 5
+    },
+    {
+      "id": "deal-review-loop",
+      "name": "Deal Review Loop",
+      "version": "1.0.0",
+      "description": "Comprehensive review of a single deal including scoring, risk assessment, and strategic recommendations.",
+      "category": "development",
+      "phaseCount": 4,
+      "skillCount": 6
+    },
+    {
       "id": "deck-loop",
       "name": "Deck Loop",
       "version": "1.0.0",
@@ -26,6 +71,15 @@
       "category": "operations",
       "phaseCount": 6,
       "skillCount": 7
+    },
+    {
+      "id": "discovery-loop",
+      "name": "Discovery Loop",
+      "version": "1.0.0",
+      "description": "Complete discovery meeting workflow including preparation, meeting execution guidance, and post-meeting debrief with intelligence extraction.",
+      "category": "development",
+      "phaseCount": 5,
+      "skillCount": 9
     },
     {
       "id": "distribution-loop",
@@ -64,6 +118,15 @@
       "skillCount": 10
     },
     {
+      "id": "intelligence-loop",
+      "name": "Intelligence Loop",
+      "version": "1.0.0",
+      "description": "Process communications to extract and consolidate deal intelligence including pain points, budget, timeline, stakeholders, and competitive signals.",
+      "category": "development",
+      "phaseCount": 4,
+      "skillCount": 12
+    },
+    {
       "id": "learning-loop",
       "name": "Learning Loop",
       "version": "1.0.0",
@@ -80,6 +143,15 @@
       "category": "meta",
       "phaseCount": 4,
       "skillCount": 6
+    },
+    {
+      "id": "pipeline-loop",
+      "name": "Pipeline Loop",
+      "version": "1.0.0",
+      "description": "Weekly pipeline review across all deals including snapshot, prioritization, and weekly focus planning.",
+      "category": "development",
+      "phaseCount": 4,
+      "skillCount": 3
     },
     {
       "id": "proposal-loop",

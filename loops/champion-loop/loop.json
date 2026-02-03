@@ -1,0 +1,55 @@
+{
+  "id": "champion-loop",
+  "name": "Champion Loop",
+  "description": "Focus on champion assessment and enablement to strengthen internal advocacy and deal momentum.",
+  "version": "1.0.0",
+  "category": "sales",
+  "phases": [
+    {
+      "id": "ASSESS",
+      "name": "Assess Champion",
+      "description": "Evaluate champion strength and gaps",
+      "skills": ["champion-scoring", "stakeholder-sentiment"],
+      "requiredDeliverables": ["champion assessment"]
+    },
+    {
+      "id": "IDENTIFY",
+      "name": "Identify Needs",
+      "description": "Identify what champion needs to succeed",
+      "skills": ["risk-assessment"],
+      "requiredDeliverables": ["needs analysis"]
+    },
+    {
+      "id": "ENABLE",
+      "name": "Enable Champion",
+      "description": "Create enablement materials",
+      "skills": ["champion-enablement-asset"],
+      "requiredDeliverables": ["enablement assets"]
+    },
+    {
+      "id": "COMPLETE",
+      "name": "Complete",
+      "description": "Plan champion engagement",
+      "skills": ["next-best-action"],
+      "requiredDeliverables": ["engagement plan"]
+    }
+  ],
+  "gates": [
+    {
+      "id": "champion-strength-gate",
+      "name": "Champion Strength Gate",
+      "afterPhase": "ASSESS",
+      "type": "manual",
+      "criteria": ["Champion identified", "Champion strength > 30 or remediation plan"]
+    }
+  ],
+  "defaults": {
+    "timeout": 3600000,
+    "retryAttempts": 0
+  },
+  "metadata": {
+    "author": "KnoPilot",
+    "createdAt": "2026-02-03",
+    "tags": ["sales", "champion", "enablement"]
+  }
+}
