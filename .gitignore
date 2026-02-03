@@ -35,3 +35,4 @@ coverage/
 *-state.json
 render-manifest.json
 .vercel
+docs/
