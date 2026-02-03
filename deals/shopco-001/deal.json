@@ -1,0 +1,31 @@
+{
+  "id": "shopco-001",
+  "name": "E-commerce Returns Automation",
+  "company": "ShopCo",
+  "industry": "E-commerce / Retail",
+  "stage": "discovery",
+  "value": 350000,
+  "createdAt": "2026-01-05T10:00:00Z",
+  "updatedAt": "2026-02-03T12:00:00Z",
+  "lastInteractionDate": "2026-01-31T14:30:00Z",
+  "daysInStage": 15,
+  "stageHistory": [
+    {
+      "from": null,
+      "to": "lead",
+      "at": "2026-01-05T10:00:00Z"
+    },
+    {
+      "from": "lead",
+      "to": "target",
+      "at": "2026-01-10T09:00:00Z",
+      "reason": "Initial meeting scheduled"
+    },
+    {
+      "from": "target",
+      "to": "discovery",
+      "at": "2026-01-19T16:00:00Z",
+      "reason": "Discovery call completed, use case defined"
+    }
+  ]
+}

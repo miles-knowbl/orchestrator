@@ -1,0 +1,19 @@
+{
+  "dealId": "shopco-001",
+  "updatedAt": "2026-01-31T14:30:00Z",
+  "budgetRange": "$200K-$400K",
+  "budgetConfirmed": true,
+  "fiscalYearEnd": "December",
+  "decisionDeadline": "2026-03-31",
+  "procurementProcess": "Standard vendor review",
+  "signals": [
+    {
+      "signal": "Budget approved for $200-400K",
+      "source": "comm-001"
+    },
+    {
+      "signal": "Need live by June = decision by March",
+      "source": "comm-001"
+    }
+  ]
+}

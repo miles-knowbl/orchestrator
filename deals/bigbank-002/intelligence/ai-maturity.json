@@ -1,0 +1,23 @@
+{
+  "dealId": "bigbank-002",
+  "updatedAt": "2026-02-01T11:00:00Z",
+  "stage": "board-mandate",
+  "priorAttempts": [
+    {
+      "vendor": "Generic chatbot vendor",
+      "outcome": "Failed - too rigid, poor containment rate"
+    }
+  ],
+  "internalCapability": "limited",
+  "timelineUrgency": "high",
+  "signals": [
+    {
+      "signal": "Board mandate for contact center transformation",
+      "source": "comm-101"
+    },
+    {
+      "signal": "Q1 launch target",
+      "source": "comm-102"
+    }
+  ]
+}

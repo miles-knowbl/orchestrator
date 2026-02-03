@@ -1,0 +1,24 @@
+{
+  "dealId": "bigbank-002",
+  "updatedAt": "2026-02-01T11:00:00Z",
+  "items": [
+    {
+      "category": "security",
+      "requirement": "SOC 2 Type 2 certification required",
+      "priority": "high",
+      "source": "comm-102"
+    },
+    {
+      "category": "security",
+      "requirement": "Data residency in US",
+      "priority": "high",
+      "source": "comm-102"
+    },
+    {
+      "category": "integration",
+      "requirement": "Core banking system integration",
+      "priority": "medium",
+      "source": "comm-101"
+    }
+  ]
+}

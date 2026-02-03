@@ -1,0 +1,77 @@
+{
+  "dealId": "bigbank-002",
+  "generatedAt": "2026-02-03T12:00:00Z",
+  "stage": "contracting",
+  "actions": [
+    {
+      "id": "nba-101",
+      "action": "Complete security questionnaire for CISO review",
+      "nbaScore": 91,
+      "likelihood": 95,
+      "effort": "low",
+      "effortFactor": 100,
+      "championValue": 80,
+      "primaryImpact": "CISO Robert (removes security blocker)",
+      "secondaryImpact": "Legal team",
+      "timing": "This week - blocking contract",
+      "reasoning": "Security review is the final technical gate before signature",
+      "stageAppropriate": true
+    },
+    {
+      "id": "nba-102",
+      "action": "Provide SOC 2 Type 2 certification documentation",
+      "nbaScore": 88,
+      "likelihood": 90,
+      "effort": "low",
+      "effortFactor": 100,
+      "championValue": 85,
+      "primaryImpact": "CISO Robert (addresses compliance)",
+      "timing": "Immediately",
+      "reasoning": "SOC 2 is a stated requirement - easy win to provide",
+      "stageAppropriate": true
+    },
+    {
+      "id": "nba-103",
+      "action": "Schedule contract review call with procurement",
+      "nbaScore": 85,
+      "likelihood": 85,
+      "effort": "medium",
+      "effortFactor": 60,
+      "championValue": 75,
+      "primaryImpact": "VP Procurement Patricia",
+      "timing": "After security approval",
+      "reasoning": "Keep momentum going once security clears",
+      "stageAppropriate": true
+    },
+    {
+      "id": "nba-104",
+      "action": "Prepare data residency documentation",
+      "nbaScore": 82,
+      "likelihood": 80,
+      "effort": "medium",
+      "effortFactor": 60,
+      "championValue": 80,
+      "primaryImpact": "CISO Robert",
+      "timing": "This week",
+      "reasoning": "Proactively address stated concern before it becomes blocker",
+      "stageAppropriate": true
+    },
+    {
+      "id": "nba-105",
+      "action": "Confirm implementation timeline with champion",
+      "nbaScore": 78,
+      "likelihood": 85,
+      "effort": "low",
+      "effortFactor": 100,
+      "championValue": 70,
+      "primaryImpact": "Champion James (maintains confidence)",
+      "timing": "Before contract finalization",
+      "reasoning": "Set expectations for post-signature execution",
+      "stageAppropriate": true
+    }
+  ],
+  "risks": [
+    "Security review pending — CISO has outstanding questions",
+    "Contract terms alignment — Procurement reviewing standard terms"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "id": "comm-102",
+  "dealId": "bigbank-002",
+  "type": "meeting",
+  "subject": "Prototype Review & Next Steps",
+  "content": "Prototype Review Meeting\n\nAttendees: James Wilson (SVP Ops), Amanda Rodriguez (CTO), Robert Kim (CISO)\n\nPrototype Feedback:\n- Successfully demonstrated account inquiry automation\n- 85% containment rate in testing\n- CTO approves technical architecture\n\nSecurity Review:\n- CISO Robert requires SOC 2 Type 2 certification\n- Data residency must be US-based\n- Standard security questionnaire to complete\n\nNext Steps:\n- Move to contracting\n- Complete security questionnaire\n- Target contract signature: mid-February\n- Kickoff implementation: March 1\n\nJames: 'We're committed to making this happen Q1'",
+  "participants": ["James Wilson", "Amanda Rodriguez", "Robert Kim", "John (Knowbl)"],
+  "timestamp": "2026-01-24T14:00:00Z",
+  "createdAt": "2026-01-24T16:00:00Z",
+  "processed": true,
+  "extractedInsights": [
+    "Prototype approved - 85% containment",
+    "CTO technical approval",
+    "Security: SOC 2 Type 2 required",
+    "Security: US data residency",
+    "Timeline: Contract mid-Feb, kickoff March 1"
+  ]
+}

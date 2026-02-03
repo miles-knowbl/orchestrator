@@ -1,0 +1,15 @@
+{
+  "dealId": "bigbank-002",
+  "updatedAt": "2026-02-01T11:00:00Z",
+  "competitors": [],
+  "buildVsBuy": "Buy - previous internal attempt failed",
+  "previousVendorFailures": [
+    "Generic chatbot - poor containment rate, frustrated customers"
+  ],
+  "signals": [
+    {
+      "signal": "Evaluated and chose Knowbl over alternatives",
+      "source": "comm-102"
+    }
+  ]
+}

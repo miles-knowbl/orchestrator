@@ -64,6 +64,8 @@ import { spacedRepetitionTools, createSpacedRepetitionToolHandlers } from './too
 import { proposingDecksTools, createProposingDecksToolHandlers } from './tools/proposingDecksTools.js';
 import { proactiveMessagingTools, createProactiveMessagingToolHandlers } from './tools/proactiveMessagingTools.js';
 import { slackIntegrationTools, createSlackIntegrationToolHandlers } from './tools/slackIntegrationTools.js';
+import { knopilotToolDefinitions, createKnoPilotToolHandlers } from './tools/knopilotTools.js';
+import { getKnoPilotService } from './services/knopilot/KnoPilotService.js';
 import { createHttpServer, startHttpServer } from './server/httpServer.js';
 import { getVersion } from './version.js';
 
@@ -589,6 +591,16 @@ async function main() {
     message: 'Install state service initialized',
   }));
 
+  // Initialize KnoPilot service (sales intelligence)
+  const knopilotService = getKnoPilotService(config.repoPath);
+  await knopilotService.initialize();
+
+  console.error(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    level: 'info',
+    message: 'KnoPilot service initialized',
+  }));
+
   // Create tool handlers
   const skillHandlers = createSkillToolHandlers(skillRegistry, learningService);
   const loopHandlers = createLoopToolHandlers(loopComposer);
@@ -616,6 +628,7 @@ async function main() {
     roadmapService
   );
   const slackIntegrationHandlers = createSlackIntegrationToolHandlers(slackIntegrationService);
+  const knopilotHandlers = createKnoPilotToolHandlers(knopilotService);
 
   // Combine all handlers
   const allHandlers = {
@@ -639,6 +652,7 @@ async function main() {
     ...proposingDecksHandlers,
     ...proactiveMessagingHandlers,
     ...slackIntegrationHandlers,
+    ...knopilotHandlers,
   };
 
   // Combine all tool definitions
@@ -663,6 +677,7 @@ async function main() {
     ...proposingDecksTools,
     ...proactiveMessagingTools,
     ...slackIntegrationTools,
+    ...knopilotToolDefinitions,
   ];
 
   // Create MCP server factory
@@ -748,6 +763,7 @@ async function main() {
       proposingDecksService,
       proactiveMessagingService,
       slackIntegrationService,
+      knopilotService,
     },
   });
   await startHttpServer(app, config);

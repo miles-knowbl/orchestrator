@@ -1,0 +1,19 @@
+{
+  "dealId": "bigbank-002",
+  "updatedAt": "2026-02-01T11:00:00Z",
+  "budgetRange": "$500K-$750K",
+  "budgetConfirmed": true,
+  "fiscalYearEnd": "December",
+  "decisionDeadline": "2026-02-15",
+  "procurementProcess": "Standard financial services procurement with security review",
+  "signals": [
+    {
+      "signal": "Budget allocated for Q1",
+      "source": "comm-101"
+    },
+    {
+      "signal": "Contract signature target: mid-February",
+      "source": "comm-102"
+    }
+  ]
+}

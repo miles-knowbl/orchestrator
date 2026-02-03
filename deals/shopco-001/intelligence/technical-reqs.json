@@ -1,0 +1,24 @@
+{
+  "dealId": "shopco-001",
+  "updatedAt": "2026-01-31T14:30:00Z",
+  "items": [
+    {
+      "category": "integration",
+      "requirement": "Shopify Plus e-commerce platform integration",
+      "priority": "high",
+      "source": "comm-001"
+    },
+    {
+      "category": "integration",
+      "requirement": "Okta authentication integration",
+      "priority": "high",
+      "source": "comm-001"
+    },
+    {
+      "category": "functionality",
+      "requirement": "Returns and exchanges automation",
+      "priority": "high",
+      "source": "comm-001"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "dealId": "shopco-001",
+  "updatedAt": "2026-01-31T14:30:00Z",
+  "items": [
+    {
+      "category": "volume",
+      "description": "300% increase in support tickets over the past year",
+      "severity": "high",
+      "source": "comm-001",
+      "extractedAt": "2026-01-19T16:00:00Z"
+    },
+    {
+      "category": "volume",
+      "description": "Current team overwhelmed, hiring not keeping pace",
+      "severity": "high",
+      "source": "comm-001",
+      "extractedAt": "2026-01-19T16:00:00Z"
+    },
+    {
+      "category": "knowledge-base",
+      "description": "Returns policy questions are repetitive and could be automated",
+      "severity": "medium",
+      "source": "comm-001",
+      "extractedAt": "2026-01-19T16:00:00Z"
+    }
+  ]
+}

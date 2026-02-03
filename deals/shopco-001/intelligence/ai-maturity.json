@@ -1,0 +1,18 @@
+{
+  "dealId": "shopco-001",
+  "updatedAt": "2026-01-31T14:30:00Z",
+  "stage": "exploring",
+  "priorAttempts": [],
+  "internalCapability": "limited",
+  "timelineUrgency": "high",
+  "signals": [
+    {
+      "signal": "Need this live by June (Q2 deadline)",
+      "source": "comm-001"
+    },
+    {
+      "signal": "No prior AI attempts, first exploration",
+      "source": "comm-001"
+    }
+  ]
+}

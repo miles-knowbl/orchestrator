@@ -32,6 +32,7 @@ import type { SpacedRepetitionService, CardType, Card } from '../services/spaced
 import type { ProposingDecksService, ReviewDeckType } from '../services/proposing-decks/index.js';
 import type { ProactiveMessagingService } from '../services/proactive-messaging/index.js';
 import type { SlackIntegrationService } from '../services/slack-integration/index.js';
+import type { KnoPilotService } from '../services/knopilot/KnoPilotService.js';
 
 export interface ApiRoutesOptions {
   executionEngine: ExecutionEngine;
@@ -58,6 +59,7 @@ export interface ApiRoutesOptions {
   proposingDecksService?: ProposingDecksService;
   proactiveMessagingService?: ProactiveMessagingService;
   slackIntegrationService?: SlackIntegrationService;
+  knopilotService?: KnoPilotService;
 }
 
 // Helper to get string param
@@ -67,7 +69,7 @@ function getParam(req: Request, name: string): string {
 }
 
 export function createApiRoutes(options: ApiRoutesOptions): Router {
-  const { executionEngine, skillRegistry, loopComposer, inboxProcessor, learningService, analyticsService, improvementOrchestrator, roadmapService, knowledgeGraphService, orchestrationService, patternsService, scoringService, autonomousExecutor, dreamEngine, multiAgentCoordinator, meceService, coherenceService, loopSequencingService, skillTreeService, gameDesignService, spacedRepetitionService, proposingDecksService, proactiveMessagingService, slackIntegrationService } = options;
+  const { executionEngine, skillRegistry, loopComposer, inboxProcessor, learningService, analyticsService, improvementOrchestrator, roadmapService, knowledgeGraphService, orchestrationService, patternsService, scoringService, autonomousExecutor, dreamEngine, multiAgentCoordinator, meceService, coherenceService, loopSequencingService, skillTreeService, gameDesignService, spacedRepetitionService, proposingDecksService, proactiveMessagingService, slackIntegrationService, knopilotService } = options;
   const router = Router();
 
   // ==========================================================================
@@ -4968,6 +4970,245 @@ export function createApiRoutes(options: ApiRoutesOptions): Router {
         const { MacOSTTS } = await import('../services/voice/index.js');
         const voices = await MacOSTTS.listVoices();
         res.json({ voices });
+      } catch (err) {
+        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+      }
+    });
+  }
+
+  // ==========================================================================
+  // KNOPILOT - Sales Intelligence
+  // ==========================================================================
+
+  if (knopilotService) {
+    /**
+     * Get pipeline summary
+     */
+    router.get('/knopilot/pipeline', async (_req: Request, res: Response) => {
+      try {
+        const summary = await knopilotService.getPipelineSummary();
+        res.json(summary);
+      } catch (err) {
+        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+      }
+    });
+
+    /**
+     * Get weekly focus actions
+     */
+    router.get('/knopilot/weekly-focus', async (_req: Request, res: Response) => {
+      try {
+        const focus = await knopilotService.getWeeklyFocus();
+        res.json(focus);
+      } catch (err) {
+        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+      }
+    });
+
+    /**
+     * List all deals
+     */
+    router.get('/knopilot/deals', async (req: Request, res: Response) => {
+      try {
+        const { stage, company, minValue, maxValue, search } = req.query;
+        const deals = await knopilotService.listDeals({
+          stage: stage as any,
+          company: company as string | undefined,
+          minValue: minValue ? Number(minValue) : undefined,
+          maxValue: maxValue ? Number(maxValue) : undefined,
+          search: search as string | undefined,
+        });
+        res.json({ count: deals.length, deals });
+      } catch (err) {
+        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+      }
+    });
+
+    /**
+     * Create a new deal
+     */
+    router.post('/knopilot/deals', async (req: Request, res: Response) => {
+      try {
+        const { name, company, industry, stage, value } = req.body;
+        const deal = await knopilotService.createDeal({ name, company, industry, stage, value });
+        res.status(201).json(deal);
+      } catch (err) {
+        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+      }
+    });
+
+    /**
+     * Get deal view (full details)
+     */
+    router.get('/knopilot/deals/:id', async (req: Request, res: Response) => {
+      try {
+        const dealView = await knopilotService.getDeal(getParam(req, 'id'));
+        if (!dealView) {
+          res.status(404).json({ error: 'Deal not found' });
+          return;
+        }
+        res.json(dealView);
+      } catch (err) {
+        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+      }
+    });
+
+    /**
+     * Update a deal
+     */
+    router.patch('/knopilot/deals/:id', async (req: Request, res: Response) => {
+      try {
+        const deal = await knopilotService.updateDeal(getParam(req, 'id'), req.body);
+        res.json(deal);
+      } catch (err) {
+        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+      }
+    });
+
+    /**
+     * Advance deal stage
+     */
+    router.post('/knopilot/deals/:id/advance', async (req: Request, res: Response) => {
+      try {
+        const { reason } = req.body;
+        const deal = await knopilotService.advanceStage(getParam(req, 'id'), reason);
+        res.json(deal);
+      } catch (err) {
+        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+      }
+    });
+
+    /**
+     * Get deal scores
+     */
+    router.get('/knopilot/deals/:id/scores', async (req: Request, res: Response) => {
+      try {
+        const scores = await knopilotService.getScores(getParam(req, 'id'));
+        res.json(scores);
+      } catch (err) {
+        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+      }
+    });
+
+    /**
+     * Recompute deal scores
+     */
+    router.post('/knopilot/deals/:id/scores', async (req: Request, res: Response) => {
+      try {
+        const scores = await knopilotService.computeScores(getParam(req, 'id'));
+        res.json(scores);
+      } catch (err) {
+        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+      }
+    });
+
+    /**
+     * Get deal NBA
+     */
+    router.get('/knopilot/deals/:id/nba', async (req: Request, res: Response) => {
+      try {
+        const nba = await knopilotService.getNBA(getParam(req, 'id'));
+        res.json(nba);
+      } catch (err) {
+        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+      }
+    });
+
+    /**
+     * Regenerate deal NBA
+     */
+    router.post('/knopilot/deals/:id/nba', async (req: Request, res: Response) => {
+      try {
+        const nba = await knopilotService.generateNBA(getParam(req, 'id'));
+        res.json(nba);
+      } catch (err) {
+        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+      }
+    });
+
+    /**
+     * Get deal intelligence
+     */
+    router.get('/knopilot/deals/:id/intelligence', async (req: Request, res: Response) => {
+      try {
+        const intelligence = await knopilotService.getIntelligence(getParam(req, 'id'));
+        res.json(intelligence);
+      } catch (err) {
+        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+      }
+    });
+
+    /**
+     * List deal stakeholders
+     */
+    router.get('/knopilot/deals/:id/stakeholders', async (req: Request, res: Response) => {
+      try {
+        const stakeholders = await knopilotService.listStakeholders(getParam(req, 'id'));
+        res.json({ count: stakeholders.length, stakeholders });
+      } catch (err) {
+        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+      }
+    });
+
+    /**
+     * Add stakeholder to deal
+     */
+    router.post('/knopilot/deals/:id/stakeholders', async (req: Request, res: Response) => {
+      try {
+        const stakeholder = await knopilotService.addStakeholder(getParam(req, 'id'), req.body);
+        res.status(201).json(stakeholder);
+      } catch (err) {
+        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+      }
+    });
+
+    /**
+     * Update stakeholder
+     */
+    router.patch('/knopilot/deals/:id/stakeholders/:stakeholderId', async (req: Request, res: Response) => {
+      try {
+        const stakeholder = await knopilotService.updateStakeholder(
+          getParam(req, 'id'),
+          getParam(req, 'stakeholderId'),
+          req.body
+        );
+        res.json(stakeholder);
+      } catch (err) {
+        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+      }
+    });
+
+    /**
+     * List deal communications
+     */
+    router.get('/knopilot/deals/:id/communications', async (req: Request, res: Response) => {
+      try {
+        const communications = await knopilotService.listCommunications(getParam(req, 'id'));
+        res.json({ count: communications.length, communications });
+      } catch (err) {
+        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+      }
+    });
+
+    /**
+     * Add communication to deal
+     */
+    router.post('/knopilot/deals/:id/communications', async (req: Request, res: Response) => {
+      try {
+        const comm = await knopilotService.addCommunication(getParam(req, 'id'), req.body);
+        res.status(201).json(comm);
+      } catch (err) {
+        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+      }
+    });
+
+    /**
+     * Process communication (extract intelligence)
+     */
+    router.post('/knopilot/deals/:id/communications/:commId/process', async (req: Request, res: Response) => {
+      try {
+        await knopilotService.processCommunication(getParam(req, 'id'), getParam(req, 'commId'));
+        res.json({ message: 'Communication processed successfully' });
       } catch (err) {
         res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
       }

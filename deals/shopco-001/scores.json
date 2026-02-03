@@ -1,0 +1,27 @@
+{
+  "dealId": "shopco-001",
+  "updatedAt": "2026-02-03T12:00:00Z",
+  "aiReadinessScore": 72,
+  "championStrength": "strong",
+  "useCaseClarity": "defined",
+  "decisionTimeline": "this-quarter",
+  "budgetRange": "100k-500k",
+  "primaryPainPoint": "volume",
+  "technicalComplexity": "medium",
+  "competitiveThreat": "low",
+  "dealConfidence": 68,
+  "aiReadinessBreakdown": {
+    "executiveMandate": 20,
+    "technicalCapability": 15,
+    "useCaseClarity": 22,
+    "budgetTimeline": 15
+  },
+  "confidenceFactors": {
+    "championStrength": 15,
+    "budgetConfirmed": 10,
+    "technicalFit": 10,
+    "stakeholderEngagement": 15,
+    "competitivePosition": 12,
+    "decisionClarity": 6
+  }
+}

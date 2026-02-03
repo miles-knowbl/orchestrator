@@ -1,0 +1,44 @@
+[
+  {
+    "id": "sh-001",
+    "name": "Sarah Chen",
+    "title": "VP Customer Experience",
+    "email": "sarah.chen@shopco.com",
+    "role": "champion",
+    "sentiment": "supportive",
+    "lastInteraction": "2026-01-31T14:30:00Z",
+    "keyQuotes": [
+      "We need this live by June or we'll drown in tickets",
+      "This could be a game-changer for our support team"
+    ],
+    "concerns": []
+  },
+  {
+    "id": "sh-002",
+    "name": "Michael Torres",
+    "title": "CTO",
+    "email": "michael.torres@shopco.com",
+    "role": "decision-maker",
+    "sentiment": "neutral",
+    "keyQuotes": [],
+    "concerns": [
+      "Integration complexity with existing auth system"
+    ]
+  },
+  {
+    "id": "sh-003",
+    "name": "Lisa Park",
+    "title": "CFO",
+    "email": "lisa.park@shopco.com",
+    "role": "decision-maker",
+    "sentiment": "skeptical",
+    "lastInteraction": "2026-01-15T10:00:00Z",
+    "keyQuotes": [
+      "Need to see ROI vs. hiring more agents"
+    ],
+    "concerns": [
+      "Budget justification",
+      "ROI clarity"
+    ]
+  }
+]

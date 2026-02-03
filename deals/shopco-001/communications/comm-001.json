@@ -1,0 +1,20 @@
+{
+  "id": "comm-001",
+  "dealId": "shopco-001",
+  "type": "meeting",
+  "subject": "Discovery Call - ShopCo Returns Automation",
+  "content": "Meeting Notes - Discovery Call with Sarah Chen\n\nAttendees: Sarah Chen (VP CX), John (Knowbl)\n\nKey Discussion Points:\n\n1. PAIN POINTS\n- 300% increase in support tickets over past year\n- Current team of 15 agents overwhelmed\n- Returns and exchanges are 40% of volume\n- Repetitive questions about return policy\n\n2. TIMELINE\n- \"We need this live by June or we'll drown in tickets\"\n- Q2 deadline is firm - tied to peak season prep\n\n3. BUDGET\n- \"Budget approved for $200-400K\"\n- CFO Lisa Park needs ROI justification\n- Standard vendor review process\n\n4. TECHNICAL\n- Shopify Plus platform\n- Okta authentication\n- Need to integrate with existing order system\n\n5. STAKEHOLDERS\n- Sarah driving initiative, strong champion\n- CTO Michael Torres not yet involved - Sarah will loop him in\n- CFO Lisa mentioned as budget-conscious\n\n6. USE CASE\n- Primary: Tier 1 chat for returns/exchanges\n- Could expand to order status, basic product questions\n\nNext Steps:\n- Send case study on Shopify integration\n- Schedule technical call with CTO\n- Prepare ROI calculator for CFO",
+  "participants": ["Sarah Chen", "John (Knowbl)"],
+  "timestamp": "2026-01-19T14:00:00Z",
+  "createdAt": "2026-01-19T16:00:00Z",
+  "processed": true,
+  "extractedInsights": [
+    "Pain point: 300% volume increase",
+    "Pain point: Returns/exchanges 40% of volume",
+    "Timeline: Live by June (Q2)",
+    "Budget: $200-400K approved",
+    "Technical: Shopify Plus, Okta",
+    "Stakeholder: CTO not yet engaged",
+    "Stakeholder: CFO needs ROI"
+  ]
+}

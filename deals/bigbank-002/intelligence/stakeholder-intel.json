@@ -1,0 +1,27 @@
+{
+  "dealId": "bigbank-002",
+  "updatedAt": "2026-02-01T11:00:00Z",
+  "items": [
+    {
+      "name": "James Wilson",
+      "role": "SVP Ops - Champion",
+      "sentiment": "Strongly supportive, driving initiative",
+      "influence": "High - reports to COO",
+      "source": "comm-101"
+    },
+    {
+      "name": "Amanda Rodriguez",
+      "role": "CTO - Technical decision",
+      "sentiment": "Supportive after prototype",
+      "influence": "Critical for technical approval",
+      "source": "comm-102"
+    },
+    {
+      "name": "Robert Kim",
+      "role": "CISO - Security gate",
+      "sentiment": "Cautious, standard security review",
+      "influence": "Can block deal if security not cleared",
+      "source": "comm-102"
+    }
+  ]
+}

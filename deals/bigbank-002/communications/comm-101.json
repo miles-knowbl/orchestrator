@@ -1,0 +1,18 @@
+{
+  "id": "comm-101",
+  "dealId": "bigbank-002",
+  "type": "meeting",
+  "subject": "Discovery Call - BigBank Contact Center",
+  "content": "Discovery meeting with James Wilson (SVP Ops)\n\nBackground:\n- BigBank has 2M+ calls per month\n- Average cost per call is $8.50\n- Board mandate to reduce contact center costs\n- Previous chatbot attempt failed - poor containment\n\nKey Pain Points:\n- Cost per call too high\n- 40% of calls could be deflected to self-service\n- Need for 24/7 availability\n\nBudget:\n- $500K-$750K allocated for Q1\n- Part of larger digital transformation initiative\n\nTimeline:\n- Q1 launch target\n- Board tracking progress monthly\n\nNext Steps:\n- Prototype for account inquiry use case\n- Technical architecture review with CTO",
+  "participants": ["James Wilson", "John (Knowbl)"],
+  "timestamp": "2025-12-20T14:00:00Z",
+  "createdAt": "2025-12-20T16:00:00Z",
+  "processed": true,
+  "extractedInsights": [
+    "Pain point: $8.50 cost per call",
+    "Pain point: 40% deflection opportunity",
+    "Budget: $500K-$750K",
+    "Timeline: Q1 launch",
+    "Board mandate"
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "id": "bigbank-002",
+  "name": "Contact Center Deflection",
+  "company": "BigBank",
+  "industry": "Financial Services",
+  "stage": "contracting",
+  "value": 500000,
+  "createdAt": "2025-12-01T10:00:00Z",
+  "updatedAt": "2026-02-03T12:00:00Z",
+  "lastInteractionDate": "2026-02-01T11:00:00Z",
+  "daysInStage": 10,
+  "stageHistory": [
+    {
+      "from": null,
+      "to": "lead",
+      "at": "2025-12-01T10:00:00Z"
+    },
+    {
+      "from": "lead",
+      "to": "target",
+      "at": "2025-12-10T09:00:00Z",
+      "reason": "Qualified, meeting scheduled"
+    },
+    {
+      "from": "target",
+      "to": "discovery",
+      "at": "2025-12-20T16:00:00Z",
+      "reason": "Discovery complete"
+    },
+    {
+      "from": "discovery",
+      "to": "contracting",
+      "at": "2026-01-24T14:00:00Z",
+      "reason": "Prototype approved, moving to contract"
+    }
+  ]
+}

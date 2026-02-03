@@ -1,0 +1,13 @@
+{
+  "dealId": "shopco-001",
+  "updatedAt": "2026-01-31T14:30:00Z",
+  "competitors": [],
+  "buildVsBuy": "Buy preference - no internal AI team",
+  "previousVendorFailures": [],
+  "signals": [
+    {
+      "signal": "No active competitive evaluation mentioned",
+      "source": "comm-001"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "dealId": "shopco-001",
+  "updatedAt": "2026-01-31T14:30:00Z",
+  "items": [
+    {
+      "name": "Sarah Chen",
+      "role": "VP CX - Champion",
+      "sentiment": "Highly supportive, driving initiative",
+      "influence": "Strong within CX org, needs exec alignment",
+      "source": "comm-001"
+    },
+    {
+      "name": "Michael Torres",
+      "role": "CTO - Technical decision",
+      "sentiment": "Unknown, not yet engaged",
+      "influence": "Critical for technical approval",
+      "source": "comm-001"
+    },
+    {
+      "name": "Lisa Park",
+      "role": "CFO - Budget holder",
+      "sentiment": "Budget-conscious, needs ROI",
+      "influence": "Final budget approval",
+      "source": "comm-001"
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+[
+  {
+    "id": "sh-101",
+    "name": "James Wilson",
+    "title": "SVP Operations",
+    "email": "james.wilson@bigbank.com",
+    "role": "champion",
+    "sentiment": "supportive",
+    "lastInteraction": "2026-02-01T11:00:00Z",
+    "keyQuotes": [
+      "This will transform our contact center efficiency",
+      "We're committed to making this happen Q1"
+    ],
+    "concerns": []
+  },
+  {
+    "id": "sh-102",
+    "name": "Amanda Rodriguez",
+    "title": "CTO",
+    "email": "amanda.rodriguez@bigbank.com",
+    "role": "decision-maker",
+    "sentiment": "supportive",
+    "lastInteraction": "2026-01-28T15:00:00Z",
+    "keyQuotes": [
+      "Architecture looks solid, security team is reviewing"
+    ],
+    "concerns": []
+  },
+  {
+    "id": "sh-103",
+    "name": "Robert Kim",
+    "title": "CISO",
+    "email": "robert.kim@bigbank.com",
+    "role": "influencer",
+    "sentiment": "neutral",
+    "lastInteraction": "2026-01-30T10:00:00Z",
+    "keyQuotes": [],
+    "concerns": [
+      "Need SOC 2 Type 2 certification",
+      "Data residency requirements"
+    ]
+  },
+  {
+    "id": "sh-104",
+    "name": "Patricia Chen",
+    "title": "VP Procurement",
+    "email": "patricia.chen@bigbank.com",
+    "role": "influencer",
+    "sentiment": "neutral",
+    "lastInteraction": "2026-02-01T11:00:00Z",
+    "keyQuotes": [],
+    "concerns": [
+      "Contract terms alignment"
+    ]
+  }
+]

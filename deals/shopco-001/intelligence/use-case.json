@@ -1,0 +1,20 @@
+{
+  "dealId": "shopco-001",
+  "updatedAt": "2026-01-31T14:30:00Z",
+  "clarity": "defined",
+  "primaryUseCase": "Tier 1 chat automation for returns and exchanges",
+  "secondaryUseCases": [
+    "Order status inquiries",
+    "Basic product questions"
+  ],
+  "signals": [
+    {
+      "signal": "Clear automation target: returns/exchanges",
+      "source": "comm-001"
+    },
+    {
+      "signal": "Specific volume metrics available (300% growth)",
+      "source": "comm-001"
+    }
+  ]
+}

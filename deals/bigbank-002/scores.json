@@ -1,0 +1,27 @@
+{
+  "dealId": "bigbank-002",
+  "updatedAt": "2026-02-03T12:00:00Z",
+  "aiReadinessScore": 85,
+  "championStrength": "strong",
+  "useCaseClarity": "scoped",
+  "decisionTimeline": "immediate",
+  "budgetRange": "500k-1m",
+  "primaryPainPoint": "cost",
+  "technicalComplexity": "medium",
+  "competitiveThreat": "low",
+  "dealConfidence": 82,
+  "aiReadinessBreakdown": {
+    "executiveMandate": 25,
+    "technicalCapability": 20,
+    "useCaseClarity": 25,
+    "budgetTimeline": 15
+  },
+  "confidenceFactors": {
+    "championStrength": 15,
+    "budgetConfirmed": 15,
+    "technicalFit": 10,
+    "stakeholderEngagement": 20,
+    "competitivePosition": 12,
+    "decisionClarity": 10
+  }
+}

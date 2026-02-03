@@ -1,0 +1,78 @@
+{
+  "dealId": "shopco-001",
+  "generatedAt": "2026-02-03T12:00:00Z",
+  "stage": "discovery",
+  "actions": [
+    {
+      "id": "nba-001",
+      "action": "Create executive one-pager for CFO Lisa Park",
+      "nbaScore": 92,
+      "likelihood": 85,
+      "effort": "low",
+      "effortFactor": 100,
+      "championValue": 95,
+      "primaryImpact": "Champion Sarah (gives her ammo for CFO)",
+      "secondaryImpact": "CFO Lisa (addresses ROI concerns)",
+      "timing": "This week (before budget review)",
+      "reasoning": "Addresses her ROI concerns, enables Sarah to sell up",
+      "stageAppropriate": true
+    },
+    {
+      "id": "nba-002",
+      "action": "Schedule technical call with CTO Michael Torres",
+      "nbaScore": 88,
+      "likelihood": 90,
+      "effort": "medium",
+      "effortFactor": 60,
+      "championValue": 80,
+      "primaryImpact": "CTO Michael (builds confidence in technical fit)",
+      "timing": "Next week",
+      "reasoning": "Address integration concerns early, get technical buy-in",
+      "stageAppropriate": true
+    },
+    {
+      "id": "nba-003",
+      "action": "Send Shopify + Okta integration case study",
+      "nbaScore": 84,
+      "likelihood": 80,
+      "effort": "low",
+      "effortFactor": 100,
+      "championValue": 85,
+      "primaryImpact": "CTO Michael (de-risks integration)",
+      "timing": "Before technical call",
+      "reasoning": "Proves we've solved their exact tech stack before",
+      "stageAppropriate": true
+    },
+    {
+      "id": "nba-004",
+      "action": "Propose free custom prototype",
+      "nbaScore": 81,
+      "likelihood": 95,
+      "effort": "high",
+      "effortFactor": 30,
+      "championValue": 90,
+      "primaryImpact": "Buying Committee (tangible proof of value)",
+      "timing": "After CTO engagement",
+      "reasoning": "Strong use case clarity, budget confirmed, champion ready",
+      "stageAppropriate": true
+    },
+    {
+      "id": "nba-005",
+      "action": "Share ROI calculator: in-house build vs. Knowbl",
+      "nbaScore": 78,
+      "likelihood": 75,
+      "effort": "low",
+      "effortFactor": 100,
+      "championValue": 90,
+      "primaryImpact": "CFO Lisa (quantifies value)",
+      "timing": "Include in one-pager",
+      "reasoning": "CFO needs business case justification",
+      "stageAppropriate": true
+    }
+  ],
+  "risks": [
+    "CTO not yet engaged — Technical decision-maker still unaware (blocker risk)",
+    "CFO skeptical on ROI — Budget approval at risk without business case",
+    "Tight timeline (Q2) — Only 4 months to deploy, need to move fast"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "dealId": "bigbank-002",
+  "updatedAt": "2026-02-01T11:00:00Z",
+  "clarity": "scoped",
+  "primaryUseCase": "Contact center call deflection for account inquiries",
+  "secondaryUseCases": [
+    "Balance inquiries",
+    "Transaction history",
+    "Branch/ATM locator"
+  ],
+  "signals": [
+    {
+      "signal": "Prototype completed and approved",
+      "source": "comm-102"
+    },
+    {
+      "signal": "Detailed requirements documented",
+      "source": "comm-102"
+    }
+  ]
+}
