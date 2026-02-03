@@ -72,6 +72,7 @@
     {
       "id": "PAT-001",
       "name": "unified-loop-architecture",
+      "category": "architectural",
       "context": "When building loops that need to share context and learn from each other",
       "solution": "Use the Organization → System → Module hierarchy with Dream State documents at each tier. All loops load context on init and archive runs on completion.",
       "example": "engineering-loop v5.0.0 loads ~/.claude/DREAM-STATE.md, {repo}/.claude/DREAM-STATE.md, and recent runs via query_runs on initialization",
@@ -83,6 +84,7 @@
     {
       "id": "PAT-002",
       "name": "completion-archival-protocol",
+      "category": "phase-bound",
       "context": "When a loop reaches COMPLETE phase",
       "solution": "Archive full state + summary to ~/.claude/runs/{year-month}/{system}-{loop}-{timestamp}.json, update Dream State at appropriate tier, prune active state file",
       "example": "learning-loop completes → archive_run() → update DREAM-STATE.md → delete learning-state.json",
@@ -94,8 +96,11 @@
     {
       "id": "PAT-003",
       "name": "deep-context-protocol",
-      "context": "Before any non-trivial task or decision",
-      "solution": "Ask 5-10+ clarifying questions across all dimensions (problem, constraints, success criteria, risks, stakeholders). Keep asking until user signals 'that's everything'. Summarize understanding before proceeding.",
+      "category": "ambient",
+      "ooda": "Orient",
+      "reflex": "What context am I missing?",
+      "context": "Continuously, as a reflex — especially before non-trivial tasks or decisions",
+      "solution": "Ask clarifying questions across all dimensions (problem, constraints, success criteria, risks, stakeholders). Keep asking until context is sufficient. Summarize understanding before proceeding.",
       "example": "User asks for auth system → probe: auth methods, compliance needs, user volume, session handling, MFA requirements, API keys needed, etc.",
       "uses": 1,
       "confidence": "high",
@@ -105,17 +110,23 @@
     {
       "id": "PAT-004",
       "name": "terrain-check",
-      "context": "After every substantive response during execution",
-      "solution": "Assess uphill (uncertain, assuming, multiple paths) vs downhill (clear, verified, just executing). If uphill, surface questions. If downhill, proceed without friction. Watch for terrain transitions.",
-      "example": "Implemented auth middleware → [uphill: assumed JWT] → 'Quick check: I went with JWT. Should I stick with that, or do you prefer sessions?'",
+      "category": "ambient",
+      "ooda": "Observe",
+      "reflex": "Where am I in the landscape?",
+      "context": "Continuously — after every substantive response, and when assessing project/module landscape",
+      "solution": "Assess uphill (uncertain, assuming, multiple paths) vs downhill (clear, verified, just executing). If uphill, surface questions. If downhill, proceed without friction. Watch for terrain transitions. When scoping work, map the landscape: existing modules, dependencies, layers, what's complete vs remaining.",
+      "example": "Implemented auth middleware → [uphill: assumed JWT] → 'Quick check: I went with JWT. Should I stick with that, or do you prefer sessions?' | Scoping new feature → explore codebase → identify dependencies → place in correct layer",
+      "fusedFrom": ["terrain-check", "roadmapping-process"],
       "uses": 1,
       "confidence": "high",
       "createdAt": "2025-01-29T00:00:00Z",
+      "updatedAt": "2026-02-03T00:00:00Z",
       "lastUsed": "2025-01-29T00:00:00Z"
     },
     {
       "id": "PAT-005",
       "name": "docs-alignment-protocol",
+      "category": "phase-bound",
       "context": "After every loop reaches COMPLETE phase",
       "solution": "Run docs-alignment skill to scan MECE categories, update Dream States with progress, validate cross-references, regenerate indexes, and prune stale documentation.",
       "example": "engineering-loop completes → docs-alignment scans all tiers → updates DREAM-STATE.md with new module progress → fixes broken links in ARCHITECTURE.md → regenerates INDEX.md",
@@ -127,28 +138,38 @@
     {
       "id": "PAT-006",
       "name": "leverage-protocol",
-      "context": "At every loop completion boundary",
-      "solution": "Evaluate available loops against value equation: (DSA×0.40 + Unlock×0.25 + Likelihood×0.15) / (Time×0.10 + Effort×0.10). Always propose a specific loop. If needed capability doesn't exist, propose meta-loop to create it first.",
-      "example": "engineering-loop completes → evaluate: engineering-loop@auth (8.2), bugfix-loop@tests (5.1), learning-loop@review (4.8) → recommend auth-service as highest leverage",
+      "category": "ambient",
+      "ooda": "Decide",
+      "reflex": "What's the highest-leverage move?",
+      "context": "At every loop completion boundary, and when planning multi-move strategy",
+      "solution": "Evaluate available loops against value equation: (DSA×0.40 + Unlock×0.25 + Likelihood×0.15) / (Time×0.10 + Effort×0.10). Always propose a specific loop. If needed capability doesn't exist, propose meta-loop to create it first. Think multiple moves ahead: detect loop co-occurrence patterns (engineering→bugfix→distribution) and plan the full line, not just the next move.",
+      "example": "engineering-loop completes → evaluate full line: engineering@auth (8.2) → bugfix@tests → distribution → recommend auth-service with downstream sequence visible",
+      "fusedFrom": ["leverage-protocol", "loop-sequencing-chess-lines"],
       "uses": 1,
       "confidence": "medium",
       "createdAt": "2026-01-30T00:00:00Z",
+      "updatedAt": "2026-02-03T00:00:00Z",
       "lastUsed": "2026-01-30T00:00:00Z"
     },
     {
       "id": "PAT-007",
       "name": "learning-feedback-loop",
-      "context": "When skills are executed during loops",
-      "solution": "Call complete_skill() with rubric scores. At COMPLETE phase, call complete_run_tracking() to persist signals and generate proposals. Review proposals via list_upgrade_proposals, approve via approve_upgrade_proposal.",
-      "example": "complete_skill(rubric={completeness:4, quality:5, friction:3, relevance:4}) → [COMPLETE] → complete_run_tracking() → 'New proposals: 1' → list_upgrade_proposals → approve",
+      "category": "ambient",
+      "ooda": "Act",
+      "reflex": "Calibrate — improve what needs improving",
+      "context": "Continuously — after substantive actions, notice what worked and what didn't. When patterns emerge, act on them.",
+      "solution": "Continuously calibrate based on feedback. After substantive actions, notice what worked and what didn't. When patterns emerge (section improvised 2+ times, estimate consistently off), improve skills, adjust estimates, update beliefs. The 'Act' is the calibration itself — versioning skills, updating models, applying learnings.",
+      "example": "Notice: auth section improvised twice → propose adding to skill | Estimate was 2x off → adjust calibration multiplier | Pattern detected → formalize into memory",
       "uses": 1,
       "confidence": "medium",
       "createdAt": "2026-01-30T00:00:00Z",
+      "updatedAt": "2026-02-03T00:00:00Z",
       "lastUsed": "2026-01-30T00:00:00Z"
     },
     {
       "id": "PAT-008",
       "name": "version-alignment-architecture",
+      "category": "architectural",
       "context": "When version numbers need to stay aligned across server, releases, and UI",
       "solution": "Single source of truth in package.json. Create src/version.ts utility that reads at runtime. GitHub Actions reads package.json for releases. UI parses from release body.",
       "example": "package.json:0.7.0 → version.ts reads it → /health returns 0.7.0 → release body has 'Version: 0.7.0' → /distribute page shows 0.7.0",
@@ -160,6 +181,8 @@
     {
       "id": "PAT-009",
       "name": "explicit-rules-enforcement",
+      "category": "relocated",
+      "relocatedTo": "behavior-guarantees module (deferred)",
       "context": "When a protocol or skill has implicit behavior that gets skipped",
       "solution": "Add a 'Critical Rules' section with explicit numbered rules, ❌/✅ examples, decision trees, and anti-patterns. Implicit understanding fails; explicit rules succeed.",
       "example": "Leverage protocol was being skipped → added Rule 1 (distribution after code), Rule 2 (never say done), Rule 3 (look beyond queue) with anti-patterns → behavior corrected",
@@ -171,6 +194,7 @@
     {
       "id": "PAT-010",
       "name": "self-improvement-architecture",
+      "category": "architectural",
       "context": "When building a system that needs to observe its own behavior and improve autonomously",
       "solution": "Two-module design: OBSERVE layer (Analytics) reads from all services without modification, surfaces insights via aggregation. ACT layer (Learning) consumes Analytics signals, generates prioritized proposals, applies improvements with human-in-the-loop approval. Separation ensures read operations don't cause side effects.",
       "example": "Execute loops → AnalyticsService.getSkillHealth() identifies low-scoring skills → ImprovementOrchestrator.processAnalyticsSignals() generates proposals → Human approves → LearningService.applyProposal() upgrades skill → Next execution benefits",
@@ -182,6 +206,8 @@
     {
       "id": "PAT-011",
       "name": "roadmapping-process",
+      "category": "fused",
+      "fusedInto": "PAT-004 (terrain-check)",
       "context": "When creating a system roadmap from a user's coded brainstorm list",
       "solution": "1) Receive user's coded list, 2) Explore codebase to understand existing modules, 3) Ask clarifying questions batched by category (acronyms, scope, differentiation, dependencies, updates vs new), 4) Identify dependencies between modules, 5) Separate updates from new modules, 6) Organize into 7 layers based on purpose and dependencies, 7) Create both ROADMAP.md and terminal visualization",
       "example": "User pastes coded list → explore src/services, loops/, skills/ → ask about 'ADIR', 'autonomous', 'tech trees vs skill trees' → identify 2-layer-orchestration unlocks autonomous → place in Layer 0 Foundation → create ROADMAP.md",
@@ -193,6 +219,8 @@
     {
       "id": "PAT-012",
       "name": "ADIR-reasoning-cycle",
+      "category": "relocated",
+      "relocatedTo": "dream-loop integration (when dreaming module is un-deferred)",
       "context": "When reasoning needs to improve itself, not just reach conclusions. Synergizes with Deep Context Protocol, Leverage Protocol, MECE Opportunity Mapping, and Terrain Check.",
       "solution": "Four phases that form a meta-cognitive loop: (A) Abductive - generate hypotheses from observations, (D) Deductive - derive testable predictions, (I) Inductive - update beliefs from results, (R) Reflexive - audit the frame itself and produce Context Delta. The Reflexive phase outputs {keep, discard, add, reweight, next_tests, guardrails} to improve the instruction set, not just conclusions.",
       "synergies": {
@@ -225,6 +253,7 @@
     {
       "id": "PAT-013",
       "name": "finite-infinite-game-framing",
+      "category": "architectural",
       "context": "When aligning work at different hierarchy levels to motivate coherent action",
       "solution": "Frame module→system and system→org as finite games with clear win conditions, checkpoints, and 'done' states. Frame org (mission) as infinite game with cosmic purpose and continuous play. Finite games ladder up to enable infinite play.",
       "example": "Module: 'Ship roadmapping module' (finite, clear deliverable) → System: 'Complete orchestrator for launch' (finite, checkpoint) → Org: 'Augment human capability indefinitely' (infinite, mission)",
@@ -236,6 +265,8 @@
     {
       "id": "PAT-014",
       "name": "loop-sequencing-chess-lines",
+      "category": "fused",
+      "fusedInto": "PAT-006 (leverage-protocol)",
       "context": "When planning beyond the immediate next loop to optimize multi-move strategy",
       "solution": "Detect patterns of loop co-occurrence (like NLP n-grams). Use that intuition to look multiple moves ahead in the 'line'. Goes beyond single-move leverage protocol to multi-move planning inspired by chess.",
       "example": "Notice: engineering-loop often followed by bugfix-loop then distribution-loop. When starting engineering-loop, plan the full line: engineering→bugfix→distribution, not just engineering.",
@@ -247,6 +278,7 @@
     {
       "id": "PAT-015",
       "name": "completion-format-protocol",
+      "category": "phase-bound",
       "context": "When any loop iteration completes and needs to present results and next steps",
       "solution": "Use standard completion format: (1) Completion banner with loop + primitive, (2) Key deliverables summary, (3) Next highest leverage move with FULL reasoning (Dream State, Downstream Unlock, Likelihood), (4) Alternatives Considered with scores, (5) Available moves (UNBLOCKED ONLY) grouped by category/layer, (6) Deferred items go to last layer (not separate section), (7) Clear call-to-action. Hide completed and blocked items from menu.",
       "example": "/engineering-loop → spaced-repetition: COMPLETE → [deliverables box] → NEXT: proposing-decks (V: 6.05) with reasoning → Alternatives Considered: ooda-clocks (5.60) → Available Moves (unblocked): Layer 1: ooda-clocks, Layer 5: proposing-decks → 'Say go to start'",
@@ -259,6 +291,7 @@
     {
       "id": "PAT-016",
       "name": "thread-per-execution",
+      "category": "phase-bound",
       "context": "When sending Slack notifications for loop executions to maintain context",
       "solution": "Each loop execution opens a new Slack thread via loop_start notification. The first message (without thread_ts) creates the thread; its timestamp becomes the thread_ts for all subsequent messages. SlackAdapter tracks executionId→threadTs mapping. FormattedMessage includes metadata.executionId for automatic thread routing.",
       "example": "notifyLoopStart(loopId, executionId, target) → first message creates thread → gate_waiting for same executionId → automatically routes to same thread → loop_complete closes the thread context",
@@ -275,5 +308,5 @@
     }
   },
   "createdAt": "2026-01-25T00:00:00Z",
-  "updatedAt": "2026-02-01T12:00:00Z"
+  "updatedAt": "2026-02-03T12:00:00Z"
 }

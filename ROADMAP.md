@@ -8,8 +8,8 @@
 
 **System**: Orchestrator — Self-improving meta-system where skills are the atomic primitive
 **Dream State**: Autonomous, coherent, local-first system that compounds leverage through skill-based ontology
-**Progress**: 20/31 modules complete (65%) + 8 deferred
-**Remaining**: voice, sales-loop, ops-loop
+**Progress**: 19/32 modules complete (59%) + 11 deferred
+**Remaining**: sales-loop, ops-loop
 
 ---
 
@@ -26,13 +26,13 @@ Layer 4  ───────────────────────�
          sales-loop, ops-loop, business-model-loop (deferred), go-to-market-loop (deferred), brownfield-specialization (deferred)
 
 Layer 3  ───────────────────────────────────────────────────────────────────────
-         voice, proactive-messaging ✓, slack-integration ✓
+         proactive-messaging ✓, slack-integration ✓, natural-conversation (deferred), multiplayer (deferred)
 
 Layer 2  ───────────────────────────────────────────────────────────────────────
          patterns-roundup ✓, scoring ✓, mece-opportunity-mapping ✓, coherence-system ✓
 
 Layer 1  ───────────────────────────────────────────────────────────────────────
-         autonomous ✓, dreaming ✓, multi-agent-worktrees ✓, loop-sequencing ✓, kanban ✓, ooda-clocks ✓, skill-trees ✓, tech-trees (deferred), ladder-of-abstraction (deferred)
+         autonomous ✓, dreaming (deferred), multi-agent-worktrees ✓, loop-sequencing ✓, kanban ✓, ooda-clocks ✓, skill-trees ✓, tech-trees (deferred), ladder-of-abstraction (deferred)
 
 Layer 0  ───────────────────────────────────────────────────────────────────────
          roadmapping ✓, 2-layer-orchestration ✓, knowledge-graph-ontology ✓
@@ -60,7 +60,7 @@ Layer 0  ───────────────────────�
 | **tech-trees** | Macroscopic technology progressions that cultures/orgs pursue. Predictive capabilities (potentially RL-based like AlphaGo with Markov decision trees) that inspire MECE opportunity mapping at system and module levels. | knowledge-graph-ontology, mece-opportunity-mapping | *deferred* |
 | **ladder-of-abstraction-interfaces** | UI showing the same loop at different zoom levels (module/system/org). Music-gear-like looping interfaces for piloting, co-piloting, or playing co-op PvE with the orchestrator. | kanban | *deferred*
 | **autonomous** ✓ | Full loop execution without human gates + background continuous operation. "It works while I sleep." The orchestrator advances dream state while you're away. | 2-layer-orchestration, proactive-messaging |
-| **dreaming** ✓ | Sleep/background processing mode for proposing new modules→system and systems→org. The system "dreams up" new work while idle, ready for review when you return. | autonomous |
+| **dreaming** | Sleep/background processing mode for proposing new modules→system and systems→org. The system "dreams up" new work while idle, ready for review when you return. Needs roadmap state sync before useful. | autonomous | *deferred* |
 | **multi-agent-worktrees** ✓ | Multiple sets of parallel agents across two hierarchy levels and multiple humans. Thoughtful coordination when collaborators each have their own agent sets working on isolated git worktrees. | 2-layer-orchestration |
 | **loop-sequencing** ✓ | Developing intuition for which loops commonly run together (like NLP pattern detection) and using that to look multiple moves ahead in the "line" (chess-inspired). Beyond single-move leverage protocol to multi-move planning. | leverage-protocol (exists) |
 
@@ -81,9 +81,10 @@ Layer 0  ───────────────────────�
 
 | Module | Description | Depends On |
 |--------|-------------|------------|
-| **voice** | Voice input and output for piloting the orchestrator. Naturalistic speech for contexts where you can't hold long documents in your head (driving, jogging). Dictate requirements, hear status. | — |
 | **proactive-messaging** ✓ | System reaches out across channels: terminal, Slack, email, text. Alerts you to completions, proposals, blockers. | — |
 | **slack-integration** ✓ | Bidirectional: receive commands and capture to inbox, plus send proactive messages. | proactive-messaging |
+| **natural-conversation** | Voice input and output for piloting the orchestrator. Naturalistic speech for contexts where you can't hold long documents in your head (driving, jogging). Dictate requirements, hear status. | — | *deferred* |
+| **multiplayer** | Multi-engineer loop coordination. Transform the single-player loops experience into multiplayer: command parsing across engineers, thread management per engineer, merge/rebase workflows, engineer status tracking, and cross-worktree coordination. Currently exists as `src/services/slack-integration/` — needs consolidation with `proactive-messaging/adapters/SlackAdapter.ts`. | slack-integration, multi-agent-worktrees | *deferred* |
 
 ---
 
@@ -143,6 +144,10 @@ Layer 0  ───────────────────────�
 | ladder-of-abstraction-interfaces | UI complexity, requires stable core | After core visualization (ooda-clocks) |
 | ecosystem-roundup | Broad scope across all primitives | When ecosystem has more content to round up |
 | brownfield-specialization | Patterns exist, needs formalization | When brownfield work increases |
+| natural-conversation | Voice I/O not immediately needed | When mobile-first usage increases |
+| multiplayer | Multi-engineer coordination exists but needs consolidation | When team usage begins; consolidate slack-integration service into proactive-messaging |
+| dreaming | Needs roadmap state sync; will integrate ADIR-reasoning-cycle | After roadmap integration fixed |
+| behavior-guarantees | System for enforcing/guaranteeing LLM behavior; explicit-rules-enforcement pattern will live here | When behavior enforcement patterns mature |
 
 ---
 
@@ -159,13 +164,13 @@ Layer 0  ───────────────────────�
 | Layer | Complete | Total | Modules |
 |-------|----------|-------|---------|
 | 0 | 3 | 3 | roadmapping ✓, 2-layer-orchestration ✓, knowledge-graph-ontology ✓ |
-| 1 | 7 | 9 | kanban ✓, ooda-clocks ✓, skill-trees ✓, tech-trees (deferred), ladder-of-abstraction (deferred), autonomous ✓, dreaming ✓, multi-agent-worktrees ✓, loop-sequencing ✓ |
+| 1 | 6 | 9 | kanban ✓, ooda-clocks ✓, skill-trees ✓, tech-trees (deferred), ladder-of-abstraction (deferred), autonomous ✓, dreaming (deferred), multi-agent-worktrees ✓, loop-sequencing ✓ |
 | 2 | 4 | 4 | patterns-roundup ✓, scoring ✓, mece-opportunity-mapping ✓, coherence-system ✓ |
-| 3 | 2 | 3 | voice, proactive-messaging ✓, slack-integration ✓ |
+| 3 | 2 | 4 | proactive-messaging ✓, slack-integration ✓, natural-conversation (deferred), multiplayer (deferred) |
 | 4 | 0 | 5 | sales-loop, ops-loop, business-model-loop (deferred), go-to-market-loop (deferred), brownfield-specialization (deferred) |
 | 5 | 4 | 6 | game-design ✓, co-op-skill-acquisition (deferred), proposing-decks ✓, spaced-repetition ✓, auto-updating ✓, ecosystem-roundup (deferred) |
 | 6 | 0 | 1 | local-first (deferred) |
-| **Complete** | **20** | **31** | **65%** |
+| **Complete** | **19** | **32** | **59%** |
 | Updates | 2 | 2 | distribution-loop ✓, InboxProcessor ✓ |
 
 ---
@@ -185,10 +190,10 @@ Layer 0  ───────────────────────�
     │ 2-LAYER ORCH  │              │ KNOWLEDGE GRAPH │              │  LOCAL-FIRST    │
     └───────┬───────┘              └────────┬────────┘              └────────┬────────┘
             │                                │                                │
-            ├──► autonomous                  ├──► skill-trees                 ├──► voice
-            ├──► dreaming                    ├──► tech-trees                  ├──► proactive-messaging
-            └──► multi-agent-worktrees       ├──► mece-opportunity-mapping    ├──► slack-integration
-                                             ├──► co-op-skill-acquisition     └──► auto-updating
+            ├──► autonomous                  ├──► skill-trees                 ├──► proactive-messaging
+            ├──► dreaming (deferred)         ├──► tech-trees                  ├──► slack-integration
+            └──► multi-agent-worktrees       ├──► mece-opportunity-mapping    ├──► auto-updating
+                                             ├──► co-op-skill-acquisition     └──► multiplayer (deferred)
                                              └──► spaced-repetition
 
     ┌───────────────┐              ┌─────────────────┐
@@ -224,8 +229,8 @@ Phase 3: Intelligence ✓ COMPLETE
   9. coherence-system ✓
   10. loop-sequencing ✓
 
-Phase 4: Layer 1 Continuation ✓ COMPLETE
-  11. dreaming ✓
+Phase 4: Layer 1 Continuation (partial)
+  11. dreaming (deferred)
   12. multi-agent-worktrees ✓
 
 Phase 5: Visualization ✓ COMPLETE
@@ -241,14 +246,15 @@ Phase 6: Meta & Interface ✓ COMPLETE
   20. slack-integration ✓
 
 Phase 7: Remaining Modules ◄── YOU ARE HERE
-  21. voice (Layer 3)
-  22. sales-loop (Layer 4)
-  23. ops-loop (Layer 4)
-  24. auto-updating ✓ (Layer 5) — COMPLETE
+  21. sales-loop (Layer 4)
+  22. ops-loop (Layer 4)
 
 Deferred:
   - tech-trees (Layer 1)
   - ladder-of-abstraction-interfaces (Layer 1)
+  - dreaming (Layer 1) — needs roadmap state sync
+  - natural-conversation (Layer 3) — voice I/O
+  - multiplayer (Layer 3) — multi-engineer coordination
   - brownfield-specialization (Layer 4)
   - business-model-loop (Layer 4)
   - go-to-market-loop (Layer 4)
@@ -306,11 +312,10 @@ Deferred:
 
 ## Next Action
 
-**Progress**: 20/31 modules complete (65%) + 8 deferred
+**Progress**: 19/32 modules complete (59%) + 11 deferred
 **Available Modules** (unblocked, not deferred):
-- Layer 3: voice
 - Layer 4: sales-loop, ops-loop
 
-**Recommended**: voice (completes Layer 3 interface capabilities)
+**Recommended**: sales-loop (domain loop with clear structure)
 
 **Note**: ADIR is now captured as pattern PAT-012 in memory/orchestrator.json rather than a standalone module. It synergizes with Deep Context Protocol, Leverage Protocol, MECE Opportunity Mapping, and Terrain Check.
