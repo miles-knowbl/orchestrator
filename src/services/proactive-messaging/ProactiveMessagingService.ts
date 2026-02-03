@@ -1065,18 +1065,23 @@ export class ProactiveMessagingService {
     let prompt: string;
 
     if (task.type === 'start_next_loop') {
-      // Start next loop task - run leverage protocol and start recommended loop
+      // Start next loop task - pop from async-queue and execute
       const completedLoop = task.completedLoopId || 'unknown';
       const completedModule = task.completedModule || 'unknown';
-      prompt = `TASK FROM SLACK (task ${task.id}): Start the next highest leverage loop. ` +
+      const cwd = process.cwd();
+      prompt = `TASK FROM SLACK (task ${task.id}): Start the next loop from the async queue. ` +
         `The user just completed ${completedLoop} for ${completedModule} and clicked "Start Next" on Slack. ` +
         `Steps: ` +
-        `1. Run the leverage protocol to determine the next highest leverage move. ` +
-        `2. Start the recommended loop (e.g., /engineering-loop, /audit-loop, etc.). ` +
-        `3. Call mcp__orchestrator__complete_slack_task with taskId="${task.id}" when the loop starts. ` +
-        `4. Run the loop autonomously - only notify on completion or if human input needed. ` +
+        `1. Read ${cwd}/memory/async-queue.json to get the pre-computed work queue. ` +
+        `2. Pop the first move from the queue (rank #1). ` +
+        `3. If queue is empty or expired, notify user: "Queue empty. Run /async-loop to plan more moves." ` +
+        `4. Otherwise, start the loop for that move (e.g., /engineering-loop auth-service). ` +
+        `5. Call mcp__orchestrator__complete_slack_task with taskId="${task.id}" when the loop starts. ` +
+        `6. Update async-queue.json to remove the executed move. ` +
+        `7. Run the loop autonomously - only notify on completion or if human input needed. ` +
         `The user is mobile and expects autonomous operation. ` +
-        `IMPORTANT: When running tests, always use "npm test -- --run" to avoid watch mode hanging.`;
+        `IMPORTANT: When running tests, always use "npm test -- --run" to avoid watch mode hanging. ` +
+        `If async-queue.json doesn't exist, fall back to running the leverage protocol to pick a move.`;
     } else {
       // Create deliverable task
       const deliverables = task.deliverables?.join(', ') || 'missing deliverables';

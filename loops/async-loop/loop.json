@@ -1,0 +1,85 @@
+{
+  "id": "async-loop",
+  "name": "Async Preparation Loop",
+  "description": "Prepares the system for autonomous Slack-based operation. Run this before going mobile.",
+  "version": "1.0.0",
+  "phases": [
+    {
+      "id": "INIT",
+      "name": "Initialize",
+      "description": "Load current state and check prerequisites for async operation",
+      "skills": ["state-loader", "prereq-checker"],
+      "deliverables": ["memory/async-state.json"]
+    },
+    {
+      "id": "GATHER",
+      "name": "Gather Context",
+      "description": "Collect all 7 layers: dream state, roadmap, scores, patterns, calibration, history, improvements",
+      "skills": ["dream-sync", "pattern-collector", "calibration-sync", "history-collector"],
+      "deliverables": ["memory/async-context.json"]
+    },
+    {
+      "id": "SCORE",
+      "name": "Score Modules",
+      "description": "Score all available modules and identify blockers",
+      "skills": ["module-scorer", "blocker-analyzer"],
+      "deliverables": ["memory/module-scores.json"]
+    },
+    {
+      "id": "PLAN",
+      "name": "Plan Moves",
+      "description": "Build prioritized queue of next 5-10 moves using leverage protocol",
+      "skills": ["leverage-calculator", "queue-builder"],
+      "deliverables": ["memory/async-queue.json"],
+      "gates": [
+        {
+          "id": "plan-gate",
+          "name": "Plan Review",
+          "description": "Review the planned moves before proceeding",
+          "approvalType": "manual",
+          "guarantees": [
+            {
+              "type": "file_exists",
+              "path": "memory/async-queue.json"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "VERIFY",
+      "name": "Verify Channels",
+      "description": "Validate Slack connection and test notification delivery",
+      "skills": ["slack-validator", "notification-tester"],
+      "deliverables": [],
+      "gates": [
+        {
+          "id": "verify-gate",
+          "name": "Channel Verification",
+          "description": "Confirm Slack notifications are working",
+          "approvalType": "auto",
+          "guarantees": [
+            {
+              "type": "custom",
+              "description": "Slack connection verified"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HANDOFF",
+      "name": "Handoff",
+      "description": "Final confirmation - system is ready for async operation",
+      "skills": ["handoff-confirmer"],
+      "deliverables": [],
+      "completionMessage": "Ready for async operation. Go mobile and use 'Start Next' on Slack."
+    }
+  ],
+  "metadata": {
+    "category": "meta",
+    "estimatedDuration": "5-10 minutes",
+    "prerequisites": ["Slack configured", "At least one module ready for work"],
+    "outcomes": ["Async queue populated", "Slack verified", "Ready for mobile operation"]
+  }
+}
