@@ -190,6 +190,54 @@ The hosted deployment powers the public dashboard — it is **not** required for
 - **Dashboard**: [orchestrator-xi.vercel.app](https://orchestrator-xi.vercel.app) — read-only monitoring UI (Vercel)
 - **Releases**: [GitHub Releases](https://github.com/superorganism/orchestrator/releases) — tarball with SHA256 checksum
 
+## Troubleshooting
+
+### Server won't start in Terminal
+
+The auto-start hook opens iTerm or Terminal.app and runs `npm start`. If it opens in the wrong directory:
+
+```bash
+# Check your orchestrator config has the correct path
+cat ~/.claude/orchestrator.json
+# Should show: "installPath": "/path/to/orchestrator"
+```
+
+If the path is wrong, update it or delete the file and re-run `/orchestrator-start-loop`.
+
+### Roadmap shows 0% when modules are complete
+
+The roadmap state is cached in `data/roadmap-state.json`. If it gets stale:
+
+```bash
+# Delete the cached state and restart
+rm data/roadmap-state.json
+# Then restart the server (kill and let it auto-start)
+lsof -ti:3002 | xargs kill -9
+```
+
+The service will re-parse ROADMAP.md and detect ✓ markers correctly.
+
+### MCP tools not connecting
+
+```bash
+# Verify ~/.claude/mcp.json has the correct config
+cat ~/.claude/mcp.json
+# Should contain orchestrator with "type": "http"
+
+# Verify server is running
+curl http://localhost:3002/health
+```
+
+### Port 3002 already in use
+
+```bash
+lsof -ti:3002 | xargs kill -9
+```
+
+### Slack shows "skipping event type: startup_welcome"
+
+This is normal. The Slack Socket Mode connection receives events your app isn't subscribed to handle. It's informational, not an error.
+
 ## License
 
 MIT

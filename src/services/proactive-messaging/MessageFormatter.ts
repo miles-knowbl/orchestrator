@@ -590,6 +590,9 @@ export class MessageFormatter {
       for (const line of wrappedLoops) {
         lines.push(this.padLine(`  ${line}`));
       }
+      lines.push(this.emptyLine());
+
+      lines.push(this.padLine('Tip: Run /orchestrator-start-loop to update.'));
 
       lines.push(this.emptyLine());
       lines.push(this.border());
@@ -617,6 +620,9 @@ export class MessageFormatter {
       lines.push(this.emptyLine());
 
       lines.push(this.padLine("Say 'go' in Claude Code to begin."));
+      lines.push(this.emptyLine());
+
+      lines.push(this.padLine('Tip: Run /orchestrator-start-loop to update.'));
 
       lines.push(this.emptyLine());
       lines.push(this.border());

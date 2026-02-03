@@ -538,11 +538,25 @@ cat ~/.claude/mcp.json
 # If wrong, fix it manually or re-run /orchestrator-start-loop
 ```
 
-**Server won't start:**
+**Server won't start / Opens in wrong directory:**
 ```bash
-# The server runs in a visible Terminal window, so check that window for errors
-# If the Terminal window closed, start manually:
-cd ~/orchestrator && npm start
+# Check your orchestrator config has the correct install path:
+cat ~/.claude/orchestrator.json
+# Should show: "installPath": "/path/to/your/orchestrator"
+
+# If wrong, delete the config and re-run /orchestrator-start-loop:
+rm ~/.claude/orchestrator.json
+
+# Or manually start the server:
+cd /path/to/orchestrator && npm start
+```
+
+**Roadmap shows 0% when modules are complete:**
+```bash
+# The roadmap state is cached. Delete the cache and restart:
+rm /path/to/orchestrator/data/roadmap-state.json
+# Then kill the server (it will auto-start on next MCP call)
+lsof -ti:3002 | xargs kill -9
 ```
 
 **Build failing:**
