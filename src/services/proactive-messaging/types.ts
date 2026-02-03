@@ -294,7 +294,7 @@ export interface NextLeverageCommand {
  */
 export interface PendingClaudeTask {
   id: string;
-  type: 'create_deliverable' | 'run_skill';
+  type: 'create_deliverable' | 'run_skill' | 'start_next_loop';
   createdAt: string;
   executionId: string;
   gateId?: string;
@@ -304,6 +304,11 @@ export interface PendingClaudeTask {
   requestedVia: 'slack' | 'terminal' | 'api';
   completedAt?: string;
   error?: string;
+  // For start_next_loop tasks
+  completedLoopId?: string;
+  completedModule?: string;
+  recommendedLoop?: string;
+  recommendedModule?: string;
 }
 
 export type InboundCommand =

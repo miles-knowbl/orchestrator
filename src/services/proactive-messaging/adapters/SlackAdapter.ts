@@ -165,7 +165,7 @@ export class SlackAdapter implements ChannelAdapter {
       }
     });
 
-    // Handle text messages
+    // Handle text messages - natural language command parsing
     this.app.message(/.*/, async ({ message, say }) => {
       let text = (message as { text?: string }).text?.toLowerCase().trim();
       if (!text) return;
@@ -174,24 +174,7 @@ export class SlackAdapter implements ChannelAdapter {
       text = text.replace(/<@[A-Z0-9]+>/gi, '').trim();
       if (!text) return;
 
-      let command: InboundCommand | null = null;
-      let feedback: string | null = null;
-
-      if (text === 'go' || text === 'continue') {
-        command = { type: 'continue' };
-        feedback = 'Continuing...';
-      } else if (text === 'approved' || text === 'approve') {
-        command = { type: 'approve', interactionId: 'latest', context: {} };
-        feedback = 'Approving...';
-      } else if (text.startsWith('feedback:')) {
-        command = {
-          type: 'feedback',
-          interactionId: 'latest',
-          text: text.replace('feedback:', '').trim(),
-          context: {},
-        };
-        feedback = 'Got your feedback.';
-      }
+      const { command, feedback } = this.parseNaturalLanguage(text);
 
       if (command && this.commandHandler) {
         try {
@@ -203,6 +186,93 @@ export class SlackAdapter implements ChannelAdapter {
         }
       }
     });
+  }
+
+  /**
+   * Parse natural language text into commands
+   * Supports: go, loops, skip, status, approve, feedback
+   */
+  private parseNaturalLanguage(text: string): { command: InboundCommand | null; feedback: string | null } {
+    // Available loops
+    const loops = [
+      'engineering-loop', 'bugfix-loop', 'learning-loop', 'dream-loop',
+      'proposal-loop', 'distribution-loop', 'infrastructure-loop',
+      'deck-loop', 'audit-loop', 'transpose-loop', 'meta-loop',
+      'sales-loop', 'ops-loop'
+    ];
+
+    // Normalize: remove hyphens for matching
+    const normalized = text.replace(/-/g, '').replace(/\s+/g, ' ');
+
+    // 1. GO / CONTINUE / NEXT / YES - proceed with current action
+    if (/^(go|continue|next|yes|proceed|ok|okay|k|yep|yeah|y)$/i.test(text)) {
+      return { command: { type: 'continue' }, feedback: 'Continuing...' };
+    }
+
+    // 2. APPROVE variants
+    if (/^(approve|approved|lgtm|ship it|shipit)$/i.test(text)) {
+      return {
+        command: { type: 'approve', interactionId: 'latest', context: {} },
+        feedback: 'Approving...'
+      };
+    }
+
+    // 3. STATUS query
+    if (/^(status|what'?s happening|what'?s up|where are we|current|state)$/i.test(text)) {
+      return { command: { type: 'status' }, feedback: null };
+    }
+
+    // 4. NEXT LEVERAGE query
+    if (/^(next|what'?s next|next move|leverage|what should i do)$/i.test(text)) {
+      return { command: { type: 'next_leverage' }, feedback: null };
+    }
+
+    // 5. LOOP COMMANDS - flexible parsing for speech input
+    // "engineering loop voice validation" / "start engineering loop" / "run bugfix loop"
+    for (const loop of loops) {
+      const loopBase = loop.replace(/-loop$/, ''); // "engineering", "bugfix", etc.
+
+      // Patterns: "engineering loop X", "start engineering loop X", "run engineering loop X"
+      const patterns = [
+        new RegExp(`^(?:start\\s+|run\\s+)?${loopBase}\\s*loop(?:\\s+(.+))?$`, 'i'),
+        new RegExp(`^(?:start\\s+|run\\s+)?${loop}(?:\\s+(.+))?$`, 'i'),
+      ];
+
+      for (const pattern of patterns) {
+        const match = text.replace(/-/g, ' ').match(pattern);
+        if (match) {
+          const target = match[1]?.trim();
+          return {
+            command: { type: 'start_loop', loopId: loop, target },
+            feedback: target ? `Starting ${loop} for ${target}...` : `Starting ${loop}...`
+          };
+        }
+      }
+    }
+
+    // 7. FEEDBACK
+    if (text.startsWith('feedback:')) {
+      return {
+        command: {
+          type: 'feedback',
+          interactionId: 'latest',
+          text: text.replace('feedback:', '').trim(),
+          context: {},
+        },
+        feedback: 'Got your feedback.'
+      };
+    }
+
+    // 8. REJECT
+    if (/^(reject|no|nope|stop|pause|hold)$/i.test(text)) {
+      return {
+        command: { type: 'reject', interactionId: 'latest', context: {} },
+        feedback: 'Rejected. Loop paused.'
+      };
+    }
+
+    // No match
+    return { command: null, feedback: null };
   }
 
   /**

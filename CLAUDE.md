@@ -255,7 +255,7 @@ Executions track detailed logs with categories:
 ```bash
 npm run dev    # Hot reload development
 npm run build  # Compile TypeScript
-npm test       # Run tests
+npm test -- --run  # Run tests (IMPORTANT: --run flag required to exit, otherwise vitest hangs in watch mode)
 ```
 
 ## Deep Context Protocol

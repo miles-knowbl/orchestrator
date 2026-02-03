@@ -1,36 +1,85 @@
-# Release Plan: v1.4.0
-
-## Summary
-
-Minor release with 2 new features and 1 bug fix focused on autonomous loop execution and hands-free notifications.
+# Release Plan: v1.4.1
 
 ## Version
 
-- **Previous:** 1.3.2
-- **Release:** 1.4.0
-- **Bump Type:** Minor (new features)
+- **Previous:** 1.4.0
+- **Proposed:** 1.4.1
+- **Semver Justification:** PATCH - No breaking changes, enhancement + documentation only
 
-## Changes
+## Release Date
+
+When criteria met (immediate distribution)
+
+## Changes Included
 
 ### Features
-
-1. **Loop-level autonomy with auto-approve gates** (6e45c70)
-   - Auto-approve gates when guarantees pass
-   - Retry flow: 3 attempts with 10s delay before escalation
-   - Spawn Claude Code to create missing deliverables after retries
-   - Escalate to human with full Slack notification if Claude fails/times out
-   - New `GateAutoApprovedEvent` type for brief notifications
-
-2. **Voice output module for hands-free notifications** (fbcd0fe)
-   - macOS `say` command integration via VoiceAdapter
-   - Configurable voice, rate, and quiet hours
-   - Event-specific voice announcements (gates, phases, completions)
+None (patch release)
 
 ### Fixes
+None
 
-1. **Slack button interactions now work for approve/reject/start-next** (7fcf8f8)
-   - Fixed button action handling in SlackAdapter
-   - Proper routing of approve/reject commands to ExecutionEngine
+### Enhancements (chore)
+1. **Slack "Start Next" button with leverage protocol**
+   - Clicking "Start Next" on loop completion notifications spawns Claude Code
+   - Runs leverage protocol to determine next highest leverage move
+   - Starts recommended loop autonomously
+   - Enables "work from mobile" loop chaining
+
+### Documentation
+1. **v1.4.0 Audit Deliverables**
+   - AUDIT-REPORT.md - Executive summary (PASSED, 8.5/10 taste)
+   - AUDIT-SCOPE.md - Audit scope definition
+   - SECURITY-AUDIT.md - Security analysis (PASS)
+   - PERF-ANALYSIS.md - Performance analysis (GOOD)
+   - PIPELINE-FAILURE-MODES.md - Backend failure modes (100% coverage)
+   - UI-FAILURE-MODES.md - UI failure modes (100% coverage)
+   - TASTE-EVAL.md, TASTE-GAPS.md, TASTE-TRACE.md - Taste evaluation
+   - REQUIREMENTS.md, VALIDATION.md, VERIFICATION.md - Verification
+
+### Breaking Changes
+None
+
+## Release Criteria
+
+- [x] All TypeScript compiles without errors
+- [x] All tests pass
+- [x] Server starts and responds to /health
+- [ ] Push to main successful
+- [ ] CI pipeline triggered and passing
+
+## Blockers
+
+None identified.
+
+## Cherry-Picks
+
+None required (shipping from HEAD of main)
+
+## Rollout Strategy
+
+- **Method:** Full rollout (no staging)
+- **Monitoring:** Check server health after build, verify CI passes
+- **Proceed Criteria:** Build success, tests pass
+- **Rollback Trigger:** Build failure or test failure
+
+## Rollback Plan
+
+1. If build fails: Fix issues and re-release as 1.4.2
+2. If runtime issues: `git revert` and release 1.4.2
+3. Dashboard: Vercel automatic rollback available
+
+## Timeline
+
+| Milestone | Date |
+|-----------|------|
+| Code freeze | 2026-02-03 (now) |
+| Release | 2026-02-03 (immediate) |
+| Post-release monitoring | 24 hours |
+
+## Stakeholders
+
+- **Approval:** Automatic (distribution-loop)
+- **Notification:** Slack channel on completion
 
 ## Distribution Targets
 
@@ -39,11 +88,3 @@ Minor release with 2 new features and 1 bug fix focused on autonomous loop execu
 | Local | npm run build |
 | GitHub | Push to main, release tarball |
 | Vercel | Dashboard auto-deploy |
-
-## Verification Checklist
-
-- [ ] Build passes
-- [ ] Tests pass (116 tests)
-- [ ] Server starts cleanly
-- [ ] Voice adapter initializes
-- [ ] Slack adapter connects

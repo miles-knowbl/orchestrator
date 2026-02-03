@@ -325,14 +325,28 @@ export class ProactiveMessagingService {
         break;
 
       case 'start_next_loop':
-        // Emit event for external handling - the leverage protocol determines next loop
-        // This will be picked up by command handlers registered via onCommand()
+        // Spawn Claude Code to run the leverage protocol and start the next loop
         console.log(`[ProactiveMessaging] Start next loop requested after ${command.completedLoopId} -> ${command.completedModule}`);
+        const nextLoopTaskId = `task-${Date.now()}`;
+        const nextLoopTask: PendingClaudeTask = {
+          id: nextLoopTaskId,
+          type: 'start_next_loop',
+          createdAt: new Date().toISOString(),
+          executionId: command.executionId,
+          completedLoopId: command.completedLoopId,
+          completedModule: command.completedModule,
+          status: 'pending',
+          requestedVia: 'slack',
+        };
+        this.pendingTasks.set(nextLoopTaskId, nextLoopTask);
+        console.log(`[ProactiveMessaging] Queued task ${nextLoopTaskId} for Claude Code: start next loop`);
+
+        // Auto-spawn Claude Code to start the next loop
+        this.spawnClaudeCode(nextLoopTask);
+
         if (interaction) {
           this.conversationState.recordResponse(interaction.id, command, 'builtin');
         }
-        // Note: Actual loop starting is delegated to external handlers that have
-        // access to the leverage protocol and can determine the best next move
         break;
 
       case 'create_deliverables':
@@ -1041,41 +1055,63 @@ export class ProactiveMessagingService {
    * Only spawns if no active execution is running (assumes Claude Code is already handling it)
    */
   private spawnClaudeCode(task: PendingClaudeTask): void {
-    const deliverables = task.deliverables?.join(', ') || 'missing deliverables';
-    const gateId = task.gateId || 'unknown-gate';
-    const gateName = gateId.replace('-gate', '');
-    const executionId = task.executionId;
     const cwd = process.cwd();
 
     // Check if there's an active execution
     const hasActiveLoop = this.executionEngine &&
       this.executionEngine.listExecutions({ status: 'active' }).length > 0;
 
-    // Build prompt for Claude Code - includes full context for autonomous operation
-    const prompt = hasActiveLoop
-      ? // Task runner mode: focused, non-interactive, advances the loop
-        `TASK FROM SLACK (task ${task.id}): Create ${deliverables} for the ${gateName} gate. ` +
-        `This is a background task for REMOTE loop operation. Steps: ` +
-        `1. Create the file with real content (not placeholder). ` +
-        `2. Call mcp__orchestrator__complete_slack_task with taskId="${task.id}". ` +
-        `3. Call mcp__orchestrator__approve_gate with executionId="${executionId}" gateId="${gateId}". ` +
-        `4. Call mcp__orchestrator__advance_phase with executionId="${executionId}" to move to next phase. ` +
-        `5. Exit when done. The next Slack notification will be sent automatically.`
-      : // Interactive mode: full loop context
-        `Create the missing deliverable(s) for the ${gateName} gate: ${deliverables}. ` +
-        `This was requested via Slack. After creating the file(s), approve the gate.`;
+    // Build prompt based on task type
+    let prompt: string;
+
+    if (task.type === 'start_next_loop') {
+      // Start next loop task - run leverage protocol and start recommended loop
+      const completedLoop = task.completedLoopId || 'unknown';
+      const completedModule = task.completedModule || 'unknown';
+      prompt = `TASK FROM SLACK (task ${task.id}): Start the next highest leverage loop. ` +
+        `The user just completed ${completedLoop} for ${completedModule} and clicked "Start Next" on Slack. ` +
+        `Steps: ` +
+        `1. Run the leverage protocol to determine the next highest leverage move. ` +
+        `2. Start the recommended loop (e.g., /engineering-loop, /audit-loop, etc.). ` +
+        `3. Call mcp__orchestrator__complete_slack_task with taskId="${task.id}" when the loop starts. ` +
+        `4. Run the loop autonomously - only notify on completion or if human input needed. ` +
+        `The user is mobile and expects autonomous operation. ` +
+        `IMPORTANT: When running tests, always use "npm test -- --run" to avoid watch mode hanging.`;
+    } else {
+      // Create deliverable task
+      const deliverables = task.deliverables?.join(', ') || 'missing deliverables';
+      const gateId = task.gateId || 'unknown-gate';
+      const gateName = gateId.replace('-gate', '');
+      const executionId = task.executionId;
+
+      prompt = hasActiveLoop
+        ? // Task runner mode: focused, non-interactive, advances the loop
+          `TASK FROM SLACK (task ${task.id}): Create ${deliverables} for the ${gateName} gate. ` +
+          `This is a background task for REMOTE loop operation. Steps: ` +
+          `1. Create the file with real content (not placeholder). ` +
+          `2. Call mcp__orchestrator__complete_slack_task with taskId="${task.id}". ` +
+          `3. Call mcp__orchestrator__approve_gate with executionId="${executionId}" gateId="${gateId}". ` +
+          `4. Call mcp__orchestrator__advance_phase with executionId="${executionId}" to move to next phase. ` +
+          `5. Exit when done. The next Slack notification will be sent automatically.`
+        : // Interactive mode: full loop context
+          `Create the missing deliverable(s) for the ${gateName} gate: ${deliverables}. ` +
+          `This was requested via Slack. After creating the file(s), approve the gate.`;
+    }
 
     // Escape for shell
     const escapedPrompt = prompt.replace(/"/g, '\\"').replace(/'/g, "'\\''");
 
     // Notify the running session about the incoming task
-    if (hasActiveLoop) {
+    if (hasActiveLoop && task.type !== 'start_next_loop') {
+      const deliverables = task.deliverables?.join(', ') || 'missing deliverables';
       console.log('[ProactiveMessaging] Active execution found - spawning task runner in new tab.');
       this.notify({
         type: 'custom',
         title: 'SLACK TASK SPAWNING',
         message: `Opening new terminal to create ${deliverables}. Gate will auto-approve when ready.`,
       });
+    } else if (task.type === 'start_next_loop') {
+      console.log('[ProactiveMessaging] Spawning Claude Code to start next loop.');
     }
 
     // Detect terminal: ORCHESTRATOR_TERMINAL_CMD > iTerm > Terminal.app
@@ -1083,7 +1119,9 @@ export class ProactiveMessagingService {
     const hasITerm = existsSync('/Applications/iTerm.app');
 
     // Build the shell command - escape for embedding in AppleScript
-    const shellCmd = hasActiveLoop
+    // Always use --dangerously-skip-permissions for autonomous tasks (start_next_loop, or active loop)
+    const useAutonomousMode = hasActiveLoop || task.type === 'start_next_loop';
+    const shellCmd = useAutonomousMode
       ? `cd '${cwd}' && claude --dangerously-skip-permissions '${prompt.replace(/'/g, "'\\''")}'`
       : `cd '${cwd}' && claude '${prompt.replace(/'/g, "'\\''")}'`;
 
@@ -1139,10 +1177,13 @@ export class ProactiveMessagingService {
       if (error) {
         console.error('[ProactiveMessaging] Failed to spawn Claude Code:', error.message);
         // Fallback: just queue the task
+        const taskDesc = task.type === 'start_next_loop'
+          ? 'start next loop'
+          : `create ${task.deliverables?.join(', ') || 'deliverables'}`;
         this.notify({
           type: 'custom',
           title: 'TASK QUEUED',
-          message: `Could not spawn terminal. Task queued: create ${deliverables}`,
+          message: `Could not spawn terminal. Task queued: ${taskDesc}`,
         });
       } else {
         console.log('[ProactiveMessaging] Spawned Claude Code to handle task:', task.id);
