@@ -133,8 +133,8 @@ REQUIREMENTS.md
 
 **Load skills from MCP:**
 ```
-mcp__skills-library__get_skill(name: "context-ingestion", includeReferences: true)
-mcp__skills-library__get_skill(name: "requirements", includeReferences: true)
+mcp__orchestrator__get_skill(name: "context-ingestion", includeReferences: true)
+mcp__orchestrator__get_skill(name: "requirements", includeReferences: true)
 ```
 
 **Process:**
@@ -183,7 +183,7 @@ mcp__skills-library__get_skill(name: "requirements", includeReferences: true)
 
 **Load skill from MCP:**
 ```
-mcp__skills-library__get_skill(name: "context-cultivation", includeReferences: true)
+mcp__orchestrator__get_skill(name: "context-cultivation", includeReferences: true)
 ```
 
 **Process:**
@@ -222,7 +222,7 @@ mcp__skills-library__get_skill(name: "context-cultivation", includeReferences: t
 
 **Load skill from MCP:**
 ```
-mcp__skills-library__get_skill(name: "priority-matrix", includeReferences: true)
+mcp__orchestrator__get_skill(name: "priority-matrix", includeReferences: true)
 ```
 
 **Process:**
@@ -261,7 +261,7 @@ mcp__skills-library__get_skill(name: "priority-matrix", includeReferences: true)
 
 **Load skill from MCP:**
 ```
-mcp__skills-library__get_skill(name: "content-analysis", includeReferences: true)
+mcp__orchestrator__get_skill(name: "content-analysis", includeReferences: true)
 ```
 
 **Process:**
@@ -300,7 +300,7 @@ mcp__skills-library__get_skill(name: "content-analysis", includeReferences: true
 
 **Load skill from MCP:**
 ```
-mcp__skills-library__get_skill(name: "proposal-builder", includeReferences: true)
+mcp__orchestrator__get_skill(name: "proposal-builder", includeReferences: true)
 ```
 
 **Process:**
@@ -340,7 +340,7 @@ mcp__skills-library__get_skill(name: "proposal-builder", includeReferences: true
 
 **Load skill from MCP:**
 ```
-mcp__skills-library__get_skill(name: "retrospective", includeReferences: true)
+mcp__orchestrator__get_skill(name: "retrospective", includeReferences: true)
 ```
 
 **Process:**
@@ -800,13 +800,13 @@ This feeds back into the skills library for future improvement.
 This command uses the **skills-library MCP server** for skill definitions:
 
 ```
-mcp__skills-library__get_skill(name: "context-ingestion", includeReferences: true)
-mcp__skills-library__get_skill(name: "requirements", includeReferences: true)
-mcp__skills-library__get_skill(name: "context-cultivation", includeReferences: true)
-mcp__skills-library__get_skill(name: "priority-matrix", includeReferences: true)
-mcp__skills-library__get_skill(name: "content-analysis", includeReferences: true)
-mcp__skills-library__get_skill(name: "proposal-builder", includeReferences: true)
-mcp__skills-library__get_skill(name: "retrospective", includeReferences: true)
+mcp__orchestrator__get_skill(name: "context-ingestion", includeReferences: true)
+mcp__orchestrator__get_skill(name: "requirements", includeReferences: true)
+mcp__orchestrator__get_skill(name: "context-cultivation", includeReferences: true)
+mcp__orchestrator__get_skill(name: "priority-matrix", includeReferences: true)
+mcp__orchestrator__get_skill(name: "content-analysis", includeReferences: true)
+mcp__orchestrator__get_skill(name: "proposal-builder", includeReferences: true)
+mcp__orchestrator__get_skill(name: "retrospective", includeReferences: true)
 ```
 
 ---

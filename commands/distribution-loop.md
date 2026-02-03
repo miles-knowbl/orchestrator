@@ -441,12 +441,12 @@ This ensures the user's Claude Code always has the latest loop definitions after
 This command uses the **skills-library MCP server** for skill definitions:
 
 ```
-mcp__skills-library__get_skill(name: "release-planner", includeReferences: true)
-mcp__skills-library__get_skill(name: "code-verification", includeReferences: true)
-mcp__skills-library__get_skill(name: "git-workflow", includeReferences: true)
-mcp__skills-library__get_skill(name: "deploy", includeReferences: true)
-mcp__skills-library__get_skill(name: "distribute", includeReferences: true)
-mcp__skills-library__get_skill(name: "retrospective", includeReferences: true)
+mcp__orchestrator__get_skill(name: "release-planner", includeReferences: true)
+mcp__orchestrator__get_skill(name: "code-verification", includeReferences: true)
+mcp__orchestrator__get_skill(name: "git-workflow", includeReferences: true)
+mcp__orchestrator__get_skill(name: "deploy", includeReferences: true)
+mcp__orchestrator__get_skill(name: "distribute", includeReferences: true)
+mcp__orchestrator__get_skill(name: "retrospective", includeReferences: true)
 ```
 
 ---

@@ -475,11 +475,11 @@ Transpose Loop: Resuming MAP phase...
 This command uses the **skills-library MCP server** for skill definitions:
 
 ```
-mcp__skills-library__get_skill(name: "architecture-extractor", includeReferences: true)
-mcp__skills-library__get_skill(name: "stack-analyzer", includeReferences: true)
-mcp__skills-library__get_skill(name: "architect", includeReferences: true)
-mcp__skills-library__get_skill(name: "spec", includeReferences: true)
-mcp__skills-library__get_skill(name: "retrospective", includeReferences: true)
+mcp__orchestrator__get_skill(name: "architecture-extractor", includeReferences: true)
+mcp__orchestrator__get_skill(name: "stack-analyzer", includeReferences: true)
+mcp__orchestrator__get_skill(name: "architect", includeReferences: true)
+mcp__orchestrator__get_skill(name: "spec", includeReferences: true)
+mcp__orchestrator__get_skill(name: "retrospective", includeReferences: true)
 ```
 
 ---

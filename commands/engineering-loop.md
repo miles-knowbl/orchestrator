@@ -1120,7 +1120,7 @@ See `commands/_shared/completion-format.md` for full format specification.
 This command uses the **skills-library MCP server** for reference materials. When detailed guidance is needed, fetch via:
 
 ```
-mcp__skills-library__get_skill(name: "skill-name", includeReferences: true)
+mcp__orchestrator__get_skill(name: "skill-name", includeReferences: true)
 ```
 
 Available references (8 total):

@@ -636,7 +636,7 @@ Deck Loop: Resuming IMPLEMENT phase...
 This command uses the **skills-library MCP server**. Fetch skill details via:
 
 ```
-mcp__skills-library__get_skill(name: "skill-name", includeReferences: true)
+mcp__orchestrator__get_skill(name: "skill-name", includeReferences: true)
 ```
 
 Key references by skill:
