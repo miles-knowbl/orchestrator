@@ -1,10 +1,10 @@
-# Release Plan: v1.4.1
+# Release Plan: v1.5.0
 
 ## Version
 
-- **Previous:** 1.4.0
-- **Proposed:** 1.4.1
-- **Semver Justification:** PATCH - No breaking changes, enhancement + documentation only
+- **Previous:** 1.4.1
+- **Proposed:** 1.5.0
+- **Semver Justification:** MINOR - New feature (async-loop for autonomous Slack operation)
 
 ## Release Date
 
@@ -13,28 +13,23 @@ When criteria met (immediate distribution)
 ## Changes Included
 
 ### Features
-None (patch release)
+1. **`/async-loop` for autonomous Slack-based operation**
+   - New loop that prepares system for mobile/async workflow
+   - Gathers all 7 memory layers (dream state, roadmap, patterns, calibration, history, scores, improvements)
+   - Builds prioritized work queue in `memory/async-queue.json`
+   - Verifies Slack connectivity before handoff
+   - Enables fully autonomous "Start Next" workflows from Slack
 
-### Fixes
-None
-
-### Enhancements (chore)
-1. **Slack "Start Next" button with leverage protocol**
-   - Clicking "Start Next" on loop completion notifications spawns Claude Code
-   - Runs leverage protocol to determine next highest leverage move
-   - Starts recommended loop autonomously
-   - Enables "work from mobile" loop chaining
+2. **Enhanced "Start Next" button behavior**
+   - Now reads from pre-computed `async-queue.json`
+   - Pops moves in order instead of recalculating leverage each time
+   - Falls back to leverage protocol if no queue exists
 
 ### Documentation
-1. **v1.4.0 Audit Deliverables**
-   - AUDIT-REPORT.md - Executive summary (PASSED, 8.5/10 taste)
-   - AUDIT-SCOPE.md - Audit scope definition
-   - SECURITY-AUDIT.md - Security analysis (PASS)
-   - PERF-ANALYSIS.md - Performance analysis (GOOD)
-   - PIPELINE-FAILURE-MODES.md - Backend failure modes (100% coverage)
-   - UI-FAILURE-MODES.md - UI failure modes (100% coverage)
-   - TASTE-EVAL.md, TASTE-GAPS.md, TASTE-TRACE.md - Taste evaluation
-   - REQUIREMENTS.md, VALIDATION.md, VERIFICATION.md - Verification
+1. **README updates**
+   - Added `/async-loop` to available commands
+   - Added `/learning-loop` to available commands
+   - Added `/dream-loop` to available commands
 
 ### Breaking Changes
 None
@@ -50,36 +45,6 @@ None
 ## Blockers
 
 None identified.
-
-## Cherry-Picks
-
-None required (shipping from HEAD of main)
-
-## Rollout Strategy
-
-- **Method:** Full rollout (no staging)
-- **Monitoring:** Check server health after build, verify CI passes
-- **Proceed Criteria:** Build success, tests pass
-- **Rollback Trigger:** Build failure or test failure
-
-## Rollback Plan
-
-1. If build fails: Fix issues and re-release as 1.4.2
-2. If runtime issues: `git revert` and release 1.4.2
-3. Dashboard: Vercel automatic rollback available
-
-## Timeline
-
-| Milestone | Date |
-|-----------|------|
-| Code freeze | 2026-02-03 (now) |
-| Release | 2026-02-03 (immediate) |
-| Post-release monitoring | 24 hours |
-
-## Stakeholders
-
-- **Approval:** Automatic (distribution-loop)
-- **Notification:** Slack channel on completion
 
 ## Distribution Targets
 
