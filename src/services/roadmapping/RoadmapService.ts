@@ -525,6 +525,15 @@ export class RoadmapService {
           const name = nameMatch ? nameMatch[1] : cells[0];
           const description = cells[1];
 
+          // Determine status from markers in the row
+          // ✓ = complete, (deferred) = blocked, otherwise pending
+          let status: ModuleStatus = 'pending';
+          if (cells[0].includes('✓') || row.includes('✓')) {
+            status = 'complete';
+          } else if (row.toLowerCase().includes('deferred') || row.includes('*deferred*')) {
+            status = 'blocked';  // Use blocked for deferred items
+          }
+
           // Parse dependencies/unlocks from third column
           let dependsOn: string[] = [];
           let unlocks: string[] = [];
@@ -547,7 +556,7 @@ export class RoadmapService {
             name,
             description,
             layer,
-            status: 'pending',
+            status,
             dependsOn,
             unlocks,
           });
