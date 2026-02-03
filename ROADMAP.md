@@ -8,8 +8,8 @@
 
 **System**: Orchestrator — Self-improving meta-system where skills are the atomic primitive
 **Dream State**: Autonomous, coherent, local-first system that compounds leverage through skill-based ontology
-**Progress**: 19/32 modules complete (59%) + 11 deferred
-**Remaining**: sales-loop, ops-loop
+**Progress**: 20/31 modules complete (65%) + 13 deferred
+**Remaining**: None (all active modules complete)
 
 ---
 
@@ -23,10 +23,10 @@ Layer 5  ───────────────────────�
          game-design ✓, co-op (deferred), proposing-decks ✓, spaced-repetition ✓, auto-updating ✓, ecosystem-roundup (deferred)
 
 Layer 4  ───────────────────────────────────────────────────────────────────────
-         sales-loop, ops-loop, business-model-loop (deferred), go-to-market-loop (deferred), brownfield-specialization (deferred)
+         sales-loop ✓, business-model-loop (deferred), go-to-market-loop (deferred), brownfield-specialization (deferred)
 
 Layer 3  ───────────────────────────────────────────────────────────────────────
-         proactive-messaging ✓, slack-integration ✓, natural-conversation (deferred), multiplayer (deferred)
+         proactive-messaging ✓, slack-integration ✓, natural-conversation (deferred), multiplayer-async-worktrees (deferred)
 
 Layer 2  ───────────────────────────────────────────────────────────────────────
          patterns-roundup ✓, scoring ✓, mece-opportunity-mapping ✓, coherence-system ✓
@@ -84,7 +84,7 @@ Layer 0  ───────────────────────�
 | **proactive-messaging** ✓ | System reaches out across channels: terminal, Slack, email, text. Alerts you to completions, proposals, blockers. | — |
 | **slack-integration** ✓ | Bidirectional: receive commands and capture to inbox, plus send proactive messages. | proactive-messaging |
 | **natural-conversation** | Voice input and output for piloting the orchestrator. Naturalistic speech for contexts where you can't hold long documents in your head (driving, jogging). Dictate requirements, hear status. | — | *deferred* |
-| **multiplayer** | Multi-engineer loop coordination. Transform the single-player loops experience into multiplayer: command parsing across engineers, thread management per engineer, merge/rebase workflows, engineer status tracking, and cross-worktree coordination. Currently exists as `src/services/slack-integration/` — needs consolidation with `proactive-messaging/adapters/SlackAdapter.ts`. | slack-integration, multi-agent-worktrees | *deferred* |
+| **multiplayer-async-worktrees** | Multi-engineer loop coordination. Transform the single-player loops experience into multiplayer: command parsing across engineers, thread management per engineer, merge/rebase workflows, engineer status tracking, and cross-worktree coordination. Currently exists as `src/services/slack-integration/` — needs consolidation with `proactive-messaging/adapters/SlackAdapter.ts`. | slack-integration, multi-agent-worktrees | *deferred* |
 
 ---
 
@@ -92,8 +92,7 @@ Layer 0  ───────────────────────�
 
 | Module | Description | Depends On |
 |--------|-------------|------------|
-| **sales-loop** | MECE loop for sales workflows. Structured process from lead to close with artifacts at each phase. | — |
-| **ops-loop** | MECE loop for operations workflows. Structured process for operational excellence with tracking artifacts. | — |
+| **sales-loop** ✓ | KnoPilot runtime context: 24 skills across 6 layers, 7 loops covering full sales lifecycle (Lead → Target → Discovery → Contracting → Production → Closed). See `runtimes/knopilot/RUNTIME.md`. | — |
 | **business-model-loop** | Full loop for creating business model artifacts. Structured exploration of value proposition, revenue streams, cost structure, channels. | — | *deferred* |
 | **go-to-market-loop** | Full loop for GTM strategy artifacts. Market analysis, positioning, launch planning, channel strategy. | — | *deferred* |
 | **brownfield-specialization** | Special patterns and loops for brownfield contexts. Making orchestrator as good at brownfield as it is at greenfield — essential for getting systems to "completion" for launch or checkpoint. | — | *deferred*
@@ -145,9 +144,11 @@ Layer 0  ───────────────────────�
 | ecosystem-roundup | Broad scope across all primitives | When ecosystem has more content to round up |
 | brownfield-specialization | Patterns exist, needs formalization | When brownfield work increases |
 | natural-conversation | Voice I/O not immediately needed | When mobile-first usage increases |
-| multiplayer | Multi-engineer coordination exists but needs consolidation | When team usage begins; consolidate slack-integration service into proactive-messaging |
+| multiplayer-async-worktrees | Multi-engineer coordination exists but needs consolidation | When team usage begins; consolidate slack-integration service into proactive-messaging |
 | dreaming | Needs roadmap state sync; will integrate ADIR-reasoning-cycle | After roadmap integration fixed |
 | behavior-guarantees | System for enforcing/guaranteeing LLM behavior; explicit-rules-enforcement pattern will live here | When behavior enforcement patterns mature |
+| runtime-contexts | Constructed environments providing domain ontology (vocabulary, entities, operations, workflows, shared concepts). KnoPilot is reference implementation. Concept needs to mature before building infrastructure. | When second runtime context needed or pattern proves out |
+| marketing-loop | Domain loop for marketing workflows. Content creation, campaign management, audience development, analytics. | When marketing work patterns emerge |
 
 ---
 
@@ -166,11 +167,11 @@ Layer 0  ───────────────────────�
 | 0 | 3 | 3 | roadmapping ✓, 2-layer-orchestration ✓, knowledge-graph-ontology ✓ |
 | 1 | 6 | 9 | kanban ✓, ooda-clocks ✓, skill-trees ✓, tech-trees (deferred), ladder-of-abstraction (deferred), autonomous ✓, dreaming (deferred), multi-agent-worktrees ✓, loop-sequencing ✓ |
 | 2 | 4 | 4 | patterns-roundup ✓, scoring ✓, mece-opportunity-mapping ✓, coherence-system ✓ |
-| 3 | 2 | 4 | proactive-messaging ✓, slack-integration ✓, natural-conversation (deferred), multiplayer (deferred) |
-| 4 | 0 | 5 | sales-loop, ops-loop, business-model-loop (deferred), go-to-market-loop (deferred), brownfield-specialization (deferred) |
+| 3 | 2 | 4 | proactive-messaging ✓, slack-integration ✓, natural-conversation (deferred), multiplayer-async-worktrees (deferred) |
+| 4 | 1 | 4 | sales-loop ✓, business-model-loop (deferred), go-to-market-loop (deferred), brownfield-specialization (deferred) |
 | 5 | 4 | 6 | game-design ✓, co-op-skill-acquisition (deferred), proposing-decks ✓, spaced-repetition ✓, auto-updating ✓, ecosystem-roundup (deferred) |
 | 6 | 0 | 1 | local-first (deferred) |
-| **Complete** | **19** | **32** | **59%** |
+| **Complete** | **20** | **31** | **65%** |
 | Updates | 2 | 2 | distribution-loop ✓, InboxProcessor ✓ |
 
 ---
@@ -193,7 +194,7 @@ Layer 0  ───────────────────────�
             ├──► autonomous                  ├──► skill-trees                 ├──► proactive-messaging
             ├──► dreaming (deferred)         ├──► tech-trees                  ├──► slack-integration
             └──► multi-agent-worktrees       ├──► mece-opportunity-mapping    ├──► auto-updating
-                                             ├──► co-op-skill-acquisition     └──► multiplayer (deferred)
+                                             ├──► co-op-skill-acquisition     └──► multiplayer-async-worktrees (deferred)
                                              └──► spaced-repetition
 
     ┌───────────────┐              ┌─────────────────┐
@@ -245,16 +246,15 @@ Phase 6: Meta & Interface ✓ COMPLETE
   19. proactive-messaging ✓
   20. slack-integration ✓
 
-Phase 7: Remaining Modules ◄── YOU ARE HERE
-  21. sales-loop (Layer 4)
-  22. ops-loop (Layer 4)
+Phase 7: Domain Loops ✓ COMPLETE
+  21. sales-loop ✓ (Layer 4) — KnoPilot runtime context
 
 Deferred:
   - tech-trees (Layer 1)
   - ladder-of-abstraction-interfaces (Layer 1)
   - dreaming (Layer 1) — needs roadmap state sync
   - natural-conversation (Layer 3) — voice I/O
-  - multiplayer (Layer 3) — multi-engineer coordination
+  - multiplayer-async-worktrees (Layer 3) — multi-engineer coordination
   - brownfield-specialization (Layer 4)
   - business-model-loop (Layer 4)
   - go-to-market-loop (Layer 4)
@@ -312,10 +312,11 @@ Deferred:
 
 ## Next Action
 
-**Progress**: 19/32 modules complete (59%) + 11 deferred
-**Available Modules** (unblocked, not deferred):
-- Layer 4: sales-loop, ops-loop
+**Progress**: 20/31 modules complete (65%) + 13 deferred
+**Available Modules** (unblocked, not deferred): None
 
-**Recommended**: sales-loop (domain loop with clear structure)
+**Status**: All active modules complete. Remaining work is explicitly deferred with revisit criteria.
+
+**To unblock new work**: Review deferred items and promote based on emerging needs. The runtime-contexts pattern may crystallize additional domain loops (like KnoPilot did for sales).
 
 **Note**: ADIR is now captured as pattern PAT-012 in memory/orchestrator.json rather than a standalone module. It synergizes with Deep Context Protocol, Leverage Protocol, MECE Opportunity Mapping, and Terrain Check.

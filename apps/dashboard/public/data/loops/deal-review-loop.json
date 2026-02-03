@@ -1,0 +1,83 @@
+{
+  "id": "deal-review-loop",
+  "name": "Deal Review Loop",
+  "version": "1.0.0",
+  "description": "Comprehensive review of a single deal including scoring, risk assessment, and strategic recommendations.",
+  "category": "development",
+  "content": "# Deal Review Loop\n\nComprehensive review of a single deal with strategic recommendations.\n\n## When to Use\n\n- Weekly deal review\n- Before major meetings\n- When deal seems stuck\n- Before proposal/contract\n- When asked \"how's this deal going?\"\n\n## What It Does\n\nProvides complete deal assessment:\n1. Reviews all intelligence\n2. Calculates fresh scores\n3. Assesses champion strength\n4. Evaluates use case clarity\n5. Identifies and assesses risks\n6. Generates strategic recommendations\n\n## Phases\n\n### GATHER: Gather Context\nReview everything about the deal.\n- All communications\n- Current intelligence\n- Stakeholder map\n- Recent activity\n\n### SCORE: Score Deal\nCalculate comprehensive scores.\n- AI Readiness score\n- Deal Confidence score\n- Champion Strength score\n- Use Case Clarity score\n- Overall Deal Health\n\n**Gate:** Deal Health Gate\n- Health > 40 to continue actively\n- Critical risks flagged\n- Qualification check\n\n### ASSESS: Assess Risks\nIdentify what could go wrong.\n- Champion risks\n- Competition risks\n- Budget risks\n- Timeline risks\n- Technical risks\n- Organizational risks\n\n### COMPLETE: Complete\nGenerate strategic recommendations.\n- Prioritized next actions\n- Risk mitigation strategies\n- Key insights summary\n\n## Inputs\n\n| Input | Required | Description |\n|-------|----------|-------------|\n| Deal ID | Yes | Which deal to review |\n\n## Outputs\n\n| Output | Location | Description |\n|--------|----------|-------------|\n| Score summary | deal.json | All updated scores |\n| Risk assessment | intelligence/risk-assessment.json | Identified risks |\n| Review summary | reviews/review-{date}.md | Full review |\n| Next actions | actions/ | Recommended actions |\n\n## Example\n\n```\n/deal-review-loop\n\nDeal: shopco\n\n═══════════════════════════════════════════\n  GATHER PHASE\n═══════════════════════════════════════════\n\n→ Gathering deal context...\n  Communications: 5 captured\n  Stakeholders: 3 mapped\n  Last activity: 2 days ago\n  Days in stage: 12 (Discovery)\n\n═══════════════════════════════════════════\n  SCORE PHASE\n═══════════════════════════════════════════\n\n→ Calculating scores...\n\n  DEAL HEALTH: 78/100 (Good)\n\n  Component Scores:\n  ┌─────────────────────────────────┐\n  │ AI Readiness      │ 65  │ ████░ │\n  │ Deal Confidence   │ 82  │ █████ │\n  │ Champion Strength │ 85  │ █████ │\n  │ Use Case Clarity  │ 78  │ ████░ │\n  └─────────────────────────────────┘\n\n  Trend: Improving (+6 from last week)\n\n[Deal Health Gate]\n  ✓ Health 78 > 40\n  ⚠️ 2 risks identified\n  → PASSED (continue actively)\n\n═══════════════════════════════════════════\n  ASSESS PHASE\n═══════════════════════════════════════════\n\n→ Assessing risks...\n\n  CRITICAL: CFO skeptical on ROI\n    Likelihood: High | Impact: High\n    Mitigation: Build ROI model with champion\n\n  HIGH: Single champion (no backup)\n    Likelihood: Medium | Impact: High\n    Mitigation: Build relationships with CTO team\n\n  MEDIUM: CTO technical concerns\n    Likelihood: Medium | Impact: Medium\n    Mitigation: Send integration documentation\n\n═══════════════════════════════════════════\n  COMPLETE PHASE\n═══════════════════════════════════════════\n\n→ Generating recommendations...\n\n  STRATEGIC ASSESSMENT:\n  ShopCo is a strong deal (78 health) with good\n  momentum. Key risk is CFO skepticism on ROI.\n  Champion is strong but sole advocate.\n\n  TOP ACTIONS:\n  1. Build ROI model for CFO presentation (87)\n  2. Request CTO introduction (78)\n  3. Send integration docs to Michael (72)\n\n  KEY INSIGHT:\n  Budget and timeline are solid. Win this by\n  proving ROI to CFO and getting CTO aligned.\n\n✓ Deal review complete\n```\n\n## Related Loops\n\n- **intelligence-loop** — Update intelligence first\n- **champion-loop** — Deep dive on champion\n- **pipeline-loop** — Review across all deals\n",
+  "phases": [
+    {
+      "name": "Gather Context",
+      "order": 0,
+      "skills": [
+        {
+          "skillId": "communication-parse",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "Score Deal",
+      "order": 1,
+      "skills": [
+        {
+          "skillId": "deal-scoring",
+          "required": true,
+          "order": 0
+        },
+        {
+          "skillId": "champion-scoring",
+          "required": true,
+          "order": 1
+        },
+        {
+          "skillId": "use-case-clarity",
+          "required": true,
+          "order": 2
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "Assess Risks",
+      "order": 2,
+      "skills": [
+        {
+          "skillId": "risk-assessment",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "Complete",
+      "order": 3,
+      "skills": [
+        {
+          "skillId": "next-best-action",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    }
+  ],
+  "gates": [
+    {
+      "id": "deal-health-gate",
+      "name": "Deal Health Gate",
+      "afterPhase": "SCORE",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": []
+    }
+  ],
+  "defaultMode": "greenfield",
+  "defaultAutonomy": "supervised",
+  "skillCount": 6,
+  "phaseCount": 4,
+  "author": "KnoPilot"
+}

@@ -1,0 +1,78 @@
+{
+  "id": "deal-intake-loop",
+  "name": "Deal Intake Loop",
+  "version": "1.0.0",
+  "description": "Standardized process for bringing new deals into the pipeline with proper structure, initial research, and qualification.",
+  "category": "development",
+  "content": "# Deal Intake Loop\n\nStandardized process for bringing new deals into the pipeline.\n\n## When to Use\n\n- New lead identified\n- Inbound inquiry received\n- Referral introduction\n- Conference lead\n- Any new potential deal\n\n## What It Does\n\nTakes a new lead and:\n1. Creates proper deal structure\n2. Researches the company and fit\n3. Captures any existing communications\n4. Adds known stakeholders\n5. Recommends first actions\n\n## Phases\n\n### INIT: Initialize\nSet up deal with proper file structure.\n- Creates deal directory\n- Generates deal.json with initial data\n- Creates DEAL.md summary\n\n### RESEARCH: Research\nResearch the lead and assess AI fit.\n- Company background\n- Likely pain points\n- AI fit scoring\n- Stakeholder identification\n- Personalization angles\n\n**Gate:** Qualification Gate\n- AI fit score > 40\n- Champion potential identified\n- No disqualifying factors\n\n### CAPTURE: Capture Intelligence\nCapture any existing communications.\n- Import email threads\n- Add meeting notes\n- Document stakeholders\n\n### COMPLETE: Complete\nFinalize and recommend next actions.\n- Generate next best actions\n- Set up for pipeline tracking\n\n## Inputs\n\n| Input | Required | Description |\n|-------|----------|-------------|\n| Company name | Yes | The company/lead name |\n| Website | Yes | Company website |\n| Source | Yes | How we found this lead |\n| Initial contact | No | First person contacted |\n| Communications | No | Any existing emails/notes |\n\n## Outputs\n\n| Output | Location | Description |\n|--------|----------|-------------|\n| Deal structure | deals/{slug}/ | Full deal directory |\n| deal.json | deals/{slug}/deal.json | Deal data |\n| DEAL.md | deals/{slug}/DEAL.md | Human-readable summary |\n| research.json | deals/{slug}/research.json | Research findings |\n| stakeholders.json | deals/{slug}/stakeholders.json | Initial stakeholders |\n| NBA | deals/{slug}/actions/ | Next best actions |\n\n## Example\n\n```\n/deal-intake-loop\n\nCompany: ShopCo\nWebsite: shopco.com\nSource: Inbound demo request\nContact: Sarah Chen, VP Customer Experience\n\n→ Creating deal structure...\n→ Researching ShopCo...\n  AI Fit: 75/100 (Good)\n  Industry: E-commerce (excellent fit)\n  Size: 500 employees (ideal)\n  Likely pain: Support volume\n\n[Qualification Gate]\n  ✓ AI fit > 40: 75\n  ✓ Champion potential: Sarah Chen\n  ✓ No disqualifying factors\n  → PASSED\n\n→ Capturing communications...\n→ Adding stakeholder: Sarah Chen\n\n→ Generating next best actions...\n  #1: Schedule discovery call (Score: 92)\n\n✓ Deal intake complete\n  Deal: shopco\n  Stage: Lead\n  Fit: 75/100\n  Next: Schedule discovery call with Sarah Chen\n```\n\n## Related Loops\n\n- **intelligence-loop** — Run after new communications\n- **discovery-loop** — Run before/after discovery meetings\n- **pipeline-loop** — Weekly pipeline review including this deal\n",
+  "phases": [
+    {
+      "name": "Initialize",
+      "order": 0,
+      "skills": [
+        {
+          "skillId": "deal-create",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "Research",
+      "order": 1,
+      "skills": [
+        {
+          "skillId": "lead-research",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "Capture Intelligence",
+      "order": 2,
+      "skills": [
+        {
+          "skillId": "communication-capture",
+          "required": true,
+          "order": 0
+        },
+        {
+          "skillId": "stakeholder-add",
+          "required": true,
+          "order": 1
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "Complete",
+      "order": 3,
+      "skills": [
+        {
+          "skillId": "next-best-action",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    }
+  ],
+  "gates": [
+    {
+      "id": "qualification-gate",
+      "name": "Qualification Gate",
+      "afterPhase": "RESEARCH",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": []
+    }
+  ],
+  "defaultMode": "greenfield",
+  "defaultAutonomy": "supervised",
+  "skillCount": 5,
+  "phaseCount": 4,
+  "author": "KnoPilot"
+}

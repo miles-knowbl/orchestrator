@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KnoPilot: Sales Intelligence That Thinks Ahead</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --bg-primary: #0D1117;
+      --bg-secondary: #161B22;
+      --bg-card: #1C2128;
+      --fg-primary: #E6EDF3;
+      --fg-secondary: #8B949E;
+      --fg-muted: #6E7681;
+      --accent-cyan: #22D3EE;
+      --accent-orange: #F97316;
+      --accent-purple: #A78BFA;
+      --accent-green: #34D399;
+      --accent-yellow: #FBBF24;
+      --accent-red: #F87171;
+      --border: #30363D;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--fg-primary);
+      line-height: 1.6;
+    }
+    
+    .slide {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto 60px;
+      aspect-ratio: 16/9;
+      background: var(--bg-primary);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      position: relative;
+      padding: 60px 80px;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .slide-number {
+      position: absolute;
+      bottom: 20px;
+      right: 30px;
+      font-size: 14px;
+      color: var(--fg-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    
+    h1 { font-size: 48px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 16px; }
+    h2 { font-size: 32px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 12px; }
+    h3 { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+    
+    .subtitle { color: var(--fg-secondary); font-size: 20px; }
+    .tagline { color: var(--accent-cyan); font-family: 'JetBrains Mono', monospace; font-size: 16px; margin-top: 24px; }
+    .muted { color: var(--fg-muted); }
+    
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    
+    .card-grid {
+      display: grid;
+      gap: 20px;
+    }
+    
+    .pill {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      margin: 4px;
+    }
+    
+    .accent-line {
+      width: 4px;
+      height: 120px;
+      background: linear-gradient(180deg, var(--accent-cyan), var(--accent-purple));
+      border-radius: 2px;
+    }
+    
+    .flow-node {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px 20px;
+      background: var(--bg-card);
+      border: 2px solid var(--accent-cyan);
+      border-radius: 8px;
+      min-width: 100px;
+    }
+    
+    .flow-arrow {
+      color: var(--accent-cyan);
+      font-size: 20px;
+      margin: 0 8px;
+    }
+    
+    .score-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 18px;
+    }
+    
+    .metric-card {
+      text-align: center;
+      padding: 20px;
+    }
+    .metric-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 32px;
+      font-weight: 700;
+    }
+    .metric-label {
+      font-size: 14px;
+      color: var(--fg-secondary);
+      margin-top: 4px;
+    }
+    
+    .cta-button {
+      display: inline-block;
+      padding: 16px 32px;
+      border-radius: 8px;
+      font-size: 20px;
+      font-weight: 600;
+      text-align: center;
+      margin: 8px;
+    }
+    .cta-primary {
+      background: var(--accent-cyan);
+      color: var(--bg-primary);
+    }
+    .cta-secondary {
+      background: transparent;
+      border: 2px solid var(--accent-purple);
+      color: var(--accent-purple);
+    }
+    
+    .nav {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--bg-card);
+      padding: 12px 20px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      z-index: 100;
+      font-size: 14px;
+    }
+    
+    /* Slide-specific styles */
+    .slide-hero {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: radial-gradient(ellipse at 25% 15%, rgba(34,211,238,0.12) 0%, transparent 50%), var(--bg-primary);
+    }
+    
+    .slide-hero h1 { font-size: 72px; }
+    
+    .quote-mark {
+      font-size: 120px;
+      color: rgba(34,211,238,0.2);
+      font-weight: 700;
+      line-height: 1;
+      position: absolute;
+      top: 60px;
+      left: 60px;
+    }
+    
+    .stakeholder {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      background: var(--bg-secondary);
+      margin-bottom: 8px;
+    }
+    
+    .stakeholder-badge {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    .risk-alert {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+    
+    .action-item {
+      display: flex;
+      gap: 16px;
+      padding: 16px;
+      background: var(--bg-card);
+      border-radius: 8px;
+      margin-bottom: 12px;
+      border-left: 4px solid var(--accent-cyan);
+    }
+    
+    .phase-card {
+      flex: 1;
+      padding: 24px;
+      background: var(--bg-card);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+    .phase-card.highlight {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 20px rgba(34,211,238,0.1);
+    }
+    .phase-card.faded {
+      opacity: 0.7;
+    }
+    
+    .container { padding: 40px 20px; max-width: 1300px; margin: 0 auto; }
+  </style>
+</head>
+<body>
+  <div class="nav">KnoPilot Deck Preview — 11 slides</div>
+  
+  <div class="container">
+    
+    <!-- Slide 1: Title -->
+    <div class="slide slide-hero">
+      <h1>KnoPilot</h1>
+      <p class="subtitle">Sales Intelligence That Thinks Ahead</p>
+      <p class="tagline">Never ask 'what should I do?' — always get ranked options.</p>
+      <p class="muted" style="position: absolute; bottom: 40px;">Internal Preview</p>
+      <span class="slide-number">1</span>
+    </div>
+    
+    <!-- Slide 2: Meta -->
+    <div class="slide" style="flex-direction: row; align-items: center; gap: 40px;">
+      <div class="accent-line"></div>
+      <div>
+        <p class="subtitle" style="margin-bottom: 12px;">Before we start...</p>
+        <h2 style="font-size: 36px;">This presentation was built using /deck-loop</h2>
+        <p class="subtitle" style="margin-top: 16px;">A structured workflow that transforms context into polished slides.</p>
+        <p class="muted" style="margin-top: 24px;">More on that at the end.</p>
+      </div>
+      <span class="slide-number">2</span>
+    </div>
+    
+    <!-- Slide 3: Problem -->
+    <div class="slide">
+      <h1>Sales intelligence is broken</h1>
+      <div class="card-grid" style="grid-template-columns: repeat(3, 1fr); margin-top: 40px; flex: 1;">
+        <div class="card" style="border-left: 4px solid var(--accent-orange);">
+          <h3 style="color: var(--accent-orange);">Data trapped in inboxes</h3>
+          <p class="subtitle" style="font-size: 16px; margin-top: 8px;">Critical signals buried in email threads and call notes</p>
+        </div>
+        <div class="card" style="border-left: 4px solid var(--accent-orange);">
+          <h3 style="color: var(--accent-orange);">Manual pipeline updates</h3>
+          <p class="subtitle" style="font-size: 16px; margin-top: 8px;">Reps spend hours updating CRM instead of selling</p>
+        </div>
+        <div class="card" style="border-left: 4px solid var(--accent-orange);">
+          <h3 style="color: var(--accent-orange);">'What should I do next?'</h3>
+          <p class="subtitle" style="font-size: 16px; margin-top: 8px;">Generic playbooks don't know your deals</p>
+        </div>
+      </div>
+      <div class="card" style="background: rgba(249,115,22,0.1); border-left: 4px solid var(--accent-orange); margin-top: 24px;">
+        <p style="font-weight: 600;">Your pipeline is full of data. Your team is starving for intelligence.</p>
+      </div>
+      <span class="slide-number">3</span>
+    </div>
+    
+    <!-- Slide 4: Vision -->
+    <div class="slide" style="background: radial-gradient(ellipse at 70% 30%, rgba(167,139,250,0.08) 0%, transparent 50%), var(--bg-primary); justify-content: center; text-align: center;">
+      <span class="quote-mark">"</span>
+      <h2 style="font-size: 40px; max-width: 700px; margin: 0 auto; line-height: 1.4;">Lead with generosity.<br>Let urgency emerge naturally.</h2>
+      <p class="subtitle" style="margin-top: 24px;">— Mo Bunnell, "Give to Grow"</p>
+      <div style="margin-top: 48px;">
+        <span class="pill" style="background: rgba(34,211,238,0.2); color: var(--accent-cyan);">Weeks, not months</span>
+        <span class="pill" style="background: rgba(167,139,250,0.2); color: var(--accent-purple);">4 years LLM experience</span>
+        <span class="pill" style="background: rgba(52,211,153,0.2); color: var(--accent-green);">Build-Operate-Transfer</span>
+        <span class="pill" style="background: rgba(52,211,153,0.2); color: var(--accent-green);">SOC 2 Type 2</span>
+      </div>
+      <p class="subtitle" style="margin-top: 32px;">Partner, not vendor. Diamond in the rough.</p>
+      <span class="slide-number">4</span>
+    </div>
+    
+    <!-- Slide 5: Pipeline -->
+    <div class="slide">
+      <h1>The Pipeline</h1>
+      <div style="display: flex; align-items: center; justify-content: center; flex: 1; gap: 8px; flex-wrap: wrap;">
+        <div class="flow-node">
+          <strong>Lead</strong>
+          <small class="muted" style="font-size: 11px;">Contact captured</small>
+        </div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-node">
+          <strong>Target</strong>
+          <small class="muted" style="font-size: 11px;">Meeting scheduled</small>
+        </div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-node">
+          <strong>Discovery</strong>
+          <small class="muted" style="font-size: 11px;">Exploring needs</small>
+        </div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-node">
+          <strong>Contracting</strong>
+          <small class="muted" style="font-size: 11px;">Committed</small>
+        </div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-node" style="border-color: var(--accent-green);">
+          <strong style="color: var(--accent-green);">Production</strong>
+          <small class="muted" style="font-size: 11px;">Live</small>
+        </div>
+      </div>
+      <p class="subtitle" style="text-align: center;">Clear entry/exit criteria. No deals stuck in limbo.</p>
+      <span class="slide-number">5</span>
+    </div>
+    
+    <!-- Slide 6: Intelligence -->
+    <div class="slide">
+      <h1>Intelligence That Extracts Itself</h1>
+      <div class="card-grid" style="grid-template-columns: repeat(3, 1fr); margin-top: 32px; flex: 1;">
+        <div class="card" style="border-left: 4px solid var(--accent-orange);">
+          <h3>Pain Points</h3>
+          <p class="muted" style="font-size: 14px;">Volume issues, KB gaps, compliance</p>
+        </div>
+        <div class="card" style="border-left: 4px solid var(--accent-purple);">
+          <h3>AI Maturity</h3>
+          <p class="muted" style="font-size: 14px;">Exploring vs board mandate</p>
+        </div>
+        <div class="card" style="border-left: 4px solid var(--accent-cyan);">
+          <h3>Budget/Timeline</h3>
+          <p class="muted" style="font-size: 14px;">Fiscal year, deadlines</p>
+        </div>
+        <div class="card" style="border-left: 4px solid var(--accent-green);">
+          <h3>Stakeholders</h3>
+          <p class="muted" style="font-size: 14px;">Champion strength, blockers</p>
+        </div>
+        <div class="card" style="border-left: 4px solid var(--accent-yellow);">
+          <h3>Technical Reqs</h3>
+          <p class="muted" style="font-size: 14px;">Integrations, scalability</p>
+        </div>
+        <div class="card" style="border-left: 4px solid var(--accent-red);">
+          <h3>Competitive</h3>
+          <p class="muted" style="font-size: 14px;">Other vendors, build vs buy</p>
+        </div>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-top: 24px;">
+        <p class="subtitle">Forward an email. Upload a transcript. Claude parses it automatically.</p>
+        <p style="color: var(--accent-cyan); font-weight: 500;">Deal properties update. Intelligence compounds.</p>
+      </div>
+      <span class="slide-number">6</span>
+    </div>
+    
+    <!-- Slide 7: Deal View -->
+    <div class="slide">
+      <h1>Deal View: ShopCo</h1>
+      <div class="card" style="flex: 1; margin-top: 24px; display: flex; flex-direction: column; gap: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 16px;">
+          <div>
+            <h3>E-commerce Returns Automation</h3>
+            <p class="muted">ShopCo</p>
+          </div>
+          <span class="pill" style="background: var(--accent-cyan); color: var(--bg-primary);">Discovery</span>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
+          <div class="metric-card card" style="background: var(--bg-secondary);">
+            <div class="metric-value" style="color: var(--accent-green);">72</div>
+            <div class="metric-label">AI Readiness</div>
+          </div>
+          <div class="metric-card card" style="background: var(--bg-secondary);">
+            <div class="metric-value" style="color: var(--accent-green); font-size: 24px;">Strong</div>
+            <div class="metric-label">Champion</div>
+          </div>
+          <div class="metric-card card" style="background: var(--bg-secondary);">
+            <div class="metric-value" style="color: var(--accent-cyan); font-size: 24px;">Defined</div>
+            <div class="metric-label">Use Case</div>
+          </div>
+          <div class="metric-card card" style="background: var(--bg-secondary);">
+            <div class="metric-value" style="color: var(--accent-yellow);">68%</div>
+            <div class="metric-label">Confidence</div>
+          </div>
+        </div>
+        
+        <div>
+          <h3 style="margin-bottom: 12px; font-size: 16px;">Stakeholders</h3>
+          <div class="stakeholder">
+            <div style="flex: 1;">
+              <strong>Sarah Chen</strong> <span class="muted">VP CX</span>
+              <span class="stakeholder-badge" style="background: var(--accent-green); color: var(--bg-primary); margin-left: 8px;">Champion</span>
+            </div>
+            <em class="muted">"Need this by June"</em>
+          </div>
+          <div class="stakeholder">
+            <div style="flex: 1;">
+              <strong>Michael Torres</strong> <span class="muted">CTO</span>
+              <span class="stakeholder-badge" style="background: var(--accent-yellow); color: var(--bg-primary); margin-left: 8px;">Decision-Maker</span>
+            </div>
+            <span style="color: var(--accent-yellow);">⚠ Not yet engaged</span>
+          </div>
+          <div class="stakeholder">
+            <div style="flex: 1;">
+              <strong>Lisa Park</strong> <span class="muted">CFO</span>
+              <span class="stakeholder-badge" style="background: var(--accent-red); color: var(--bg-primary); margin-left: 8px;">Decision-Maker</span>
+            </div>
+            <em class="muted">"Need ROI vs hiring"</em>
+          </div>
+        </div>
+        
+        <div style="display: flex; gap: 12px;">
+          <div class="risk-alert" style="background: rgba(251,191,36,0.1); color: var(--accent-yellow);">
+            ⚠ CTO not yet engaged — blocker risk
+          </div>
+          <div class="risk-alert" style="background: rgba(248,113,113,0.1); color: var(--accent-red);">
+            ⚠ CFO skeptical on ROI — needs business case
+          </div>
+        </div>
+      </div>
+      <span class="slide-number">7</span>
+    </div>
+    
+    <!-- Slide 8: Next Best Actions -->
+    <div class="slide">
+      <h1>Next Best Actions</h1>
+      <p class="tagline" style="margin-bottom: 24px;">Never 'what should I do?' — always ranked options.</p>
+      
+      <div style="flex: 1;">
+        <div class="action-item" style="border-left-color: var(--accent-green);">
+          <div class="score-badge" style="background: var(--accent-green); color: var(--bg-primary);">92</div>
+          <div style="flex: 1;">
+            <h3>Create CFO one-pager</h3>
+            <p class="muted" style="font-size: 14px;">Addresses Lisa's ROI concerns, enables Sarah to sell up</p>
+            <p style="font-size: 14px; margin-top: 8px;">
+              <span class="muted">Impact:</span> Champion Sarah → CFO Lisa
+              <span style="margin-left: 16px; color: var(--accent-orange);">⏰ Before budget review Friday</span>
+            </p>
+          </div>
+        </div>
+        
+        <div class="action-item" style="border-left-color: var(--accent-green);">
+          <div class="score-badge" style="background: var(--accent-green); color: var(--bg-primary);">88</div>
+          <div style="flex: 1;">
+            <h3>Schedule CTO technical call</h3>
+            <p class="muted" style="font-size: 14px;">Address integration concerns early, get technical buy-in</p>
+            <p style="font-size: 14px; margin-top: 8px;">
+              <span class="muted">Impact:</span> CTO Michael
+              <span style="margin-left: 16px; color: var(--fg-muted);">⏰ Next week</span>
+            </p>
+          </div>
+        </div>
+        
+        <div class="action-item" style="border-left-color: var(--accent-cyan);">
+          <div class="score-badge" style="background: var(--accent-cyan); color: var(--bg-primary);">84</div>
+          <div style="flex: 1;">
+            <h3>Send Shopify + Okta case study</h3>
+            <p class="muted" style="font-size: 14px;">Proves we've solved their exact tech stack</p>
+            <p style="font-size: 14px; margin-top: 8px;">
+              <span class="muted">Impact:</span> CTO Michael → Technical evaluators
+              <span style="margin-left: 16px; color: var(--fg-muted);">⏰ Before CTO call</span>
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <p style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--fg-muted); text-align: right;">
+        NBA = Likelihood × 0.4 + Effort × 0.3 + Champion Value × 0.3
+      </p>
+      <span class="slide-number">8</span>
+    </div>
+    
+    <!-- Slide 9: Pipeline Dashboard -->
+    <div class="slide">
+      <h1>Pipeline Dashboard</h1>
+      <div class="card" style="flex: 1; margin-top: 24px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-bottom: 32px;">
+          <div class="metric-card">
+            <div class="metric-value" style="color: var(--accent-cyan); font-size: 48px;">$2.4M</div>
+            <div class="metric-label">Total Pipeline (weighted by confidence)</div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px; justify-content: center;">
+            <div style="text-align: center; padding: 8px 12px;">
+              <div style="font-size: 24px; font-weight: 700;">12</div>
+              <div class="metric-label">Lead</div>
+            </div>
+            <div style="text-align: center; padding: 8px 12px;">
+              <div style="font-size: 24px; font-weight: 700; color: var(--accent-purple);">8</div>
+              <div class="metric-label">Target</div>
+            </div>
+            <div style="text-align: center; padding: 8px 12px;">
+              <div style="font-size: 24px; font-weight: 700; color: var(--accent-cyan);">6</div>
+              <div class="metric-label">Discovery</div>
+            </div>
+            <div style="text-align: center; padding: 8px 12px;">
+              <div style="font-size: 24px; font-weight: 700; color: var(--accent-yellow);">3</div>
+              <div class="metric-label">Contract</div>
+            </div>
+            <div style="text-align: center; padding: 8px 12px;">
+              <div style="font-size: 24px; font-weight: 700; color: var(--accent-green);">4</div>
+              <div class="metric-label">Prod</div>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value" style="font-size: 36px;">64% <span style="color: var(--accent-green); font-size: 20px;">+8%</span></div>
+            <div class="metric-label">Avg Confidence (30 days)</div>
+          </div>
+        </div>
+        
+        <div style="border-top: 1px solid var(--border); padding-top: 24px;">
+          <h3 style="margin-bottom: 16px;">This Week's Focus</h3>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+            <div class="card" style="background: var(--bg-secondary);">
+              <strong>ShopCo</strong>
+              <p class="muted" style="font-size: 14px;">Create CFO one-pager</p>
+              <p style="color: var(--accent-orange); font-size: 13px; margin-top: 8px;">⏰ Budget review Friday</p>
+            </div>
+            <div class="card" style="background: var(--bg-secondary);">
+              <strong>BigBank</strong>
+              <p class="muted" style="font-size: 14px;">Complete security questionnaire</p>
+              <p style="color: var(--accent-red); font-size: 13px; margin-top: 8px;">🚫 Legal blocker</p>
+            </div>
+            <div class="card" style="background: var(--bg-secondary);">
+              <strong>RetailMart</strong>
+              <p class="muted" style="font-size: 14px;">Re-engage CTO</p>
+              <p style="color: var(--accent-yellow); font-size: 13px; margin-top: 8px;">⚠ 14 days silent</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <span class="slide-number">9</span>
+    </div>
+    
+    <!-- Slide 10: Roadmap -->
+    <div class="slide">
+      <h1>Building KnoPilot</h1>
+      <div style="display: flex; gap: 24px; flex: 1; margin-top: 32px;">
+        <div class="phase-card highlight">
+          <span class="pill" style="background: var(--accent-cyan); color: var(--bg-primary); margin-bottom: 16px;">Now</span>
+          <h3>Phase 1: MVP</h3>
+          <ul style="margin-top: 16px; padding-left: 20px; color: var(--fg-secondary);">
+            <li>Deal management + pipeline stages</li>
+            <li>Gmail integration (selective forwarding)</li>
+            <li>Claude-powered parsing</li>
+            <li>Deal view + NBA engine</li>
+            <li>Pipeline dashboard</li>
+          </ul>
+        </div>
+        <div class="phase-card faded">
+          <span class="pill" style="background: var(--accent-purple); color: var(--bg-primary); margin-bottom: 16px;">Next</span>
+          <h3>Phase 2: Integrations</h3>
+          <ul style="margin-top: 16px; padding-left: 20px; color: var(--fg-secondary);">
+            <li>Demo agent (auto-generate prototypes)</li>
+            <li>Meeting tools (Limitless, Granola, Gemini)</li>
+            <li>Advanced analytics</li>
+          </ul>
+        </div>
+        <div class="phase-card faded">
+          <span class="pill" style="background: var(--fg-muted); color: var(--bg-primary); margin-bottom: 16px;">Later</span>
+          <h3>Phase 3: Automation</h3>
+          <ul style="margin-top: 16px; padding-left: 20px; color: var(--fg-secondary);">
+            <li>Contracting agent</li>
+            <li>Workflow automation</li>
+            <li>Mobile app</li>
+          </ul>
+        </div>
+      </div>
+      <p class="subtitle" style="text-align: center; margin-top: 24px;">Phase 1 is the foundation. Everything else builds on it.</p>
+      <span class="slide-number">10</span>
+    </div>
+    
+    <!-- Slide 11: CTAs -->
+    <div class="slide" style="background: radial-gradient(ellipse at 50% 30%, rgba(34,211,238,0.1) 0%, transparent 50%), var(--bg-primary); justify-content: center; align-items: center; text-align: center;">
+      <h1 style="font-size: 56px; margin-bottom: 40px;">Let's Build</h1>
+      
+      <div style="margin-bottom: 16px;">
+        <div class="cta-button cta-primary">Let's build KnoPilot</div>
+        <p class="muted" style="margin-top: 8px;">The intelligence layer Knowbl's sales team deserves.</p>
+      </div>
+      
+      <div style="margin-bottom: 48px;">
+        <div class="cta-button cta-secondary">Let's build more decks with /deck-loop</div>
+        <p class="muted" style="margin-top: 8px;">This presentation took 20 minutes to generate.</p>
+      </div>
+      
+      <div style="display: flex; gap: 48px; justify-content: center;">
+        <div class="metric-card">
+          <div class="metric-value" style="color: var(--accent-green);">6mo → <4mo</div>
+          <div class="metric-label">Sales Cycle</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value" style="color: var(--accent-green);">+15-20%</div>
+          <div class="metric-label">Win Rate</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value" style="color: var(--accent-cyan);">Instant</div>
+          <div class="metric-label">Prioritization</div>
+        </div>
+      </div>
+      <span class="slide-number">11</span>
+    </div>
+    
+  </div>
+</body>
+</html>

@@ -1,0 +1,122 @@
+{
+  "id": "async-loop",
+  "name": "Async Preparation Loop",
+  "version": "1.0.0",
+  "description": "Prepares the system for autonomous Slack-based operation. Run this before going mobile.",
+  "category": "meta",
+  "content": "# Async Preparation Loop\n\n## Purpose\n\nPrepares the orchestrator for autonomous Slack-based operation. Run this loop before going mobile (jogging, driving, AFK). After completion, you can control work entirely through Slack \"Start Next\" buttons.\n\n## When to Use\n\n- Before going mobile/AFK\n- When you want autonomous loop execution\n- To set up a work queue for async processing\n\n## The 7 Layers\n\nThis loop ensures all context layers are populated:\n\n| Layer | Description | File |\n|-------|-------------|------|\n| 1. Dream State | Vision and goals | `memory/dream-state.json` |\n| 2. Roadmap | Available moves | `memory/roadmap.json` |\n| 3. Module Scores | What's ready vs blocked | `memory/module-scores.json` |\n| 4. Patterns | Learned behaviors | `memory/patterns.json` |\n| 5. Calibration | Accurate effort estimates | `memory/calibration.json` |\n| 6. Run History | Recent completions | `memory/run-history.json` |\n| 7. Improvements | Pending skill upgrades | `memory/improvements.json` |\n\n## Phases\n\n### INIT\nLoad current system state. Check prerequisites:\n- Slack configured and connected\n- At least one module ready for work\n- No critical blockers\n\n### GATHER\nCollect and sync all 7 layers:\n- Refresh dream state if stale\n- Load recent run history\n- Collect learned patterns\n- Sync calibration data\n\n### SCORE\nScore all available modules:\n- Calculate leverage scores\n- Identify blockers\n- Determine what's actionable\n\n### PLAN\nBuild the async queue:\n- Apply leverage protocol to all modules\n- Rank by: Dream State Alignment (40%) + Downstream Unlock (25%) + Likelihood (15%) - Time (10%) - Effort (10%)\n- Select top 5-10 moves\n- Write to `memory/async-queue.json`\n\n**Gate:** Review planned moves before proceeding\n\n### VERIFY\nTest async channels:\n- Verify Slack Socket Mode connected\n- Send test notification\n- Confirm delivery\n\n**Gate:** Slack must be working\n\n### HANDOFF\nFinal confirmation:\n- Display the queue summary\n- Show estimated work time\n- Confirm ready for async operation\n\n## Output: async-queue.json\n\n```json\n{\n  \"createdAt\": \"2024-01-15T10:00:00Z\",\n  \"createdBy\": \"async-loop\",\n  \"moves\": [\n    {\n      \"rank\": 1,\n      \"loopId\": \"engineering-loop\",\n      \"module\": \"auth-service\",\n      \"reason\": \"Unblocks 3 dependent modules\",\n      \"score\": 8.7,\n      \"estimatedEffort\": \"medium\"\n    },\n    {\n      \"rank\": 2,\n      \"loopId\": \"engineering-loop\",\n      \"module\": \"api-gateway\",\n      \"reason\": \"High dream state alignment\",\n      \"score\": 8.2,\n      \"estimatedEffort\": \"medium\"\n    }\n  ],\n  \"totalMoves\": 5,\n  \"estimatedTotalEffort\": \"2-3 sessions\"\n}\n```\n\n## How \"Start Next\" Works After This\n\n1. You click \"Start Next\" on Slack\n2. Spawned Claude Code reads `memory/async-queue.json`\n3. Pops move #1 from the queue\n4. Executes that loop (e.g., `/engineering-loop auth-service`)\n5. On completion, notifies you with \"Start Next\" button\n6. Repeat until queue exhausted\n\n## Differences from Other Loops\n\n| Aspect | Async Loop | Other Loops |\n|--------|------------|-------------|\n| **Purpose** | Preparation | Execution |\n| **Output** | Queue of moves | Deliverables |\n| **Human** | Present at start | Present throughout |\n| **After** | Go mobile | Stay at terminal |\n\n## Example Session\n\n```\nTerminal:\n> /async-loop\n\n[INIT] Loading state... ✓\n[GATHER] Syncing 7 layers... ✓\n[SCORE] Scoring 12 modules... ✓\n[PLAN] Building queue...\n  1. engineering-loop → auth-service (8.7)\n  2. engineering-loop → api-gateway (8.2)\n  3. bugfix-loop → flaky-tests (7.1)\n  4. engineering-loop → dashboard (6.9)\n  5. learning-loop → review-runs (5.2)\n[Gate] Review queue? (approve/reject)\n> approve\n[VERIFY] Testing Slack... ✓ Notification delivered\n[HANDOFF] Ready for async operation!\n\nQueue: 5 moves | Est: 2-3 sessions\nGo mobile. Use \"Start Next\" on Slack to begin.\n```\n\nThen on Slack:\n```\n[Notification] auth-service complete. Start Next?\n[Click] → api-gateway starts\n[Notification] api-gateway complete. Start Next?\n...\n```\n",
+  "phases": [
+    {
+      "name": "Initialize",
+      "order": 0,
+      "skills": [
+        {
+          "skillId": "state-loader",
+          "required": true,
+          "order": 0
+        },
+        {
+          "skillId": "prereq-checker",
+          "required": true,
+          "order": 1
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "Gather Context",
+      "order": 1,
+      "skills": [
+        {
+          "skillId": "dream-sync",
+          "required": true,
+          "order": 0
+        },
+        {
+          "skillId": "pattern-collector",
+          "required": true,
+          "order": 1
+        },
+        {
+          "skillId": "calibration-sync",
+          "required": true,
+          "order": 2
+        },
+        {
+          "skillId": "history-collector",
+          "required": true,
+          "order": 3
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "Score Modules",
+      "order": 2,
+      "skills": [
+        {
+          "skillId": "module-scorer",
+          "required": true,
+          "order": 0
+        },
+        {
+          "skillId": "blocker-analyzer",
+          "required": true,
+          "order": 1
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "Plan Moves",
+      "order": 3,
+      "skills": [
+        {
+          "skillId": "leverage-calculator",
+          "required": true,
+          "order": 0
+        },
+        {
+          "skillId": "queue-builder",
+          "required": true,
+          "order": 1
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "Verify Channels",
+      "order": 4,
+      "skills": [
+        {
+          "skillId": "slack-validator",
+          "required": true,
+          "order": 0
+        },
+        {
+          "skillId": "notification-tester",
+          "required": true,
+          "order": 1
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "Handoff",
+      "order": 5,
+      "skills": [
+        {
+          "skillId": "handoff-confirmer",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    }
+  ],
+  "gates": [],
+  "defaultMode": "greenfield",
+  "defaultAutonomy": "supervised",
+  "skillCount": 13,
+  "phaseCount": 6
+}
