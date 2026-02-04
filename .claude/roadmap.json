@@ -1,14 +1,159 @@
 {
   "system": "Orchestrator",
   "dreamState": "Autonomous, coherent, local-first system that compounds leverage through skill-based ontology",
+  "deferredModulesRef": "./deferred-modules-in-progress.json",
   "modules": [
+    {
+      "id": "skill-registry",
+      "name": "skill-registry",
+      "description": "Core service for skill CRUD operations, search, and improvement capture.",
+      "layer": 0,
+      "status": "complete",
+      "dependsOn": [],
+      "unlocks": [
+        "knowledge-graph-ontology"
+      ]
+    },
+    {
+      "id": "loop-composer",
+      "name": "loop-composer",
+      "description": "Compose loops from skills, validate loop definitions, manage loop lifecycle.",
+      "layer": 0,
+      "status": "complete",
+      "dependsOn": [
+        "skill-registry"
+      ],
+      "unlocks": [
+        "execution-engine"
+      ]
+    },
+    {
+      "id": "execution-engine",
+      "name": "execution-engine",
+      "description": "Execute loops with phase management, skill completion tracking, and gate enforcement.",
+      "layer": 0,
+      "status": "complete",
+      "dependsOn": [
+        "loop-composer"
+      ],
+      "unlocks": [
+        "autonomous",
+        "run-archival"
+      ]
+    },
+    {
+      "id": "memory-service",
+      "name": "memory-service",
+      "description": "Context persistence, pattern recording, decision tracking, and handoff creation.",
+      "layer": 0,
+      "status": "complete",
+      "dependsOn": [],
+      "unlocks": [
+        "learning-service"
+      ]
+    },
+    {
+      "id": "learning-service",
+      "name": "learning-service",
+      "description": "Skill improvement proposals, metrics tracking, proposal lifecycle management.",
+      "layer": 0,
+      "status": "complete",
+      "dependsOn": [
+        "memory-service",
+        "analytics"
+      ],
+      "unlocks": []
+    },
+    {
+      "id": "calibration-service",
+      "name": "calibration-service",
+      "description": "Effort estimation calibration, accuracy tracking, calibration recommendations.",
+      "layer": 0,
+      "status": "complete",
+      "dependsOn": [],
+      "unlocks": []
+    },
+    {
+      "id": "inbox-processor",
+      "name": "inbox-processor",
+      "description": "Second brain inbox for capturing content, URL fetching, skill extraction.",
+      "layer": 0,
+      "status": "complete",
+      "dependsOn": [
+        "skill-registry"
+      ],
+      "unlocks": []
+    },
+    {
+      "id": "run-archival",
+      "name": "run-archival",
+      "description": "Archive completed loop runs, query historical runs, generate run summaries.",
+      "layer": 0,
+      "status": "complete",
+      "dependsOn": [
+        "execution-engine"
+      ],
+      "unlocks": [
+        "analytics"
+      ]
+    },
+    {
+      "id": "guarantee-service",
+      "name": "guarantee-service",
+      "description": "Register and validate skill guarantees, aggregate loop guarantees, enforce at gates.",
+      "layer": 0,
+      "status": "complete",
+      "dependsOn": [
+        "execution-engine"
+      ],
+      "unlocks": []
+    },
+    {
+      "id": "deliverable-manager",
+      "name": "deliverable-manager",
+      "description": "Store and retrieve execution deliverables, manage deliverable paths.",
+      "layer": 0,
+      "status": "complete",
+      "dependsOn": [
+        "execution-engine"
+      ],
+      "unlocks": []
+    },
+    {
+      "id": "analytics",
+      "name": "analytics",
+      "description": "Collect and aggregate metrics from runs, skills, calibration, gates, patterns.",
+      "layer": 0,
+      "status": "complete",
+      "dependsOn": [
+        "run-archival"
+      ],
+      "unlocks": [
+        "learning-service",
+        "patterns-roundup",
+        "scoring"
+      ]
+    },
+    {
+      "id": "dream-state-service",
+      "name": "dream-state-service",
+      "description": "Manage dream state JSON, sync from roadmap, render markdown views.",
+      "layer": 0,
+      "status": "complete",
+      "dependsOn": [
+        "roadmapping"
+      ],
+      "unlocks": []
+    },
     {
       "id": "2-layer-orchestration",
       "name": "2-layer-orchestration",
       "description": "Orchestrator that spawns and manages sub-agents. One orchestrator per system, capable of spinning up/down any number of agents running any combination of loops to advance toward dream state.",
       "layer": 0,
       "status": "complete",
-      "dependsOn": [],
+      "dependsOn": [
+        "execution-engine"
+      ],
       "unlocks": [
         "autonomous",
         "dreaming",
@@ -18,16 +163,16 @@
     {
       "id": "knowledge-graph-ontology",
       "name": "knowledge-graph-ontology",
-      "description": "The skill-based knowledge graph where compound leverage accumulates. Skills, patterns, loops, and learnings form nodes; relationships form edges. This is the second brain's actual structure.",
+      "description": "The skill-based knowledge graph where compound leverage accumulates. Skills, patterns, loops, and learnings form nodes; relationships form edges.",
       "layer": 0,
       "status": "complete",
-      "dependsOn": [],
+      "dependsOn": [
+        "skill-registry"
+      ],
       "unlocks": [
         "skill-trees",
-        "tech-trees",
-        "co-op-skill-acquisition",
         "mece-opportunity-mapping",
-        "spaced-repetition"
+        "spaced-repetition-learning"
       ]
     },
     {
@@ -39,36 +184,28 @@
       "dependsOn": [],
       "unlocks": [
         "kanban",
-        "coherence-system"
+        "coherence-system",
+        "dream-state-service"
       ]
     },
     {
       "id": "autonomous",
       "name": "autonomous",
-      "description": "Full loop execution without human gates + background continuous operation. \"It works while I sleep.\" The orchestrator advances dream state while you're away.",
+      "description": "Full loop execution without human gates + background continuous operation. The orchestrator advances dream state while you're away.",
       "layer": 1,
       "status": "complete",
       "dependsOn": [
         "2-layer-orchestration",
         "proactive-messaging"
       ],
-      "unlocks": []
-    },
-    {
-      "id": "dreaming",
-      "name": "dreaming",
-      "description": "Sleep/background processing mode for proposing new modules→system and systems→org. The system \"dreams up\" new work while idle, ready for review when you return. Needs roadmap state sync before useful.",
-      "layer": 1,
-      "status": "complete",
-      "dependsOn": [
-        "autonomous"
-      ],
-      "unlocks": []
+      "unlocks": [
+        "dreaming"
+      ]
     },
     {
       "id": "kanban",
       "name": "kanban",
-      "description": "Linear-style visualization of the module ladder to system completion. Human-readable checklist showing scope completion, delegation-ready for worktrees.",
+      "description": "Linear-style visualization of the module ladder to system completion. Human-readable checklist showing scope completion.",
       "layer": 1,
       "status": "complete",
       "dependsOn": [
@@ -78,31 +215,18 @@
       "completedAt": "2026-02-04T17:16:56.068Z"
     },
     {
-      "id": "ladder-of-abstraction-interfaces",
-      "name": "ladder-of-abstraction-interfaces",
-      "description": "UI showing the same loop at different zoom levels (module/system/org). Music-gear-like looping interfaces for piloting, co-piloting, or playing co-op PvE with the orchestrator.",
-      "layer": 1,
-      "status": "deferred",
-      "dependsOn": [
-        "kanban"
-      ],
-      "unlocks": []
-    },
-    {
       "id": "loop-sequencing",
       "name": "loop-sequencing",
-      "description": "Developing intuition for which loops commonly run together (like NLP pattern detection) and using that to look multiple moves ahead in the \"line\" (chess-inspired). Beyond single-move leverage protocol to multi-move planning.",
+      "description": "Developing intuition for which loops commonly run together and using that to look multiple moves ahead in the line.",
       "layer": 1,
       "status": "complete",
-      "dependsOn": [
-        "leverage-protocol (exists)"
-      ],
+      "dependsOn": [],
       "unlocks": []
     },
     {
       "id": "multi-agent-worktrees",
       "name": "multi-agent-worktrees",
-      "description": "Multiple sets of parallel agents across two hierarchy levels and multiple humans. Thoughtful coordination when collaborators each have their own agent sets working on isolated git worktrees.",
+      "description": "Multiple sets of parallel agents across two hierarchy levels. Coordination when collaborators each have their own agent sets working on isolated git worktrees.",
       "layer": 1,
       "status": "complete",
       "dependsOn": [
@@ -113,7 +237,7 @@
     {
       "id": "ooda-clocks-visual",
       "name": "ooda-clocks-visual",
-      "description": "Gamelan-inspired circular visualization showing when patterns, hooks, and skills fire during loop execution. Temporal awareness of the orchestration rhythm.",
+      "description": "Gamelan-inspired circular visualization showing when patterns, hooks, and skills fire during loop execution.",
       "layer": 1,
       "status": "complete",
       "dependsOn": [],
@@ -122,53 +246,32 @@
     {
       "id": "skill-trees",
       "name": "skill-trees",
-      "description": "DAG-like domain-specific sequences of skills. Simultaneously illustrates skill relationships to LLMs while helping users gain familiarity by seeing each skill produce output before using it in a loop. Interface to the skill-based ontology.",
+      "description": "DAG-like domain-specific sequences of skills. Interface to the skill-based ontology with progression tracking.",
       "layer": 1,
       "status": "complete",
       "dependsOn": [
         "knowledge-graph-ontology"
-      ],
-      "unlocks": []
-    },
-    {
-      "id": "tech-trees",
-      "name": "tech-trees",
-      "description": "Macroscopic technology progressions that cultures/orgs pursue. Predictive capabilities (potentially RL-based like AlphaGo with Markov decision trees) that inspire MECE opportunity mapping at system and module levels.",
-      "layer": 1,
-      "status": "deferred",
-      "dependsOn": [
-        "knowledge-graph-ontology",
-        "mece-opportunity-mapping"
-      ],
-      "unlocks": []
-    },
-    {
-      "id": "behavior-guarantees",
-      "name": "behavior-guarantees",
-      "description": "System for enforcing/guaranteeing LLM behavior. Explicit rules enforcement patterns for ensuring consistent agent behavior.",
-      "layer": 2,
-      "status": "deferred",
-      "dependsOn": [
-        "coherence-system"
       ],
       "unlocks": []
     },
     {
       "id": "coherence-system",
       "name": "coherence-system",
-      "description": "Alignment of all orchestrator components. Skill-based ontology + dream state + roadmapping form the spine of a \"spec-driven organization.\" Ensures modules don't drift or conflict.",
+      "description": "Alignment of all orchestrator components. Ensures modules don't drift or conflict.",
       "layer": 2,
       "status": "complete",
       "dependsOn": [
         "roadmapping",
         "knowledge-graph-ontology"
       ],
-      "unlocks": []
+      "unlocks": [
+        "game-design"
+      ]
     },
     {
       "id": "mece-opportunity-mapping",
       "name": "mece-opportunity-mapping",
-      "description": "Mutually Exclusive, Collectively Exhaustive opportunity analysis at system and module levels. Ensures no blind spots in roadmap coverage.",
+      "description": "Mutually Exclusive, Collectively Exhaustive opportunity analysis. Ensures no blind spots in roadmap coverage.",
       "layer": 2,
       "status": "complete",
       "dependsOn": [
@@ -179,11 +282,11 @@
     {
       "id": "patterns-roundup",
       "name": "patterns-roundup",
-      "description": "Two functions: (1) Round up existing patterns not yet formalized into memory/patterns, (2) Automatic pattern detection and proposal from observed behaviors.",
+      "description": "Round up existing patterns not yet formalized, plus automatic pattern detection from observed behaviors.",
       "layer": 2,
       "status": "complete",
       "dependsOn": [
-        "analytics (exists)"
+        "analytics"
       ],
       "unlocks": []
     },
@@ -194,44 +297,26 @@
       "layer": 2,
       "status": "complete",
       "dependsOn": [
-        "analytics (exists)"
+        "analytics"
       ],
-      "unlocks": []
-    },
-    {
-      "id": "multiplayer",
-      "name": "multiplayer",
-      "description": "Multi-engineer loop coordination. Transform the single-player loops experience into multiplayer: command parsing across engineers, thread management per engineer, merge/rebase workflows, engineer status tracking, and cross-worktree coordination. Currently exists as `src/services/slack-integration/` — needs consolidation with `proactive-messaging/adapters/SlackAdapter.ts`.",
-      "layer": 3,
-      "status": "deferred",
-      "dependsOn": [
-        "slack-integration",
-        "multi-agent-worktrees"
-      ],
-      "unlocks": []
-    },
-    {
-      "id": "natural-conversation",
-      "name": "natural-conversation",
-      "description": "Voice input and output for piloting the orchestrator. Naturalistic speech for contexts where you can't hold long documents in your head (driving, jogging). Dictate requirements, hear status.",
-      "layer": 3,
-      "status": "deferred",
-      "dependsOn": [],
       "unlocks": []
     },
     {
       "id": "proactive-messaging",
       "name": "proactive-messaging",
-      "description": "System reaches out across channels: terminal, Slack, email, text. Alerts you to completions, proposals, blockers.",
+      "description": "System reaches out across channels: terminal, Slack, notifications. Alerts you to completions, proposals, blockers.",
       "layer": 3,
       "status": "complete",
       "dependsOn": [],
-      "unlocks": []
+      "unlocks": [
+        "slack-integration",
+        "autonomous"
+      ]
     },
     {
       "id": "slack-integration",
       "name": "slack-integration",
-      "description": "Bidirectional: receive commands and capture to inbox, plus send proactive messages.",
+      "description": "Bidirectional Slack: receive commands and capture to inbox, plus send proactive messages with buttons.",
       "layer": 3,
       "status": "complete",
       "dependsOn": [
@@ -240,140 +325,22 @@
       "unlocks": []
     },
     {
-      "id": "brownfield-specialization",
-      "name": "brownfield-specialization",
-      "description": "Special patterns and loops for brownfield contexts. Making orchestrator as good at brownfield as it is at greenfield — essential for getting systems to \"completion\" for launch or checkpoint.",
-      "layer": 4,
-      "status": "deferred",
-      "dependsOn": [],
-      "unlocks": []
-    },
-    {
-      "id": "business-model-loop",
-      "name": "business-model-loop",
-      "description": "Full loop for creating business model artifacts. Structured exploration of value proposition, revenue streams, cost structure, channels.",
-      "layer": 4,
-      "status": "deferred",
-      "dependsOn": [],
-      "unlocks": []
-    },
-    {
-      "id": "go-to-market-loop",
-      "name": "go-to-market-loop",
-      "description": "Full loop for GTM strategy artifacts. Market analysis, positioning, launch planning, channel strategy.",
-      "layer": 4,
-      "status": "deferred",
-      "dependsOn": [],
-      "unlocks": []
-    },
-    {
-      "id": "marketing-loop",
-      "name": "marketing-loop",
-      "description": "Domain loop for marketing workflows. Content creation, campaign management, audience development, analytics.",
-      "layer": 4,
-      "status": "deferred",
-      "dependsOn": [],
-      "unlocks": []
-    },
-    {
-      "id": "ops-loop",
-      "name": "ops-loop",
-      "description": "MECE loop for operations workflows. Structured process for operational excellence with tracking artifacts.",
-      "layer": 4,
-      "status": "deferred",
-      "dependsOn": [],
-      "unlocks": []
-    },
-    {
-      "id": "runtime-contexts",
-      "name": "runtime-contexts",
-      "description": "Constructed environments providing domain ontology (vocabulary, entities, operations, workflows, shared concepts). KnoPilot is reference implementation.",
-      "layer": 4,
-      "status": "deferred",
+      "id": "voice",
+      "name": "voice",
+      "description": "Text-to-speech output for status updates. MacOS TTS integration with event formatting and quiet hours.",
+      "layer": 3,
+      "status": "complete",
       "dependsOn": [
-        "sales-loop"
+        "proactive-messaging"
       ],
       "unlocks": []
     },
     {
-      "id": "sales-loop",
-      "name": "sales-loop",
-      "description": "MECE loop for sales workflows. Structured process from lead to close with artifacts at each phase.",
+      "id": "knopilot",
+      "name": "knopilot",
+      "description": "Sales CRM runtime context. Deal management, stakeholder tracking, NBA engine, pipeline intelligence.",
       "layer": 4,
       "status": "complete",
-      "dependsOn": [],
-      "unlocks": []
-    },
-    {
-      "id": "auto-updating",
-      "name": "auto-updating",
-      "description": "Other users receive updates without manually downloading from docs site. Push-based distribution of improvements via daily welcome notification.",
-      "layer": 5,
-      "status": "complete",
-      "dependsOn": [],
-      "unlocks": []
-    },
-    {
-      "id": "co-op-skill-acquisition",
-      "name": "co-op-skill-acquisition",
-      "description": "Collaborative ontology building across multiple users, multiple AI agents, and user+AI combinations. Creating multiple ontologies with different participant combinations.",
-      "layer": 5,
-      "status": "deferred",
-      "dependsOn": [
-        "knowledge-graph-ontology",
-        "multi-agent-worktrees"
-      ],
-      "unlocks": []
-    },
-    {
-      "id": "ecosystem-roundup",
-      "name": "ecosystem-roundup",
-      "description": "Collecting and organizing tools, patterns, frameworks, skills, and loops across the ecosystem. Ensuring nothing useful is orphaned.",
-      "layer": 5,
-      "status": "deferred",
-      "dependsOn": [],
-      "unlocks": []
-    },
-    {
-      "id": "game-design",
-      "name": "game-design",
-      "description": "Framing the dream state ladder at each of the two levels (module→system, system→org) as finite games with clear win conditions. Understanding the infinite game the org plays in a cosmic, mission sense.",
-      "layer": 5,
-      "status": "complete",
-      "dependsOn": [
-        "coherence-system"
-      ],
-      "unlocks": []
-    },
-    {
-      "id": "proposing-decks",
-      "name": "proposing-decks",
-      "description": "Wake up to decks ready for review: (1) Knowledge decks for spaced repetition learning, (2) Project/module/system proposal decks. Learn from them and approve scopes for autonomous execution.",
-      "layer": 5,
-      "status": "complete",
-      "dependsOn": [
-        "dreaming",
-        "spaced-repetition-learning"
-      ],
-      "unlocks": []
-    },
-    {
-      "id": "spaced-repetition-learning",
-      "name": "spaced-repetition-learning",
-      "description": "SRS for skill mastery and knowledge retention. The orchestrator helps you internalize patterns and skills through timed review.",
-      "layer": 5,
-      "status": "complete",
-      "dependsOn": [
-        "knowledge-graph-ontology"
-      ],
-      "unlocks": []
-    },
-    {
-      "id": "local-first",
-      "name": "local-first",
-      "description": "Architecture ensuring orchestrator works without internet. Encryption, sync protocols, and security for the journey from local to public apps. The foundation for true ownership. Affects all external integrations.",
-      "layer": 6,
-      "status": "deferred",
       "dependsOn": [],
       "unlocks": []
     }
@@ -388,7 +355,7 @@
     },
     {
       "id": "update-inboxprocessor",
-      "target": "InboxProcessor",
+      "target": "inbox-processor",
       "description": "Finish the second brain inbox implementation. Complete the skill harvesting pipeline.",
       "priority": "medium",
       "status": "pending"
@@ -400,7 +367,7 @@
       "notes": "Systematic audit to find gaps in skill coverage"
     }
   ],
-  "version": "1.0.0",
+  "version": "2.0.0",
   "createdAt": "2026-02-03T13:25:11.157Z",
-  "updatedAt": "2026-02-04T17:48:21.218Z"
+  "updatedAt": "2026-02-04T18:35:00.000Z"
 }

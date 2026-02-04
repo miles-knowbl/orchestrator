@@ -847,11 +847,22 @@ export class ProactiveMessagingService {
 
       // Extract progress from JSON
       const modules = dreamState.modules || [];
-      // Filter out infrastructure layer (layer -1)
-      const visionModules = modules.filter((m: { layer?: number }) => (m.layer ?? 0) >= 0);
-      const modulesComplete = visionModules.filter((m: { status: string }) => m.status === 'complete').length;
-      const modulesDeferred = visionModules.filter((m: { status: string }) => m.status === 'deferred').length;
-      const modulesTotal = visionModules.length;
+      const modulesComplete = modules.filter((m: { status: string }) => m.status === 'complete').length;
+      const modulesTotal = modules.length;
+
+      // Count deferred modules from separate file if referenced
+      let modulesDeferred = 0;
+      if (dreamState.deferredRef) {
+        try {
+          const deferredPath = path.join(repoPath, '.claude', path.basename(dreamState.deferredRef));
+          const deferredContent = await fs.readFile(deferredPath, 'utf-8');
+          const deferredData = JSON.parse(deferredContent);
+          modulesDeferred = (deferredData.modules || []).length;
+        } catch {
+          // Deferred file not found, count inline deferred modules
+          modulesDeferred = modules.filter((m: { status: string }) => m.status === 'deferred').length;
+        }
+      }
 
       // Count functions across all modules (including infrastructure)
       let functionsTotal = 0;
@@ -906,7 +917,7 @@ export class ProactiveMessagingService {
 
     if (hasDreamState && dreamStateProgress) {
       // Calculate active modules (exclude deferred)
-      const activeTotal = dreamStateProgress.modulesTotal - dreamStateProgress.modulesDeferred;
+      const activeTotal = dreamStateProgress.modulesTotal;
       const activeComplete = dreamStateProgress.modulesComplete;
 
       if (activeComplete < activeTotal) {

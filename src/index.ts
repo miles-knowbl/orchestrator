@@ -300,7 +300,7 @@ async function main() {
     console.error(JSON.stringify({
       timestamp: new Date().toISOString(),
       level: 'info',
-      message: `Roadmap service initialized (${progress.completeModules}/${progress.totalModules} modules complete)`,
+      message: `Roadmap service initialized (${progress.completeModules} modules active)`,
     }));
     // Wire roadmap service to execution engine for pre-loop context
     executionEngine.setRoadmapService(roadmapService);
@@ -308,7 +308,7 @@ async function main() {
     console.error(JSON.stringify({
       timestamp: new Date().toISOString(),
       level: 'warn',
-      message: 'Roadmap service not available (no ROADMAP.md found)',
+      message: `Roadmap service not available: ${err instanceof Error ? err.message : String(err)}`,
     }));
   }
 
@@ -326,7 +326,7 @@ async function main() {
     console.error(JSON.stringify({
       timestamp: new Date().toISOString(),
       level: 'info',
-      message: `Dream state service initialized (${completion.completedFunctions}/${completion.totalFunctions} functions complete)`,
+      message: `Dream state service initialized (${completion.completedFunctions} functions complete)`,
     }));
 
     // Wire sync hook: roadmap changes trigger dream state sync

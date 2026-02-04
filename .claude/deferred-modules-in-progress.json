@@ -1,0 +1,150 @@
+{
+  "description": "Modules deferred for future implementation. These represent future capabilities that are not yet prioritized.",
+  "modules": [
+    {
+      "id": "ladder-of-abstraction-interfaces",
+      "layer": 1,
+      "description": "UI showing the same loop at different zoom levels (module/system/org). Music-gear-like looping interfaces for piloting, co-piloting, or playing co-op PvE with the orchestrator.",
+      "dependsOn": [
+        "kanban"
+      ],
+      "notes": "Requires dashboard foundation to be solid first"
+    },
+    {
+      "id": "tech-trees",
+      "layer": 1,
+      "description": "Macroscopic technology progressions that cultures/orgs pursue. Predictive capabilities (potentially RL-based like AlphaGo with Markov decision trees) that inspire MECE opportunity mapping at system and module levels.",
+      "dependsOn": [
+        "knowledge-graph-ontology",
+        "mece-opportunity-mapping"
+      ],
+      "notes": "May be superseded by skill-trees for most use cases"
+    },
+    {
+      "id": "behavior-guarantees",
+      "layer": 2,
+      "description": "System for enforcing/guaranteeing LLM behavior. Explicit rules enforcement patterns for ensuring consistent agent behavior.",
+      "dependsOn": [
+        "coherence-system"
+      ],
+      "notes": "Partially implemented in GuaranteeService for skill guarantees"
+    },
+    {
+      "id": "multiplayer",
+      "layer": 3,
+      "description": "Multi-engineer loop coordination. Transform the single-player loops experience into multiplayer: command parsing across engineers, thread management per engineer, merge/rebase workflows, engineer status tracking, and cross-worktree coordination.",
+      "dependsOn": [
+        "slack-integration",
+        "multi-agent-worktrees"
+      ],
+      "notes": "Foundation exists in slack-integration, needs consolidation"
+    },
+    {
+      "id": "natural-conversation",
+      "layer": 3,
+      "description": "Voice input and output for piloting the orchestrator. Naturalistic speech for contexts where you can't hold long documents in your head (driving, jogging). Dictate requirements, hear status.",
+      "dependsOn": [],
+      "notes": "Voice output service exists, needs voice input"
+    },
+    {
+      "id": "brownfield-specialization",
+      "layer": 4,
+      "description": "Special patterns and loops for brownfield contexts. Making orchestrator as good at brownfield as it is at greenfield.",
+      "dependsOn": [],
+      "notes": "Essential for getting systems to completion for launch or checkpoint"
+    },
+    {
+      "id": "business-model-loop",
+      "layer": 4,
+      "description": "Full loop for creating business model artifacts. Structured exploration of value proposition, revenue streams, cost structure, channels.",
+      "dependsOn": [],
+      "notes": "Domain-specific loop for business planning"
+    },
+    {
+      "id": "go-to-market-loop",
+      "layer": 4,
+      "description": "Full loop for GTM strategy artifacts. Market analysis, positioning, launch planning, channel strategy.",
+      "dependsOn": [],
+      "notes": "Domain-specific loop for GTM"
+    },
+    {
+      "id": "marketing-loop",
+      "layer": 4,
+      "description": "Domain loop for marketing workflows. Content creation, campaign management, audience development, analytics.",
+      "dependsOn": [],
+      "notes": "Domain-specific loop for marketing"
+    },
+    {
+      "id": "runtime-contexts",
+      "layer": 4,
+      "description": "Constructed environments providing domain ontology (vocabulary, entities, operations, workflows, shared concepts). KnoPilot is reference implementation.",
+      "dependsOn": [
+        "knopilot"
+      ],
+      "notes": "KnoPilot service is the first runtime context"
+    },
+    {
+      "id": "co-op-skill-acquisition",
+      "layer": 5,
+      "description": "Collaborative ontology building across multiple users, multiple AI agents, and user+AI combinations. Creating multiple ontologies with different participant combinations.",
+      "dependsOn": [
+        "knowledge-graph-ontology",
+        "multi-agent-worktrees"
+      ],
+      "notes": "Future collaborative capability"
+    },
+    {
+      "id": "ecosystem-roundup",
+      "layer": 5,
+      "description": "Collecting and organizing tools, patterns, frameworks, skills, and loops across the ecosystem. Ensuring nothing useful is orphaned.",
+      "dependsOn": [],
+      "notes": "Meta-capability for ecosystem management"
+    },
+    {
+      "id": "local-first",
+      "layer": 6,
+      "description": "Architecture ensuring orchestrator works without internet. Encryption, sync protocols, and security for the journey from local to public apps. The foundation for true ownership.",
+      "dependsOn": [],
+      "notes": "Affects all external integrations"
+    },
+    {
+      "id": "dreaming",
+      "layer": 1,
+      "description": "Sleep/background processing mode for proposing new modules and improvements. The system dreams up new work while idle, ready for review when you return.",
+      "dependsOn": [
+        "autonomous"
+      ],
+      "notes": "Service exists but not production-ready"
+    },
+    {
+      "id": "game-design",
+      "layer": 5,
+      "description": "Framing the dream state ladder as finite games with clear win conditions. Understanding the infinite game the org plays.",
+      "dependsOn": [
+        "coherence-system"
+      ],
+      "notes": "Service exists but not production-ready"
+    },
+    {
+      "id": "proposing-decks",
+      "layer": 5,
+      "description": "Wake up to decks ready for review: knowledge decks for spaced repetition, project proposal decks for autonomous execution.",
+      "dependsOn": [
+        "dreaming",
+        "spaced-repetition-learning"
+      ],
+      "notes": "Service exists but not production-ready"
+    },
+    {
+      "id": "spaced-repetition-learning",
+      "layer": 5,
+      "description": "SRS for skill mastery and knowledge retention with SM-2 algorithm.",
+      "dependsOn": [
+        "knowledge-graph-ontology"
+      ],
+      "notes": "Service exists but not production-ready"
+    }
+  ],
+  "createdAt": "2026-02-04T18:30:00.000Z",
+  "updatedAt": "2026-02-04T19:20:00.000Z"
+}

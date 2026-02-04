@@ -50,6 +50,7 @@ export type Update = z.infer<typeof UpdateSchema>;
 export const RoadmapSchema = z.object({
   system: z.string(),
   dreamState: z.string(),
+  deferredModulesRef: z.string().optional(),  // Path to deferred modules file
   modules: z.array(ModuleSchema),
   updates: z.array(UpdateSchema).default([]),
   brainstorm: z.array(z.object({

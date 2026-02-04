@@ -2,450 +2,488 @@
   "system": "orchestrator",
   "organization": "superorganism",
   "location": "~/workspaces/orchestrator",
-  "roadmapRef": "../ROADMAP.md",
+  "roadmapRef": "./roadmap.json",
+  "deferredRef": "./deferred-modules-in-progress.json",
   "vision": "A self-improving meta-system where skills are the atomic primitive. Orchestrator manages skills, composes them into loops, executes loops with quality gates, learns from every execution, and maintains context across sessions. The system should enable \"show up, say go\" workflows where complex engineering tasks are decomposed and executed with rigor.",
   "dreamStatement": "Autonomous, coherent, local-first system that compounds leverage through skill-based ontology.",
   "modules": [
     {
-      "id": "core-infrastructure",
-      "path": "src/services/",
+      "id": "skill-registry",
+      "path": "src/services/SkillRegistry.ts",
       "status": "complete",
       "functions": [
         {
-          "name": "[skill-registry] list_skills operational",
+          "name": "list_skills — filter by phase/category/query",
           "complete": true
         },
         {
-          "name": "[skill-registry] get_skill operational",
+          "name": "get_skill — full content with references",
           "complete": true
         },
         {
-          "name": "[skill-registry] create_skill operational",
+          "name": "create_skill — draft new skill",
           "complete": true
         },
         {
-          "name": "[skill-registry] update_skill operational",
+          "name": "update_skill — edit with version bump",
           "complete": true
         },
         {
-          "name": "[skill-registry] search_skills operational",
+          "name": "search_skills — keyword search",
           "complete": true
         },
         {
-          "name": "[skill-registry] capture_improvement operational",
+          "name": "capture_improvement — log feedback for skill",
           "complete": true
-        },
-        {
-          "name": "[loop-composer] list_loops operational",
-          "complete": true
-        },
-        {
-          "name": "[loop-composer] get_loop operational",
-          "complete": true
-        },
-        {
-          "name": "[loop-composer] create_loop operational",
-          "complete": true
-        },
-        {
-          "name": "[loop-composer] validate_loop operational",
-          "complete": true
-        },
-        {
-          "name": "[loop-composer] compose from skills operational",
-          "complete": true
-        },
-        {
-          "name": "[execution-engine] start_execution operational",
-          "complete": true
-        },
-        {
-          "name": "[execution-engine] get_execution operational",
-          "complete": true
-        },
-        {
-          "name": "[execution-engine] advance_phase operational",
-          "complete": true
-        },
+        }
+      ]
+    },
+    {
+      "id": "loop-composer",
+      "path": "src/services/LoopComposer.ts",
+      "status": "complete",
+      "functions": [
         {
-          "name": "[execution-engine] complete_phase operational",
+          "name": "list_loops — available loops",
           "complete": true
         },
         {
-          "name": "[execution-engine] complete_skill operational",
+          "name": "get_loop — definition with skills",
           "complete": true
         },
         {
-          "name": "[execution-engine] skip_skill operational",
+          "name": "create_loop — compose from skills",
           "complete": true
         },
         {
-          "name": "[execution-engine] approve_gate operational",
+          "name": "validate_loop — check composition",
           "complete": true
         },
         {
-          "name": "[execution-engine] reject_gate operational",
+          "name": "compose_from_skills — create loop from skill list",
           "complete": true
-        },
-        {
-          "name": "[execution-engine] pause_execution operational",
-          "complete": true
-        },
+        }
+      ]
+    },
+    {
+      "id": "execution-engine",
+      "path": "src/services/ExecutionEngine.ts",
+      "status": "complete",
+      "functions": [
         {
-          "name": "[execution-engine] resume_execution operational",
+          "name": "start_execution — begin loop run",
           "complete": true
         },
         {
-          "name": "[memory-service] get_memory operational",
+          "name": "get_execution — current state",
           "complete": true
         },
         {
-          "name": "[memory-service] update_summary operational",
+          "name": "advance_phase — move to next phase",
           "complete": true
         },
         {
-          "name": "[memory-service] record_decision operational",
+          "name": "complete_phase — mark current phase complete",
           "complete": true
         },
         {
-          "name": "[memory-service] record_pattern operational",
+          "name": "complete_skill — mark skill complete",
           "complete": true
         },
         {
-          "name": "[memory-service] create_handoff operational",
+          "name": "skip_skill — skip with reason",
           "complete": true
         },
         {
-          "name": "[memory-service] load_context operational",
+          "name": "approve_gate — pass quality gate",
           "complete": true
         },
         {
-          "name": "[learning-service] capture_skill_improvement operational",
+          "name": "reject_gate — block at gate with feedback",
           "complete": true
         },
         {
-          "name": "[learning-service] list_proposals operational",
+          "name": "pause_execution — pause execution",
           "complete": true
         },
         {
-          "name": "[learning-service] apply_proposal operational",
+          "name": "resume_execution — resume execution",
           "complete": true
-        },
+        }
+      ]
+    },
+    {
+      "id": "memory-service",
+      "path": "src/services/MemoryService.ts",
+      "status": "complete",
+      "functions": [
         {
-          "name": "[learning-service] approve_proposal operational",
+          "name": "get_memory — read at any level",
           "complete": true
         },
         {
-          "name": "[learning-service] reject_proposal operational",
+          "name": "update_summary — write memory summary",
           "complete": true
         },
         {
-          "name": "[learning-service] get_skill_metrics operational",
+          "name": "record_decision — add ADR",
           "complete": true
         },
         {
-          "name": "[learning-service] get_learning_status operational",
+          "name": "record_pattern — add learned pattern",
           "complete": true
         },
         {
-          "name": "[learning-service] identify_underutilized_skills operational",
+          "name": "create_handoff — session summary",
           "complete": true
         },
         {
-          "name": "[calibration-service] get_calibrated_estimate operational",
+          "name": "load_context — cold boot context",
           "complete": true
-        },
+        }
+      ]
+    },
+    {
+      "id": "learning-service",
+      "path": "src/services/learning/",
+      "status": "complete",
+      "functions": [
         {
-          "name": "[calibration-service] record_estimate_result operational",
+          "name": "capture_skill_improvement — log improvement",
           "complete": true
         },
         {
-          "name": "[calibration-service] get_calibration_report operational",
+          "name": "list_proposals — pending proposals",
           "complete": true
         },
         {
-          "name": "[calibration-service] get_calibration_recommendations operational",
+          "name": "apply_proposal — apply approved proposal",
           "complete": true
         },
         {
-          "name": "[inbox-processor] add_to_inbox operational",
+          "name": "approve_proposal — approve for application",
           "complete": true
         },
         {
-          "name": "[inbox-processor] add_url_to_inbox operational",
+          "name": "reject_proposal — reject with reason",
           "complete": true
         },
         {
-          "name": "[inbox-processor] list_inbox operational",
+          "name": "get_skill_metrics — metrics by skill",
           "complete": true
         },
         {
-          "name": "[inbox-processor] process_inbox_item operational",
+          "name": "get_learning_status — overall status",
           "complete": true
         },
         {
-          "name": "[inbox-processor] approve_extraction operational",
+          "name": "identify_underutilized_skills — find unused skills",
           "complete": true
         },
         {
-          "name": "[run-archival] query_runs operational",
+          "name": "processAnalyticsSignals — consume analytics",
           "complete": true
         },
         {
-          "name": "[run-archival] archive_run operational",
+          "name": "identifyLowHealthSkills — find below threshold",
           "complete": true
         },
         {
-          "name": "[run-archival] get_recent_context operational",
+          "name": "generateSkillProposal — create improvement proposal",
           "complete": true
         },
         {
-          "name": "[run-archival] createRunSummary operational",
+          "name": "prioritizeProposals — leverage scoring",
           "complete": true
         },
         {
-          "name": "[run-archival] pruneStateFile operational",
+          "name": "runImprovementCycle — full analyze→propose→apply",
           "complete": true
         },
         {
-          "name": "[guarantee-service] registerSkillGuarantee operational",
+          "name": "getImprovementQueue — prioritized queue",
           "complete": true
         },
         {
-          "name": "[guarantee-service] getSkillGuarantees operational",
+          "name": "getImprovementHistory — past improvements",
           "complete": true
-        },
+        }
+      ]
+    },
+    {
+      "id": "calibration-service",
+      "path": "src/services/CalibrationService.ts",
+      "status": "complete",
+      "functions": [
         {
-          "name": "[guarantee-service] validateGuarantees operational",
+          "name": "get_calibrated_estimate — calibrated effort estimate",
           "complete": true
         },
         {
-          "name": "[guarantee-service] enforceGuarantees operational",
+          "name": "record_estimate_result — record actual vs estimate",
           "complete": true
         },
         {
-          "name": "[guarantee-service] getLoopGuaranteeMap operational",
+          "name": "get_calibration_report — accuracy report",
           "complete": true
         },
         {
-          "name": "[guarantee-service] aggregateLoopGuarantees operational",
+          "name": "get_calibration_recommendations — improvement suggestions",
           "complete": true
-        },
+        }
+      ]
+    },
+    {
+      "id": "inbox-processor",
+      "path": "src/services/InboxProcessor.ts",
+      "status": "complete",
+      "functions": [
         {
-          "name": "[guarantee-service] setAggregator operational",
+          "name": "add_to_inbox — add paste/conversation",
           "complete": true
         },
         {
-          "name": "[guarantee-service] getRegistryVersion operational",
+          "name": "add_url_to_inbox — fetch URL content",
           "complete": true
         },
         {
-          "name": "[loop-guarantee-aggregator] aggregateForLoop operational",
+          "name": "list_inbox — list items",
           "complete": true
         },
         {
-          "name": "[loop-guarantee-aggregator] aggregateAll operational",
+          "name": "process_inbox_item — extract skills via AI",
           "complete": true
         },
         {
-          "name": "[loop-guarantee-aggregator] getSummary operational",
+          "name": "approve_extraction — create skill from extraction",
           "complete": true
-        },
+        }
+      ]
+    },
+    {
+      "id": "run-archival",
+      "path": "src/services/RunArchivalService.ts",
+      "status": "complete",
+      "functions": [
         {
-          "name": "[loop-guarantee-aggregator] getLoopGuarantees operational",
+          "name": "query_runs — search historical runs",
           "complete": true
         },
         {
-          "name": "[deliverable-manager] initialize operational",
+          "name": "archive_run — archive completed run",
           "complete": true
         },
         {
-          "name": "[deliverable-manager] storeDeliverable operational",
+          "name": "get_recent_context — recent context for cold boot",
           "complete": true
         },
         {
-          "name": "[deliverable-manager] getDeliverable operational",
+          "name": "createRunSummary — generate run summary",
           "complete": true
         },
         {
-          "name": "[deliverable-manager] listDeliverables operational",
+          "name": "pruneStateFile — clean up state file",
           "complete": true
-        },
+        }
+      ]
+    },
+    {
+      "id": "guarantee-service",
+      "path": "src/services/GuaranteeService.ts",
+      "status": "complete",
+      "functions": [
         {
-          "name": "[deliverable-manager] getDeliverablePath operational",
+          "name": "registerSkillGuarantee — register guarantee",
           "complete": true
         },
         {
-          "name": "[version-utility] getVersion — reads from package.json at runtime",
+          "name": "getSkillGuarantees — get guarantees for skill",
           "complete": true
         },
         {
-          "name": "[loop-commands] engineering-loop — v5.0.0 with hierarchy + completion + leverage",
+          "name": "validateGuarantees — validate at gate",
           "complete": true
         },
         {
-          "name": "[loop-commands] learning-loop — v2.0.0 with hierarchy + completion + leverage",
+          "name": "enforceGuarantees — block if failed",
           "complete": true
         },
         {
-          "name": "[loop-commands] bugfix-loop — v2.0.0 with hierarchy + completion + leverage",
+          "name": "getLoopGuaranteeMap — map for loop",
           "complete": true
         },
         {
-          "name": "[loop-commands] proposal-loop — v3.0.0 with hierarchy + completion + leverage",
+          "name": "aggregateLoopGuarantees — aggregate all",
           "complete": true
         },
         {
-          "name": "[loop-commands] meta-loop — v2.0.0 with hierarchy + completion + leverage",
+          "name": "setAggregator — set aggregation strategy",
           "complete": true
         },
         {
-          "name": "[loop-commands] infra-loop — v2.0.0 with hierarchy + completion + leverage",
+          "name": "getRegistryVersion — registry version",
           "complete": true
         },
         {
-          "name": "[loop-commands] distribution-loop — v2.0.0 with version bump + leverage",
+          "name": "aggregateForLoop — aggregate for specific loop",
           "complete": true
         },
         {
-          "name": "[loop-commands] audit-loop — v2.0.0 with hierarchy + completion + leverage",
+          "name": "aggregateAll — aggregate all loops",
           "complete": true
         },
         {
-          "name": "[loop-commands] deck-loop — v2.0.0 with hierarchy + completion + leverage",
+          "name": "getSummary — aggregation summary",
           "complete": true
         },
         {
-          "name": "[loop-commands] transpose-loop — v2.0.0 with hierarchy + completion + leverage",
+          "name": "getLoopGuarantees — guarantees by loop",
           "complete": true
-        },
+        }
+      ]
+    },
+    {
+      "id": "deliverable-manager",
+      "path": "src/services/DeliverableManager.ts",
+      "status": "complete",
+      "functions": [
         {
-          "name": "[loop-commands] dream-loop — v1.0.0 with tier detection + leverage",
+          "name": "initialize — setup deliverables dir",
           "complete": true
         },
         {
-          "name": "[analytics] collectRunMetrics — parse run archives",
+          "name": "storeDeliverable — store deliverable",
           "complete": true
         },
         {
-          "name": "[analytics] collectRubricMetrics — aggregate from LearningService",
+          "name": "getDeliverable — retrieve deliverable",
           "complete": true
         },
         {
-          "name": "[analytics] collectCalibrationMetrics — pull from CalibrationService",
+          "name": "listDeliverables — list for execution",
           "complete": true
         },
         {
-          "name": "[analytics] collectGateMetrics — extract from run archives",
+          "name": "getDeliverablePath — get path for deliverable",
           "complete": true
-        },
+        }
+      ]
+    },
+    {
+      "id": "analytics",
+      "path": "src/services/analytics/",
+      "status": "complete",
+      "functions": [
         {
-          "name": "[analytics] collectPatternMetrics — pull from MemoryService",
+          "name": "collectRunMetrics — parse run archives",
           "complete": true
         },
         {
-          "name": "[analytics] collectProposalMetrics — pull from LearningService",
+          "name": "collectRubricMetrics — aggregate from LearningService",
           "complete": true
         },
         {
-          "name": "[analytics] computeAggregates — rates, averages, trends",
+          "name": "collectCalibrationMetrics — pull from CalibrationService",
           "complete": true
         },
         {
-          "name": "[analytics] getAnalyticsSummary — dashboard-ready summary",
+          "name": "collectGateMetrics — extract from run archives",
           "complete": true
         },
         {
-          "name": "[analytics] getSkillHealth — rankings by rubric dimension",
+          "name": "collectPatternMetrics — pull from MemoryService",
           "complete": true
         },
         {
-          "name": "[analytics] getLoopPerformance — duration/success metrics",
+          "name": "collectProposalMetrics — pull from LearningService",
           "complete": true
         },
         {
-          "name": "[analytics] getCalibrationAccuracy — estimate accuracy trends",
+          "name": "computeAggregates — rates, averages, trends",
           "complete": true
         },
         {
-          "name": "[analytics] getTrends — time-series data",
+          "name": "getAnalyticsSummary — dashboard-ready summary",
           "complete": true
         },
         {
-          "name": "[analytics] API endpoints — /api/analytics/* (11 endpoints)",
+          "name": "getSkillHealth — rankings by rubric dimension",
           "complete": true
         },
         {
-          "name": "[analytics] Dashboard view — apps/dashboard/app/analytics/page.tsx",
+          "name": "getLoopPerformance — duration/success metrics",
           "complete": true
         },
         {
-          "name": "[learning] processAnalyticsSignals — consume analytics, identify targets",
+          "name": "getCalibrationAccuracy — estimate accuracy trends",
           "complete": true
         },
         {
-          "name": "[learning] identifyLowHealthSkills — find skills below threshold",
+          "name": "getTrends — time-series data",
           "complete": true
         },
         {
-          "name": "[learning] identifyCalibrationDrift — find poor estimate accuracy",
+          "name": "API endpoints — /api/analytics/* (11 endpoints)",
           "complete": true
         },
         {
-          "name": "[learning] identifyPatternCandidates — find repeated behaviors",
+          "name": "Dashboard view — apps/dashboard/app/analytics/page.tsx",
           "complete": true
-        },
+        }
+      ]
+    },
+    {
+      "id": "dream-state-service",
+      "path": "src/services/dream-state/",
+      "status": "complete",
+      "functions": [
         {
-          "name": "[learning] generateSkillProposal — exists in LearningService",
+          "name": "load — load dream state from JSON",
           "complete": true
         },
         {
-          "name": "[learning] generateCalibrationAdjustment — ImprovementOrchestrator",
+          "name": "save — persist dream state",
           "complete": true
         },
         {
-          "name": "[learning] generatePatternProposal — ImprovementOrchestrator",
+          "name": "getDreamState — get current state",
           "complete": true
         },
         {
-          "name": "[learning] prioritizeProposals — leverage protocol scoring",
+          "name": "getCompletionAlgebra — calculate module/function counts",
           "complete": true
         },
         {
-          "name": "[learning] applySkillUpgrade — exists in LearningService",
+          "name": "getModule — get specific module",
           "complete": true
         },
         {
-          "name": "[learning] applyCalibrationAdjustment — ImprovementOrchestrator",
+          "name": "updateModuleStatus — update module status",
           "complete": true
         },
         {
-          "name": "[learning] applyPatternRecording — via MemoryService",
+          "name": "updateFunction — update function completion",
           "complete": true
         },
         {
-          "name": "[learning] bumpSkillVersion — exists in SkillRegistry",
+          "name": "addModule — add new module",
           "complete": true
         },
         {
-          "name": "[learning] runImprovementCycle — full analyze→propose→apply cycle",
+          "name": "syncFromRoadmap — sync status from roadmap",
           "complete": true
         },
         {
-          "name": "[learning] getImprovementQueue — prioritized proposals",
+          "name": "recordCompletion — record loop completion",
           "complete": true
         },
         {
-          "name": "[learning] getImprovementHistory — past improvements",
+          "name": "setActiveLoops — set currently active loops",
           "complete": true
         },
         {
-          "name": "[learning] API endpoints — /api/learning/* (10 endpoints)",
+          "name": "renderMarkdown — generate markdown view",
           "complete": true
-        },
-        {
-          "name": "[learning] Dashboard enhancements — improvements page updates (optional)",
-          "complete": false
         }
       ]
     },
@@ -639,7 +677,48 @@
       "id": "roadmapping",
       "path": "src/services/roadmapping/",
       "status": "complete",
-      "functions": []
+      "functions": [
+        {
+          "name": "load — load roadmap from JSON",
+          "complete": true
+        },
+        {
+          "name": "save — persist roadmap",
+          "complete": true
+        },
+        {
+          "name": "getRoadmap — get current roadmap",
+          "complete": true
+        },
+        {
+          "name": "getModule — get specific module",
+          "complete": true
+        },
+        {
+          "name": "updateModuleStatus — update status",
+          "complete": true
+        },
+        {
+          "name": "getProgress — calculate progress",
+          "complete": true
+        },
+        {
+          "name": "getNextModule — get next recommended module",
+          "complete": true
+        },
+        {
+          "name": "getLeverageScores — calculate leverage scores",
+          "complete": true
+        },
+        {
+          "name": "onSave — register save callbacks",
+          "complete": true
+        },
+        {
+          "name": "isLoaded — check if loaded",
+          "complete": true
+        }
+      ]
     },
     {
       "id": "autonomous",
@@ -705,85 +784,6 @@
       ]
     },
     {
-      "id": "dreaming",
-      "path": "src/services/dreaming/",
-      "status": "complete",
-      "functions": [
-        {
-          "name": "DreamEngine — src/services/dreaming/DreamEngine.ts",
-          "complete": true
-        },
-        {
-          "name": "start/stop — background dreaming lifecycle",
-          "complete": true
-        },
-        {
-          "name": "triggerDream — manually trigger dream cycle",
-          "complete": true
-        },
-        {
-          "name": "getStatus — current engine state (running, idle, isIdle)",
-          "complete": true
-        },
-        {
-          "name": "getStats — dreaming statistics",
-          "complete": true
-        },
-        {
-          "name": "configure — idleThreshold, dreamInterval, maxProposalsPerCycle",
-          "complete": true
-        },
-        {
-          "name": "listProposals — filter by status/type/limit",
-          "complete": true
-        },
-        {
-          "name": "getProposal — get specific proposal",
-          "complete": true
-        },
-        {
-          "name": "approveProposal — approve for implementation",
-          "complete": true
-        },
-        {
-          "name": "rejectProposal — reject with reason",
-          "complete": true
-        },
-        {
-          "name": "markImplemented — mark as implemented",
-          "complete": true
-        },
-        {
-          "name": "listSessions — dream session history",
-          "complete": true
-        },
-        {
-          "name": "generateNewModuleProposals — analyze blocked modules",
-          "complete": true
-        },
-        {
-          "name": "generateSkillImprovementProposals — from learning service",
-          "complete": true
-        },
-        {
-          "name": "generatePatternCaptureProposals — from pattern gaps",
-          "complete": true
-        },
-        {
-          "name": "Idle detection — monitors activity timestamps",
-          "complete": true
-        },
-        {
-          "name": "API endpoints — /api/dreaming/* (11 endpoints)",
-          "complete": true
-        },
-        {
-          "name": "MCP tools — 12 tools for dreaming control",
-          "complete": true
-        }
-      ]
-    },
-    {
       "id": "kanban",
       "path": "apps/dashboard/app/roadmap/",
       "status": "complete",
@@ -823,12 +823,6 @@
       ]
     },
     {
-      "id": "ladder-of-abstraction-interfaces",
-      "path": "",
-      "status": "deferred",
-      "functions": []
-    },
-    {
       "id": "loop-sequencing",
       "path": "src/services/loop-sequencing/",
       "status": "complete",
@@ -838,11 +832,11 @@
           "complete": true
         },
         {
-          "name": "analyzeRunHistory — detect loop co-occurrence patterns from run archives",
+          "name": "analyzeRunHistory — detect loop co-occurrence patterns",
           "complete": true
         },
         {
-          "name": "getTransitions — list loop-to-loop transitions with statistics",
+          "name": "getTransitions — list loop-to-loop transitions",
           "complete": true
         },
         {
@@ -858,7 +852,7 @@
           "complete": true
         },
         {
-          "name": "generateLine — create multi-move plan with compound leverage",
+          "name": "generateLine — create multi-move plan",
           "complete": true
         },
         {
@@ -870,7 +864,7 @@
           "complete": true
         },
         {
-          "name": "getLastAnalysis — retrieve last sequence analysis",
+          "name": "getLastAnalysis — retrieve last analysis",
           "complete": true
         },
         {
@@ -878,7 +872,7 @@
           "complete": true
         },
         {
-          "name": "generateTerminalView — terminal-friendly sequencing view",
+          "name": "generateTerminalView — terminal-friendly view",
           "complete": true
         },
         {
@@ -913,14 +907,6 @@
           "complete": true
         },
         {
-          "name": "touchCollaborator — update activity timestamp",
-          "complete": true
-        },
-        {
-          "name": "disconnectCollaborator — mark as disconnected",
-          "complete": true
-        },
-        {
           "name": "createAgentSet — create agent set for collaborator",
           "complete": true
         },
@@ -933,19 +919,11 @@
           "complete": true
         },
         {
-          "name": "addAgentToSet — add agent to set",
-          "complete": true
-        },
-        {
-          "name": "addWorktreeToSet — add worktree module to set",
-          "complete": true
-        },
-        {
           "name": "pauseAgentSet/resumeAgentSet — lifecycle control",
           "complete": true
         },
         {
-          "name": "createReservation — claim module/file/path for exclusive work",
+          "name": "createReservation — claim module/file/path",
           "complete": true
         },
         {
@@ -957,7 +935,7 @@
           "complete": true
         },
         {
-          "name": "extendReservation — extend reservation duration",
+          "name": "extendReservation — extend duration",
           "complete": true
         },
         {
@@ -981,7 +959,7 @@
           "complete": true
         },
         {
-          "name": "checkCanWork — check if collaborator can work on module",
+          "name": "checkCanWork — check if collaborator can work",
           "complete": true
         },
         {
@@ -1000,7 +978,7 @@
     },
     {
       "id": "ooda-clocks-visual",
-      "path": "src/services/ooda-clock/, apps/dashboard/app/ooda-clock/",
+      "path": "src/services/ooda-clock/",
       "status": "complete",
       "functions": [
         {
@@ -1009,14 +987,6 @@
         },
         {
           "name": "RhythmAnalyzer — src/services/ooda-clock/RhythmAnalyzer.ts",
-          "complete": true
-        },
-        {
-          "name": "Types — src/services/ooda-clock/types.ts",
-          "complete": true
-        },
-        {
-          "name": "MCP tools — src/tools/oodaClockTools.ts",
           "complete": true
         },
         {
@@ -1040,23 +1010,11 @@
           "complete": true
         },
         {
-          "name": "EventArc component — duration arcs",
-          "complete": true
-        },
-        {
           "name": "PlaybackControls component — replay functionality",
           "complete": true
         },
         {
-          "name": "ClockLegend component — color/shape legend",
-          "complete": true
-        },
-        {
-          "name": "Navigation link — Added to layout.tsx",
-          "complete": true
-        },
-        {
-          "name": "See ARCHITECTURE.md for full design documentation",
+          "name": "MCP tools — src/tools/oodaClockTools.ts",
           "complete": true
         }
       ]
@@ -1071,7 +1029,7 @@
           "complete": true
         },
         {
-          "name": "generateTree — generate skill tree for domain (phase, tag, category, loop)",
+          "name": "generateTree — generate skill tree for domain",
           "complete": true
         },
         {
@@ -1083,7 +1041,7 @@
           "complete": true
         },
         {
-          "name": "getAvailableDomains — list available domains for tree generation",
+          "name": "getAvailableDomains — list available domains",
           "complete": true
         },
         {
@@ -1103,7 +1061,7 @@
           "complete": true
         },
         {
-          "name": "generateLearningPath — create learning path to target skill",
+          "name": "generateLearningPath — create learning path",
           "complete": true
         },
         {
@@ -1119,7 +1077,7 @@
           "complete": true
         },
         {
-          "name": "generateTerminalView — terminal-friendly tree visualization",
+          "name": "generateTerminalView — terminal-friendly visualization",
           "complete": true
         },
         {
@@ -1131,18 +1089,6 @@
           "complete": true
         }
       ]
-    },
-    {
-      "id": "tech-trees",
-      "path": "",
-      "status": "deferred",
-      "functions": []
-    },
-    {
-      "id": "behavior-guarantees",
-      "path": "",
-      "status": "deferred",
-      "functions": []
     },
     {
       "id": "coherence-system",
@@ -1261,18 +1207,6 @@
           "complete": true
         },
         {
-          "name": "Default 9-category taxonomy covering all system aspects",
-          "complete": true
-        },
-        {
-          "name": "Automatic classification using keyword matching",
-          "complete": true
-        },
-        {
-          "name": "Recommendation generation from gaps and overlaps",
-          "complete": true
-        },
-        {
           "name": "API endpoints — /api/mece/* (10 endpoints)",
           "complete": true
         },
@@ -1300,11 +1234,11 @@
           "complete": true
         },
         {
-          "name": "generateRoundup — Export formatted summary (summary/full/markdown)",
+          "name": "generateRoundup — Export formatted summary",
           "complete": true
         },
         {
-          "name": "detectBehavioralPatterns — Detect from run archives (success/failure/skip)",
+          "name": "detectBehavioralPatterns — Detect from run archives",
           "complete": true
         },
         {
@@ -1312,7 +1246,7 @@
           "complete": true
         },
         {
-          "name": "identifyPatternGaps — Gap coverage analysis (8 categories)",
+          "name": "identifyPatternGaps — Gap coverage analysis",
           "complete": true
         },
         {
@@ -1363,7 +1297,7 @@
           "complete": true
         },
         {
-          "name": "getScoreTrends — trend analysis (improving/stable/declining)",
+          "name": "getScoreTrends — trend analysis",
           "complete": true
         },
         {
@@ -1385,18 +1319,6 @@
       ]
     },
     {
-      "id": "multiplayer",
-      "path": "",
-      "status": "deferred",
-      "functions": []
-    },
-    {
-      "id": "natural-conversation",
-      "path": "",
-      "status": "deferred",
-      "functions": []
-    },
-    {
       "id": "proactive-messaging",
       "path": "src/services/proactive-messaging/",
       "status": "complete",
@@ -1414,7 +1336,7 @@
           "complete": true
         },
         {
-          "name": "MessageFormatter — terminal-style formatting for all channels",
+          "name": "MessageFormatter — terminal-style formatting",
           "complete": true
         },
         {
@@ -1426,7 +1348,7 @@
           "complete": true
         },
         {
-          "name": "notifyGateWaiting — gate approval notifications with buttons",
+          "name": "notifyGateWaiting — gate approval notifications",
           "complete": true
         },
         {
@@ -1462,23 +1384,15 @@
           "complete": true
         },
         {
+          "name": "sendStartupWelcome — daily welcome with dream state progress",
+          "complete": true
+        },
+        {
           "name": "API endpoints — /api/messaging/* (6 endpoints)",
           "complete": true
         },
         {
           "name": "MCP tools — 10 tools for messaging operations",
-          "complete": true
-        },
-        {
-          "name": "Bidirectional Slack interaction via Socket Mode",
-          "complete": true
-        },
-        {
-          "name": "Foundation for \"work from anywhere\" async loops",
-          "complete": true
-        },
-        {
-          "name": "See src/services/proactive-messaging/ProactiveMessagingService.ts",
           "complete": true
         }
       ]
@@ -1493,7 +1407,7 @@
           "complete": true
         },
         {
-          "name": "SlackCommandParser — semantic command parsing from text",
+          "name": "SlackCommandParser — semantic command parsing",
           "complete": true
         },
         {
@@ -1502,10 +1416,6 @@
         },
         {
           "name": "SlackMergeWorkflow — merge/rebase coordination",
-          "complete": true
-        },
-        {
-          "name": "types — SlackChannelConfig, SemanticCommand, ExecutionThread, EngineerStatus",
           "complete": true
         },
         {
@@ -1543,479 +1453,197 @@
         {
           "name": "Tests — 55 tests passing (slackIntegration.test.ts)",
           "complete": true
-        },
-        {
-          "name": "See src/services/slack-integration/SlackIntegrationService.ts",
-          "complete": true
         }
       ]
     },
     {
-      "id": "brownfield-specialization",
-      "path": "",
-      "status": "deferred",
-      "functions": []
-    },
-    {
-      "id": "business-model-loop",
-      "path": "",
-      "status": "deferred",
-      "functions": []
-    },
-    {
-      "id": "go-to-market-loop",
-      "path": "",
-      "status": "deferred",
-      "functions": []
-    },
-    {
-      "id": "marketing-loop",
-      "path": "",
-      "status": "deferred",
-      "functions": []
-    },
-    {
-      "id": "ops-loop",
-      "path": "",
-      "status": "deferred",
-      "functions": []
-    },
-    {
-      "id": "runtime-contexts",
-      "path": "",
-      "status": "deferred",
-      "functions": []
-    },
-    {
-      "id": "sales-loop",
-      "path": "",
-      "status": "complete",
-      "functions": []
-    },
-    {
-      "id": "auto-updating",
-      "path": "",
-      "status": "complete",
-      "functions": []
-    },
-    {
-      "id": "co-op-skill-acquisition",
-      "path": "",
-      "status": "deferred",
-      "functions": []
-    },
-    {
-      "id": "ecosystem-roundup",
-      "path": "",
-      "status": "deferred",
-      "functions": []
-    },
-    {
-      "id": "game-design",
-      "path": "src/services/game-design/",
+      "id": "voice",
+      "path": "src/services/voice/",
       "status": "complete",
       "functions": [
         {
-          "name": "GameDesignService — src/services/game-design/GameDesignService.ts",
+          "name": "VoiceOutputService — src/services/voice/VoiceOutputService.ts",
           "complete": true
         },
         {
-          "name": "createFiniteGame — create finite game for module/system",
+          "name": "MacOSTTS — macOS say command integration",
           "complete": true
         },
         {
-          "name": "startGame — start tracking game progress",
+          "name": "SpeechQueue — queued speech with priorities",
           "complete": true
         },
         {
-          "name": "satisfyWinCondition — mark condition as satisfied",
+          "name": "QuietHoursManager — time-based speech control",
           "complete": true
         },
         {
-          "name": "getFiniteGame — get game by ID",
+          "name": "EventFormatter — format events for speech",
           "complete": true
         },
         {
-          "name": "listFiniteGames — list with filtering (scope, status)",
+          "name": "initialize — setup TTS engine",
           "complete": true
         },
         {
-          "name": "createInfiniteGame — create infinite game for organization",
+          "name": "configure — update voice settings",
           "complete": true
         },
         {
-          "name": "linkFiniteGame — link finite to infinite game",
+          "name": "speak — queue speech",
           "complete": true
         },
         {
-          "name": "updateHealthMetric — update infinite game health metrics",
+          "name": "speakNow — immediate speech (skip queue)",
           "complete": true
         },
         {
-          "name": "getInfiniteGame — get infinite game by ID",
+          "name": "getQueue — get speech queue",
           "complete": true
         },
         {
-          "name": "listInfiniteGames — list all infinite games",
+          "name": "clearQueue — clear pending speech",
           "complete": true
         },
         {
-          "name": "generateGamesFromRoadmap — auto-generate games from modules",
+          "name": "pause/resume — speech control",
           "complete": true
         },
         {
-          "name": "getGameState — overall game state summary",
+          "name": "getStatus — current voice status",
           "complete": true
         },
         {
-          "name": "getStatus — service status",
-          "complete": true
-        },
-        {
-          "name": "generateTerminalView — terminal-friendly game view",
-          "complete": true
-        },
-        {
-          "name": "API endpoints — /api/game-design/* (12 endpoints)",
-          "complete": true
-        },
-        {
-          "name": "MCP tools — 15 tools for game design operations",
+          "name": "shouldSpeakEvent — check if event should speak",
           "complete": true
         }
       ]
     },
     {
-      "id": "proposing-decks",
-      "path": "src/services/proposing-decks/",
+      "id": "knopilot",
+      "path": "src/services/knopilot/",
       "status": "complete",
       "functions": [
         {
-          "name": "ProposingDecksService — src/services/proposing-decks/ProposingDecksService.ts",
+          "name": "KnoPilotService — src/services/knopilot/KnoPilotService.ts",
           "complete": true
         },
         {
-          "name": "getDailyReviewSummary — get today's review summary",
+          "name": "DealManager — deal lifecycle management",
           "complete": true
         },
         {
-          "name": "generateDailyDeck — generate daily decks (knowledge + proposals)",
+          "name": "ScoringEngine — deal scoring and confidence",
           "complete": true
         },
         {
-          "name": "listDecks — list review decks with filtering",
+          "name": "NBAEngine — next best action recommendations",
           "complete": true
         },
         {
-          "name": "getDeck — get specific deck details",
+          "name": "createDeal — create new deal",
           "complete": true
         },
         {
-          "name": "startReview — start reviewing a deck",
+          "name": "getDeal — get deal with intelligence",
           "complete": true
         },
         {
-          "name": "completeReview — complete deck review with results",
+          "name": "listDeals — list with filtering",
           "complete": true
         },
         {
-          "name": "skipDeck — skip a deck with reason",
+          "name": "updateDeal — update deal fields",
           "complete": true
         },
         {
-          "name": "getSchedule — get generation schedule",
+          "name": "advanceStage — advance deal stage",
           "complete": true
         },
         {
-          "name": "configureSchedule — configure auto-generation schedule",
+          "name": "addCommunication — add communication record",
           "complete": true
         },
         {
-          "name": "getStats — get service statistics (streak, completion rates)",
+          "name": "processCommunication — extract insights from communication",
           "complete": true
         },
         {
-          "name": "getHistory — get review history",
+          "name": "addStakeholder — add stakeholder to deal",
           "complete": true
         },
         {
-          "name": "DreamEngine integration for proposal decks",
+          "name": "listStakeholders — list deal stakeholders",
           "complete": true
         },
         {
-          "name": "SpacedRepetitionService integration for knowledge cards",
+          "name": "getIntelligence — get deal intelligence",
           "complete": true
         },
         {
-          "name": "SM-2 algorithm leveraged for card scheduling",
+          "name": "getScores — get deal scores",
           "complete": true
         },
         {
-          "name": "API endpoints — /api/proposing-decks/* (10 endpoints)",
+          "name": "computeScores — recalculate deal scores",
           "complete": true
         },
         {
-          "name": "MCP tools — 12 tools for proposing decks operations",
+          "name": "getNBA — get next best actions",
           "complete": true
         },
         {
-          "name": "Terminal view for morning review",
+          "name": "generateNBA — generate fresh NBA",
           "complete": true
         },
         {
-          "name": "Foundation for \"wake up to decks ready for review\"",
+          "name": "getPipelineSummary — pipeline overview",
           "complete": true
         },
         {
-          "name": "See src/services/proposing-decks/ProposingDecksService.ts",
+          "name": "getWeeklyFocus — weekly priorities",
+          "complete": true
+        },
+        {
+          "name": "API endpoints — /api/knopilot/* (20 endpoints)",
+          "complete": true
+        },
+        {
+          "name": "MCP tools — 18 KnoPilot tools",
           "complete": true
         }
       ]
-    },
-    {
-      "id": "spaced-repetition-learning",
-      "path": "src/services/spaced-repetition/",
-      "status": "complete",
-      "functions": [
-        {
-          "name": "SpacedRepetitionService — src/services/spaced-repetition/SpacedRepetitionService.ts",
-          "complete": true
-        },
-        {
-          "name": "createCard — create SRS card",
-          "complete": true
-        },
-        {
-          "name": "getCard — get card by ID",
-          "complete": true
-        },
-        {
-          "name": "listCards — list with filtering (type, deck, tag, due, suspended)",
-          "complete": true
-        },
-        {
-          "name": "updateCard — update card content/tags/suspended",
-          "complete": true
-        },
-        {
-          "name": "deleteCard — remove card",
-          "complete": true
-        },
-        {
-          "name": "createDeck — create card deck",
-          "complete": true
-        },
-        {
-          "name": "getDeck — get deck by ID",
-          "complete": true
-        },
-        {
-          "name": "listDecks — list all decks",
-          "complete": true
-        },
-        {
-          "name": "addCardToDeck — add card to deck",
-          "complete": true
-        },
-        {
-          "name": "removeCardFromDeck — remove card from deck",
-          "complete": true
-        },
-        {
-          "name": "getDueCards — get cards due for review",
-          "complete": true
-        },
-        {
-          "name": "startReviewSession — start review session",
-          "complete": true
-        },
-        {
-          "name": "recordReview — record response with SM-2 algorithm",
-          "complete": true
-        },
-        {
-          "name": "completeSession — complete review session",
-          "complete": true
-        },
-        {
-          "name": "getSessions — list review sessions",
-          "complete": true
-        },
-        {
-          "name": "getSession — get specific session",
-          "complete": true
-        },
-        {
-          "name": "generateCardsFromSkills — auto-generate from knowledge graph",
-          "complete": true
-        },
-        {
-          "name": "generateCardsFromPatterns — auto-generate from memory patterns",
-          "complete": true
-        },
-        {
-          "name": "getLearningStats — learning statistics",
-          "complete": true
-        },
-        {
-          "name": "getStatus — service status",
-          "complete": true
-        },
-        {
-          "name": "generateTerminalView — terminal-friendly SRS view",
-          "complete": true
-        },
-        {
-          "name": "API endpoints — /api/srs/* (19 endpoints)",
-          "complete": true
-        },
-        {
-          "name": "MCP tools — 22 tools for SRS operations",
-          "complete": true
-        }
-      ]
-    },
-    {
-      "id": "local-first",
-      "path": "",
-      "status": "deferred",
-      "functions": []
     }
   ],
   "completionAlgebra": {
     "formula": "System.done = ALL(Module.done)",
-    "current": "21/21 active modules complete (100%) + 14 deferred",
+    "current": "29 modules active",
     "pending": "None",
-    "status": "409/410 functions (100%)",
-    "version": "2.0.0"
+    "status": "351 functions complete",
+    "version": "3.0.0"
   },
   "activeLoops": [],
   "recentCompletions": [
+    {
+      "date": "2026-02-04",
+      "loop": "restructure",
+      "scope": "dream-state-architecture",
+      "outcome": "success",
+      "deliverables": "Decomposed core-infrastructure into 11 modules, added knopilot/voice/dream-state-service, moved deferred to separate file"
+    },
     {
       "date": "2026-02-02",
       "loop": "engineering-loop",
       "scope": "slack-integration",
       "outcome": "success",
-      "deliverables": "SlackIntegrationService, 8 API endpoints, 15 MCP tools, full bidirectional control"
+      "deliverables": "SlackIntegrationService, 8 API endpoints, 15 MCP tools"
     },
     {
       "date": "2026-02-01",
       "loop": "engineering-loop",
       "scope": "proactive-messaging",
       "outcome": "success",
-      "deliverables": "ProactiveMessagingService, 6 API endpoints, 10 MCP tools, Slack bidirectional"
-    },
-    {
-      "date": "2026-02-01",
-      "loop": "engineering-loop",
-      "scope": "proposing-decks",
-      "outcome": "success",
-      "deliverables": "ProposingDecksService, 10 API endpoints, 12 MCP tools, morning review decks"
-    },
-    {
-      "date": "2026-02-01",
-      "loop": "engineering-loop",
-      "scope": "spaced-repetition",
-      "outcome": "success",
-      "deliverables": "SpacedRepetitionService, 19 API endpoints, 22 MCP tools, SM-2 algorithm"
-    },
-    {
-      "date": "2026-02-01",
-      "loop": "engineering-loop",
-      "scope": "game-design",
-      "outcome": "success",
-      "deliverables": "GameDesignService, 12 API endpoints, 15 MCP tools, finite/infinite game framing"
-    },
-    {
-      "date": "2026-02-01",
-      "loop": "engineering-loop",
-      "scope": "skill-trees",
-      "outcome": "success",
-      "deliverables": "SkillTreeService, 13 API endpoints, 13 MCP tools, DAG visualization"
-    },
-    {
-      "date": "2026-02-01",
-      "loop": "engineering-loop",
-      "scope": "loop-sequencing",
-      "outcome": "success",
-      "deliverables": "LoopSequencingService, 11 API endpoints, 12 MCP tools, multi-move planning"
-    },
-    {
-      "date": "2026-02-01",
-      "loop": "engineering-loop",
-      "scope": "coherence-system",
-      "outcome": "success",
-      "deliverables": "CoherenceService, 7 API endpoints, 7 MCP tools, 10 validation rules across 8 domains"
-    },
-    {
-      "date": "2026-02-01",
-      "loop": "engineering-loop",
-      "scope": "mece-opportunity-mapping",
-      "outcome": "success",
-      "deliverables": "MECEOpportunityService, 10 API endpoints, 12 MCP tools, gap/overlap detection"
-    },
-    {
-      "date": "2026-02-01",
-      "loop": "engineering-loop",
-      "scope": "multi-agent-worktrees",
-      "outcome": "success",
-      "deliverables": "MultiAgentCoordinator, 20 API endpoints, 24 MCP tools, parallel development coordination"
-    },
-    {
-      "date": "2026-02-01",
-      "loop": "engineering-loop",
-      "scope": "dreaming",
-      "outcome": "success",
-      "deliverables": "DreamEngine, 11 API endpoints, 12 MCP tools, idle proposal generation"
-    },
-    {
-      "date": "2026-02-01",
-      "loop": "engineering-loop",
-      "scope": "autonomous",
-      "outcome": "success",
-      "deliverables": "AutonomousExecutor, 8 API endpoints, 9 MCP tools, background execution"
-    },
-    {
-      "date": "2026-02-01",
-      "loop": "engineering-loop",
-      "scope": "scoring",
-      "outcome": "success",
-      "deliverables": "ScoringService, 8 API endpoints, 8 MCP tools, system scorecard"
-    },
-    {
-      "date": "2026-02-01",
-      "loop": "engineering-loop",
-      "scope": "patterns-roundup",
-      "outcome": "success",
-      "deliverables": "PatternsService, 6 API endpoints, 6 MCP tools, pattern detection"
-    },
-    {
-      "date": "2026-02-01",
-      "loop": "engineering-loop",
-      "scope": "kanban",
-      "outcome": "success",
-      "deliverables": "Dashboard roadmap page, layer visualization, leverage scoring panel"
-    },
-    {
-      "date": "2026-02-01",
-      "loop": "engineering-loop",
-      "scope": "2-layer-orchestration",
-      "outcome": "success",
-      "deliverables": "OrchestrationService, AgentManager, WorktreeManager, 15 API endpoints, 17 MCP tools"
-    },
-    {
-      "date": "2026-01-31",
-      "loop": "engineering-loop",
-      "scope": "knowledge-graph-ontology",
-      "outcome": "success",
-      "deliverables": "KnowledgeGraphService, 17 API endpoints, 19 MCP tools"
-    },
-    {
-      "date": "2026-01-31",
-      "loop": "engineering-loop",
-      "scope": "roadmapping-module",
-      "outcome": "success",
-      "deliverables": "RoadmapService, 10 API endpoints, leverage integration"
+      "deliverables": "ProactiveMessagingService, 6 API endpoints, 10 MCP tools"
     }
   ],
   "dependencies": {
@@ -2026,7 +1654,7 @@
     ]
   },
   "notes": [],
-  "version": "2.0.0",
+  "version": "3.0.0",
   "createdAt": "2026-02-04T17:28:05.689Z",
-  "updatedAt": "2026-02-04T17:48:21.226Z"
+  "updatedAt": "2026-02-04T18:45:00.000Z"
 }

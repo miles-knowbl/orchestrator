@@ -562,7 +562,8 @@ export class MessageFormatter {
       // Returning user with Dream State
       const progress = event.dreamStateProgress;
       const deferred = progress.modulesDeferred || 0;
-      const activeTotal = progress.modulesTotal - deferred;
+      // modulesTotal is active modules only (deferred are in separate file)
+      const activeTotal = progress.modulesTotal;
       const pct = activeTotal > 0 ? Math.round((progress.modulesComplete / activeTotal) * 100) : 0;
 
       lines.push('```');
@@ -575,13 +576,22 @@ export class MessageFormatter {
       lines.push(this.emptyLine());
 
       lines.push(this.padLine(`Dream State: ${progress.name}`));
-      // Show active modules progress + deferred count
-      const deferredStr = deferred > 0 ? ` + ${deferred} deferred` : '';
-      lines.push(this.padLine(`Modules: ${progress.modulesComplete}/${activeTotal} complete (${pct}%)${deferredStr}`));
+      // Show active modules
+      const modulesStr = pct === 100
+        ? `Modules: ${progress.modulesComplete} active`
+        : `Modules: ${progress.modulesComplete}/${activeTotal} (${pct}%)`;
+      lines.push(this.padLine(modulesStr));
+      // Show deferred count as "dream state modules"
+      if (deferred > 0) {
+        lines.push(this.padLine(`Dream State Modules: ${deferred}`));
+      }
       // Show function-level progress if available
       if (progress.functionsTotal && progress.functionsTotal > 0) {
         const funcPct = Math.round((progress.functionsComplete / progress.functionsTotal) * 100);
-        lines.push(this.padLine(`Functions: ${progress.functionsComplete}/${progress.functionsTotal} (${funcPct}%)`));
+        const funcStr = funcPct === 100
+          ? `Functions: ${progress.functionsComplete}`
+          : `Functions: ${progress.functionsComplete}/${progress.functionsTotal} (${funcPct}%)`;
+        lines.push(this.padLine(funcStr));
       }
       lines.push(this.emptyLine());
 
@@ -642,7 +652,7 @@ export class MessageFormatter {
     if (event.hasDreamState && event.dreamStateProgress) {
       const p = event.dreamStateProgress;
       const deferred = p.modulesDeferred || 0;
-      const activeTotal = p.modulesTotal - deferred;
+      const activeTotal = p.modulesTotal;
       statusText = `${p.modulesComplete}/${activeTotal} modules`;
       if (deferred > 0) statusText += ` + ${deferred} deferred`;
     }
