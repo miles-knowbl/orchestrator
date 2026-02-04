@@ -286,9 +286,10 @@ async function main() {
   }));
 
   // Initialize roadmap service (system-level visibility into module progress)
+  // PAT-017: JSON source of truth in .claude/ directory
   const roadmapService = new RoadmapService({
     roadmapPath: join(config.repoPath, 'ROADMAP.md'),
-    statePath: join(config.repoPath, 'data', 'roadmap-state.json'),
+    statePath: join(config.repoPath, '.claude', 'roadmap.json'),
   });
 
   // Try to load roadmap (optional - may not exist in all projects)

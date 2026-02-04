@@ -18,7 +18,9 @@ import * as path from 'path';
 // Types
 // ============================================================================
 
-export const ModuleStatusSchema = z.enum(['pending', 'in-progress', 'complete', 'blocked']);
+// 'blocked' = dependency-blocked (auto-resolved when deps met)
+// 'deferred' = intentionally postponed (requires manual un-deferral)
+export const ModuleStatusSchema = z.enum(['pending', 'in-progress', 'complete', 'blocked', 'deferred']);
 export type ModuleStatus = z.infer<typeof ModuleStatusSchema>;
 
 export const ModuleSchema = z.object({
@@ -31,6 +33,8 @@ export const ModuleSchema = z.object({
   unlocks: z.array(z.string()).default([]),
   startedAt: z.string().datetime().optional(),
   completedAt: z.string().datetime().optional(),
+  deferredReason: z.string().optional(),
+  revisitWhen: z.string().optional(),
 });
 export type Module = z.infer<typeof ModuleSchema>;
 
@@ -114,7 +118,8 @@ export class RoadmapService {
 
   constructor(options: RoadmapServiceOptions = {}) {
     this.roadmapPath = options.roadmapPath || path.join(process.cwd(), 'ROADMAP.md');
-    this.statePath = options.statePath || path.join(process.cwd(), 'roadmap-state.json');
+    // JSON source of truth in .claude/ directory (PAT-017: Structured Document Architecture)
+    this.statePath = options.statePath || path.join(process.cwd(), '.claude', 'roadmap.json');
   }
 
   // --------------------------------------------------------------------------
@@ -147,7 +152,8 @@ export class RoadmapService {
   }
 
   /**
-   * Save current state to roadmap-state.json
+   * Save current state to .claude/roadmap.json and regenerate ROADMAP.md
+   * PAT-017: JSON is source of truth, markdown is generated view
    */
   async save(): Promise<void> {
     if (!this.roadmap) {
@@ -155,7 +161,173 @@ export class RoadmapService {
     }
 
     this.roadmap.updatedAt = new Date().toISOString();
+
+    // Ensure .claude directory exists
+    const claudeDir = path.dirname(this.statePath);
+    if (!fs.existsSync(claudeDir)) {
+      fs.mkdirSync(claudeDir, { recursive: true });
+    }
+
+    // Save JSON (source of truth)
     fs.writeFileSync(this.statePath, JSON.stringify(this.roadmap, null, 2));
+
+    // Regenerate markdown (derived view)
+    const markdown = this.renderMarkdown();
+    fs.writeFileSync(this.roadmapPath, markdown);
+  }
+
+  /**
+   * Render roadmap as markdown
+   * PAT-017: Generated from JSON source of truth
+   */
+  renderMarkdown(): string {
+    if (!this.roadmap) {
+      throw new Error('No roadmap loaded');
+    }
+
+    const lines: string[] = [];
+    const r = this.roadmap;
+    const progress = this.getProgress();
+
+    // Header
+    lines.push('# Orchestrator Roadmap');
+    lines.push('');
+    lines.push('> Modules that ladder up to system completion. Each module advances the dream state.');
+    lines.push('');
+    lines.push('---');
+    lines.push('');
+
+    // Overview
+    lines.push('## Overview');
+    lines.push('');
+    lines.push(`**System**: ${r.system} — ${r.dreamState}`);
+    lines.push(`**Dream State**: ${r.dreamState}`);
+
+    const deferred = r.modules.filter(m => m.status === 'deferred');
+    const activeComplete = progress.completeModules;
+    const activeTotal = r.modules.length - deferred.length;
+    lines.push(`**Progress**: ${activeComplete}/${activeTotal} modules complete (${Math.round((activeComplete / activeTotal) * 100)}%) + ${deferred.length} deferred`);
+
+    const remaining = r.modules.filter(m => m.status === 'pending' || m.status === 'in-progress');
+    lines.push(`**Remaining**: ${remaining.length > 0 ? remaining.map(m => m.name).join(', ') : 'None (all active modules complete)'}`);
+    lines.push('');
+    lines.push('---');
+    lines.push('');
+
+    // Layer visualization
+    lines.push('## The Seven Layers');
+    lines.push('');
+    lines.push('```');
+    for (let layer = 6; layer >= 0; layer--) {
+      const layerModules = r.modules.filter(m => m.layer === layer);
+      if (layerModules.length > 0) {
+        lines.push(`Layer ${layer}  ${'─'.repeat(75 - `Layer ${layer}  `.length)}`);
+        const moduleStrs = layerModules.map(m => {
+          const status = m.status === 'complete' ? ' ✓' : m.status === 'deferred' ? ' (deferred)' : '';
+          return `${m.name}${status}`;
+        });
+        lines.push(`         ${moduleStrs.join(', ')}`);
+        lines.push('');
+      }
+    }
+    lines.push('```');
+    lines.push('');
+    lines.push('---');
+    lines.push('');
+
+    // Layer details
+    for (let layer = 0; layer <= 6; layer++) {
+      const layerModules = r.modules.filter(m => m.layer === layer);
+      if (layerModules.length === 0) continue;
+
+      lines.push(`## Layer ${layer}`);
+      lines.push('');
+
+      const hasUnlocks = layer === 0;
+      if (hasUnlocks) {
+        lines.push('| Module | Description | Unlocks |');
+        lines.push('|--------|-------------|---------|');
+      } else {
+        lines.push('| Module | Description | Depends On |');
+        lines.push('|--------|-------------|------------|');
+      }
+
+      for (const m of layerModules) {
+        const status = m.status === 'complete' ? ' ✓' : '';
+        const deferredMark = m.status === 'deferred' ? ' | *deferred*' : '';
+        const deps = hasUnlocks
+          ? (m.unlocks.length > 0 ? m.unlocks.join(', ') : '—')
+          : (m.dependsOn.length > 0 ? m.dependsOn.join(', ') : '—');
+        lines.push(`| **${m.name}**${status} | ${m.description} | ${deps}${deferredMark} |`);
+      }
+      lines.push('');
+      lines.push('---');
+      lines.push('');
+    }
+
+    // Updates section
+    if (r.updates && r.updates.length > 0) {
+      lines.push('## Updates to Existing Modules');
+      lines.push('');
+      lines.push('| Target | Update | Priority | Status |');
+      lines.push('|--------|--------|----------|--------|');
+      for (const u of r.updates) {
+        const statusMark = u.status === 'complete' ? '✓ Complete' : u.status;
+        lines.push(`| **${u.target}** | ${u.description} | ${u.priority.charAt(0).toUpperCase() + u.priority.slice(1)} | ${statusMark} |`);
+      }
+      lines.push('');
+      lines.push('---');
+      lines.push('');
+    }
+
+    // Brainstorm section
+    if (r.brainstorm && r.brainstorm.length > 0) {
+      lines.push('## Brainstorm (Not Yet Scoped)');
+      lines.push('');
+      lines.push('| Idea | Notes |');
+      lines.push('|------|-------|');
+      for (const b of r.brainstorm) {
+        lines.push(`| **${b.idea}** | ${b.notes || ''} |`);
+      }
+      lines.push('');
+      lines.push('---');
+      lines.push('');
+    }
+
+    // Module count summary
+    lines.push('## Module Count Summary');
+    lines.push('');
+    lines.push('| Layer | Complete | Total | Modules |');
+    lines.push('|-------|----------|-------|---------|');
+    for (const lp of progress.layerProgress) {
+      const moduleList = lp.modules.map(m => {
+        const mark = m.status === 'complete' ? ' ✓' : m.status === 'blocked' ? ' (deferred)' : '';
+        return `${m.name}${mark}`;
+      }).join(', ');
+      lines.push(`| ${lp.layer} | ${lp.complete} | ${lp.total} | ${moduleList} |`);
+    }
+    const totalComplete = progress.completeModules;
+    const totalModules = progress.totalModules;
+    lines.push(`| **Complete** | **${totalComplete}** | **${totalModules}** | **${Math.round((totalComplete / totalModules) * 100)}%** |`);
+    lines.push('');
+    lines.push('---');
+    lines.push('');
+
+    // Next action
+    lines.push('## Next Action');
+    lines.push('');
+    lines.push(`**Progress**: ${totalComplete}/${totalModules} modules complete (${Math.round((totalComplete / totalModules) * 100)}%)`);
+
+    const available = this.getNextAvailableModules();
+    lines.push(`**Available Modules** (unblocked): ${available.length > 0 ? available.map(m => m.name).join(', ') : 'None'}`);
+    lines.push('');
+
+    // Footer
+    lines.push('---');
+    lines.push('');
+    lines.push(`*Generated from .claude/roadmap.json on ${new Date().toISOString().split('T')[0]}*`);
+
+    return lines.join('\n');
   }
 
   /**
