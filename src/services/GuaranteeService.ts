@@ -702,14 +702,22 @@ export class GuaranteeService {
           case 'no_uncommitted': {
             // Check for uncommitted changes (staged or unstaged)
             const { stdout } = await execAsync('git status --porcelain', { cwd });
-            let changes = stdout.trim().split('\n').filter(l => l.length > 0);
+            // Don't trim() before split - it would strip the leading space from first line
+            // which is part of the git status format (XY path)
+            const rawChanges = stdout.split('\n').filter(l => l.trim().length > 0);
 
             // Apply exclude patterns if specified
             const excludePatterns = check.excludePatterns || [];
+            let changes = rawChanges;
             if (excludePatterns.length > 0) {
-              changes = changes.filter(change => {
-                // Extract file path from git status line (format: "XY path" or "XY old -> new")
-                const filePath = change.slice(3).split(' -> ').pop() || '';
+              changes = rawChanges.filter(change => {
+                // Git status porcelain format: "XY path" or "XY path -> newpath"
+                // XY is 2 characters (index + working tree status), followed by space
+                // Handle both formats: "M  path" (staged) and " M path" (unstaged)
+                // The path starts at position 3
+                const fullPath = change.substring(3).split(' -> ').pop() || '';
+                // Trim to handle any leading space in edge cases
+                const filePath = fullPath.trim();
                 return !excludePatterns.some(pattern => filePath.startsWith(pattern));
               });
             }
