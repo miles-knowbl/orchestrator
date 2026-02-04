@@ -295,10 +295,11 @@
       "context": "When sending Slack notifications for loop executions to maintain context",
       "solution": "Each loop execution opens a new Slack thread via loop_start notification. The first message (without thread_ts) creates the thread; its timestamp becomes the thread_ts for all subsequent messages. SlackAdapter tracks executionId→threadTs mapping. FormattedMessage includes metadata.executionId for automatic thread routing.",
       "example": "notifyLoopStart(loopId, executionId, target) → first message creates thread → gate_waiting for same executionId → automatically routes to same thread → loop_complete closes the thread context",
-      "uses": 0,
+      "uses": 1,
       "confidence": "high",
       "createdAt": "2026-02-01T00:00:00Z",
-      "lastUsed": null
+      "lastUsed": "2026-02-01T00:00:00Z",
+      "implementedVia": "ADR-008 (Slack Autonomy Mode)"
     }
   ],
   "calibration": {
