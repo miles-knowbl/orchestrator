@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "image-schema-v1",
+  "title": "Image Schema",
+  "description": "A fully-specified schema for generating a single image or image sequence, derived from a taste schema",
+
+  "meta": {
+    "derived_from": "string: Name of the source taste schema",
+    "created_at": "string: ISO timestamp",
+    "generation_target": "string: Intended generation tool (Midjourney, DALL-E, Gemini, etc.)"
+  },
+
+  "classification": {
+    "mode": "archetype | dimensional",
+    "archetype": "quote_graphic | text_post | stat_callout | list_post | comparison_text | null (if dimensional)",
+    "dimensions": {
+      "composition": "single_focus | sectioned | null (if archetype)",
+      "text_image_balance": "text_dominant | balanced | image_dominant | null (if archetype)",
+      "visual_style": "photorealistic | illustrated | diagrammatic | null (if archetype)",
+      "format": "static | sequential"
+    }
+  },
+
+  "intent": {
+    "title": "string: Working title for this image",
+    "goal": "string: What this image should accomplish (1-2 sentences)",
+    "audience": "string: Who will see this and in what context",
+    "core_message": "string: The single most important takeaway",
+    "emotional_target": "string: How the viewer should feel after seeing this"
+  },
+
+  "canvas": {
+    "aspect_ratio": "string: e.g., '1:1', '16:9', '9:16', '4:5'",
+    "orientation": "square | landscape | portrait",
+    "intended_platform": "string: Instagram, Twitter, LinkedIn, presentation, etc.",
+    "resolution_notes": "string: Any specific size requirements"
+  },
+
+  "sections": [
+    {
+      "id": "string: Unique identifier for this section (e.g., 'header', 'main', 'footer')",
+      "purpose": "string: What this section accomplishes in the overall composition",
+      "zone": "string: Spatial location (e.g., 'top third', 'left half', 'center', 'full bleed')",
+      "heading": "string: Any heading text (empty string if none)",
+      "body_text": "string: Any body text (empty string if none)",
+      "visual_elements": ["array: Specific visual components to include"],
+      "visual_description": "string: Detailed description of imagery for this section",
+      "mood": "string: Emotional register for this section specifically",
+      "data_required": ["array: Any data points/stats needed (empty if none)"]
+    }
+  ],
+
+  "style": {
+    "colors": {
+      "primary": ["array: 1-3 dominant colors with hex or descriptive names"],
+      "secondary": ["array: Supporting colors"],
+      "accent": ["array: Highlight/emphasis colors"],
+      "background": "string: Background color or treatment",
+      "color_relationships": "string: How colors should interact (contrast, harmony, gradient, etc.)"
+    },
+    "typography": {
+      "heading_style": "string: Description of heading treatment",
+      "body_style": "string: Description of body text treatment",
+      "emphasis_style": "string: How to handle bold, italic, highlights",
+      "font_personality": "string: The feeling the typography should convey"
+    },
+    "imagery": {
+      "style_reference": "string: Reference for visual style (e.g., 'Ukiyo-e woodblock', 'corporate photography', 'flat illustration')",
+      "detail_level": "minimal | moderate | high",
+      "texture": "string: Surface treatment (clean, grainy, painterly, etc.)",
+      "lighting": "string: Lighting approach (bright, moody, dramatic, natural, etc.)"
+    },
+    "composition_notes": "string: Overall layout guidance, visual flow, whitespace approach"
+  },
+
+  "voice_alignment": {
+    "taste_elements_applied": ["array: Which taste schema dimensions informed this image"],
+    "signature_elements": ["array: Voice-specific elements that must be present"],
+    "anti_patterns_avoided": ["array: What was intentionally NOT done per taste schema"]
+  },
+
+  "generation_prompt": {
+    "primary_prompt": "string: The main prompt to paste into the image generation tool",
+    "negative_prompt": "string: What to exclude (for tools that support this)",
+    "style_modifiers": ["array: Style keywords to append"],
+    "technical_parameters": {
+      "suggested_model": "string: Recommended model/version if applicable",
+      "aspect_ratio_flag": "string: Platform-specific AR flag (e.g., '--ar 9:16')",
+      "other_flags": ["array: Any other generation parameters"]
+    }
+  },
+
+  "sequential_extension": {
+    "is_sequential": "boolean",
+    "panel_count": "number | null",
+    "panel_relationship": "string: How panels relate (narrative sequence, variations, parts of whole)",
+    "per_panel_overrides": [
+      {
+        "panel_number": "number",
+        "section_overrides": "object: Any section-level changes for this panel",
+        "prompt_additions": "string: Additional prompt text for this panel"
+      }
+    ]
+  }
+}

@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "text-schema-v1",
+  "title": "Text Schema",
+  "description": "A fully-specified schema for generating text content (threads or articles), derived from a taste schema",
+
+  "meta": {
+    "derived_from": "string: Name of the source taste schema",
+    "created_at": "string: ISO timestamp",
+    "format": "thread | article"
+  },
+
+  "classification": {
+    "format": "thread | article",
+    "dimensions": {
+      "structure": "linear | sectioned | narrative",
+      "purpose": "inform | persuade | teach | provoke",
+      "audience_expertise": "novice | general | expert",
+      "evidence_style": "data_driven | story_driven | assertion"
+    },
+    "format_specific": {
+      "post_count": "number | null (for threads: 3-5, 6-10, 10+)",
+      "length": "short | medium | long | null (for articles: <800, 800-2500, 2500+)"
+    }
+  },
+
+  "intent": {
+    "title": "string: Working title",
+    "goal": "string: What this piece should accomplish (1-2 sentences)",
+    "audience": "string: Who will read this and in what context",
+    "core_message": "string: The single most important takeaway",
+    "emotional_target": "string: How the reader should feel after reading",
+    "desired_action": "string: What the reader should do/think/believe after reading"
+  },
+
+  "hook_micro_post": {
+    "purpose": "string: 'thread_opener' for threads, 'companion_post' for articles",
+    "text": "string: The 140-character micro-post",
+    "link_placeholder": "string | null: '[LINK]' or specific URL if known",
+    "density_notes": "string: Which meaning-dense words carry weight",
+    "voice_elements_applied": ["array: Which taste schema elements are present in this micro-post"]
+  },
+
+  "thread_body": {
+    "_applies_to": "thread format only",
+    "posts": [
+      {
+        "post_number": "number: Position in thread (1 = hook, 2+)",
+        "purpose": "string: What this post accomplishes in the thread arc",
+        "text": "string: The post content (≤280 chars)",
+        "character_count": "number",
+        "transition_from_previous": "string: How this connects to the prior post",
+        "voice_elements": ["array: Specific voice patterns used here"]
+      }
+    ],
+    "thread_arc": {
+      "opening_move": "string: How the thread hooks",
+      "development": "string: How the middle posts build",
+      "closing_move": "string: How the thread lands/resolves"
+    }
+  },
+
+  "article_body": {
+    "_applies_to": "article format only",
+    "headline": "string: Article title",
+    "subheadline": "string | null: Optional subtitle or deck",
+    "estimated_word_count": "number",
+    "estimated_read_time": "string: e.g., '5 min read'",
+    "sections": [
+      {
+        "section_id": "string: Unique identifier",
+        "section_type": "intro | body | conclusion | callout | aside",
+        "heading": "string | null: Section heading if sectioned structure",
+        "content_summary": "string: What this section covers (for outline)",
+        "content_full": "string: The actual text content",
+        "word_count": "number",
+        "purpose": "string: What this section accomplishes",
+        "voice_elements": ["array: Specific voice patterns used here"]
+      }
+    ],
+    "pull_quotes": [
+      {
+        "text": "string: Extractable quote (for sharing, callout boxes)",
+        "source_section": "string: Which section this comes from",
+        "standalone_impact": "string: Why this works as a standalone"
+      }
+    ]
+  },
+
+  "closer": {
+    "type": "cta | reflection | callback | open_question | challenge",
+    "text": "string: The closing line(s)",
+    "desired_response": "string: What you want the reader to do/feel/think"
+  },
+
+  "style": {
+    "tone": "string: The overall tone (derived from taste schema)",
+    "sentence_patterns": {
+      "avg_sentence_length": "short | medium | varied",
+      "rhythm": "string: Description of sentence rhythm and variation",
+      "signature_structures": ["array: Sentence patterns from taste schema"]
+    },
+    "vocabulary": {
+      "register": "formal | conversational | provocative",
+      "domain_vocabulary": ["array: Field-specific terms to use"],
+      "forbidden_words": ["array: Words that don't fit this voice"]
+    },
+    "paragraph_patterns": {
+      "avg_length": "short | medium | long",
+      "variation_approach": "string: How paragraph length varies"
+    }
+  },
+
+  "voice_alignment": {
+    "taste_elements_applied": ["array: Which taste schema dimensions informed this piece"],
+    "narrative_mechanics_used": {
+      "arc_type": "string | null: If a story arc is used, which one",
+      "specificity_anchors": ["array: Specific numbers, sensory details, proper nouns used"]
+    },
+    "rhetorical_signature_used": {
+      "analogies": ["array: Any explanatory analogies used"],
+      "humor_moments": ["array: Where humor appears and its function"],
+      "contrarian_inversions": ["array: Any conventional wisdom flipped"]
+    },
+    "emotional_architecture_used": {
+      "vulnerability_moments": ["array: Any vulnerability shared"],
+      "triumph_moments": ["array: Any earned victories referenced"],
+      "gratitude_moments": ["array: Any gratitude expressed"]
+    },
+    "teaching_moves_used": {
+      "frameworks": ["array: Any named frameworks used"],
+      "advice_inversions": ["array: Any common advice challenged"]
+    },
+    "anti_patterns_avoided": ["array: What was intentionally NOT done per taste schema"]
+  },
+
+  "metadata": {
+    "target_platform": "string: Where this will be published",
+    "seo_considerations": {
+      "primary_keyword": "string | null",
+      "secondary_keywords": ["array"],
+      "meta_description": "string | null: For articles"
+    },
+    "hashtags": ["array: Suggested hashtags if applicable"],
+    "publication_timing": "string | null: Any timing considerations"
+  }
+}

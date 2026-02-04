@@ -1,0 +1,375 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "taste-schema-v1",
+  "title": "Taste Schema",
+  "description": "A comprehensive, format-agnostic schema capturing the essence of a creator's voice across textual and visual dimensions",
+  
+  "meta": {
+    "voice_name": "string: Name/identifier for this voice",
+    "voice_description": "string: 1-2 sentence description of whose voice this captures",
+    "source_summary": {
+      "text_sources": "number: Count of text documents analyzed",
+      "image_sources": "number: Count of images analyzed", 
+      "video_sources": "number: Count of videos analyzed",
+      "total_word_count": "number: Approximate words analyzed"
+    },
+    "confidence": {
+      "overall": "low|medium|high: Based on source quantity and variety",
+      "textual": "low|medium|high: Confidence in textual dimensions",
+      "visual": "low|medium|high: Confidence in visual dimensions",
+      "rationale": "string: Brief explanation of confidence assessment"
+    },
+    "version": "string: Schema version (1.0)",
+    "created_at": "string: ISO timestamp"
+  },
+
+  "essence": {
+    "core_dna": "string: The single most important sentence capturing this voice's essence. What makes it instantly recognizable?",
+    "values": ["array: 3-7 core values that permeate all content"],
+    "worldview": "string: How does this voice see the world? What lens do they apply?",
+    "emotional_signature": "string: The dominant emotional register (e.g., 'vulnerable optimism', 'playful authority', 'earned wisdom')",
+    "transformation_promise": "string: What transformation does this voice offer its audience?"
+  },
+
+  "textual_dimensions": {
+    "narrative_mechanics": {
+      "dominant_arc_types": [
+        {
+          "arc_name": "string: e.g., 'Shame → Liberation', 'Weakness → Strength'",
+          "frequency": "string: Percentage or ratio of usage",
+          "signature_example": "string: Brief example from source material",
+          "structural_pattern": "string: The beats this arc typically follows"
+        }
+      ],
+      "specificity_anchors": {
+        "number_patterns": {
+          "preference": "precise|rounded|sparse: How does this voice use numbers?",
+          "signature_numbers": ["array: Recurring numbers from their stories"],
+          "comparison_style": "string: How they frame ratios/comparisons (e.g., '27 hours vs their 3')"
+        },
+        "sensory_details": {
+          "dominant_senses": ["array: Which senses appear most? visual, auditory, kinesthetic, etc."],
+          "physical_emotion_mapping": ["array: How emotions manifest physically (e.g., 'cheeks hurting from smiling')"],
+          "environment_grounding": ["array: Types of environmental details used"]
+        },
+        "proper_noun_density": {
+          "level": "low|medium|high",
+          "domains": ["array: Where proper nouns come from (institutions, pop culture, places, etc.)"],
+          "examples": ["array: Signature proper nouns from source material"]
+        }
+      },
+      "story_corpus_patterns": {
+        "thematic_clusters": [
+          {
+            "theme": "string: e.g., 'Origin Stories', 'Transformation Moments'",
+            "count": "number: How many stories in this cluster",
+            "voice_contribution": "string: What voice elements does this cluster provide?"
+          }
+        ],
+        "signature_stories": ["array: The 3-5 most important/repeated stories"]
+      }
+    },
+
+    "rhetorical_signature": {
+      "explanatory_analogies": {
+        "source_domains": [
+          {
+            "domain": "string: e.g., 'anime', 'sports', 'cooking', 'math'",
+            "frequency": "string: How often used",
+            "function": "string: What this domain is typically used to explain",
+            "example_mapping": "string: Specific analogy from source"
+          }
+        ],
+        "analogy_structure": "string: How analogies are typically introduced (e.g., 'X is like Y', 'Imagine...', 'Think of it as...')"
+      },
+      "humor_deployment": {
+        "modes": [
+          {
+            "mode": "string: e.g., 'self-deprecating', 'absurdist', 'observational'",
+            "frequency": "string",
+            "function": "string: What purpose this humor serves (disarms, builds trust, creates memory, softens)"
+          }
+        ],
+        "timing_patterns": "string: Where humor typically appears (before credentials, after vulnerability, etc.)",
+        "off_limits": ["array: Topics/styles this voice never jokes about"]
+      },
+      "contrarian_inversions": {
+        "pattern": "string: The structure used (e.g., 'Most people think X. I've found Y.')",
+        "signature_inversions": [
+          {
+            "conventional_wisdom": "string",
+            "inversion": "string", 
+            "proof_point": "string"
+          }
+        ]
+      }
+    },
+
+    "emotional_architecture": {
+      "vulnerability_layer": {
+        "formula": "string: The pattern vulnerability follows (e.g., 'specific + past + overcome')",
+        "shame_admissions": ["array: Types of shame this voice admits to"],
+        "fear_admissions": ["array: Types of fears this voice admits to"],
+        "failure_admissions": ["array: Types of failures this voice admits to"],
+        "vulnerability_boundaries": "string: What this voice will NOT be vulnerable about"
+      },
+      "triumph_layer": {
+        "earned_victory_pattern": "string: How triumphs are paired with struggles",
+        "improbability_framing": "string: How unlikely success is quantified",
+        "present_day_proof": ["array: Types of current evidence used to validate past struggles"]
+      },
+      "gratitude_layer": {
+        "frequency": "string: How often gratitude appears",
+        "targets": ["array: Who/what is thanked"],
+        "framing_pattern": "string: The structure of gratitude (e.g., 'grateful to [person] for [action] because [impact]')",
+        "specificity_level": "low|medium|high"
+      }
+    },
+
+    "identity_threads": {
+      "core_claims": {
+        "i_am_statements": ["array: Static identity claims"],
+        "i_do_statements": ["array: Action-based identity claims (preferred)"],
+        "i_believe_statements": ["array: Worldview/philosophy claims"]
+      },
+      "belonging_dynamics": {
+        "outsider_markers": ["array: What made/makes them an outsider"],
+        "belonging_moments": ["array: Key moments of fitting in"],
+        "bridge_identities": ["array: How they connect outsider past to insider present"]
+      },
+      "persona_consistency": {
+        "always_present": ["array: Elements that appear in every piece"],
+        "never_present": ["array: Elements that never appear"],
+        "context_dependent": ["array: Elements that shift based on audience"]
+      }
+    },
+
+    "teaching_moves": {
+      "framework_delivery": {
+        "naming_patterns": ["array: How frameworks are named (numbers, alliteration, metaphor, etc.)"],
+        "structure_preferences": "string: How frameworks are organized (numbered lists, categories, sequential)",
+        "signature_frameworks": [
+          {
+            "name": "string",
+            "components": ["array"],
+            "usage_context": "string"
+          }
+        ]
+      },
+      "advice_inversions": {
+        "pattern": "string: Structure for flipping common advice",
+        "signature_inversions": [
+          {
+            "common_advice": "string",
+            "their_advice": "string",
+            "lived_proof": "string"
+          }
+        ]
+      },
+      "pedagogical_style": "string: How this voice teaches (Socratic, demonstrative, storytelling, etc.)"
+    },
+
+    "audience_relationship": {
+      "universal_hooks": {
+        "entry_points": ["array: Feelings/experiences used to create immediate recognition"],
+        "language_style": "string: How hooks are phrased (internal monologue, second person, etc.)",
+        "placement": "string: Where hooks typically appear (opening, throughout, etc.)"
+      },
+      "parasocial_invitations": {
+        "intimacy_moves": ["array: Private moments/rituals shared"],
+        "vulnerability_gifts": ["array: What personal information is offered"],
+        "boundary_maintenance": "string: What remains private"
+      },
+      "permission_grants": {
+        "implicit_permissions": ["array: What the audience is allowed to feel/do/be through this content"],
+        "explicit_permissions": ["array: Directly stated permissions"],
+        "permission_pattern": "string: How permissions are typically delivered"
+      }
+    },
+
+    "narrative_metadata": {
+      "audience_adaptations": [
+        {
+          "audience_type": "string: e.g., 'technical', 'business', 'students'",
+          "story_selection": ["array: Which stories for this audience"],
+          "tone_adjustments": "string",
+          "credibility_markers": ["array: What establishes authority for this group"]
+        }
+      ],
+      "story_clustering": {
+        "primary_chains": [
+          {
+            "chain_name": "string",
+            "sequence": ["array: Story order"],
+            "narrative_function": "string: What this chain accomplishes"
+          }
+        ],
+        "transition_patterns": ["array: How stories connect to each other"]
+      },
+      "signature_phrases": {
+        "opening_moves": ["array: How content typically begins"],
+        "transition_phrases": ["array: Phrases that bridge sections"],
+        "closing_moves": ["array: How content typically ends"]
+      }
+    }
+  },
+
+  "visual_dimensions": {
+    "color_system": {
+      "palette_philosophy": "string: The overall approach to color (bold, muted, high-contrast, etc.)",
+      "primary_colors": [
+        {
+          "color": "string: Color name or hex",
+          "usage": "string: When/where this color appears",
+          "emotional_association": "string: What feeling this color carries"
+        }
+      ],
+      "secondary_colors": ["array: Supporting colors"],
+      "accent_colors": ["array: Highlight/emphasis colors"],
+      "forbidden_colors": ["array: Colors that don't fit this voice"],
+      "color_relationships": "string: How colors interact (complementary, analogous, etc.)"
+    },
+
+    "typography_system": {
+      "philosophy": "string: Overall approach to type (modern, classic, playful, etc.)",
+      "heading_style": {
+        "characteristics": ["array: Bold, light, condensed, etc."],
+        "personality": "string: What the headings convey"
+      },
+      "body_style": {
+        "characteristics": ["array"],
+        "readability_priority": "string"
+      },
+      "accent_typography": {
+        "usage": "string: When special typography appears",
+        "style": "string"
+      },
+      "hierarchy_patterns": "string: How type sizes/weights create hierarchy"
+    },
+
+    "composition_system": {
+      "layout_philosophy": "string: Overall approach to arranging elements",
+      "preferred_structures": ["array: Common layout patterns (grid, asymmetric, centered, etc.)"],
+      "whitespace_approach": {
+        "density": "minimal|balanced|generous",
+        "philosophy": "string: What whitespace communicates"
+      },
+      "visual_flow": "string: How the eye is guided through content",
+      "aspect_ratio_preferences": ["array: Common ratios (16:9, 1:1, 9:16, etc.)"]
+    },
+
+    "imagery_system": {
+      "illustration_style": {
+        "approach": "string: e.g., 'flat', 'detailed', 'hand-drawn', 'photographic'",
+        "characteristics": ["array: Key visual traits"]
+      },
+      "iconography": {
+        "style": "string: Line weight, fill, complexity",
+        "usage_patterns": "string: When/how icons appear"
+      },
+      "recurring_motifs": ["array: Visual elements that repeat across content"],
+      "visual_metaphors": ["array: Abstract concepts and their visual representations"],
+      "photography_style": {
+        "if_used": "string: Characteristics of photos (candid, staged, filtered, etc.)",
+        "subject_matter": ["array: Common photo subjects"]
+      }
+    },
+
+    "mood_atmosphere": {
+      "overall_mood": "string: The dominant feeling (energetic, contemplative, bold, etc.)",
+      "energy_level": "low|medium|high",
+      "texture_preferences": {
+        "digital_texture": "clean|subtle|heavy",
+        "examples": ["array: Specific textures used (paper, grain, gradients, etc.)"]
+      },
+      "lighting_tendencies": "string: Bright, moody, natural, dramatic, etc.",
+      "emotional_range": {
+        "primary_emotions": ["array: Emotions visuals typically evoke"],
+        "emotional_transitions": "string: How mood shifts within a piece"
+      }
+    }
+  },
+
+  "anti_patterns": {
+    "textual_anti_patterns": [
+      {
+        "pattern": "string: What to avoid",
+        "reason": "string: Why it breaks the voice",
+        "example": "string: What it looks like when done wrong"
+      }
+    ],
+    "visual_anti_patterns": [
+      {
+        "pattern": "string",
+        "reason": "string",
+        "example": "string"
+      }
+    ]
+  },
+
+  "quality_gates": {
+    "minimum_requirements": ["array: Hard requirements for any content in this voice"],
+    "voice_markers": {
+      "required_count": "number: Minimum markers needed",
+      "markers": ["array: The specific markers to check for"]
+    },
+    "evaluation_weights": {
+      "narrative_mechanics": "number: percentage weight",
+      "rhetorical_signature": "number",
+      "emotional_architecture": "number",
+      "identity_threads": "number",
+      "teaching_moves": "number",
+      "audience_relationship": "number",
+      "narrative_metadata": "number"
+    }
+  },
+
+  "derivation_hints": {
+    "long_form_text": {
+      "ideal_length": "string",
+      "structure_recommendation": "string",
+      "key_dimensions_to_emphasize": ["array"]
+    },
+    "short_form_text": {
+      "ideal_length": "string",
+      "compression_strategy": "string",
+      "key_dimensions_to_emphasize": ["array"]
+    },
+    "social_media": {
+      "platform_specific_notes": {},
+      "compression_strategy": "string",
+      "hook_emphasis": "string"
+    },
+    "infographics": {
+      "visual_priority": ["array: Which visual dimensions matter most"],
+      "data_presentation_style": "string",
+      "narrative_integration": "string"
+    },
+    "presentations": {
+      "slide_density": "string",
+      "visual_to_text_ratio": "string",
+      "storytelling_approach": "string"
+    },
+    "video": {
+      "pacing_notes": "string",
+      "visual_style_adaptation": "string",
+      "audio_considerations": "string"
+    }
+  },
+
+  "signature_examples": {
+    "exemplary_texts": [
+      {
+        "title": "string",
+        "excerpt": "string: Brief representative excerpt",
+        "voice_elements_demonstrated": ["array: Which dimensions this exemplifies"]
+      }
+    ],
+    "exemplary_visuals": [
+      {
+        "description": "string",
+        "voice_elements_demonstrated": ["array"]
+      }
+    ]
+  }
+}
