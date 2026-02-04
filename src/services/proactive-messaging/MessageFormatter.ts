@@ -561,7 +561,9 @@ export class MessageFormatter {
     if (event.hasDreamState && event.dreamStateProgress) {
       // Returning user with Dream State
       const progress = event.dreamStateProgress;
-      const pct = Math.round((progress.modulesComplete / progress.modulesTotal) * 100);
+      const deferred = progress.modulesDeferred || 0;
+      const activeTotal = progress.modulesTotal - deferred;
+      const pct = activeTotal > 0 ? Math.round((progress.modulesComplete / activeTotal) * 100) : 0;
 
       lines.push('```');
       lines.push(this.border());
@@ -573,7 +575,14 @@ export class MessageFormatter {
       lines.push(this.emptyLine());
 
       lines.push(this.padLine(`Dream State: ${progress.name}`));
-      lines.push(this.padLine(`Progress: ${progress.modulesComplete}/${progress.modulesTotal} modules (${pct}%)`));
+      // Show active modules progress + deferred count
+      const deferredStr = deferred > 0 ? ` + ${deferred} deferred` : '';
+      lines.push(this.padLine(`Modules: ${progress.modulesComplete}/${activeTotal} complete (${pct}%)${deferredStr}`));
+      // Show function-level progress if available
+      if (progress.functionsTotal && progress.functionsTotal > 0) {
+        const funcPct = Math.round((progress.functionsComplete / progress.functionsTotal) * 100);
+        lines.push(this.padLine(`Functions: ${progress.functionsComplete}/${progress.functionsTotal} (${funcPct}%)`));
+      }
       lines.push(this.emptyLine());
 
       lines.push(this.padLine('Next highest leverage move:'));
@@ -629,9 +638,14 @@ export class MessageFormatter {
       lines.push('```');
     }
 
-    const statusText = event.hasDreamState && event.dreamStateProgress
-      ? `${event.dreamStateProgress.modulesComplete}/${event.dreamStateProgress.modulesTotal} modules`
-      : 'No Dream State';
+    let statusText = 'No Dream State';
+    if (event.hasDreamState && event.dreamStateProgress) {
+      const p = event.dreamStateProgress;
+      const deferred = p.modulesDeferred || 0;
+      const activeTotal = p.modulesTotal - deferred;
+      statusText = `${p.modulesComplete}/${activeTotal} modules`;
+      if (deferred > 0) statusText += ` + ${deferred} deferred`;
+    }
     return {
       text: lines.join('\n'),
       notificationText: `Orchestrator v${event.version} ready — ${statusText}`,

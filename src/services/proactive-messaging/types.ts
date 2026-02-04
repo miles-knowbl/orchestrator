@@ -142,6 +142,9 @@ export interface StartupWelcomeEvent {
     name: string;
     modulesComplete: number;
     modulesTotal: number;
+    modulesDeferred: number;
+    functionsComplete: number;
+    functionsTotal: number;
   };
   recommendedLoop: string;
   recommendedTarget?: string;
@@ -179,6 +182,9 @@ export interface DailyWelcomeEvent {
     name: string;
     modulesComplete: number;
     modulesTotal: number;
+    modulesDeferred?: number;
+    functionsComplete?: number;
+    functionsTotal?: number;
   };
   pendingProposals: number;
   recommendedLoop: string;

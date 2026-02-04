@@ -828,31 +828,76 @@ export class ProactiveMessagingService {
   }): Promise<string> {
     const { version, skillCount, loopCount, repoPath, availableLoops } = options;
 
-    // Check for Dream State
-    const dreamStatePath = path.join(repoPath, '.claude', 'DREAM-STATE.md');
+    // Check for Dream State JSON (PAT-017: JSON is source of truth)
+    const dreamStateJsonPath = path.join(repoPath, '.claude', 'dream-state.json');
     let hasDreamState = false;
-    let dreamStateProgress: { name: string; modulesComplete: number; modulesTotal: number } | undefined;
+    let dreamStateProgress: {
+      name: string;
+      modulesComplete: number;
+      modulesTotal: number;
+      modulesDeferred: number;
+      functionsComplete: number;
+      functionsTotal: number;
+    } | undefined;
 
     try {
-      const content = await fs.readFile(dreamStatePath, 'utf-8');
+      const content = await fs.readFile(dreamStateJsonPath, 'utf-8');
+      const dreamState = JSON.parse(content);
       hasDreamState = true;
 
-      // Parse Dream State for progress
-      // Look for: "# System Dream State: {name}"
-      const nameMatch = content.match(/^#\s+(?:System\s+)?Dream State:\s*(.+)$/mi);
-      const name = nameMatch ? nameMatch[1].trim() : 'Unknown';
+      // Extract progress from JSON
+      const modules = dreamState.modules || [];
+      // Filter out infrastructure layer (layer -1)
+      const visionModules = modules.filter((m: { layer?: number }) => (m.layer ?? 0) >= 0);
+      const modulesComplete = visionModules.filter((m: { status: string }) => m.status === 'complete').length;
+      const modulesDeferred = visionModules.filter((m: { status: string }) => m.status === 'deferred').length;
+      const modulesTotal = visionModules.length;
 
-      // Count complete vs total modules from the table
-      // Look for status column with "complete" or progress percentage
-      const moduleLines = content.match(/^\|[^|]+\|[^|]+\|\s*(complete|in-progress|pending|blocked)\s*\|/gmi) || [];
-      const modulesTotal = moduleLines.length;
-      const modulesComplete = moduleLines.filter(l => /complete/i.test(l)).length;
-
-      if (modulesTotal > 0) {
-        dreamStateProgress = { name, modulesComplete, modulesTotal };
+      // Count functions across all modules (including infrastructure)
+      let functionsTotal = 0;
+      let functionsComplete = 0;
+      for (const m of modules) {
+        const funcs = m.functions || [];
+        functionsTotal += funcs.length;
+        functionsComplete += funcs.filter((f: { complete: boolean }) => f.complete).length;
       }
+
+      dreamStateProgress = {
+        name: dreamState.system || 'Unknown',
+        modulesComplete,
+        modulesTotal,
+        modulesDeferred,
+        functionsComplete,
+        functionsTotal,
+      };
     } catch {
-      // No Dream State file
+      // No Dream State JSON file - fall back to markdown parsing
+      try {
+        const mdPath = path.join(repoPath, '.claude', 'DREAM-STATE.md');
+        const content = await fs.readFile(mdPath, 'utf-8');
+        hasDreamState = true;
+
+        const nameMatch = content.match(/^#\s+(?:System\s+)?Dream State:\s*(.+)$/mi);
+        const name = nameMatch ? nameMatch[1].trim() : 'Unknown';
+
+        const moduleLines = content.match(/^\|[^|]+\|[^|]+\|\s*(complete|in-progress|pending|blocked|deferred)\s*\|/gmi) || [];
+        const modulesTotal = moduleLines.length;
+        const modulesComplete = moduleLines.filter(l => /\|\s*complete\s*\|/i.test(l)).length;
+        const modulesDeferred = moduleLines.filter(l => /\|\s*deferred\s*\|/i.test(l)).length;
+
+        if (modulesTotal > 0) {
+          dreamStateProgress = {
+            name,
+            modulesComplete,
+            modulesTotal,
+            modulesDeferred,
+            functionsComplete: 0,
+            functionsTotal: 0,
+          };
+        }
+      } catch {
+        // No Dream State file at all
+      }
     }
 
     // Determine recommended loop
@@ -860,11 +905,16 @@ export class ProactiveMessagingService {
     let recommendedTarget: string | undefined;
 
     if (hasDreamState && dreamStateProgress) {
-      // Has Dream State - recommend engineering-loop or distribution-loop
-      if (dreamStateProgress.modulesComplete < dreamStateProgress.modulesTotal) {
+      // Calculate active modules (exclude deferred)
+      const activeTotal = dreamStateProgress.modulesTotal - dreamStateProgress.modulesDeferred;
+      const activeComplete = dreamStateProgress.modulesComplete;
+
+      if (activeComplete < activeTotal) {
+        // Has incomplete active modules - recommend engineering-loop
         recommendedLoop = 'engineering-loop';
         recommendedTarget = 'next module';
       } else {
+        // All active modules complete - recommend distribution-loop
         recommendedLoop = 'distribution-loop';
       }
     }
