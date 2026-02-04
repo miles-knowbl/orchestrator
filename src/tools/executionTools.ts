@@ -107,6 +107,18 @@ const SetAllGatesAutoSchema = z.object({
   executionId: z.string().min(1),
 });
 
+// Retry/Revalidate schemas
+const RevalidateGuaranteesSchema = z.object({
+  executionId: z.string().min(1),
+  skillId: z.string().min(1),
+});
+
+const RetrySkillSchema = z.object({
+  executionId: z.string().min(1),
+  skillId: z.string().min(1),
+  deliverables: z.array(z.string()).optional(),
+});
+
 const PauseResumeSchema = z.object({
   executionId: z.string().min(1),
 });
@@ -462,6 +474,48 @@ export const executionToolDefinitions = [
         },
       },
       required: ['executionId'],
+    },
+  },
+  // Retry/Revalidate tools
+  {
+    name: 'revalidate_guarantees',
+    description: 'Check which guarantees pass/fail for a skill without completing it. Use to see what still needs fixing before retrying.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        executionId: {
+          type: 'string',
+          description: 'Execution ID',
+        },
+        skillId: {
+          type: 'string',
+          description: 'Skill ID to revalidate',
+        },
+      },
+      required: ['executionId', 'skillId'],
+    },
+  },
+  {
+    name: 'retry_skill',
+    description: 'Retry completing a skill after fixing deliverables. Automatically unblocks execution if blocked.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        executionId: {
+          type: 'string',
+          description: 'Execution ID',
+        },
+        skillId: {
+          type: 'string',
+          description: 'Skill ID to retry',
+        },
+        deliverables: {
+          type: 'array',
+          items: { type: 'string' },
+          description: 'List of deliverables produced',
+        },
+      },
+      required: ['executionId', 'skillId'],
     },
   },
   {
@@ -864,6 +918,31 @@ export function createExecutionToolHandlers(
       const validated = SetAllGatesAutoSchema.parse(params);
       const result = await executionEngine.setAllGatesAuto(validated.executionId);
       return result;
+    },
+
+    // Retry/Revalidate handlers
+    revalidate_guarantees: async (params: unknown) => {
+      const validated = RevalidateGuaranteesSchema.parse(params);
+      const result = await executionEngine.revalidateGuarantees(
+        validated.executionId,
+        validated.skillId
+      );
+      return result;
+    },
+
+    retry_skill: async (params: unknown) => {
+      const validated = RetrySkillSchema.parse(params);
+      const execution = await executionEngine.retrySkillCompletion(
+        validated.executionId,
+        validated.skillId,
+        validated.deliverables ? { deliverables: validated.deliverables } : undefined
+      );
+      return {
+        id: execution.id,
+        status: execution.status,
+        currentPhase: execution.currentPhase,
+        message: `Skill "${validated.skillId}" completion retried`,
+      };
     },
 
     pause_execution: async (params: unknown) => {

@@ -917,6 +917,111 @@ export class ExecutionEngine {
     };
   }
 
+  /**
+   * Revalidate guarantees for a skill without completing it.
+   * Useful to check what's still failing before retrying.
+   */
+  async revalidateGuarantees(
+    executionId: string,
+    skillId: string
+  ): Promise<{
+    passed: boolean;
+    blocking: Array<{ guaranteeId: string; name: string; errors: string[] }>;
+    warnings: Array<{ guaranteeId: string; name: string; errors: string[] }>;
+    acknowledged: Array<{ guaranteeId: string; resolutionType: string }>;
+    message: string;
+  }> {
+    const execution = this.executions.get(executionId);
+    if (!execution) {
+      throw new Error(`Execution not found: ${executionId}`);
+    }
+
+    if (!this.guaranteeService) {
+      return {
+        passed: true,
+        blocking: [],
+        warnings: [],
+        acknowledged: [],
+        message: 'Guarantee service not available - validation skipped',
+      };
+    }
+
+    const context: ValidationContext = {
+      executionId,
+      loopId: execution.loopId,
+      skillId,
+      phase: execution.currentPhase,
+      mode: execution.mode,
+      projectPath: this.getProjectPath(execution),
+    };
+
+    const result = await this.guaranteeService.validateSkillGuarantees(context);
+
+    // Get acknowledged guarantees for this skill
+    const acknowledged = this.guaranteeService.getSkillAcknowledgments(executionId, skillId)
+      .map(ack => ({
+        guaranteeId: ack.guaranteeId,
+        resolutionType: ack.resolutionType,
+      }));
+
+    const blocking = result.blocking.map(g => ({
+      guaranteeId: g.guaranteeId,
+      name: g.name,
+      errors: g.errors,
+    }));
+
+    const warnings = result.warnings.map(g => ({
+      guaranteeId: g.guaranteeId,
+      name: g.name,
+      errors: g.errors,
+    }));
+
+    let message: string;
+    if (result.passed) {
+      message = `All guarantees pass for skill "${skillId}". You can now complete the skill.`;
+    } else {
+      message = `${blocking.length} guarantee(s) still failing for skill "${skillId}". Fix the issues or acknowledge the guarantees.`;
+    }
+
+    this.log('info', `Revalidated guarantees for ${skillId}: ${result.passed ? 'PASSED' : 'BLOCKED'}`);
+    return {
+      passed: result.passed,
+      blocking,
+      warnings,
+      acknowledged,
+      message,
+    };
+  }
+
+  /**
+   * Retry completing a skill after fixing deliverables.
+   * Convenience method that unblocks and reattempts completion.
+   */
+  async retrySkillCompletion(
+    executionId: string,
+    skillId: string,
+    result?: {
+      deliverables?: string[];
+      outcome?: { success: boolean; score: number };
+    }
+  ): Promise<LoopExecution> {
+    const execution = this.executions.get(executionId);
+    if (!execution) {
+      throw new Error(`Execution not found: ${executionId}`);
+    }
+
+    // If blocked, resume first
+    if (execution.status === 'blocked') {
+      this.log('info', `Resuming blocked execution ${executionId} for retry`);
+      execution.status = 'active';
+      execution.updatedAt = new Date();
+      await this.saveExecution(execution);
+    }
+
+    // Attempt to complete the skill
+    return this.completeSkill(executionId, skillId, result);
+  }
+
   // ==========================================================================
   // GATE HANDLING
   // ==========================================================================
