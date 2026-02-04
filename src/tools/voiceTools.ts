@@ -106,14 +106,15 @@ export const voiceToolDefinitions = [
 // Tool handlers
 export function createVoiceToolHandlers(getVoiceAdapter: () => VoiceAdapter | null) {
   return {
-    configure_voice: async (args: z.infer<typeof configureVoiceSchema>) => {
+    configure_voice: async (args: unknown) => {
+      const validated = configureVoiceSchema.parse(args || {});
       const adapter = getVoiceAdapter();
       if (!adapter) {
         return { error: 'Voice adapter not configured' };
       }
 
       const service = adapter.getService();
-      service.configure(args as Partial<VoiceChannelConfig>);
+      service.configure(validated as Partial<VoiceChannelConfig>);
 
       return {
         success: true,
@@ -121,13 +122,14 @@ export function createVoiceToolHandlers(getVoiceAdapter: () => VoiceAdapter | nu
       };
     },
 
-    test_voice: async (args: z.infer<typeof testVoiceSchema>) => {
+    test_voice: async (args: unknown) => {
+      const validated = testVoiceSchema.parse(args || {});
       const adapter = getVoiceAdapter();
       if (!adapter) {
         return { error: 'Voice adapter not configured' };
       }
 
-      const text = args.text || 'Voice test successful';
+      const text = validated.text || 'Voice test successful';
       const service = adapter.getService();
 
       try {

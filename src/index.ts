@@ -67,7 +67,12 @@ import { proactiveMessagingTools, createProactiveMessagingToolHandlers } from '.
 import { slackIntegrationTools, createSlackIntegrationToolHandlers } from './tools/slackIntegrationTools.js';
 import { knopilotToolDefinitions, createKnoPilotToolHandlers } from './tools/knopilotTools.js';
 import { deliverableToolDefinitions, createDeliverableToolHandlers } from './tools/deliverableTools.js';
+import { createKnowledgeGraphTools } from './tools/knowledgeGraphTools.js';
+import { createRoadmapTools } from './tools/roadmapTools.js';
+import { createOrchestrationTools } from './tools/orchestrationTools.js';
+import { voiceToolDefinitions, createVoiceToolHandlers } from './tools/voiceTools.js';
 import { getKnoPilotService } from './services/knopilot/KnoPilotService.js';
+import { OrchestrationService } from './services/orchestration/index.js';
 import { createHttpServer, startHttpServer } from './server/httpServer.js';
 import { getVersion } from './version.js';
 
@@ -605,6 +610,22 @@ async function main() {
     message: 'KnoPilot service initialized',
   }));
 
+  // Initialize orchestration service (2-layer multi-agent)
+  const orchestrationService = new OrchestrationService({
+    dataDir: join(config.repoPath, 'data', 'orchestration'),
+  });
+  orchestrationService.setDependencies({
+    roadmapService,
+    executionEngine,
+    loopComposer,
+  });
+
+  console.error(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    level: 'info',
+    message: 'Orchestration service ready',
+  }));
+
   // Create tool handlers
   const skillHandlers = createSkillToolHandlers(skillRegistry, learningService);
   const loopHandlers = createLoopToolHandlers(loopComposer);
@@ -636,6 +657,37 @@ async function main() {
   const slackIntegrationHandlers = createSlackIntegrationToolHandlers(slackIntegrationService);
   const knopilotHandlers = createKnoPilotToolHandlers(knopilotService);
   const deliverableHandlers = createDeliverableToolHandlers(deliverableManager);
+  const voiceHandlers = createVoiceToolHandlers(() => proactiveMessagingService.getVoiceAdapter());
+
+  // Create tools from factory functions that return { tools, handleTool }
+  const knowledgeGraphToolsResult = createKnowledgeGraphTools({ knowledgeGraphService });
+  const roadmapToolsResult = createRoadmapTools({ roadmapService });
+  const orchestrationToolsResult = createOrchestrationTools({ orchestrationService });
+
+  // Convert handleTool pattern to individual handlers
+  const knowledgeGraphHandlers: Record<string, (args: unknown) => Promise<unknown>> = {};
+  for (const tool of knowledgeGraphToolsResult.tools) {
+    knowledgeGraphHandlers[tool.name] = async (args: unknown) => {
+      const result = await knowledgeGraphToolsResult.handleTool(tool.name, args);
+      return JSON.parse(result.content[0].text);
+    };
+  }
+
+  const roadmapHandlers: Record<string, (args: unknown) => Promise<unknown>> = {};
+  for (const tool of roadmapToolsResult.tools) {
+    roadmapHandlers[tool.name] = async (args: unknown) => {
+      const result = await roadmapToolsResult.handleTool(tool.name, args);
+      return JSON.parse(result.content[0].text);
+    };
+  }
+
+  const orchestrationHandlers: Record<string, (args: unknown) => Promise<unknown>> = {};
+  for (const tool of orchestrationToolsResult.tools) {
+    orchestrationHandlers[tool.name] = async (args: unknown) => {
+      const result = await orchestrationToolsResult.handleTool(tool.name, args);
+      return JSON.parse(result.content[0].text);
+    };
+  }
 
   // Combine all handlers
   const allHandlers = {
@@ -661,6 +713,10 @@ async function main() {
     ...slackIntegrationHandlers,
     ...knopilotHandlers,
     ...deliverableHandlers,
+    ...voiceHandlers,
+    ...knowledgeGraphHandlers,
+    ...roadmapHandlers,
+    ...orchestrationHandlers,
   };
 
   // Combine all tool definitions
@@ -688,6 +744,10 @@ async function main() {
     ...slackIntegrationTools,
     ...knopilotToolDefinitions,
     ...deliverableToolDefinitions,
+    ...voiceToolDefinitions,
+    ...knowledgeGraphToolsResult.tools,
+    ...roadmapToolsResult.tools,
+    ...orchestrationToolsResult.tools,
   ];
 
   // Create MCP server factory
