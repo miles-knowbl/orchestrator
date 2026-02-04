@@ -4,7 +4,7 @@
 
 **Organization:** superorganism
 **Location:** ~/workspaces/orchestrator
-**Roadmap:** [ROADMAP.md](../ROADMAP.md) — 32 modules across 7 layers
+**Roadmap:** [ROADMAP.md](../ROADMAP.md) — 35 modules
 
 ## Vision
 
@@ -20,9 +20,9 @@ A self-improving meta-system where skills are the atomic primitive. Orchestrator
 |--------|------|--------|-----------|----------|
 | skill-registry | src/services/SkillRegistry.ts | complete | 6/6 | 100% |
 | loop-composer | src/services/LoopComposer.ts | complete | 5/5 | 100% |
-| execution-engine | src/services/ExecutionEngine.ts | complete | 12/12 | 100% |
+| execution-engine | src/services/ExecutionEngine.ts | complete | 10/10 | 100% |
 | memory-service | src/services/MemoryService.ts | complete | 6/6 | 100% |
-| learning-service | src/services/LearningService.ts | complete | 12/12 | 100% |
+| learning-service | src/services/LearningService.ts | complete | 8/8 | 100% |
 | calibration-service | src/services/CalibrationService.ts | complete | 4/4 | 100% |
 | inbox-processor | src/services/InboxProcessor.ts | complete | 5/5 | 100% |
 | run-archival | src/services/RunArchivalService.ts | complete | 5/5 | 100% |
@@ -30,29 +30,29 @@ A self-improving meta-system where skills are the atomic primitive. Orchestrator
 | loop-guarantee-aggregator | src/services/LoopGuaranteeAggregator.ts | complete | 4/4 | 100% |
 | deliverable-manager | src/services/DeliverableManager.ts | complete | 5/5 | 100% |
 | version-utility | src/version.ts | complete | 1/1 | 100% |
-| http-server | src/server/httpServer.ts | complete | 5/5 | 100% |
+| http-server | src/server/httpServer.ts | complete | 0/0 | N/A |
 | loop-commands | commands/*.md | complete | 11/11 | 100% |
-| analytics | src/services/analytics/ | complete | 12/12 | 100% |
-| learning | src/services/learning/ | complete | 15/15 | 100% |
-| roadmapping | src/services/roadmapping/ | complete | 14/14 | 100% |
-| knowledge-graph | src/services/knowledge-graph/ | complete | 25/25 | 100% |
-| orchestration | src/services/orchestration/ | complete | 30/30 | 100% |
+| analytics | src/services/analytics/ | complete | 14/14 | 100% |
+| learning | src/services/learning/ | complete | 16/17 | 94% |
+| roadmapping | src/services/roadmapping/ | complete | 0/0 | N/A |
+| knowledge-graph | src/services/knowledge-graph/ | complete | 22/22 | 100% |
+| orchestration | src/services/orchestration/ | complete | 21/21 | 100% |
 | kanban | apps/dashboard/app/roadmap/ | complete | 8/8 | 100% |
 | patterns-roundup | src/services/patterns/ | complete | 10/10 | 100% |
 | scoring | src/services/scoring/ | complete | 12/12 | 100% |
-| autonomous | src/services/autonomous/ | complete | 15/15 | 100% |
+| autonomous | src/services/autonomous/ | complete | 14/14 | 100% |
 | dreaming | src/services/dreaming/ | complete | 18/18 | 100% |
-| multi-agent-worktrees | src/services/multi-agent/ | complete | 22/22 | 100% |
-| mece-opportunity-mapping | src/services/mece/ | complete | 16/16 | 100% |
-| coherence-system | src/services/coherence/ | complete | 12/12 | 100% |
+| multi-agent-worktrees | src/services/multi-agent/ | complete | 25/25 | 100% |
+| mece-opportunity-mapping | src/services/mece/ | complete | 18/18 | 100% |
+| coherence-system | src/services/coherence/ | complete | 13/13 | 100% |
 | loop-sequencing | src/services/loop-sequencing/ | complete | 14/14 | 100% |
 | skill-trees | src/services/skill-trees/ | complete | 16/16 | 100% |
-| game-design | src/services/game-design/ | complete | 15/15 | 100% |
-| spaced-repetition | src/services/spaced-repetition/ | complete | 22/22 | 100% |
-| proposing-decks | src/services/proposing-decks/ | complete | 12/12 | 100% |
-| proactive-messaging | src/services/proactive-messaging/ | complete | 10/10 | 100% |
+| game-design | src/services/game-design/ | complete | 17/17 | 100% |
+| spaced-repetition | src/services/spaced-repetition/ | complete | 24/24 | 100% |
+| proposing-decks | src/services/proposing-decks/ | complete | 20/20 | 100% |
+| proactive-messaging | src/services/proactive-messaging/ | complete | 20/20 | 100% |
 | slack-integration | src/services/slack-integration/ | complete | 15/15 | 100% |
-| ooda-clocks-visual | src/services/ooda-clock/, apps/dashboard/app/ooda-clock/ | complete | 12/12 | 100% |
+| ooda-clocks-visual | src/services/ooda-clock/, apps/dashboard/app/ooda-clock/ | complete | 14/14 | 100% |
 
 ---
 
@@ -540,23 +540,8 @@ A self-improving meta-system where skills are the atomic primitive. Orchestrator
 
 ```
 System.done = ALL(Module.done)
-            = skill-registry.done AND loop-composer.done AND execution-engine.done
-              AND memory-service.done AND learning-service.done AND calibration-service.done
-              AND inbox-processor.done AND run-archival.done AND guarantee-service.done
-              AND loop-guarantee-aggregator.done AND deliverable-manager.done
-              AND version-utility.done AND http-server.done AND loop-commands.done
-              AND analytics.done AND learning.done AND roadmapping.done
-              AND knowledge-graph.done AND orchestration.done AND kanban.done
-              AND patterns-roundup.done AND scoring.done AND autonomous.done
-              AND dreaming.done AND multi-agent-worktrees.done
-              AND mece-opportunity-mapping.done AND coherence-system.done
-              AND loop-sequencing.done AND skill-trees.done AND game-design.done
-              AND ooda-clocks-visual.done AND slack-integration.done
-              AND spaced-repetition.done AND proposing-decks.done
-              AND proactive-messaging.done
 
 Current: 34/34 modules complete (100%)
-Pending: None
 Status: Core operational + autonomy layer + intelligence layer
 Version: 1.2.0
 ```
@@ -573,7 +558,7 @@ Version: 1.2.0
 
 ## Recent Completions
 
-> Last 5 completed loop runs for this system.
+> Last completed loop runs for this system.
 
 | Date | Loop | Scope | Outcome | Key Deliverables |
 |------|------|-------|---------|------------------|
@@ -587,14 +572,6 @@ Version: 1.2.0
 | 2026-02-01 | engineering-loop | coherence-system | success | CoherenceService, 7 API endpoints, 7 MCP tools, 10 validation rules across 8 domains |
 | 2026-02-01 | engineering-loop | mece-opportunity-mapping | success | MECEOpportunityService, 10 API endpoints, 12 MCP tools, gap/overlap detection |
 | 2026-02-01 | engineering-loop | multi-agent-worktrees | success | MultiAgentCoordinator, 20 API endpoints, 24 MCP tools, parallel development coordination |
-| 2026-02-01 | engineering-loop | dreaming | success | DreamEngine, 11 API endpoints, 12 MCP tools, idle proposal generation |
-| 2026-02-01 | engineering-loop | autonomous | success | AutonomousExecutor, 8 API endpoints, 9 MCP tools, background execution |
-| 2026-02-01 | engineering-loop | scoring | success | ScoringService, 8 API endpoints, 8 MCP tools, system scorecard |
-| 2026-02-01 | engineering-loop | patterns-roundup | success | PatternsService, 6 API endpoints, 6 MCP tools, pattern detection |
-| 2026-02-01 | engineering-loop | kanban | success | Dashboard roadmap page, layer visualization, leverage scoring panel |
-| 2026-02-01 | engineering-loop | 2-layer-orchestration | success | OrchestrationService, AgentManager, WorktreeManager, 15 API endpoints, 17 MCP tools |
-| 2026-01-31 | engineering-loop | knowledge-graph-ontology | success | KnowledgeGraphService, 17 API endpoints, 19 MCP tools |
-| 2026-01-31 | engineering-loop | roadmapping-module | success | RoadmapService, 10 API endpoints, leverage integration |
 
 ---
 
@@ -606,331 +583,4 @@ Version: 1.2.0
 
 ---
 
-## Notes
-
-- Architecture v1.0.0 established 2025-01-29
-- 54+ MCP tools operational
-- 11 loop definitions with unified architecture (Organization → System → Module)
-- Run archival system operational
-- Deep Context Protocol active across all loops (v1.0.0 - 2025-01-29)
-  - Global instructions in ~/.claude/CLAUDE.md
-  - Shared protocol in commands/_shared/clarification-protocol.md
-  - Per-loop Clarification Protocol sections
-  - Terrain Check: uphill/downhill forcing function after every response
-- Docs Alignment skill (v1.0.0 - 2025-01-29)
-  - MECE documentation taxonomy
-  - Automatic alignment after every loop COMPLETE phase
-  - Dream State updates, cross-reference validation, indexing
-  - See `skills/docs-alignment/SKILL.md`
-- Learning System v2 (v2.0.0 - 2026-01-30)
-  - Rubric scoring: completeness, quality, friction, relevance
-  - Section recommendations for skill improvement
-  - Threshold-based upgrade proposal generation
-  - complete_run_tracking for learning persistence
-  - See ADR-002 in memory/orchestrator.json
-- Leverage Protocol (v1.0.0 - 2026-01-30)
-  - Value equation: (DSA×0.40 + Unlock×0.25 + Likelihood×0.15) / (Time×0.10 + Effort×0.10)
-  - Internal mode after every response (not surfaced)
-  - External mode at loop boundaries (always propose next loop)
-  - See commands/_shared/leverage-protocol.md
-- Version Alignment (v1.0.0 - 2026-01-30)
-  - Single source of truth in package.json
-  - src/version.ts reads at runtime
-  - distribution-loop bumps version during INIT phase
-  - See ADR-004 in memory/orchestrator.json
-- Guarantee System (v1.0.0 - 2026-01-30)
-  - Belt-and-suspenders guarantee enforcement
-  - Skill guarantees aggregate to loop guarantees
-  - Autonomous mode validation
-- Deliverable Organization (v1.0.0 - 2026-01-30)
-  - Structured deliverable storage per execution
-  - Consistent paths: deliverables/{executionId}/{phase}/{filename}
-- Self-Improvement Architecture (v1.0.0 - 2026-01-31)
-  - Two-module design: Analytics (observe) + Learning (improve)
-  - Analytics reads from all services, surfaces insights
-  - Learning processes signals, generates proposals, applies upgrades
-  - Feedback loop: Execute → Analytics → Learning → improved skills → Execute
-  - See src/services/analytics/DREAM-STATE.md and src/services/learning/DREAM-STATE.md
-- Hierarchy Simplification (ADR-006 - 2026-01-31)
-  - Simplified from 4-tier (Org→Domain→System→Module) to 3-tier (Org→System→Module)
-  - Systems ladder directly to Org dream state
-  - Clearer mental model, less confusion around "domain" concept
-- Seven-Layer Roadmap Architecture (ADR-007 - 2026-01-31)
-  - L0 Foundation, L1 Visualization, L2 Autonomy, L3 Intelligence, L4 Interface, L5 Domain Loops, L6 Meta, L7 Sovereignty
-  - 32 new modules planned across 7 layers
-  - Dependencies flow upward through layers
-  - See ROADMAP.md for full details
-- Key Concepts Captured (PAT-011 through PAT-014 - 2026-01-31)
-  - ADIR reasoning cycle (Abductive→Deductive→Inductive→Reflexive)
-  - Context Delta schema for reflexive phase output
-  - Finite/infinite game framing for hierarchy levels
-  - Loop sequencing (chess-line multi-move planning)
-- Knowledge Graph Ontology (v1.0.0 - 2026-01-31)
-  - Skills as only primitive (nodes); everything else is metadata or derived
-  - Objective ontology: about skills themselves, not personal proficiency
-  - Five edge types: depends_on, tag_cluster, sequence, co_executed, improved_by
-  - PageRank-like leverage scoring for centrality
-  - Gap analysis: missing dependencies, isolated skills, weak clusters, phase gaps
-  - See src/services/knowledge-graph/DREAM-STATE.md
-- 2-Layer Orchestration (v1.0.0 - 2026-02-01)
-  - Layer 1: System Orchestrator (persistent, human-facing portal)
-  - Layer 2: Task Agents (ephemeral, module-scoped workers)
-  - Git worktrees per module for isolation and parallel development
-  - Concurrency modes: sequential, parallel-async, parallel-threads
-  - Failure cascade: retry → reassign → escalate (human as last resort)
-  - Leverage-driven work assignment via RoadmapService
-  - Foundation for autonomous, dreaming, multi-agent-worktrees
-  - See src/services/orchestration/DREAM-STATE.md
-- Kanban Visualization (v1.0.0 - 2026-02-01)
-  - Linear-style dashboard at /roadmap showing module ladder
-  - 7-layer visualization (0-6) with collapsible sections
-  - Leverage scoring panel highlighting next highest-value work
-  - Module cards with status, dependencies, expand/collapse details
-  - Delegation-ready for worktree-based parallel development
-  - See skills/kanban/DREAM-STATE.md
-- Patterns Roundup (v1.0.0 - 2026-02-01)
-  - PatternsService with query, roundup, and detection capabilities
-  - Behavioral pattern detection from run archives (success/failure/skip patterns)
-  - Codebase pattern detection from skill documentation
-  - Gap analysis for 8 pattern categories (security, testing, etc.)
-  - Formalization workflow: detect → review → formalize into memory
-  - 6 API endpoints at /api/patterns/*
-  - 6 MCP tools for pattern operations
-  - See skills/patterns-roundup/DREAM-STATE.md
-- Scoring Module (v1.0.0 - 2026-02-01)
-  - ScoringService unifying metrics from Roadmap, Analytics, Calibration
-  - 5-component module scoring: dreamStateAlignment, downstreamImpact, completionValue, executionQuality, strategicPosition
-  - System health score with completion, quality, momentum, and risk metrics
-  - Historical tracking with trend analysis
-  - Terminal-friendly scorecard visualization
-  - 8 API endpoints at /api/scoring/*
-  - 8 MCP tools for scoring operations
-  - See skills/scoring/DREAM-STATE.md
-- Autonomous Module (v1.0.0 - 2026-02-01)
-  - AutonomousExecutor for background loop execution
-  - Auto-approval of gates based on approvalType (auto, conditional)
-  - Auto-advancement of phases when skills complete
-  - Configurable tick interval, max parallel executions, retry limits
-  - Gate auto-approval respects guarantee validation
-  - Only autonomy='full' executions are processed automatically
-  - 8 API endpoints at /api/autonomous/*
-  - 9 MCP tools for autonomous control
-  - Foundation for "it works while I sleep" capability
-  - See src/services/autonomous/AutonomousExecutor.ts
-- Dreaming Module (v1.0.0 - 2026-02-01)
-  - DreamEngine for background proposal generation during idle periods
-  - Idle detection based on last activity timestamps
-  - Three proposal types: new-module, skill-improvement, pattern-capture
-  - Analyzes blocked modules from RoadmapService
-  - Pulls skill improvement proposals from LearningService
-  - Detects pattern gaps from PatternsService
-  - Proposal lifecycle: pending → approved/rejected → implemented
-  - Configurable idle threshold, dream interval, max proposals per cycle
-  - Dream session tracking with timestamps and proposal counts
-  - 11 API endpoints at /api/dreaming/*
-  - 12 MCP tools for dreaming control
-  - Foundation for "wake up to proposals" capability
-  - See src/services/dreaming/DreamEngine.ts
-- Multi-Agent Worktrees Module (v1.0.0 - 2026-02-01)
-  - MultiAgentCoordinator for parallel development across collaborators
-  - Collaborator management: register, list, disconnect, track activity
-  - Agent sets: group agents by collaborator with lifecycle control
-  - Resource reservations: claim modules/files/paths for exclusive work
-  - Merge queue: coordinated merging to avoid conflicts
-  - Conflict detection: reservation conflicts, merge conflicts, active agent conflicts
-  - Cross-collaborator visibility: see what everyone is working on
-  - Background tasks: automatic merge checking, reservation cleanup
-  - Integrates with AgentManager and WorktreeManager from orchestration module
-  - 20 API endpoints at /api/multi-agent/*
-  - 24 MCP tools for multi-agent coordination
-  - Foundation for team-based parallel development with isolated worktrees
-  - See src/services/multi-agent/MultiAgentCoordinator.ts
-- MECE Opportunity Mapping Module (v1.0.0 - 2026-02-01)
-  - MECEOpportunityService for complete roadmap coverage analysis
-  - MECE principle: Mutually Exclusive (no overlaps), Collectively Exhaustive (no gaps)
-  - 9-category default taxonomy: Foundation, Execution, Intelligence, Visualization, Autonomy, Interface, Domain, Meta, Sovereignty
-  - Opportunity collection from roadmap modules, skills, and patterns
-  - Automatic classification using keyword matching
-  - Gap detection: missing categories, empty subcategories, stagnant categories
-  - Overlap detection: similar titles, same source, circular dependencies
-  - Recommendation generation with priority scoring
-  - Coverage metrics per category and overall system
-  - 10 API endpoints at /api/mece/*
-  - 12 MCP tools for MECE operations
-  - Foundation for ensuring no blind spots in roadmap planning
-  - See src/services/mece/MECEOpportunityService.ts
-- Coherence System Module (v1.0.0 - 2026-02-01)
-  - CoherenceService validates alignment across all orchestrator components
-  - 8 alignment domains: dream-roadmap, skill-loop, pattern-impl, graph-skill, mece-roadmap, dependency-order, memory-consistency, version-sync
-  - 10 validation rules detecting orphans, conflicts, misalignments
-  - Domain scoring (0-1) aggregates to overall coherence score
-  - Issue tracking with severity levels (critical, warning, info) and status workflow
-  - Recommendation generation prioritized by severity and impact
-  - Terminal-friendly coherence dashboard view
-  - 7 API endpoints at /api/coherence/*
-  - 7 MCP tools for coherence operations
-  - Foundation for "spec-driven organization" where all components stay aligned
-  - See src/services/coherence/CoherenceService.ts
-- Loop Sequencing Module (v1.0.0 - 2026-02-01)
-  - LoopSequencingService for multi-move planning beyond single leverage decisions
-  - Chess-inspired "line" thinking: look multiple moves ahead
-  - NLP-like pattern detection of loop co-occurrence
-  - Transition tracking: which loops commonly follow which
-  - Sequence detection: 3-5 loop patterns that recur
-  - Line generation: multi-move plans with compound leverage scoring
-  - Confidence calculation based on historical transition success rates
-  - Risk identification for weak transitions
-  - Alternative suggestion for each move
-  - 11 API endpoints at /api/sequencing/*
-  - 12 MCP tools for sequencing operations
-  - Foundation for sophisticated autonomous decision-making
-  - See src/services/loop-sequencing/LoopSequencingService.ts
-- Skill Trees Module (v1.0.0 - 2026-02-01)
-  - SkillTreeService for DAG visualization of skill relationships
-  - Interface to the skill-based ontology from knowledge graph
-  - Domain filtering: generate trees by phase, tag, category, or loop
-  - Tree structure: nodes with depth, parents, children, hub detection
-  - Critical path calculation through highest-leverage skills
-  - Suggested learning order via topological sort
-  - Progression tracking: locked → available → in-progress → familiar → mastered
-  - Learning path generation to reach target skills
-  - Prerequisite detection and recursive dependency resolution
-  - Terminal-friendly tree visualization with depth-based rendering
-  - 13 API endpoints at /api/skill-trees/*
-  - 13 MCP tools for skill tree operations
-  - Foundation for user skill familiarity and learning navigation
-  - See src/services/skill-trees/SkillTreeService.ts
-- Game Design Module (v1.0.0 - 2026-02-01)
-  - GameDesignService for finite/infinite game framing of dream state ladders
-  - Finite games for module→system scope with win conditions and checkpoints
-  - Infinite games for organization scope with principles and health metrics
-  - Three game levels: module (finite), system (finite), organization (infinite)
-  - Win condition tracking: metric-based targets with satisfaction evidence
-  - Checkpoint milestones with celebration messages
-  - Auto-generation of games from roadmap modules
-  - Progress calculation blending checkpoints (60%) and final conditions (40%)
-  - Health metric tracking with trend analysis (improving/stable/declining)
-  - Principle-based play for infinite games (examples and violations)
-  - Terminal-friendly game status visualization
-  - 12 API endpoints at /api/game-design/*
-  - 15 MCP tools for game design operations
-  - Foundation for gamified roadmap progression and mission framing
-  - See src/services/game-design/GameDesignService.ts
-- Spaced Repetition Module (v1.0.0 - 2026-02-01)
-  - SpacedRepetitionService for SRS-based skill mastery and knowledge retention
-  - SM-2 algorithm implementation for optimal review scheduling
-  - Card types: skill, pattern, concept, custom
-  - Response quality scale: 0-5 (0-2 fail, 3 hard, 4 good, 5 easy)
-  - Ease factor adjustment (min 1.3, default 2.5)
-  - Interval progression: 1 day → 4 days → exponential growth
-  - Deck management with daily new/review limits
-  - Review session tracking with time spent and correctness
-  - Streak tracking for consecutive study days
-  - Card maturity levels: new → young (<21 days) → mature (≥21 days) → mastered (≥30 days)
-  - Auto-generation from knowledge graph skills
-  - Auto-generation from memory patterns
-  - Terminal-friendly SRS status visualization
-  - 19 API endpoints at /api/srs/*
-  - 22 MCP tools for SRS operations
-  - Foundation for internalized skill knowledge through timed review
-  - Unlocks proposing-decks module capability
-  - See src/services/spaced-repetition/SpacedRepetitionService.ts
-- Slack Integration Module (v1.0.0 - 2026-02-02)
-  - SlackIntegrationService for full bidirectional Slack control
-  - SlackCommandParser for semantic command parsing
-  - SlackThreadManager for thread-per-execution tracking
-  - SlackMergeWorkflow for merge/rebase coordination
-  - Command types: start_loop, go, approved, reject, merge, rebase, status, show, capture
-  - Engineer status tracking with activity timestamps
-  - Channel = Engineer = Worktree = Branch model
-  - Conflict detection and cross-engineer coordination
-  - 8 API endpoints at /api/slack/*
-  - 15 MCP tools for Slack integration
-  - 55 tests covering all components
-  - Foundation for "work from Slack" async orchestration
-  - See src/services/slack-integration/SlackIntegrationService.ts
-
----
-
-## Architecture Evolution v2.0 (2026-02-03)
-
-> Strategic direction for the next phase of orchestrator development.
-
-### Three-Layer Persistence Architecture
-
-The system persistence is organized into three layers with distinct ownership:
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                 THREE-LAYER ARCHITECTURE                     │
-├─────────────────────────────────────────────────────────────┤
-│  LAYER 1: Orchestrator Core (immutable knowledge)           │
-│  ├── skills/*  (skill definitions)                          │
-│  ├── loops/*   (loop definitions)                           │
-│  ├── commands/*.md (slash commands)                         │
-│  └── memory/orchestrator.json (patterns, decisions)         │
-│                                                             │
-│  LAYER 2: User Context (travels with user)                  │
-│  ├── ~/.claude/profile.json (user identity, preferences)    │
-│  ├── ~/.claude/calibration/ (estimate accuracy)             │
-│  ├── ~/.claude/preferences.json (UI, notification prefs)    │
-│  └── ~/.claude/commands/ (user commands)                    │
-│                                                             │
-│  LAYER 3: Project Context (stays with project)              │
-│  ├── {project}/.claude/DREAM-STATE.md                       │
-│  ├── {project}/.claude/runs/ (archived executions)          │
-│  ├── {project}/.claude/memory.json (project patterns)       │
-│  └── {project}/ROADMAP.md (module ladder)                   │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### Active vs Passive Mode
-
-Mode governs what can mutate when the user is away:
-
-| Mode | Human Presence | Layer 3 | Notification Style |
-|------|----------------|---------|-------------------|
-| **Active** | Present | Mutable | Interactive prompts |
-| **Passive** | Away | Read-only | Queue to inbox |
-
-Active mode: Human-in-loop, executing work, mutable project state.
-Passive mode: Autonomous observation, proposals queued to user inbox.
-
-*Note: Mode architecture documented in deferred dreaming module scope (ROADMAP.md).*
-
-### Execution Model Improvements
-
-| Improvement | Description | Task |
-|-------------|-------------|------|
-| **Per-loop transient state** | Each loop has `{loop-id}-state.json` pattern | #1 |
-| **Resolve guarantee** | "I satisfied the guarantee another way" semantic | Done |
-| **Retry deliverable** | Explicit retry path for failed deliverables | #3 |
-| **Version patch default** | Versions advance 1.0.x by default | #5 |
-| **Gate CRUD** | Add/remove/disable gates dynamically | #6 |
-| **Clean shutdown** | Registry for server, loops, agents cleanup | #7 |
-
-### Quality & Context Improvements
-
-| Improvement | Description | Task |
-|-------------|-------------|------|
-| **Taxonomy audit** | Review skill/loop categories and guarantees | #4 |
-| **User profile** | Canonical ~/.claude/profile.json structure | #9 |
-| **Context cultivation loops** | /gotchas, /guarantee for coherence discovery | #10 |
-| **Architecture documentation** | Formalize three-layer model | #11 |
-
-### Key Findings
-
-1. **AGENTS.md vs SKILL.md**: Complementary, not competing. AGENTS.md is cross-tool project context; SKILL.md is structured reusable capabilities. Our system is more sophisticated.
-
-2. **Persistence inventory**: Discovered 5 layers of persistence across memory/, data/, skills/, loops/, ~/.claude/, and project .claude/ directories.
-
-3. **Guarantee resolution**: Implemented new semantic allowing guarantee intent to be acknowledged when formal checks fail but intent is satisfied.
-
-### Next Phase Priority
-
-The highest-leverage tasks for v2.0:
-
-1. **Gate CRUD** (#6) — Enables mobile workflow flexibility
-2. **User profile** (#9) — Foundation for Layer 2
-3. **Clean shutdown** (#7) — Operational reliability
-4. **Context cultivation loops** (#10) — Coherence discovery
+*Generated from .claude/dream-state.json on 2026-02-04*

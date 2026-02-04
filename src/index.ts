@@ -28,6 +28,7 @@ import { DeliverableManager } from './services/DeliverableManager.js';
 import { AnalyticsService } from './services/analytics/index.js';
 import { ImprovementOrchestrator } from './services/learning/index.js';
 import { RoadmapService } from './services/roadmapping/index.js';
+import { DreamStateService } from './services/dream-state/index.js';
 import { KnowledgeGraphService } from './services/knowledge-graph/index.js';
 import { PatternsService } from './services/patterns/index.js';
 import { ScoringService } from './services/scoring/index.js';
@@ -308,6 +309,56 @@ async function main() {
       timestamp: new Date().toISOString(),
       level: 'warn',
       message: 'Roadmap service not available (no ROADMAP.md found)',
+    }));
+  }
+
+  // Initialize dream state service (function-level visibility within modules)
+  // PAT-017: JSON source of truth in .claude/ directory, syncs from roadmap
+  const dreamStateService = new DreamStateService({
+    markdownPath: join(config.repoPath, '.claude', 'DREAM-STATE.md'),
+    statePath: join(config.repoPath, '.claude', 'dream-state.json'),
+  });
+
+  // Try to load dream state (optional - may not exist in all projects)
+  try {
+    await dreamStateService.load();
+    const completion = dreamStateService.getCompletionAlgebra();
+    console.error(JSON.stringify({
+      timestamp: new Date().toISOString(),
+      level: 'info',
+      message: `Dream state service initialized (${completion.completedFunctions}/${completion.totalFunctions} functions complete)`,
+    }));
+
+    // Wire sync hook: roadmap changes trigger dream state sync
+    if (roadmapService.isLoaded()) {
+      roadmapService.onSave(async () => {
+        const roadmap = roadmapService.getRoadmap();
+        const modules = roadmap.modules.map(m => ({
+          id: m.id,
+          status: m.status,
+          name: m.name,
+        }));
+        const result = dreamStateService.syncFromRoadmap(modules);
+        if (result.synced.length > 0) {
+          await dreamStateService.save();
+          console.error(JSON.stringify({
+            timestamp: new Date().toISOString(),
+            level: 'info',
+            message: `Dream state synced from roadmap: ${result.synced.length} modules updated`,
+          }));
+        }
+      });
+      console.error(JSON.stringify({
+        timestamp: new Date().toISOString(),
+        level: 'info',
+        message: 'Dream state sync hook wired to roadmap service',
+      }));
+    }
+  } catch (err) {
+    console.error(JSON.stringify({
+      timestamp: new Date().toISOString(),
+      level: 'warn',
+      message: 'Dream state service not available (no dream-state.json found)',
     }));
   }
 

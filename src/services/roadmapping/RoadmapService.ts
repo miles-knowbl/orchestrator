@@ -115,11 +115,27 @@ export class RoadmapService {
   private roadmapPath: string;
   private statePath: string;
   private roadmap: Roadmap | null = null;
+  private saveCallbacks: Array<() => Promise<void>> = [];
 
   constructor(options: RoadmapServiceOptions = {}) {
     this.roadmapPath = options.roadmapPath || path.join(process.cwd(), 'ROADMAP.md');
     // JSON source of truth in .claude/ directory (PAT-017: Structured Document Architecture)
     this.statePath = options.statePath || path.join(process.cwd(), '.claude', 'roadmap.json');
+  }
+
+  /**
+   * Check if roadmap has been loaded
+   */
+  isLoaded(): boolean {
+    return this.roadmap !== null;
+  }
+
+  /**
+   * Register a callback to be called after save()
+   * Used for sync hooks (e.g., DreamStateService.syncFromRoadmap)
+   */
+  onSave(callback: () => Promise<void>): void {
+    this.saveCallbacks.push(callback);
   }
 
   // --------------------------------------------------------------------------
@@ -174,6 +190,11 @@ export class RoadmapService {
     // Regenerate markdown (derived view)
     const markdown = this.renderMarkdown();
     fs.writeFileSync(this.roadmapPath, markdown);
+
+    // Call registered save callbacks (e.g., dream state sync)
+    for (const callback of this.saveCallbacks) {
+      await callback();
+    }
   }
 
   /**
