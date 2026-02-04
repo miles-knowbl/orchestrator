@@ -225,3 +225,82 @@ export function parseVersionFromFilename(filename: string): number | null {
   const match = filename.match(/-v(\d+)\./);
   return match ? parseInt(match[1], 10) : null;
 }
+
+// =============================================================================
+// TRANSIENT STATE TYPES
+// =============================================================================
+
+/**
+ * Transient state for per-execution working data.
+ * Lives in .orchestra/runs/{execution-id}/transient/
+ * Automatically cleaned up on execution completion.
+ *
+ * Directory Structure:
+ * transient/
+ *   context/           # Gathered context (sources, research)
+ *     sources.json     # Context sources metadata
+ *     *.md             # Raw context documents
+ *   working/           # Active working state
+ *     checkpoint.json  # Resumable state checkpoint
+ *     notes.md         # Working notes
+ *   scratch/           # Temporary files (always cleaned)
+ */
+
+export type TransientCategory = 'context' | 'working' | 'scratch';
+
+export interface TransientFile {
+  name: string;
+  category: TransientCategory;
+  path: string;
+  createdAt: Date;
+  updatedAt: Date;
+  size: number;
+  metadata?: Record<string, unknown>;
+}
+
+export interface TransientState {
+  executionId: string;
+  files: TransientFile[];
+  checkpoint?: TransientCheckpoint;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface TransientCheckpoint {
+  phase: Phase;
+  skillId?: string;
+  data: Record<string, unknown>;
+  savedAt: Date;
+}
+
+export interface WriteTransientParams {
+  executionId: string;
+  category: TransientCategory;
+  name: string;
+  content: string;
+  metadata?: Record<string, unknown>;
+}
+
+export interface ReadTransientParams {
+  executionId: string;
+  category: TransientCategory;
+  name: string;
+}
+
+export interface ListTransientParams {
+  executionId: string;
+  category?: TransientCategory;
+}
+
+export interface SaveCheckpointParams {
+  executionId: string;
+  phase: Phase;
+  skillId?: string;
+  data: Record<string, unknown>;
+}
+
+export interface CleanupTransientParams {
+  executionId: string;
+  /** If true, only clean scratch/; otherwise clean all transient state */
+  scratchOnly?: boolean;
+}

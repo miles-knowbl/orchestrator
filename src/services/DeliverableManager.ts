@@ -37,6 +37,15 @@ import type {
   SearchDeliverablesParams,
   SearchResult,
   SearchMatch,
+  TransientCategory,
+  TransientFile,
+  TransientState,
+  TransientCheckpoint,
+  WriteTransientParams,
+  ReadTransientParams,
+  ListTransientParams,
+  SaveCheckpointParams,
+  CleanupTransientParams,
 } from '../types/deliverable.js';
 import {
   getDeliverableCategory,
@@ -52,6 +61,8 @@ const ORCHESTRA_DIR = '.orchestra';
 const RUNS_DIR = 'runs';
 const MANIFEST_FILE = 'manifest.json';
 const CURRENT_LINK = 'current';
+const TRANSIENT_DIR = 'transient';
+const CHECKPOINT_FILE = 'checkpoint.json';
 
 export class DeliverableManager {
   private manifests: Map<string, DeliverableManifest> = new Map();
@@ -566,6 +577,207 @@ export class DeliverableManager {
    */
   private computeHash(content: string): string {
     return `sha256:${createHash('sha256').update(content).digest('hex')}`;
+  }
+
+  // ==========================================================================
+  // TRANSIENT STATE MANAGEMENT
+  // ==========================================================================
+
+  /**
+   * Get transient directory path for an execution
+   */
+  private getTransientPath(executionId: string, category?: TransientCategory): string {
+    const basePath = join(this.getRunPath(executionId), TRANSIENT_DIR);
+    return category ? join(basePath, category) : basePath;
+  }
+
+  /**
+   * Initialize transient state directories for an execution
+   */
+  async initializeTransient(executionId: string): Promise<void> {
+    const categories: TransientCategory[] = ['context', 'working', 'scratch'];
+    for (const category of categories) {
+      await mkdir(this.getTransientPath(executionId, category), { recursive: true });
+    }
+    this.log('info', `Initialized transient state for execution ${executionId}`);
+  }
+
+  /**
+   * Write a transient file
+   */
+  async writeTransient(params: WriteTransientParams): Promise<TransientFile> {
+    const { executionId, category, name, content, metadata } = params;
+    const categoryPath = this.getTransientPath(executionId, category);
+    await mkdir(categoryPath, { recursive: true });
+
+    const filePath = join(categoryPath, name);
+    await writeFile(filePath, content, 'utf-8');
+
+    const stats = await stat(filePath);
+    const file: TransientFile = {
+      name,
+      category,
+      path: relative(this.getRunPath(executionId), filePath),
+      createdAt: stats.birthtime,
+      updatedAt: stats.mtime,
+      size: stats.size,
+      metadata,
+    };
+
+    this.log('info', `Wrote transient file: ${category}/${name} for ${executionId}`);
+    return file;
+  }
+
+  /**
+   * Read a transient file
+   */
+  async readTransient(params: ReadTransientParams): Promise<string | null> {
+    const { executionId, category, name } = params;
+    const filePath = join(this.getTransientPath(executionId, category), name);
+
+    try {
+      return await readFile(filePath, 'utf-8');
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * List transient files for an execution
+   */
+  async listTransient(params: ListTransientParams): Promise<TransientFile[]> {
+    const { executionId, category } = params;
+    const files: TransientFile[] = [];
+    const categories: TransientCategory[] = category ? [category] : ['context', 'working', 'scratch'];
+
+    for (const cat of categories) {
+      const categoryPath = this.getTransientPath(executionId, cat);
+      try {
+        const entries = await readdir(categoryPath);
+        for (const entry of entries) {
+          const filePath = join(categoryPath, entry);
+          const stats = await stat(filePath);
+          if (stats.isFile()) {
+            files.push({
+              name: entry,
+              category: cat,
+              path: relative(this.getRunPath(executionId), filePath),
+              createdAt: stats.birthtime,
+              updatedAt: stats.mtime,
+              size: stats.size,
+            });
+          }
+        }
+      } catch {
+        // Directory doesn't exist, skip
+      }
+    }
+
+    return files;
+  }
+
+  /**
+   * Save a checkpoint for resumable state
+   */
+  async saveCheckpoint(params: SaveCheckpointParams): Promise<TransientCheckpoint> {
+    const { executionId, phase, skillId, data } = params;
+    const checkpoint: TransientCheckpoint = {
+      phase,
+      skillId,
+      data,
+      savedAt: new Date(),
+    };
+
+    await this.writeTransient({
+      executionId,
+      category: 'working',
+      name: CHECKPOINT_FILE,
+      content: JSON.stringify(checkpoint, null, 2),
+    });
+
+    this.log('info', `Saved checkpoint for ${executionId} at ${phase}${skillId ? `/${skillId}` : ''}`);
+    return checkpoint;
+  }
+
+  /**
+   * Load a checkpoint
+   */
+  async loadCheckpoint(executionId: string): Promise<TransientCheckpoint | null> {
+    const content = await this.readTransient({
+      executionId,
+      category: 'working',
+      name: CHECKPOINT_FILE,
+    });
+
+    if (!content) return null;
+
+    try {
+      const checkpoint = JSON.parse(content);
+      checkpoint.savedAt = new Date(checkpoint.savedAt);
+      return checkpoint;
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Clean up transient state for an execution
+   */
+  async cleanupTransient(params: CleanupTransientParams): Promise<{ deletedCount: number }> {
+    const { executionId, scratchOnly } = params;
+    let deletedCount = 0;
+
+    const categoriesToClean: TransientCategory[] = scratchOnly
+      ? ['scratch']
+      : ['context', 'working', 'scratch'];
+
+    for (const category of categoriesToClean) {
+      const categoryPath = this.getTransientPath(executionId, category);
+      try {
+        const entries = await readdir(categoryPath);
+        for (const entry of entries) {
+          await rm(join(categoryPath, entry), { recursive: true, force: true });
+          deletedCount++;
+        }
+      } catch {
+        // Directory doesn't exist, skip
+      }
+    }
+
+    // If cleaning all, remove the transient directory itself
+    if (!scratchOnly) {
+      try {
+        await rm(this.getTransientPath(executionId), { recursive: true, force: true });
+      } catch {
+        // Ignore errors
+      }
+    }
+
+    this.log('info', `Cleaned up ${deletedCount} transient files for ${executionId}${scratchOnly ? ' (scratch only)' : ''}`);
+    return { deletedCount };
+  }
+
+  /**
+   * Get transient state summary for an execution
+   */
+  async getTransientState(executionId: string): Promise<TransientState | null> {
+    const files = await this.listTransient({ executionId });
+    const checkpoint = await this.loadCheckpoint(executionId);
+
+    if (files.length === 0 && !checkpoint) return null;
+
+    // Find earliest and latest timestamps
+    const timestamps = files.map(f => f.createdAt.getTime());
+    const createdAt = timestamps.length > 0 ? new Date(Math.min(...timestamps)) : new Date();
+    const updatedAt = timestamps.length > 0 ? new Date(Math.max(...files.map(f => f.updatedAt.getTime()))) : new Date();
+
+    return {
+      executionId,
+      files,
+      checkpoint: checkpoint ?? undefined,
+      createdAt,
+      updatedAt,
+    };
   }
 
   private log(level: string, message: string): void {

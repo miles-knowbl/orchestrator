@@ -210,6 +210,8 @@ export class ExecutionEngine {
         project: params.project,
         phases: loop.phases.map(p => p.name),
       });
+      // Initialize transient state directories
+      await this.deliverableManager.initializeTransient(id);
     }
 
     // Save and track
@@ -483,6 +485,21 @@ export class ExecutionEngine {
           }
         } catch (err) {
           this.log('warn', `Failed to auto-sync roadmap: ${err}`);
+        }
+      }
+
+      // Clean up transient state on completion
+      if (this.deliverableManager) {
+        try {
+          const { deletedCount } = await this.deliverableManager.cleanupTransient({
+            executionId,
+            scratchOnly: false, // Clean all transient files
+          });
+          if (deletedCount > 0) {
+            this.log('info', `Cleaned up ${deletedCount} transient files for ${executionId}`);
+          }
+        } catch (err) {
+          this.log('warn', `Failed to clean up transient state: ${err}`);
         }
       }
 
@@ -1379,6 +1396,18 @@ export class ExecutionEngine {
 
     await this.saveExecution(execution);
     this.executions.delete(executionId);
+
+    // Clean up transient state on abort
+    if (this.deliverableManager) {
+      try {
+        await this.deliverableManager.cleanupTransient({
+          executionId,
+          scratchOnly: false,
+        });
+      } catch (err) {
+        this.log('warn', `Failed to clean up transient state on abort: ${err}`);
+      }
+    }
 
     this.log('info', `Execution ${executionId} aborted: ${reason || 'No reason'}`);
   }
