@@ -1,7 +1,7 @@
 {
   "id": "orchestrator",
   "level": "orchestrator",
-  "summary": "Self-improving meta-system using Organization → System → Module hierarchy (simplified from 4-tier to 3-tier). 32 modules across 7 layers planned via ROADMAP.md. All loops share context loading protocol and completion archival. 54+ MCP tools, 11 loop definitions. Learning System v2 with rubric scoring. Leverage Protocol with Critical Rules for optimal loop sequencing. Version alignment from single source of truth. v0.9.0 with self-improvement architecture complete: Analytics (OBSERVE) + Learning (ACT) modules provide closed-loop feedback.",
+  "summary": "Self-improving meta-system using Organization → System → Module hierarchy (simplified from 4-tier to 3-tier). 32 modules across 7 layers planned via ROADMAP.md. All loops share context loading protocol and completion archival. 54+ MCP tools, 11 loop definitions. Learning System v2 with rubric scoring. Leverage Protocol with Critical Rules for optimal loop sequencing. Version alignment from single source of truth. v0.9.0 with self-improvement architecture complete: Analytics (OBSERVE) + Learning (ACT) modules provide closed-loop feedback. Meta-Change Protocol (PAT-017) for safe modification of guidance infrastructure.",
   "decisions": [
     {
       "id": "ADR-001",
@@ -66,6 +66,15 @@
       "decision": "Adopted thread-per-execution model: Each loop execution opens a new Slack thread on start. All subsequent messages for that execution go to the same thread. This keeps context grouped and allows reviewing execution history. Slack assumes autonomous mode - loops run autonomously with notifications at start and completion, reducing noise while maintaining visibility.",
       "consequences": "Clean Slack channel with one thread per execution. Engineers can review threads for context without blocking on every gate. Reduces notification fatigue. SlackAdapter tracks executionId→threadTs mapping. ProactiveMessagingService has notifyLoopStart() in addition to notifyLoopComplete().",
       "date": "2026-02-01T00:00:00Z"
+    },
+    {
+      "id": "ADR-009",
+      "title": "Meta-Change Protocol - Atomic changes to guidance infrastructure",
+      "context": "Attempted to change roadmap architecture (JSON source of truth + generated markdown). Documentation was written but implementation never completed. API errors interrupted work. No checkpoint existed, so state was lost. This is the self-referential trap: changing the system that guides us while using it for guidance.",
+      "decision": "Adopted Meta-Change Protocol (PAT-017) for all modifications to guidance infrastructure. Required phases: CHECKPOINT (backup state), BOOTSTRAP (create TRANSITION.md), IMPLEMENT (atomic changes), VERIFY (coherence check), CLEANUP (remove checkpoint). Any failure triggers ROLLBACK.",
+      "consequences": "Meta-changes are now recoverable. TRANSITION.md survives session boundaries and API errors. Atomic implementation prevents partial states. Verification ensures new state works before old is discarded. Pattern applies to: ROADMAP.md, DREAM-STATE.md, memory/*.json, loop commands, skill schemas.",
+      "date": "2026-02-04T00:00:00Z",
+      "learnedFrom": "Structured Document Architecture change failed"
     }
   ],
   "patterns": [
@@ -300,6 +309,41 @@
       "createdAt": "2026-02-01T00:00:00Z",
       "lastUsed": "2026-02-01T00:00:00Z",
       "implementedVia": "ADR-008 (Slack Autonomy Mode)"
+    },
+    {
+      "id": "PAT-017",
+      "name": "meta-change-protocol",
+      "category": "architectural",
+      "context": "When modifying guidance infrastructure (roadmap, dream-state, memory, loops) that the system depends on for its own operation",
+      "problem": "Self-referential trap: Changing the system that guides us while using that system for guidance creates instability. Mid-change, guidance becomes invalid. If interrupted (API error, context loss), we lose track of both the change and the original state.",
+      "solution": "Atomic meta-changes with explicit checkpointing: (1) CHECKPOINT: Save current state to explicit backup before any modification, (2) BOOTSTRAP: Create minimal standalone guidance document that survives the transition, (3) IMPLEMENT: Make changes atomically (all-or-nothing), (4) VERIFY: Validate new state is coherent and usable, (5) CLEANUP: Remove checkpoint only after verification succeeds. If any step fails, ROLLBACK to checkpoint.",
+      "phases": {
+        "checkpoint": "git stash or explicit backup file before starting",
+        "bootstrap": "Create TRANSITION.md with: current goal, expected end state, rollback instructions",
+        "implement": "Make all changes in single session, commit atomically",
+        "verify": "Load new system, run coherence check, test critical paths",
+        "cleanup": "Remove TRANSITION.md and checkpoint after success"
+      },
+      "antiPatterns": [
+        "Starting meta-change without checkpoint (no rollback path)",
+        "Partial implementation across multiple sessions (drift between sessions)",
+        "Modifying guidance docs without bootstrap (lost if interrupted)",
+        "Declaring success before verification (broken state persists)",
+        "Documenting change but not implementing (design-implementation gap)"
+      ],
+      "example": "Structured Document Architecture change failed because: no checkpoint (uncommitted docs), no bootstrap (no TRANSITION.md), partial implementation (docs done, code not started), API error interrupted → lost state",
+      "triggerConditions": [
+        "Changing ROADMAP.md structure or location",
+        "Changing DREAM-STATE.md structure or location",
+        "Changing memory/*.json schema",
+        "Changing loop command definitions",
+        "Changing skill schema or guarantees"
+      ],
+      "uses": 0,
+      "confidence": "high",
+      "createdAt": "2026-02-04T00:00:00Z",
+      "lastUsed": null,
+      "learnedFrom": "Structured Document Architecture change failed 2026-02-04"
     }
   ],
   "calibration": {
@@ -309,5 +353,5 @@
     }
   },
   "createdAt": "2026-01-25T00:00:00Z",
-  "updatedAt": "2026-02-03T12:00:00Z"
+  "updatedAt": "2026-02-04T17:00:00Z"
 }
