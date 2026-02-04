@@ -66,6 +66,7 @@ import { proposingDecksTools, createProposingDecksToolHandlers } from './tools/p
 import { proactiveMessagingTools, createProactiveMessagingToolHandlers } from './tools/proactiveMessagingTools.js';
 import { slackIntegrationTools, createSlackIntegrationToolHandlers } from './tools/slackIntegrationTools.js';
 import { knopilotToolDefinitions, createKnoPilotToolHandlers } from './tools/knopilotTools.js';
+import { deliverableToolDefinitions, createDeliverableToolHandlers } from './tools/deliverableTools.js';
 import { getKnoPilotService } from './services/knopilot/KnoPilotService.js';
 import { createHttpServer, startHttpServer } from './server/httpServer.js';
 import { getVersion } from './version.js';
@@ -634,6 +635,7 @@ async function main() {
   );
   const slackIntegrationHandlers = createSlackIntegrationToolHandlers(slackIntegrationService);
   const knopilotHandlers = createKnoPilotToolHandlers(knopilotService);
+  const deliverableHandlers = createDeliverableToolHandlers(deliverableManager);
 
   // Combine all handlers
   const allHandlers = {
@@ -658,6 +660,7 @@ async function main() {
     ...proactiveMessagingHandlers,
     ...slackIntegrationHandlers,
     ...knopilotHandlers,
+    ...deliverableHandlers,
   };
 
   // Combine all tool definitions
@@ -684,6 +687,7 @@ async function main() {
     ...proactiveMessagingTools,
     ...slackIntegrationTools,
     ...knopilotToolDefinitions,
+    ...deliverableToolDefinitions,
   ];
 
   // Create MCP server factory
