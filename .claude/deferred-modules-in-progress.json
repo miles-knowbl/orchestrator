@@ -86,7 +86,7 @@
     {
       "id": "co-op-skill-acquisition",
       "layer": 5,
-      "description": "Collaborative ontology building across multiple users, multiple AI agents, and user+AI combinations. Creating multiple ontologies with different participant combinations.",
+      "description": "Collaborative ontology building across multiple users, multiple AI agents, and user+AI combinations. Includes skill merging (combining skills from different sources) and load-your-own-skills (importing external skill libraries). Creating multiple ontologies with different participant combinations.",
       "dependsOn": [
         "knowledge-graph-ontology",
         "multi-agent-worktrees"
@@ -143,8 +143,156 @@
         "knowledge-graph-ontology"
       ],
       "notes": "Service exists but not production-ready"
+    },
+    {
+      "id": "black-box-surfacing",
+      "layer": 2,
+      "description": "Click into each skill to see its step-by-step process, chat with it, see relevant docs.",
+      "dependsOn": [
+        "skill-registry"
+      ],
+      "notes": "Interactive skill exploration and debugging interface"
+    },
+    {
+      "id": "constitutional-ai",
+      "layer": 2,
+      "description": "Behavior guardrails and value alignment for agent actions.",
+      "dependsOn": [
+        "behavior-guarantees",
+        "coherence-system"
+      ],
+      "notes": "Builds on guarantee and coherence infrastructure"
+    },
+    {
+      "id": "context-answering-tool",
+      "layer": 1,
+      "description": "Deep context gathering tool (slow but thorough).",
+      "dependsOn": [],
+      "notes": "Complements quick context tools with exhaustive analysis"
+    },
+    {
+      "id": "context-queuing",
+      "layer": 1,
+      "description": "Print context questions for multiple roadmap modules simultaneously.",
+      "dependsOn": [
+        "roadmapping"
+      ],
+      "notes": "Batch context gathering across modules"
+    },
+    {
+      "id": "multi-agent-heartbeat",
+      "layer": 3,
+      "description": "Org-level event task queue, roundtable council through single portal.",
+      "dependsOn": [
+        "multi-agent-worktrees",
+        "2-layer-orchestration"
+      ],
+      "notes": "Coordination layer for multi-agent systems"
+    },
+    {
+      "id": "remix-loops",
+      "layer": 2,
+      "description": "Ability to remix/fork existing loops with modifications.",
+      "dependsOn": [
+        "loop-composer"
+      ],
+      "notes": "Loop variation and customization"
+    },
+    {
+      "id": "loop-plugins-effects",
+      "layer": 2,
+      "description": "Plugins and effects that affect just that specific loop instance.",
+      "dependsOn": [
+        "loop-composer",
+        "execution-engine"
+      ],
+      "notes": "Per-instance loop customization"
+    },
+    {
+      "id": "documentation-recipe-book",
+      "layer": 4,
+      "description": "Recipes for common documentation patterns.",
+      "dependsOn": [],
+      "notes": "Domain-specific documentation generation"
+    },
+    {
+      "id": "generative-interfaces",
+      "layer": 3,
+      "description": "Generative UI/UX for dynamic interface generation.",
+      "dependsOn": [
+        "kanban"
+      ],
+      "notes": "AI-driven interface generation"
+    },
+    {
+      "id": "adoption-loop",
+      "layer": 2,
+      "description": "Loop for user adoption workflows and onboarding sequences.",
+      "dependsOn": [
+        "loop-composer"
+      ],
+      "notes": "Domain-specific loop for adoption/onboarding"
+    },
+    {
+      "id": "prompt-logging",
+      "layer": 1,
+      "description": "Log and analyze prompts across the system.",
+      "dependsOn": [
+        "analytics"
+      ],
+      "notes": "Observability for prompt engineering"
+    },
+    {
+      "id": "framework-library",
+      "layer": 2,
+      "description": "Theory of constraints, More/Better/New, MoSCoW, and other decision frameworks.",
+      "dependsOn": [],
+      "notes": "Reusable strategic and decision-making frameworks"
+    },
+    {
+      "id": "skill-mastery",
+      "layer": 3,
+      "description": "Integration layer braiding together skill-trees, inbox-processor, and knowledge-graph-ontology. Unified skill acquisition pipeline: capture knowledge from inbox, map relationships in graph, track progression through trees, recommend learning paths based on graph clusters, surface gaps between captured content and mastered skills.",
+      "dependsOn": [
+        "skill-trees",
+        "inbox-processor",
+        "knowledge-graph-ontology",
+        "spaced-repetition-learning"
+      ],
+      "notes": "Higher-order module that unifies the three skill primitives into cohesive mastery system"
+    },
+    {
+      "id": "dynamic-context-bundle",
+      "layer": 2,
+      "description": "Serialization format and service for passing execution context between agents. Bundles current execution state, relevant memory, active patterns, and calibration data into a portable package that Layer 2 agents can load to resume work seamlessly.",
+      "dependsOn": [
+        "2-layer-orchestration",
+        "multi-agent-worktrees"
+      ],
+      "notes": "Critical for multi-agent handoff. Currently no standard way to pass state between spawned agents."
+    },
+    {
+      "id": "kanban",
+      "layer": 1,
+      "description": "Visual kanban board for the dashboard showing module status across the 7-layer hierarchy. Module cards with status indicators (complete, in-progress, pending, blocked), leverage scoring panel, progress visualization, and dependency view.",
+      "dependsOn": [],
+      "notes": "SKILL.md spec exists but component not built. Roadmap API exists but no interactive board UI."
+    },
+    {
+      "id": "multi-agent-worktrees",
+      "layer": 3,
+      "description": "Git worktree management for parallel module development. Collaborator registration, resource reservations, merge queue, and conflict detection.",
+      "dependsOn": [],
+      "notes": "Infrastructure exists (24 tools, 23+ endpoints) but not wired to OrchestrationService or ExecutionEngine. Needs integration to be usable."
+    },
+    {
+      "id": "2-layer-orchestration",
+      "layer": 3,
+      "description": "Layer 1 persistent orchestrator spawns Layer 2 ephemeral agents for parallel work. Work distribution, concurrency modes, failure handling cascade.",
+      "dependsOn": [],
+      "notes": "Framework complete (17 tools, 15 endpoints) but agents don't run loops. ExecutionEngine not wired, auto-merge disabled, no crash recovery."
     }
   ],
   "createdAt": "2026-02-04T18:30:00.000Z",
-  "updatedAt": "2026-02-04T19:20:00.000Z"
+  "updatedAt": "2026-02-04T23:30:00.000Z"
 }

@@ -490,7 +490,7 @@
     {
       "id": "2-layer-orchestration",
       "path": "src/services/orchestration/",
-      "status": "complete",
+      "status": "deferred",
       "functions": [
         {
           "name": "initializeOrchestrator — create/resume Layer 1 orchestrator",
@@ -888,7 +888,7 @@
     {
       "id": "multi-agent-worktrees",
       "path": "src/services/multi-agent/",
-      "status": "complete",
+      "status": "deferred",
       "functions": [
         {
           "name": "MultiAgentCoordinator — src/services/multi-agent/MultiAgentCoordinator.ts",
@@ -1399,59 +1399,28 @@
     },
     {
       "id": "slack-integration",
-      "path": "src/services/slack-integration/",
+      "path": "src/services/slack/",
       "status": "complete",
+      "notes": "Consolidated into UnifiedSlackService and proactive-messaging/adapters/SlackAdapter.ts",
       "functions": [
         {
-          "name": "SlackIntegrationService — src/services/slack-integration/SlackIntegrationService.ts",
+          "name": "UnifiedSlackService — src/services/slack/UnifiedSlackService.ts",
           "complete": true
         },
         {
-          "name": "SlackCommandParser — semantic command parsing",
+          "name": "CommandParser — semantic command parsing",
           "complete": true
         },
         {
-          "name": "SlackThreadManager — thread-per-execution tracking",
+          "name": "ThreadManager — thread-per-execution tracking",
           "complete": true
         },
         {
-          "name": "SlackMergeWorkflow — merge/rebase coordination",
+          "name": "MessageComposer — Block Kit message composition",
           "complete": true
         },
         {
-          "name": "handleMessage — route incoming messages to handlers",
-          "complete": true
-        },
-        {
-          "name": "handleButtonClick — handle Slack button interactions",
-          "complete": true
-        },
-        {
-          "name": "handleStartLoop — start loop from Slack command",
-          "complete": true
-        },
-        {
-          "name": "handleApproval — approve gates from Slack",
-          "complete": true
-        },
-        {
-          "name": "handleMerge/handleRebase — git operations from Slack",
-          "complete": true
-        },
-        {
-          "name": "handleCapture — inbox capture from Slack",
-          "complete": true
-        },
-        {
-          "name": "API endpoints — /api/slack/* (8 endpoints)",
-          "complete": true
-        },
-        {
-          "name": "MCP tools — 15 tools for Slack integration",
-          "complete": true
-        },
-        {
-          "name": "Tests — 55 tests passing (slackIntegration.test.ts)",
+          "name": "SlackAdapter — proactive messaging delivery",
           "complete": true
         }
       ]
@@ -1632,11 +1601,11 @@
       "deliverables": "Decomposed core-infrastructure into 11 modules, added knopilot/voice/dream-state-service, moved deferred to separate file"
     },
     {
-      "date": "2026-02-02",
-      "loop": "engineering-loop",
-      "scope": "slack-integration",
+      "date": "2026-02-04",
+      "loop": "cleanup",
+      "scope": "slack-consolidation",
       "outcome": "success",
-      "deliverables": "SlackIntegrationService, 8 API endpoints, 15 MCP tools"
+      "deliverables": "Consolidated Slack services into UnifiedSlackService + SlackAdapter"
     },
     {
       "date": "2026-02-01",
