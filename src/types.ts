@@ -516,6 +516,9 @@ export interface GateState {
   approvedBy?: string;
   approvedAt?: Date;
   feedback?: string;
+  // Gate CRUD additions
+  enabled?: boolean;                    // Default true; set to false to skip gate
+  approvalTypeOverride?: 'human' | 'auto' | 'conditional';  // Override loop definition
 }
 
 export interface SkillExecution {

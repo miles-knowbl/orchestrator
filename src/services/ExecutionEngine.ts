@@ -423,7 +423,9 @@ export class ExecutionEngine {
     const gate = loop.gates.find(g => g.afterPhase === execution.currentPhase);
     if (gate) {
       const gateState = execution.gates.find(g => g.gateId === gate.id);
-      if (gateState && gateState.status !== 'approved' && gate.required) {
+      // Gate blocks if: exists AND is required AND not approved AND is enabled
+      const gateEnabled = gateState?.enabled !== false;
+      if (gateState && gateState.status !== 'approved' && gate.required && gateEnabled) {
         throw new Error(`Gate ${gate.id} must be approved before advancing`);
       }
     }
@@ -827,6 +829,77 @@ export class ExecutionEngine {
     return execution;
   }
 
+  /**
+   * Resolve a guarantee by acknowledging it was satisfied through alternative means.
+   * This allows skill completion to proceed even when the formal guarantee check would fail.
+   *
+   * Use this when:
+   * - The deliverable/artifact exists but in a different location
+   * - The guarantee intent was satisfied through different means
+   * - The guarantee is not applicable for this specific case
+   *
+   * @param executionId - The execution ID
+   * @param skillId - The skill ID
+   * @param guaranteeId - The guarantee ID to resolve
+   * @param resolutionType - How the guarantee was satisfied
+   * @param evidence - Explanation of how the guarantee was satisfied
+   */
+  async resolveGuarantee(
+    executionId: string,
+    skillId: string,
+    guaranteeId: string,
+    resolutionType: 'satisfied_alternatively' | 'acceptable_deviation' | 'waived_with_reason',
+    evidence: string
+  ): Promise<{ success: boolean; message: string; acknowledgment?: unknown }> {
+    const execution = this.executions.get(executionId);
+    if (!execution) {
+      throw new Error(`Execution not found: ${executionId}`);
+    }
+
+    if (!this.guaranteeService) {
+      throw new Error('GuaranteeService not available');
+    }
+
+    // Acknowledge the guarantee
+    const acknowledgment = this.guaranteeService.acknowledgeGuarantee(
+      executionId,
+      skillId,
+      guaranteeId,
+      resolutionType,
+      evidence
+    );
+
+    // If execution was blocked, check if we can unblock it
+    if (execution.status === 'blocked') {
+      execution.status = 'active';
+      this.log('info', `Execution ${executionId} unblocked after guarantee resolution`);
+    }
+
+    // Log the resolution
+    this.addExecutionLog(execution, {
+      level: 'info',
+      category: 'skill',
+      phase: execution.currentPhase,
+      skillId,
+      message: `Guarantee "${guaranteeId}" resolved: ${resolutionType}`,
+      details: {
+        guaranteeId,
+        resolutionType,
+        evidence,
+      },
+    });
+
+    execution.updatedAt = new Date();
+    await this.saveExecution(execution);
+
+    this.log('info', `Guarantee ${guaranteeId} resolved for skill ${skillId}: ${resolutionType}`);
+    return {
+      success: true,
+      message: `Guarantee "${guaranteeId}" acknowledged as ${resolutionType}. You can now retry completing the skill.`,
+      acknowledgment,
+    };
+  }
+
   // ==========================================================================
   // GATE HANDLING
   // ==========================================================================
@@ -1021,6 +1094,227 @@ export class ExecutionEngine {
       failed: result.blocking.length,
       canApprove: result.passed,
       blocking: blocking.length > 0 ? blocking : undefined,
+    };
+  }
+
+  // ==========================================================================
+  // GATE CRUD OPERATIONS
+  // ==========================================================================
+
+  /**
+   * List all gates for an execution with their current state
+   */
+  async listGates(executionId: string): Promise<Array<{
+    gateId: string;
+    name: string;
+    afterPhase: Phase;
+    status: 'pending' | 'approved' | 'rejected';
+    enabled: boolean;
+    approvalType: 'human' | 'auto' | 'conditional';
+    approvalTypeOverride?: 'human' | 'auto' | 'conditional';
+    required: boolean;
+  }>> {
+    const execution = this.executions.get(executionId);
+    if (!execution) {
+      throw new Error(`Execution not found: ${executionId}`);
+    }
+
+    const loop = await this.loopComposer.getLoop(execution.loopId);
+    if (!loop) {
+      return execution.gates.map(gs => ({
+        gateId: gs.gateId,
+        name: gs.gateId,
+        afterPhase: 'INIT' as Phase,
+        status: gs.status,
+        enabled: gs.enabled !== false,
+        approvalType: gs.approvalTypeOverride || 'human',
+        approvalTypeOverride: gs.approvalTypeOverride,
+        required: true,
+      }));
+    }
+
+    return execution.gates.map(gs => {
+      const gateDef = loop.gates.find(g => g.id === gs.gateId);
+      return {
+        gateId: gs.gateId,
+        name: gateDef?.name || gs.gateId,
+        afterPhase: gateDef?.afterPhase || ('INIT' as Phase),
+        status: gs.status,
+        enabled: gs.enabled !== false,
+        approvalType: gs.approvalTypeOverride || gateDef?.approvalType || 'human',
+        approvalTypeOverride: gs.approvalTypeOverride,
+        required: gateDef?.required ?? true,
+      };
+    });
+  }
+
+  /**
+   * Update a gate's properties (enable/disable, change approval type)
+   */
+  async updateGate(
+    executionId: string,
+    gateId: string,
+    updates: {
+      enabled?: boolean;
+      approvalTypeOverride?: 'human' | 'auto' | 'conditional' | null;
+    }
+  ): Promise<{ success: boolean; message: string; gate: unknown }> {
+    const execution = this.executions.get(executionId);
+    if (!execution) {
+      throw new Error(`Execution not found: ${executionId}`);
+    }
+
+    const gateState = execution.gates.find(g => g.gateId === gateId);
+    if (!gateState) {
+      throw new Error(`Gate not found: ${gateId}`);
+    }
+
+    // Apply updates
+    if (updates.enabled !== undefined) {
+      gateState.enabled = updates.enabled;
+    }
+    if (updates.approvalTypeOverride !== undefined) {
+      if (updates.approvalTypeOverride === null) {
+        delete gateState.approvalTypeOverride;
+      } else {
+        gateState.approvalTypeOverride = updates.approvalTypeOverride;
+      }
+    }
+
+    execution.updatedAt = new Date();
+
+    this.addExecutionLog(execution, {
+      level: 'info',
+      category: 'gate',
+      gateId,
+      message: `Gate "${gateId}" updated`,
+      details: updates,
+    });
+
+    await this.saveExecution(execution);
+    this.log('info', `Gate ${gateId} updated for execution ${executionId}`);
+
+    return {
+      success: true,
+      message: `Gate "${gateId}" updated`,
+      gate: gateState,
+    };
+  }
+
+  /**
+   * Disable all gates for an execution (useful for mobile/async work)
+   */
+  async disableAllGates(executionId: string): Promise<{
+    success: boolean;
+    message: string;
+    disabledCount: number;
+  }> {
+    const execution = this.executions.get(executionId);
+    if (!execution) {
+      throw new Error(`Execution not found: ${executionId}`);
+    }
+
+    let count = 0;
+    for (const gateState of execution.gates) {
+      if (gateState.enabled !== false) {
+        gateState.enabled = false;
+        count++;
+      }
+    }
+
+    execution.updatedAt = new Date();
+
+    this.addExecutionLog(execution, {
+      level: 'info',
+      category: 'system',
+      message: `All gates disabled (${count} gates)`,
+    });
+
+    await this.saveExecution(execution);
+    this.log('info', `All gates disabled for execution ${executionId}`);
+
+    return {
+      success: true,
+      message: `Disabled ${count} gate(s)`,
+      disabledCount: count,
+    };
+  }
+
+  /**
+   * Enable all gates for an execution (restore normal operation)
+   */
+  async enableAllGates(executionId: string): Promise<{
+    success: boolean;
+    message: string;
+    enabledCount: number;
+  }> {
+    const execution = this.executions.get(executionId);
+    if (!execution) {
+      throw new Error(`Execution not found: ${executionId}`);
+    }
+
+    let count = 0;
+    for (const gateState of execution.gates) {
+      if (gateState.enabled === false) {
+        gateState.enabled = true;
+        count++;
+      }
+    }
+
+    execution.updatedAt = new Date();
+
+    this.addExecutionLog(execution, {
+      level: 'info',
+      category: 'system',
+      message: `All gates enabled (${count} gates)`,
+    });
+
+    await this.saveExecution(execution);
+    this.log('info', `All gates enabled for execution ${executionId}`);
+
+    return {
+      success: true,
+      message: `Enabled ${count} gate(s)`,
+      enabledCount: count,
+    };
+  }
+
+  /**
+   * Set all gates to auto-approve (for autonomous operation)
+   */
+  async setAllGatesAuto(executionId: string): Promise<{
+    success: boolean;
+    message: string;
+    updatedCount: number;
+  }> {
+    const execution = this.executions.get(executionId);
+    if (!execution) {
+      throw new Error(`Execution not found: ${executionId}`);
+    }
+
+    let count = 0;
+    for (const gateState of execution.gates) {
+      if (gateState.approvalTypeOverride !== 'auto') {
+        gateState.approvalTypeOverride = 'auto';
+        count++;
+      }
+    }
+
+    execution.updatedAt = new Date();
+
+    this.addExecutionLog(execution, {
+      level: 'info',
+      category: 'system',
+      message: `All gates set to auto-approve (${count} gates)`,
+    });
+
+    await this.saveExecution(execution);
+    this.log('info', `All gates set to auto for execution ${executionId}`);
+
+    return {
+      success: true,
+      message: `Set ${count} gate(s) to auto-approve`,
+      updatedCount: count,
     };
   }
 

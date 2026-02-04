@@ -63,6 +63,14 @@ const SkipSkillSchema = z.object({
   reason: z.string().min(1),
 });
 
+const ResolveGuaranteeSchema = z.object({
+  executionId: z.string().min(1),
+  skillId: z.string().min(1),
+  guaranteeId: z.string().min(1),
+  resolutionType: z.enum(['satisfied_alternatively', 'acceptable_deviation', 'waived_with_reason']),
+  evidence: z.string().min(1),
+});
+
 const ApproveGateSchema = z.object({
   executionId: z.string().min(1),
   gateId: z.string().min(1),
@@ -73,6 +81,30 @@ const RejectGateSchema = z.object({
   executionId: z.string().min(1),
   gateId: z.string().min(1),
   feedback: z.string().min(1),
+});
+
+// Gate CRUD schemas
+const ListGatesSchema = z.object({
+  executionId: z.string().min(1),
+});
+
+const UpdateGateSchema = z.object({
+  executionId: z.string().min(1),
+  gateId: z.string().min(1),
+  enabled: z.boolean().optional(),
+  approvalTypeOverride: z.enum(['human', 'auto', 'conditional']).nullable().optional(),
+});
+
+const DisableAllGatesSchema = z.object({
+  executionId: z.string().min(1),
+});
+
+const EnableAllGatesSchema = z.object({
+  executionId: z.string().min(1),
+});
+
+const SetAllGatesAutoSchema = z.object({
+  executionId: z.string().min(1),
 });
 
 const PauseResumeSchema = z.object({
@@ -274,6 +306,37 @@ export const executionToolDefinitions = [
     },
   },
   {
+    name: 'resolve_guarantee',
+    description: 'Resolve a guarantee by acknowledging it was satisfied through alternative means. Use this when a skill cannot complete due to guarantee failures but the guarantee intent was actually met (e.g., deliverable exists in different location, intent satisfied differently). After resolving, retry complete_skill.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        executionId: {
+          type: 'string',
+          description: 'Execution ID',
+        },
+        skillId: {
+          type: 'string',
+          description: 'Skill ID that has the guarantee',
+        },
+        guaranteeId: {
+          type: 'string',
+          description: 'Guarantee ID to resolve (from the error message)',
+        },
+        resolutionType: {
+          type: 'string',
+          enum: ['satisfied_alternatively', 'acceptable_deviation', 'waived_with_reason'],
+          description: 'How the guarantee was satisfied: satisfied_alternatively (intent met differently), acceptable_deviation (deviation is OK for this case), waived_with_reason (explicitly waived)',
+        },
+        evidence: {
+          type: 'string',
+          description: 'Explanation of how the guarantee was satisfied or why waiver is acceptable',
+        },
+      },
+      required: ['executionId', 'skillId', 'guaranteeId', 'resolutionType', 'evidence'],
+    },
+  },
+  {
     name: 'approve_gate',
     description: 'Approve a gate to allow phase advancement',
     inputSchema: {
@@ -315,6 +378,90 @@ export const executionToolDefinitions = [
         },
       },
       required: ['executionId', 'gateId', 'feedback'],
+    },
+  },
+  // Gate CRUD tools
+  {
+    name: 'list_gates',
+    description: 'List all gates for an execution with their current state (enabled, status, approval type)',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        executionId: {
+          type: 'string',
+          description: 'Execution ID',
+        },
+      },
+      required: ['executionId'],
+    },
+  },
+  {
+    name: 'update_gate',
+    description: 'Update a gate properties (enable/disable, change approval type). Use to customize gate behavior for an execution.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        executionId: {
+          type: 'string',
+          description: 'Execution ID',
+        },
+        gateId: {
+          type: 'string',
+          description: 'Gate ID to update',
+        },
+        enabled: {
+          type: 'boolean',
+          description: 'Set to false to disable the gate (skip it)',
+        },
+        approvalTypeOverride: {
+          type: 'string',
+          enum: ['human', 'auto', 'conditional'],
+          description: 'Override the approval type (set to null to use loop default)',
+        },
+      },
+      required: ['executionId', 'gateId'],
+    },
+  },
+  {
+    name: 'disable_all_gates',
+    description: 'Disable all gates for an execution. Useful for mobile/async work where you cannot approve gates interactively.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        executionId: {
+          type: 'string',
+          description: 'Execution ID',
+        },
+      },
+      required: ['executionId'],
+    },
+  },
+  {
+    name: 'enable_all_gates',
+    description: 'Enable all gates for an execution (restore normal gate operation)',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        executionId: {
+          type: 'string',
+          description: 'Execution ID',
+        },
+      },
+      required: ['executionId'],
+    },
+  },
+  {
+    name: 'set_all_gates_auto',
+    description: 'Set all gates to auto-approve mode for autonomous operation',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        executionId: {
+          type: 'string',
+          description: 'Execution ID',
+        },
+      },
+      required: ['executionId'],
     },
   },
   {
@@ -617,6 +764,19 @@ export function createExecutionToolHandlers(
       };
     },
 
+    resolve_guarantee: async (params: unknown) => {
+      const validated = ResolveGuaranteeSchema.parse(params);
+      const result = await executionEngine.resolveGuarantee(
+        validated.executionId,
+        validated.skillId,
+        validated.guaranteeId,
+        validated.resolutionType,
+        validated.evidence
+      );
+
+      return result;
+    },
+
     approve_gate: async (params: unknown) => {
       const validated = ApproveGateSchema.parse(params);
 
@@ -662,6 +822,48 @@ export function createExecutionToolHandlers(
         status: execution.status,
         message: `Gate ${validated.gateId} rejected`,
       };
+    },
+
+    // Gate CRUD handlers
+    list_gates: async (params: unknown) => {
+      const validated = ListGatesSchema.parse(params);
+      const gates = await executionEngine.listGates(validated.executionId);
+      return {
+        executionId: validated.executionId,
+        gates,
+        count: gates.length,
+      };
+    },
+
+    update_gate: async (params: unknown) => {
+      const validated = UpdateGateSchema.parse(params);
+      const result = await executionEngine.updateGate(
+        validated.executionId,
+        validated.gateId,
+        {
+          enabled: validated.enabled,
+          approvalTypeOverride: validated.approvalTypeOverride,
+        }
+      );
+      return result;
+    },
+
+    disable_all_gates: async (params: unknown) => {
+      const validated = DisableAllGatesSchema.parse(params);
+      const result = await executionEngine.disableAllGates(validated.executionId);
+      return result;
+    },
+
+    enable_all_gates: async (params: unknown) => {
+      const validated = EnableAllGatesSchema.parse(params);
+      const result = await executionEngine.enableAllGates(validated.executionId);
+      return result;
+    },
+
+    set_all_gates_auto: async (params: unknown) => {
+      const validated = SetAllGatesAutoSchema.parse(params);
+      const result = await executionEngine.setAllGatesAuto(validated.executionId);
+      return result;
     },
 
     pause_execution: async (params: unknown) => {

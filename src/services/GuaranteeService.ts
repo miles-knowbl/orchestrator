@@ -20,6 +20,8 @@ import type {
   GuaranteeFailureRecord,
   GuaranteeType,
   GitStateCheck,
+  GuaranteeAcknowledgment,
+  GuaranteeResolutionType,
 } from '../types/guarantee.js';
 import { exec } from 'child_process';
 import { promisify } from 'util';
@@ -38,6 +40,7 @@ export interface GuaranteeServiceOptions {
 export class GuaranteeService {
   private registry: GuaranteeRegistry | null = null;
   private failureRecords: GuaranteeFailureRecord[] = [];
+  private acknowledgments: GuaranteeAcknowledgment[] = [];
   private aggregator: LoopGuaranteeAggregator | null = null;
   private deliverableManager: DeliverableManager | null = null;
 
@@ -155,6 +158,24 @@ export class GuaranteeService {
       // Check condition
       if (guarantee.condition && !this.evaluateCondition(guarantee.condition, context)) {
         this.log('debug', `Skipping ${guarantee.id} - condition not met`);
+        continue;
+      }
+
+      // Check if this guarantee has been acknowledged (resolved through alternative means)
+      if (this.isGuaranteeAcknowledged(context.executionId, context.skillId, guarantee.id)) {
+        this.log('info', `Skipping ${guarantee.id} - acknowledged/resolved`);
+        // Create a synthetic "passed" result for acknowledged guarantees
+        results.push({
+          guaranteeId: guarantee.id,
+          name: guarantee.name,
+          type: guarantee.type,
+          passed: true,
+          required: guarantee.required,
+          evidence: [{ type: 'proof', value: 'Acknowledged by user' }],
+          errors: [],
+          warnings: ['Guarantee was acknowledged/resolved, not formally validated'],
+          timestamp: new Date(),
+        });
         continue;
       }
 
@@ -792,6 +813,97 @@ export class GuaranteeService {
     if (record) {
       record.resolution = resolution;
     }
+  }
+
+  // ==========================================================================
+  // GUARANTEE ACKNOWLEDGMENT
+  // ==========================================================================
+
+  /**
+   * Acknowledge a guarantee as resolved through alternative means.
+   * This allows skill completion to proceed even when the formal guarantee check fails.
+   *
+   * @param executionId - The execution ID
+   * @param skillId - The skill ID
+   * @param guaranteeId - The guarantee ID to acknowledge
+   * @param resolutionType - How the guarantee was satisfied
+   * @param evidence - Optional explanation/evidence for the acknowledgment
+   */
+  acknowledgeGuarantee(
+    executionId: string,
+    skillId: string,
+    guaranteeId: string,
+    resolutionType: GuaranteeResolutionType,
+    evidence?: string
+  ): GuaranteeAcknowledgment {
+    // Check if already acknowledged
+    const existing = this.acknowledgments.find(
+      a => a.executionId === executionId &&
+           a.skillId === skillId &&
+           a.guaranteeId === guaranteeId
+    );
+    if (existing) {
+      // Update existing acknowledgment
+      existing.resolutionType = resolutionType;
+      existing.evidence = evidence;
+      existing.acknowledgedAt = new Date();
+      this.log('info', `Updated acknowledgment for ${guaranteeId} in skill ${skillId}`);
+      return existing;
+    }
+
+    // Create new acknowledgment
+    const acknowledgment: GuaranteeAcknowledgment = {
+      executionId,
+      skillId,
+      guaranteeId,
+      resolutionType,
+      evidence,
+      acknowledgedAt: new Date(),
+    };
+
+    this.acknowledgments.push(acknowledgment);
+    this.log('info', `Acknowledged guarantee ${guaranteeId} for skill ${skillId}: ${resolutionType}`);
+    return acknowledgment;
+  }
+
+  /**
+   * Check if a guarantee has been acknowledged for a specific execution/skill
+   */
+  isGuaranteeAcknowledged(
+    executionId: string,
+    skillId: string,
+    guaranteeId: string
+  ): boolean {
+    return this.acknowledgments.some(
+      a => a.executionId === executionId &&
+           a.skillId === skillId &&
+           a.guaranteeId === guaranteeId
+    );
+  }
+
+  /**
+   * Get all acknowledgments for an execution
+   */
+  getAcknowledgments(executionId: string): GuaranteeAcknowledgment[] {
+    return this.acknowledgments.filter(a => a.executionId === executionId);
+  }
+
+  /**
+   * Get acknowledgments for a specific skill in an execution
+   */
+  getSkillAcknowledgments(executionId: string, skillId: string): GuaranteeAcknowledgment[] {
+    return this.acknowledgments.filter(
+      a => a.executionId === executionId && a.skillId === skillId
+    );
+  }
+
+  /**
+   * Clear acknowledgments for an execution (e.g., when execution completes)
+   */
+  clearAcknowledgments(executionId: string): void {
+    this.acknowledgments = this.acknowledgments.filter(
+      a => a.executionId !== executionId
+    );
   }
 
   // ==========================================================================

@@ -438,6 +438,73 @@ export function createApiRoutes(options: ApiRoutesOptions): Router {
   });
 
   /**
+   * List all gates for an execution
+   */
+  router.get('/executions/:id/gates', async (req: Request, res: Response) => {
+    try {
+      const gates = await executionEngine.listGates(getParam(req, 'id'));
+      res.json({ gates, count: gates.length });
+    } catch (err) {
+      res.status(400).json({ error: err instanceof Error ? err.message : 'Failed to list gates' });
+    }
+  });
+
+  /**
+   * Update a gate (enable/disable, change approval type)
+   */
+  router.put('/executions/:id/gates/:gateId', async (req: Request, res: Response) => {
+    try {
+      const result = await executionEngine.updateGate(
+        getParam(req, 'id'),
+        getParam(req, 'gateId'),
+        {
+          enabled: req.body?.enabled,
+          approvalTypeOverride: req.body?.approvalTypeOverride,
+        }
+      );
+      res.json(result);
+    } catch (err) {
+      res.status(400).json({ error: err instanceof Error ? err.message : 'Failed to update gate' });
+    }
+  });
+
+  /**
+   * Disable all gates for an execution
+   */
+  router.put('/executions/:id/gates-disable-all', async (req: Request, res: Response) => {
+    try {
+      const result = await executionEngine.disableAllGates(getParam(req, 'id'));
+      res.json(result);
+    } catch (err) {
+      res.status(400).json({ error: err instanceof Error ? err.message : 'Failed to disable gates' });
+    }
+  });
+
+  /**
+   * Enable all gates for an execution
+   */
+  router.put('/executions/:id/gates-enable-all', async (req: Request, res: Response) => {
+    try {
+      const result = await executionEngine.enableAllGates(getParam(req, 'id'));
+      res.json(result);
+    } catch (err) {
+      res.status(400).json({ error: err instanceof Error ? err.message : 'Failed to enable gates' });
+    }
+  });
+
+  /**
+   * Set all gates to auto-approve mode
+   */
+  router.put('/executions/:id/gates-auto-all', async (req: Request, res: Response) => {
+    try {
+      const result = await executionEngine.setAllGatesAuto(getParam(req, 'id'));
+      res.json(result);
+    } catch (err) {
+      res.status(400).json({ error: err instanceof Error ? err.message : 'Failed to set gates to auto' });
+    }
+  });
+
+  /**
    * Pause execution
    */
   router.put('/executions/:id/pause', async (req: Request, res: Response) => {

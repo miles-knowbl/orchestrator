@@ -235,10 +235,29 @@ export interface GuaranteeFailureRecord {
     fileCount?: number;
   };
   resolution?: {
-    type: 'fixed' | 'skipped' | 'overridden';
+    type: 'fixed' | 'skipped' | 'overridden' | 'resolved';
     timeMs: number;  // Time to resolve
     retryCount: number;
   };
+}
+
+// =============================================================================
+// GUARANTEE ACKNOWLEDGMENT TYPES
+// =============================================================================
+
+export type GuaranteeResolutionType =
+  | 'satisfied_alternatively'  // Guarantee intent met through different means
+  | 'acceptable_deviation'     // Deviation from guarantee is acceptable for this case
+  | 'waived_with_reason';      // Explicitly waived with documented justification
+
+export interface GuaranteeAcknowledgment {
+  executionId: string;
+  skillId: string;
+  guaranteeId: string;
+  resolutionType: GuaranteeResolutionType;
+  evidence?: string;           // User-provided explanation/evidence
+  acknowledgedAt: Date;
+  acknowledgedBy?: string;     // Who acknowledged (for audit trail)
 }
 
 export interface ProblematicSkill {
