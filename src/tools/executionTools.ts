@@ -5,6 +5,7 @@
 import { z } from 'zod';
 import type { ExecutionEngine } from '../services/ExecutionEngine.js';
 import type { LearningService } from '../services/LearningService.js';
+import type { AutonomousExecutor } from '../services/autonomous/index.js';
 import type { LoopMode, AutonomyLevel, ExecutionStatus, SkillRubric, SectionRecommendation, Phase } from '../types.js';
 
 // Zod schemas
@@ -55,12 +56,6 @@ const CompleteSkillSchema = z.object({
   // Learning system: rubric and section recommendations
   rubric: RubricSchema.optional(),
   sectionRecommendations: z.array(SectionRecommendationSchema).optional(),
-});
-
-const SkipSkillSchema = z.object({
-  executionId: z.string().min(1),
-  skillId: z.string().min(1),
-  reason: z.string().min(1),
 });
 
 const ResolveGuaranteeSchema = z.object({
@@ -304,28 +299,6 @@ export const executionToolDefinitions = [
         },
       },
       required: ['executionId', 'skillId'],
-    },
-  },
-  {
-    name: 'skip_skill',
-    description: 'Skip a skill in the current phase',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        executionId: {
-          type: 'string',
-          description: 'Execution ID',
-        },
-        skillId: {
-          type: 'string',
-          description: 'Skill ID to skip',
-        },
-        reason: {
-          type: 'string',
-          description: 'Reason for skipping',
-        },
-      },
-      required: ['executionId', 'skillId', 'reason'],
     },
   },
   {
@@ -699,7 +672,8 @@ export const executionToolDefinitions = [
  */
 export function createExecutionToolHandlers(
   executionEngine: ExecutionEngine,
-  learningService?: LearningService
+  learningService?: LearningService,
+  autonomousExecutor?: AutonomousExecutor
 ) {
   return {
     start_execution: async (params: unknown) => {
@@ -714,6 +688,13 @@ export function createExecutionToolHandlers(
       // Start learning tracking
       if (learningService) {
         learningService.startRunTracking(execution.id, execution.loopId, execution.project);
+      }
+
+      // Capture coherence baseline for autonomous executions
+      if (autonomousExecutor && validated.autonomy === 'full') {
+        autonomousExecutor.captureCoherenceBaseline(execution.id).catch(() => {
+          // Non-blocking - coherence baseline is optional
+        });
       }
 
       return {
@@ -851,21 +832,6 @@ export function createExecutionToolHandlers(
         rubric: validated.rubric,
         sectionRecommendations: validated.sectionRecommendations,
         message: `Skill ${validated.skillId} completed${rubricDisplay}${sectionNotes}`,
-      };
-    },
-
-    skip_skill: async (params: unknown) => {
-      const validated = SkipSkillSchema.parse(params);
-      const execution = await executionEngine.skipSkill(
-        validated.executionId,
-        validated.skillId,
-        validated.reason
-      );
-
-      return {
-        id: execution.id,
-        skillId: validated.skillId,
-        message: `Skill ${validated.skillId} skipped: ${validated.reason}`,
       };
     },
 

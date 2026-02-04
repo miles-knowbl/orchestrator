@@ -43,7 +43,9 @@ import { GameDesignService } from './services/game-design/index.js';
 import { SpacedRepetitionService } from './services/spaced-repetition/index.js';
 import { ProposingDecksService } from './services/proposing-decks/index.js';
 import { ProactiveMessagingService } from './services/proactive-messaging/index.js';
-import { SlackIntegrationService } from './services/slack-integration/index.js';
+// SlackIntegrationService removed - functionality consolidated into ProactiveMessagingService's SlackAdapter
+// UnifiedSlackService removed - duplicate Slack connection, all functionality via SlackAdapter
+import { OODAClockService } from './services/ooda-clock/index.js';
 import { InstallStateService } from './services/InstallStateService.js';
 import { ShutdownManager } from './services/ShutdownManager.js';
 import { skillToolDefinitions, createSkillToolHandlers } from './tools/skillTools.js';
@@ -65,7 +67,7 @@ import { gameDesignTools, createGameDesignToolHandlers } from './tools/gameDesig
 import { spacedRepetitionTools, createSpacedRepetitionToolHandlers } from './tools/spacedRepetitionTools.js';
 import { proposingDecksTools, createProposingDecksToolHandlers } from './tools/proposingDecksTools.js';
 import { proactiveMessagingTools, createProactiveMessagingToolHandlers } from './tools/proactiveMessagingTools.js';
-import { slackIntegrationTools, createSlackIntegrationToolHandlers } from './tools/slackIntegrationTools.js';
+// slackIntegrationTools removed - functionality consolidated into proactiveMessagingTools
 import { knopilotToolDefinitions, createKnoPilotToolHandlers } from './tools/knopilotTools.js';
 import { deliverableToolDefinitions, createDeliverableToolHandlers } from './tools/deliverableTools.js';
 import { createKnowledgeGraphTools } from './tools/knowledgeGraphTools.js';
@@ -428,6 +430,7 @@ async function main() {
     maxSkillRetries: 3,
     autoStart: false,  // Must be explicitly started
   });
+  // Note: coherenceService dependency added after coherenceService is initialized below
   autonomousExecutor.setDependencies({
     executionEngine,
     loopComposer,
@@ -514,10 +517,21 @@ async function main() {
   });
   await coherenceService.initialize();
 
+  // Wire coherence service to autonomous executor for reflexive checks
+  autonomousExecutor.setDependencies({
+    executionEngine,
+    loopComposer,
+    learningService,
+    coherenceService,
+  });
+
+  // Wire coherence service to execution engine for non-autonomous coherence checks
+  executionEngine.setCoherenceService(coherenceService);
+
   console.error(JSON.stringify({
     timestamp: new Date().toISOString(),
     level: 'info',
-    message: 'Coherence service initialized',
+    message: 'Coherence service initialized (wired to autonomous executor and execution engine)',
   }));
 
   // Initialize loop sequencing service
@@ -626,17 +640,17 @@ async function main() {
     message: 'Proactive messaging service initialized',
   }));
 
-  // Initialize Slack integration service (full bidirectional control)
-  const slackIntegrationService = new SlackIntegrationService({
-    dataPath: join(config.repoPath, 'data', 'slack-integration'),
-  });
-  await slackIntegrationService.initialize();
+  // Initialize OODA clock service (Gamelan-inspired visualization)
+  const oodaClockService = new OODAClockService();
 
   console.error(JSON.stringify({
     timestamp: new Date().toISOString(),
     level: 'info',
-    message: 'Slack integration service initialized',
+    message: 'OODA clock service initialized',
   }));
+
+  // Slack is now handled entirely through ProactiveMessagingService's SlackAdapter
+  // This eliminates the duplicate Slack connection that UnifiedSlackService was creating
 
   // Initialize install state service (tracks daily interactions)
   const installStateService = new InstallStateService({
@@ -681,7 +695,7 @@ async function main() {
   // Create tool handlers
   const skillHandlers = createSkillToolHandlers(skillRegistry, learningService);
   const loopHandlers = createLoopToolHandlers(loopComposer);
-  const executionHandlers = createExecutionToolHandlers(executionEngine, learningService);
+  const executionHandlers = createExecutionToolHandlers(executionEngine, learningService, autonomousExecutor);
   const memoryHandlers = createMemoryToolHandlers(memoryService, learningService, calibrationService);
   const inboxHandlers = createInboxToolHandlers(inboxProcessor);
   const runHandlers = createRunToolHandlers(runArchivalService);
@@ -706,7 +720,6 @@ async function main() {
     config.repoPath,
     roadmapService
   );
-  const slackIntegrationHandlers = createSlackIntegrationToolHandlers(slackIntegrationService);
   const knopilotHandlers = createKnoPilotToolHandlers(knopilotService);
   const deliverableHandlers = createDeliverableToolHandlers(deliverableManager);
   const voiceHandlers = createVoiceToolHandlers(() => proactiveMessagingService.getVoiceAdapter());
@@ -762,7 +775,6 @@ async function main() {
     ...spacedRepetitionHandlers,
     ...proposingDecksHandlers,
     ...proactiveMessagingHandlers,
-    ...slackIntegrationHandlers,
     ...knopilotHandlers,
     ...deliverableHandlers,
     ...voiceHandlers,
@@ -793,7 +805,6 @@ async function main() {
     // DEFERRED: proposingDecksTools disabled while module is deferred
     // ...proposingDecksTools,
     ...proactiveMessagingTools,
-    ...slackIntegrationTools,
     ...knopilotToolDefinitions,
     ...deliverableToolDefinitions,
     ...voiceToolDefinitions,
@@ -884,8 +895,8 @@ async function main() {
       spacedRepetitionService,
       proposingDecksService,
       proactiveMessagingService,
-      slackIntegrationService,
       knopilotService,
+      oodaClockService,
     },
   });
   const httpServer = await startHttpServer(app, config);

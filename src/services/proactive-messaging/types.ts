@@ -196,6 +196,18 @@ export interface DailyWelcomeEvent {
   availableMoves?: RoadmapMove[];
 }
 
+export interface CoherenceCheckEvent {
+  type: 'coherence_check';
+  checkType: 'tick' | 'phase' | 'loop';
+  score: number;
+  criticalIssues: number;
+  warnings: number;
+  baselineScore?: number;  // For loop delta comparison
+  executionId?: string;
+  loopId?: string;
+  phase?: string;
+}
+
 export type ProactiveEvent =
   | LoopStartEvent
   | GateWaitingEvent
@@ -210,7 +222,8 @@ export type ProactiveEvent =
   | PhaseStartEvent
   | CustomNotificationEvent
   | StartupWelcomeEvent
-  | DailyWelcomeEvent;
+  | DailyWelcomeEvent
+  | CoherenceCheckEvent;
 
 // ============================================================================
 // Commands (Inbound)
@@ -278,15 +291,6 @@ export interface CreateDeliverablesCommand {
   missingFiles: string[];
 }
 
-export interface SkipCommand {
-  type: 'skip';
-  executionId?: string;
-  skillId?: string;
-  gateId?: string;
-  reason: string;
-  dangerous?: boolean;  // Skip even with failed guarantees
-}
-
 export interface StatusCommand {
   type: 'status';
 }
@@ -326,7 +330,6 @@ export type InboundCommand =
   | ApproveAllProposalsCommand
   | StartNextLoopCommand
   | CreateDeliverablesCommand
-  | SkipCommand
   | StatusCommand
   | NextLeverageCommand;
 

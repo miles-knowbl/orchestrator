@@ -16,6 +16,7 @@ import type { ExecutionEngine } from '../ExecutionEngine.js';
 import type { LoopComposer } from '../LoopComposer.js';
 import type { LearningService } from '../LearningService.js';
 import type { ProactiveMessagingService } from '../proactive-messaging/index.js';
+import type { CoherenceService, CoherenceReport } from '../coherence/index.js';
 import type { LoopExecution, Gate, AutonomyLevel } from '../../types.js';
 
 // ============================================================================
@@ -37,6 +38,18 @@ export interface AutonomousExecutorOptions {
   maxGateRetries?: number;
   /** Timeout for Claude Code task (ms). Default: 300000 (5 min) */
   claudeTaskTimeoutMs?: number;
+
+  // Coherence integration options
+  /** Enable per-tick coherence status check. Default: true */
+  coherencePerTick?: boolean;
+  /** Enable per-phase coherence validation before advancing. Default: true */
+  coherencePerPhase?: boolean;
+  /** Enable per-loop coherence delta report. Default: true */
+  coherencePerLoop?: boolean;
+  /** Pause execution on critical coherence issues. Default: false (notify only) */
+  pauseOnCriticalCoherence?: boolean;
+  /** How often to run full validation during ticks (every N ticks). Default: 12 (1 min at 5s interval) */
+  coherenceValidationFrequency?: number;
 }
 
 /**
@@ -72,9 +85,23 @@ export interface TickResult {
 }
 
 export interface TickAction {
-  type: 'gate_auto_approved' | 'phase_advanced' | 'phase_completed' | 'loop_completed' | 'skill_retry' | 'escalation';
+  type: 'gate_auto_approved' | 'phase_advanced' | 'phase_completed' | 'loop_completed' | 'skill_retry' | 'escalation' | 'coherence_check' | 'coherence_warning' | 'coherence_critical';
   target: string;  // gateId, phase name, or skillId
   details?: Record<string, unknown>;
+}
+
+/**
+ * Coherence check result for tracking
+ */
+export interface CoherenceCheckResult {
+  type: 'tick' | 'phase' | 'loop';
+  executionId?: string;
+  phase?: string;
+  score: number;
+  criticalIssues: number;
+  warnings: number;
+  timestamp: string;
+  baselineScore?: number;  // For loop delta comparison
 }
 
 export interface AutoApprovalResult {
@@ -92,6 +119,7 @@ export class AutonomousExecutor {
   private loopComposer: LoopComposer | null = null;
   private learningService: LearningService | null = null;
   private messagingService: ProactiveMessagingService | null = null;
+  private coherenceService: CoherenceService | null = null;
 
   private running = false;
   private tickTimer: ReturnType<typeof setInterval> | null = null;
@@ -101,6 +129,13 @@ export class AutonomousExecutor {
   private gateRetryDelayMs: number;
   private maxGateRetries: number;
   private claudeTaskTimeoutMs: number;
+
+  // Coherence configuration
+  private coherencePerTick: boolean;
+  private coherencePerPhase: boolean;
+  private coherencePerLoop: boolean;
+  private pauseOnCriticalCoherence: boolean;
+  private coherenceValidationFrequency: number;
 
   private totalTicksProcessed = 0;
   private lastTickAt: Date | null = null;
@@ -112,6 +147,9 @@ export class AutonomousExecutor {
   // Track gate retry states: key = `${executionId}:${gateId}`
   private gateRetries: Map<string, GateRetryState> = new Map();
 
+  // Track coherence baselines per execution for delta comparison
+  private coherenceBaselines: Map<string, CoherenceReport> = new Map();
+
   constructor(private options: AutonomousExecutorOptions = {}) {
     this.tickInterval = options.tickInterval || 5000;
     this.maxParallelExecutions = options.maxParallelExecutions || 3;
@@ -119,6 +157,13 @@ export class AutonomousExecutor {
     this.gateRetryDelayMs = options.gateRetryDelayMs || 10000;
     this.maxGateRetries = options.maxGateRetries || 3;
     this.claudeTaskTimeoutMs = options.claudeTaskTimeoutMs || 300000;
+
+    // Coherence options (all enabled by default)
+    this.coherencePerTick = options.coherencePerTick !== false;
+    this.coherencePerPhase = options.coherencePerPhase !== false;
+    this.coherencePerLoop = options.coherencePerLoop !== false;
+    this.pauseOnCriticalCoherence = options.pauseOnCriticalCoherence || false;
+    this.coherenceValidationFrequency = options.coherenceValidationFrequency || 12;
   }
 
   /**
@@ -128,10 +173,12 @@ export class AutonomousExecutor {
     executionEngine: ExecutionEngine;
     loopComposer: LoopComposer;
     learningService?: LearningService;
+    coherenceService?: CoherenceService;
   }): void {
     this.executionEngine = deps.executionEngine;
     this.loopComposer = deps.loopComposer;
     this.learningService = deps.learningService || null;
+    this.coherenceService = deps.coherenceService || null;
   }
 
   /**
@@ -274,6 +321,31 @@ export class AutonomousExecutor {
     this.totalTicksProcessed++;
     this.lastTickAt = new Date();
 
+    // Per-tick coherence check (runs periodically based on coherenceValidationFrequency)
+    const coherenceResult = await this.runTickCoherenceCheck();
+    if (coherenceResult && coherenceResult.criticalIssues > 0) {
+      // Add coherence action to first result or create standalone result
+      const coherenceAction: TickAction = {
+        type: 'coherence_critical',
+        target: 'system',
+        details: {
+          score: coherenceResult.score,
+          criticalIssues: coherenceResult.criticalIssues,
+          warnings: coherenceResult.warnings,
+        },
+      };
+
+      if (results.length > 0) {
+        results[0].actions.push(coherenceAction);
+      } else {
+        results.push({
+          executionId: 'system',
+          actions: [coherenceAction],
+          errors: [],
+        });
+      }
+    }
+
     return results;
   }
 
@@ -304,7 +376,29 @@ export class AutonomousExecutor {
       });
     }
 
-    // 3. Try to advance to next phase
+    // 3. Per-phase coherence check before advancing
+    const nextPhase = this.getNextPhaseName(execution, loop);
+    if (nextPhase) {
+      const coherenceCheck = await this.runPhaseCoherenceCheck(execution, nextPhase);
+      if (coherenceCheck.result) {
+        actions.push({
+          type: coherenceCheck.result.criticalIssues > 0 ? 'coherence_critical' : 'coherence_check',
+          target: nextPhase,
+          details: {
+            score: coherenceCheck.result.score,
+            criticalIssues: coherenceCheck.result.criticalIssues,
+            warnings: coherenceCheck.result.warnings,
+          },
+        });
+      }
+
+      // If coherence blocked advancement, skip the advance step
+      if (!coherenceCheck.canAdvance) {
+        return { executionId: execution.id, actions, errors };
+      }
+    }
+
+    // 4. Try to advance to next phase
     const advanceResult = await this.tryAdvancePhase(execution, loop);
     if (advanceResult.advanced) {
       actions.push({
@@ -313,7 +407,7 @@ export class AutonomousExecutor {
       });
     }
 
-    // 4. Check if loop is now complete
+    // 5. Check if loop is now complete
     const updatedExecution = await this.executionEngine!.getExecution(execution.id);
     if (updatedExecution?.status === 'completed') {
       actions.push({
@@ -329,9 +423,46 @@ export class AutonomousExecutor {
           // Learning is non-blocking
         }
       }
+
+      // Per-loop coherence check (delta comparison)
+      const loopCoherence = await this.runLoopCoherenceCheck(execution);
+      if (loopCoherence) {
+        const delta = loopCoherence.baselineScore !== undefined
+          ? loopCoherence.score - loopCoherence.baselineScore
+          : 0;
+
+        actions.push({
+          type: delta < 0 ? 'coherence_warning' : 'coherence_check',
+          target: execution.loopId,
+          details: {
+            score: loopCoherence.score,
+            baselineScore: loopCoherence.baselineScore,
+            delta,
+            criticalIssues: loopCoherence.criticalIssues,
+            warnings: loopCoherence.warnings,
+          },
+        });
+      }
     }
 
     return { executionId: execution.id, actions, errors };
+  }
+
+  /**
+   * Get the next phase name for coherence check logging
+   */
+  private getNextPhaseName(
+    execution: LoopExecution,
+    loop: { phases?: Array<{ name: string; order: number }> }
+  ): string | null {
+    if (!loop.phases) return null;
+
+    const currentPhaseIndex = loop.phases.findIndex(p => p.name === execution.currentPhase);
+    if (currentPhaseIndex === -1 || currentPhaseIndex >= loop.phases.length - 1) {
+      return null;
+    }
+
+    return loop.phases[currentPhaseIndex + 1]?.name || null;
   }
 
   // --------------------------------------------------------------------------
@@ -873,5 +1004,182 @@ export class AutonomousExecutor {
       service: 'AutonomousExecutor',
       message,
     }));
+  }
+
+  // --------------------------------------------------------------------------
+  // Coherence Integration
+  // --------------------------------------------------------------------------
+
+  /**
+   * Per-tick coherence check (lightweight status check)
+   * Runs periodically during autonomous execution
+   */
+  private async runTickCoherenceCheck(): Promise<CoherenceCheckResult | null> {
+    if (!this.coherenceService || !this.coherencePerTick) return null;
+
+    // Only run full validation every N ticks (default: 12 = 1 minute at 5s interval)
+    const shouldRunFull = (this.totalTicksProcessed % this.coherenceValidationFrequency) === 0;
+
+    if (shouldRunFull) {
+      try {
+        const report = await this.coherenceService.runValidation();
+        const result: CoherenceCheckResult = {
+          type: 'tick',
+          score: report.overallScore,
+          criticalIssues: report.criticalIssues,
+          warnings: report.warnings,
+          timestamp: new Date().toISOString(),
+        };
+
+        // Notify if critical issues detected
+        if (report.criticalIssues > 0) {
+          this.log('warn', `Coherence check found ${report.criticalIssues} critical issues (score: ${report.overallScore})`);
+          await this.sendCoherenceNotification('tick', result);
+        }
+
+        return result;
+      } catch (err) {
+        this.log('error', `Tick coherence check failed: ${err instanceof Error ? err.message : String(err)}`);
+        return null;
+      }
+    } else {
+      // Quick status check (no full validation)
+      const status = this.coherenceService.getStatus();
+      if (status.criticalIssues > 0) {
+        return {
+          type: 'tick',
+          score: status.overallScore || 0,
+          criticalIssues: status.criticalIssues,
+          warnings: status.openIssues - status.criticalIssues,
+          timestamp: new Date().toISOString(),
+        };
+      }
+      return null;
+    }
+  }
+
+  /**
+   * Per-phase coherence check (before phase advancement)
+   * Validates system coherence before moving to next phase
+   */
+  private async runPhaseCoherenceCheck(
+    execution: LoopExecution,
+    nextPhase: string
+  ): Promise<{ canAdvance: boolean; result: CoherenceCheckResult | null }> {
+    if (!this.coherenceService || !this.coherencePerPhase) {
+      return { canAdvance: true, result: null };
+    }
+
+    try {
+      const report = await this.coherenceService.runValidation();
+      const result: CoherenceCheckResult = {
+        type: 'phase',
+        executionId: execution.id,
+        phase: nextPhase,
+        score: report.overallScore,
+        criticalIssues: report.criticalIssues,
+        warnings: report.warnings,
+        timestamp: new Date().toISOString(),
+      };
+
+      // If critical issues and pauseOnCritical is enabled, block advancement
+      if (report.criticalIssues > 0) {
+        this.log('warn', `Phase coherence check: ${report.criticalIssues} critical issues before advancing to ${nextPhase}`);
+        await this.sendCoherenceNotification('phase', result, execution);
+
+        if (this.pauseOnCriticalCoherence) {
+          this.log('info', `Blocking phase advancement due to critical coherence issues`);
+          return { canAdvance: false, result };
+        }
+      }
+
+      return { canAdvance: true, result };
+    } catch (err) {
+      this.log('error', `Phase coherence check failed: ${err instanceof Error ? err.message : String(err)}`);
+      return { canAdvance: true, result: null };
+    }
+  }
+
+  /**
+   * Capture coherence baseline when loop starts
+   * Used for delta comparison at loop completion
+   */
+  async captureCoherenceBaseline(executionId: string): Promise<void> {
+    if (!this.coherenceService || !this.coherencePerLoop) return;
+
+    try {
+      const report = await this.coherenceService.runValidation();
+      this.coherenceBaselines.set(executionId, report);
+      this.log('info', `Captured coherence baseline for ${executionId} (score: ${report.overallScore})`);
+    } catch (err) {
+      this.log('error', `Failed to capture coherence baseline: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  }
+
+  /**
+   * Per-loop coherence check (at loop completion)
+   * Compares current state against baseline captured at loop start
+   */
+  private async runLoopCoherenceCheck(execution: LoopExecution): Promise<CoherenceCheckResult | null> {
+    if (!this.coherenceService || !this.coherencePerLoop) return null;
+
+    try {
+      const baseline = this.coherenceBaselines.get(execution.id);
+      const report = await this.coherenceService.runValidation();
+
+      const result: CoherenceCheckResult = {
+        type: 'loop',
+        executionId: execution.id,
+        score: report.overallScore,
+        criticalIssues: report.criticalIssues,
+        warnings: report.warnings,
+        timestamp: new Date().toISOString(),
+        baselineScore: baseline?.overallScore,
+      };
+
+      // Calculate delta
+      const delta = baseline ? report.overallScore - baseline.overallScore : 0;
+      const deltaStr = delta >= 0 ? `+${delta}` : `${delta}`;
+
+      this.log('info', `Loop coherence delta for ${execution.id}: ${deltaStr} (${baseline?.overallScore || 'N/A'} → ${report.overallScore})`);
+
+      // Always notify on loop completion with coherence delta
+      await this.sendCoherenceNotification('loop', result, execution);
+
+      // Clean up baseline
+      this.coherenceBaselines.delete(execution.id);
+
+      return result;
+    } catch (err) {
+      this.log('error', `Loop coherence check failed: ${err instanceof Error ? err.message : String(err)}`);
+      return null;
+    }
+  }
+
+  /**
+   * Send coherence notification via ProactiveMessaging
+   */
+  private async sendCoherenceNotification(
+    type: 'tick' | 'phase' | 'loop',
+    result: CoherenceCheckResult,
+    execution?: LoopExecution
+  ): Promise<void> {
+    if (!this.messagingService) return;
+
+    try {
+      await this.messagingService.notify({
+        type: 'coherence_check',
+        checkType: type,
+        score: result.score,
+        criticalIssues: result.criticalIssues,
+        warnings: result.warnings,
+        baselineScore: result.baselineScore,
+        executionId: execution?.id,
+        loopId: execution?.loopId,
+        phase: result.phase,
+      });
+    } catch {
+      // Notification is non-blocking
+    }
   }
 }

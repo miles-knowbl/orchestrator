@@ -11,6 +11,7 @@ import type { GuaranteeService } from './GuaranteeService.js';
 import type { DeliverableManager } from './DeliverableManager.js';
 import type { ProactiveMessagingService } from './proactive-messaging/index.js';
 import type { RoadmapService } from './roadmapping/index.js';
+import type { CoherenceService, CoherenceReport } from './coherence/index.js';
 import type {
   Loop,
   LoopExecution,
@@ -41,6 +42,10 @@ export class ExecutionEngine {
   private deliverableManager: DeliverableManager | null = null;
   private messagingService: ProactiveMessagingService | null = null;
   private roadmapService: RoadmapService | null = null;
+  private coherenceService: CoherenceService | null = null;
+
+  // Track coherence baselines per execution for delta comparison
+  private coherenceBaselines: Map<string, CoherenceReport> = new Map();
 
   constructor(
     private options: ExecutionEngineOptions,
@@ -78,6 +83,14 @@ export class ExecutionEngine {
   setRoadmapService(service: RoadmapService): void {
     this.roadmapService = service;
     this.log('info', 'RoadmapService attached to ExecutionEngine');
+  }
+
+  /**
+   * Set the CoherenceService for alignment validation
+   */
+  setCoherenceService(service: CoherenceService): void {
+    this.coherenceService = service;
+    this.log('info', 'CoherenceService attached to ExecutionEngine');
   }
 
   /**
@@ -235,6 +248,17 @@ export class ExecutionEngine {
 
     // Gather pre-loop context for caller (required deliverables, guarantees)
     execution.preLoopContext = await this.gatherPreLoopContext(loop, execution);
+
+    // Capture coherence baseline for delta comparison at loop completion
+    if (this.coherenceService) {
+      try {
+        const baseline = await this.coherenceService.runValidation();
+        this.coherenceBaselines.set(id, baseline);
+        this.log('info', `Captured coherence baseline for ${id} (score: ${baseline.overallScore})`);
+      } catch (err) {
+        this.log('warn', `Failed to capture coherence baseline: ${err instanceof Error ? err.message : String(err)}`);
+      }
+    }
 
     return execution;
   }
@@ -485,6 +509,49 @@ export class ExecutionEngine {
           }
         } catch (err) {
           this.log('warn', `Failed to auto-sync roadmap: ${err}`);
+        }
+      }
+
+      // Per-loop coherence check: compare final state to baseline
+      if (this.coherenceService) {
+        try {
+          const baseline = this.coherenceBaselines.get(executionId);
+          const finalReport = await this.coherenceService.runValidation();
+
+          const delta = baseline ? finalReport.overallScore - baseline.overallScore : 0;
+          const deltaStr = delta >= 0 ? `+${delta}` : `${delta}`;
+
+          this.addExecutionLog(execution, {
+            level: delta < 0 ? 'warn' : 'info',
+            category: 'system',
+            message: `Loop coherence delta: ${deltaStr} (${baseline?.overallScore || 'N/A'} → ${finalReport.overallScore})`,
+            details: {
+              baselineScore: baseline?.overallScore,
+              finalScore: finalReport.overallScore,
+              delta,
+              criticalIssues: finalReport.criticalIssues,
+              warnings: finalReport.warnings,
+            },
+          });
+
+          // Notify coherence delta
+          if (this.messagingService) {
+            await this.messagingService.notify({
+              type: 'coherence_check',
+              checkType: 'loop',
+              score: finalReport.overallScore,
+              criticalIssues: finalReport.criticalIssues,
+              warnings: finalReport.warnings,
+              baselineScore: baseline?.overallScore,
+              executionId,
+              loopId: execution.loopId,
+            });
+          }
+
+          // Clean up baseline
+          this.coherenceBaselines.delete(executionId);
+        } catch (err) {
+          this.log('warn', `Loop coherence check failed: ${err instanceof Error ? err.message : String(err)}`);
         }
       }
 
@@ -804,24 +871,6 @@ export class ExecutionEngine {
 
     await this.saveExecution(execution);
     return execution;
-  }
-
-  /**
-   * Skip a skill
-   *
-   * @deprecated Skills should not be skipped. Use resolve_guarantee to acknowledge
-   * guarantees that were satisfied through alternative means, then complete the skill.
-   */
-  async skipSkill(
-    executionId: string,
-    skillId: string,
-    reason: string
-  ): Promise<LoopExecution> {
-    throw new Error(
-      `Skills cannot be skipped. Use resolve_guarantee to acknowledge guarantees ` +
-      `satisfied through alternative means, then call complete_skill. ` +
-      `Reason provided: ${reason}`
-    );
   }
 
   /**
@@ -1147,6 +1196,51 @@ export class ExecutionEngine {
         await this.saveExecution(execution);
 
         throw GuaranteeViolationError.fromBlocking({ gateId }, guaranteeResult.blocking);
+      }
+    }
+    // ==========================================================================
+
+    // ==========================================================================
+    // COHERENCE VALIDATION (synergizes with guarantees)
+    // ==========================================================================
+    if (this.coherenceService && !options?.skipGuarantees) {
+      try {
+        const coherenceReport = await this.coherenceService.runValidation();
+
+        // Log coherence status with gate
+        this.addExecutionLog(execution, {
+          level: coherenceReport.criticalIssues > 0 ? 'warn' : 'info',
+          category: 'gate',
+          gateId,
+          message: `Coherence check at gate "${gateId}": score ${coherenceReport.overallScore}/100`,
+          details: {
+            score: coherenceReport.overallScore,
+            criticalIssues: coherenceReport.criticalIssues,
+            warnings: coherenceReport.warnings,
+            domains: coherenceReport.domainValidations.map(d => ({
+              domain: d.domain,
+              score: d.score,
+              issues: d.issueCount,
+            })),
+          },
+        });
+
+        // Notify on coherence issues (but don't block - guarantees are the hard gate)
+        if (coherenceReport.criticalIssues > 0 && this.messagingService) {
+          await this.messagingService.notify({
+            type: 'coherence_check',
+            checkType: 'phase',
+            score: coherenceReport.overallScore,
+            criticalIssues: coherenceReport.criticalIssues,
+            warnings: coherenceReport.warnings,
+            executionId,
+            loopId: execution.loopId,
+            phase: execution.currentPhase,
+          });
+        }
+      } catch (err) {
+        // Coherence validation is advisory - don't block on errors
+        this.log('warn', `Coherence validation failed at gate: ${err instanceof Error ? err.message : String(err)}`);
       }
     }
     // ==========================================================================

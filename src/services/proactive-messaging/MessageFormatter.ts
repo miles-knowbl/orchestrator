@@ -30,6 +30,7 @@ import type {
   CustomNotificationEvent,
   StartupWelcomeEvent,
   DailyWelcomeEvent,
+  CoherenceCheckEvent,
 } from './types.js';
 
 export class MessageFormatter {
@@ -67,6 +68,8 @@ export class MessageFormatter {
         return this.formatStartupWelcome(event, interactionId);
       case 'daily_welcome':
         return this.formatDailyWelcome(event, interactionId);
+      case 'coherence_check':
+        return this.formatCoherenceCheck(event, interactionId);
       default:
         return this.formatUnknown(event as ProactiveEvent, interactionId);
     }
@@ -76,15 +79,19 @@ export class MessageFormatter {
     const loopName = event.loopId.replace(/-loop$/, '');
 
     // Concise message
-    const lines: string[] = [];
-    lines.push(`*${loopName} loop* started → *${event.target}*`);
+    let text = `*${loopName} loop* started — *${event.target}*`;
     if (event.branch) {
-      lines.push(`Branch: \`${event.branch}\``);
+      text += `\nBranch: \`${event.branch}\``;
     }
 
+    const slackBlocks = [
+      { type: 'section', text: { type: 'mrkdwn', text } },
+    ];
+
     return {
-      text: lines.join('\n'),
+      text,
       notificationText: `${loopName} loop started: ${event.target}`,
+      blocks: slackBlocks,
       metadata: {
         interactionId,
         eventType: 'loop_start',
@@ -189,9 +196,15 @@ export class MessageFormatter {
       value: rejectPayload,
     });
 
+    const text = lines.join('\n');
+    const slackBlocks = [
+      { type: 'section', text: { type: 'mrkdwn', text } },
+    ];
+
     return {
-      text: lines.join('\n'),
+      text,
       notificationText,
+      blocks: slackBlocks,
       actions,
       metadata: {
         interactionId,
@@ -213,11 +226,14 @@ export class MessageFormatter {
       suffix = ' (after Claude fix)';
     }
 
-    const text = `✓ *${gateName} gate* passed${suffix} → advancing`;
+    const text = `*${gateName} gate* passed${suffix} — advancing`;
 
     return {
       text,
       notificationText: `${gateName} gate auto-approved`,
+      blocks: [
+        { type: 'section', text: { type: 'mrkdwn', text } },
+      ],
       metadata: {
         interactionId,
         eventType: 'gate_auto_approved',
@@ -229,20 +245,24 @@ export class MessageFormatter {
   private formatLoopComplete(event: LoopCompleteEvent, interactionId: string): FormattedMessage {
     const loopName = event.loopId.replace(/-loop$/, '');
 
-    // Concise completion message
-    const lines: string[] = [];
-    lines.push(`*${loopName} loop complete* → ${event.module}`);
+    // Build message text
+    let text = `*${loopName} loop* complete — ${event.module}`;
     if (event.summary) {
-      lines.push(event.summary.slice(0, 200));
+      text += `\n${event.summary.slice(0, 200)}`;
     }
     if (event.deliverables.length > 0) {
       const delivs = event.deliverables.slice(0, 3).join(', ');
-      lines.push(`Deliverables: ${delivs}`);
+      text += `\nDeliverables: ${delivs}`;
     }
 
+    const slackBlocks = [
+      { type: 'section', text: { type: 'mrkdwn', text } },
+    ];
+
     return {
-      text: lines.join('\n'),
+      text,
       notificationText: `${loopName} loop complete: ${event.module}`,
+      blocks: slackBlocks,
       actions: [
         {
           id: `next_loop_${interactionId}`,
@@ -266,19 +286,18 @@ export class MessageFormatter {
   }
 
   private formatDreamProposals(event: DreamProposalsReadyEvent, interactionId: string): FormattedMessage {
-    const lines: string[] = [];
+    const high = event.proposals.filter(p => p.priority === 'high');
+    const medium = event.proposals.filter(p => p.priority === 'medium');
+    const low = event.proposals.filter(p => p.priority === 'low');
 
+    // Terminal display with ASCII
+    const lines: string[] = [];
     lines.push('```');
     lines.push(this.border());
     lines.push(this.formatTitle('PROPOSALS READY'));
     lines.push(this.emptyLine());
-
     lines.push(this.padLine(`${event.count} proposals generated`));
     lines.push(this.emptyLine());
-
-    const high = event.proposals.filter(p => p.priority === 'high');
-    const medium = event.proposals.filter(p => p.priority === 'medium');
-    const low = event.proposals.filter(p => p.priority === 'low');
 
     if (high.length > 0) {
       lines.push(this.padLine('High Priority:'));
@@ -286,14 +305,12 @@ export class MessageFormatter {
         lines.push(this.padLine(`  [${p.type}] ${p.title}`.slice(0, this.width - 4)));
       }
     }
-
     if (medium.length > 0) {
       lines.push(this.padLine('Medium Priority:'));
       for (const p of medium.slice(0, 3)) {
         lines.push(this.padLine(`  [${p.type}] ${p.title}`.slice(0, this.width - 4)));
       }
     }
-
     if (low.length > 0 && high.length + medium.length < 5) {
       lines.push(this.padLine('Low Priority:'));
       for (const p of low.slice(0, 2)) {
@@ -305,7 +322,26 @@ export class MessageFormatter {
     lines.push(this.border());
     lines.push('```');
 
-    // Build actions: Approve All for quick mobile approval, plus individual high-priority approvals
+    // Slack blocks (clean, no ASCII)
+    const slackBlocks: Array<{ type: string; text?: { type: string; text: string }; elements?: Array<{ type: string; text: string }> }> = [];
+
+    let headerText = `*${event.count} Proposals Ready*\n`;
+    if (high.length > 0) {
+      headerText += `\n*High Priority:*\n`;
+      for (const p of high.slice(0, 3)) {
+        headerText += `• [${p.type}] ${p.title}\n`;
+      }
+    }
+    if (medium.length > 0) {
+      headerText += `\n*Medium Priority:*\n`;
+      for (const p of medium.slice(0, 3)) {
+        headerText += `• [${p.type}] ${p.title}\n`;
+      }
+    }
+
+    slackBlocks.push({ type: 'section', text: { type: 'mrkdwn', text: headerText.trim() } });
+
+    // Build actions
     const actions: Array<{ id: string; label: string; style?: 'primary' | 'danger'; value: string }> = [
       {
         id: `approve_all_${interactionId}`,
@@ -319,11 +355,10 @@ export class MessageFormatter {
       },
     ];
 
-    // Add individual approve buttons for high priority proposals (max 2 for mobile usability)
     for (const proposal of high.slice(0, 2)) {
       actions.push({
         id: `approve_${proposal.id}_${interactionId}`,
-        label: `✓ ${proposal.title.slice(0, 20)}`,
+        label: proposal.title.slice(0, 20),
         value: JSON.stringify({
           action: 'approve',
           interactionId,
@@ -341,7 +376,8 @@ export class MessageFormatter {
     const highCount = high.length;
     return {
       text: lines.join('\n'),
-      notificationText: `📋 ${event.count} proposals ready${highCount > 0 ? ` (${highCount} high priority)` : ''} — Review or Approve All`,
+      notificationText: `${event.count} proposals ready${highCount > 0 ? ` (${highCount} high priority)` : ''}`,
+      blocks: slackBlocks,
       actions,
       metadata: {
         interactionId,
@@ -351,8 +387,8 @@ export class MessageFormatter {
   }
 
   private formatExecutorBlocked(event: ExecutorBlockedEvent, interactionId: string): FormattedMessage {
+    // Terminal display with ASCII
     const lines: string[] = [];
-
     lines.push('```');
     lines.push(this.border());
     lines.push(this.formatTitle('EXECUTOR BLOCKED', '[BLOCKED]'));
@@ -373,9 +409,20 @@ export class MessageFormatter {
     lines.push(this.border());
     lines.push('```');
 
+    // Slack blocks (clean, no ASCII)
+    let slackText = `*Blocked*`;
+    if (event.phase) slackText += ` at ${event.phase}`;
+    if (event.gateId) slackText += ` (${event.gateId.replace('-gate', '')} gate)`;
+    slackText += `\n\n${event.reason}`;
+
+    const slackBlocks = [
+      { type: 'section', text: { type: 'mrkdwn', text: slackText } },
+    ];
+
     return {
       text: lines.join('\n'),
-      notificationText: `⛔ Blocked: ${event.reason.slice(0, 60)}${event.reason.length > 60 ? '...' : ''}`,
+      notificationText: `Blocked: ${event.reason.slice(0, 60)}${event.reason.length > 60 ? '...' : ''}`,
+      blocks: slackBlocks,
       actions: [
         {
           id: `investigate_${interactionId}`,
@@ -392,9 +439,10 @@ export class MessageFormatter {
   }
 
   private formatError(event: ErrorEvent, interactionId: string): FormattedMessage {
-    const lines: string[] = [];
     const severityTag = `[${event.severity.toUpperCase()}]`;
 
+    // Terminal display with ASCII
+    const lines: string[] = [];
     lines.push('```');
     lines.push(this.border());
     lines.push(this.formatTitle('ERROR', severityTag));
@@ -418,10 +466,21 @@ export class MessageFormatter {
     lines.push(this.border());
     lines.push('```');
 
-    const icon = event.severity === 'critical' ? '🚨' : event.severity === 'warning' ? '⚠️' : 'ℹ️';
+    // Slack blocks (clean, no ASCII)
+    let slackText = `*${event.severity.toUpperCase()}:* ${event.message}`;
+    if (event.context) {
+      const contextStr = JSON.stringify(event.context, null, 2);
+      slackText += `\n\`\`\`${contextStr.slice(0, 200)}\`\`\``;
+    }
+
+    const slackBlocks = [
+      { type: 'section', text: { type: 'mrkdwn', text: slackText } },
+    ];
+
     return {
       text: lines.join('\n'),
-      notificationText: `${icon} ${event.severity.toUpperCase()}: ${event.message.slice(0, 60)}${event.message.length > 60 ? '...' : ''}`,
+      notificationText: `${event.severity.toUpperCase()}: ${event.message.slice(0, 60)}${event.message.length > 60 ? '...' : ''}`,
+      blocks: slackBlocks,
       metadata: {
         interactionId,
         eventType: 'error',
@@ -430,9 +489,10 @@ export class MessageFormatter {
   }
 
   private formatDeckReady(event: DeckReadyEvent, interactionId: string): FormattedMessage {
-    const lines: string[] = [];
     const title = `${event.deckType.toUpperCase()} DECK READY`;
 
+    // Terminal display with ASCII
+    const lines: string[] = [];
     lines.push('```');
     lines.push(this.border());
     lines.push(this.formatTitle(title));
@@ -450,9 +510,16 @@ export class MessageFormatter {
     lines.push(this.border());
     lines.push('```');
 
+    // Slack blocks (clean, no ASCII)
+    const slackText = `*${event.deckType} Deck Ready*\nItems: ${event.itemCount}\nEstimated: ~${event.estimatedMinutes} min`;
+    const slackBlocks = [
+      { type: 'section', text: { type: 'mrkdwn', text: slackText } },
+    ];
+
     return {
       text: lines.join('\n'),
-      notificationText: `🃏 ${event.deckType} deck ready: ${event.itemCount} items (~${event.estimatedMinutes} min)`,
+      notificationText: `${event.deckType} deck ready: ${event.itemCount} items (~${event.estimatedMinutes} min)`,
+      blocks: slackBlocks,
       actions: [
         {
           id: `start_review_${interactionId}`,
@@ -475,11 +542,14 @@ export class MessageFormatter {
 
   private formatSkillComplete(event: SkillCompleteEvent, interactionId: string): FormattedMessage {
     // Very compact - just skill name
-    const text = `✓ ${event.skillId}`;
+    const text = `Done: ${event.skillId}`;
 
     return {
       text,
       notificationText: `${event.skillId} done`,
+      blocks: [
+        { type: 'section', text: { type: 'mrkdwn', text } },
+      ],
       metadata: {
         interactionId,
         eventType: 'skill_complete',
@@ -491,12 +561,15 @@ export class MessageFormatter {
   private formatPhaseComplete(event: PhaseCompleteEvent, interactionId: string): FormattedMessage {
     // Simple completion notification - gate will send its own message if needed
     const gateName = event.gateId?.replace('-gate', '') || '';
-    const gateNote = event.hasGate ? ` → ${gateName} gate` : '';
-    const text = `✓ *${event.phase}* complete${gateNote}`;
+    const gateNote = event.hasGate ? ` — ${gateName} gate next` : '';
+    const text = `*${event.phase}* complete${gateNote}`;
 
     return {
       text,
       notificationText: `${event.phase} phase done`,
+      blocks: [
+        { type: 'section', text: { type: 'mrkdwn', text } },
+      ],
       metadata: {
         interactionId,
         eventType: 'phase_complete',
@@ -510,9 +583,14 @@ export class MessageFormatter {
     const skillCount = event.skills.length;
     const text = `*${event.phase}* [${event.phaseNumber}/${event.totalPhases}] — ${skillCount} skill${skillCount !== 1 ? 's' : ''}`;
 
+    const slackBlocks = [
+      { type: 'section', text: { type: 'mrkdwn', text } },
+    ];
+
     return {
       text,
       notificationText: `${event.phase} phase starting`,
+      blocks: slackBlocks,
       metadata: {
         interactionId,
         eventType: 'phase_start',
@@ -522,8 +600,8 @@ export class MessageFormatter {
   }
 
   private formatCustom(event: CustomNotificationEvent, interactionId: string): FormattedMessage {
+    // Terminal display with ASCII
     const lines: string[] = [];
-
     lines.push('```');
     lines.push(this.border());
     lines.push(this.formatTitle(event.title.toUpperCase()));
@@ -538,6 +616,11 @@ export class MessageFormatter {
     lines.push(this.border());
     lines.push('```');
 
+    // Slack blocks (clean, no ASCII)
+    const slackBlocks = [
+      { type: 'section', text: { type: 'mrkdwn', text: `*${event.title}*\n${event.message}` } },
+    ];
+
     const actions = event.actions?.map((a, i) => ({
       id: `custom_${interactionId}_${i}`,
       label: a.label,
@@ -547,6 +630,7 @@ export class MessageFormatter {
     return {
       text: lines.join('\n'),
       notificationText: `${event.title}: ${event.message.slice(0, 50)}${event.message.length > 50 ? '...' : ''}`,
+      blocks: slackBlocks,
       actions,
       metadata: {
         interactionId,
@@ -581,17 +665,9 @@ export class MessageFormatter {
         ? `Modules: ${progress.modulesComplete} active`
         : `Modules: ${progress.modulesComplete}/${activeTotal} (${pct}%)`;
       lines.push(this.padLine(modulesStr));
-      // Show deferred count as "dream state modules"
+      // Show future modules count (dream state backlog)
       if (deferred > 0) {
-        lines.push(this.padLine(`Dream State Modules: ${deferred}`));
-      }
-      // Show function-level progress if available
-      if (progress.functionsTotal && progress.functionsTotal > 0) {
-        const funcPct = Math.round((progress.functionsComplete / progress.functionsTotal) * 100);
-        const funcStr = funcPct === 100
-          ? `Functions: ${progress.functionsComplete}`
-          : `Functions: ${progress.functionsComplete}/${progress.functionsTotal} (${funcPct}%)`;
-        lines.push(this.padLine(funcStr));
+        lines.push(this.padLine(`Future: ${deferred} modules in dream state`));
       }
       lines.push(this.emptyLine());
 
@@ -603,11 +679,13 @@ export class MessageFormatter {
       }
       lines.push(this.emptyLine());
 
+      // Organize loops by category
+      const loopCategories = this.categorizeLoops(event.availableLoops);
       lines.push(this.padLine('Available loops:'));
-      const loopList = event.availableLoops.map(l => `/${l}`).join(', ');
-      const wrappedLoops = this.wrapText(loopList, this.width - 6);
-      for (const line of wrappedLoops) {
-        lines.push(this.padLine(`  ${line}`));
+      for (const [category, loops] of Object.entries(loopCategories)) {
+        if (loops.length > 0) {
+          lines.push(this.padLine(`  ${category}: ${loops.join(', ')}`));
+        }
       }
       lines.push(this.emptyLine());
 
@@ -654,11 +732,70 @@ export class MessageFormatter {
       const deferred = p.modulesDeferred || 0;
       const activeTotal = p.modulesTotal;
       statusText = `${p.modulesComplete}/${activeTotal} modules`;
-      if (deferred > 0) statusText += ` + ${deferred} deferred`;
+      if (deferred > 0) statusText += ` + ${deferred} future`;
     }
+
+    // Build Slack-native blocks (no ASCII borders)
+    const slackBlocks: Array<{ type: string; text?: { type: string; text: string }; elements?: Array<{ type: string; text: string }> }> = [];
+
+    if (event.hasDreamState && event.dreamStateProgress) {
+      const p = event.dreamStateProgress;
+      const deferred = p.modulesDeferred || 0;
+      const activeTotal = p.modulesTotal;
+      const pct = activeTotal > 0 ? Math.round((p.modulesComplete / activeTotal) * 100) : 0;
+
+      // Header section
+      let headerText = `*Orchestrator v${event.version}*\n`;
+      headerText += `Skills: ${event.skillCount} | Loops: ${event.loopCount}\n\n`;
+      headerText += `*Dream State:* ${p.name}\n`;
+      headerText += pct === 100
+        ? `Modules: ${p.modulesComplete} active`
+        : `Modules: ${p.modulesComplete}/${activeTotal} (${pct}%)`;
+      if (deferred > 0) {
+        headerText += ` + ${deferred} future`;
+      }
+
+      slackBlocks.push({
+        type: 'section',
+        text: { type: 'mrkdwn', text: headerText },
+      });
+
+      // Next move section
+      const nextMove = event.recommendedTarget
+        ? `/${event.recommendedLoop} -> ${event.recommendedTarget}`
+        : `/${event.recommendedLoop}`;
+      slackBlocks.push({
+        type: 'section',
+        text: { type: 'mrkdwn', text: `*Next:* ${nextMove}` },
+      });
+
+      // Loops by category
+      const loopCategories = this.categorizeLoops(event.availableLoops);
+      const loopLines: string[] = [];
+      for (const [category, catLoops] of Object.entries(loopCategories)) {
+        if (catLoops.length > 0) {
+          loopLines.push(`${category}: ${catLoops.join(', ')}`);
+        }
+      }
+      slackBlocks.push({
+        type: 'context',
+        elements: [{ type: 'mrkdwn', text: loopLines.join('\n') }],
+      });
+    } else {
+      // No dream state
+      slackBlocks.push({
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: `*Orchestrator v${event.version}*\nNo Dream State. Run /dream-loop to get started.`,
+        },
+      });
+    }
+
     return {
       text: lines.join('\n'),
       notificationText: `Orchestrator v${event.version} ready — ${statusText}`,
+      blocks: slackBlocks,
       metadata: {
         interactionId,
         eventType: 'startup_welcome',
@@ -667,34 +804,26 @@ export class MessageFormatter {
   }
 
   private formatDailyWelcome(event: DailyWelcomeEvent, interactionId: string): FormattedMessage {
+    // Terminal display with ASCII
     const lines: string[] = [];
-
     lines.push('```');
     lines.push(this.border());
 
     if (!event.hasDreamState) {
-      // Fresh install - no Dream State
       lines.push(this.formatTitle('WELCOME TO ORCHESTRATOR'));
       lines.push(this.emptyLine());
-
       lines.push(this.padLine(`Version: ${event.version}`));
       lines.push(this.emptyLine());
-
       lines.push(this.padLine('No Dream State found.'));
       lines.push(this.emptyLine());
-
       lines.push(this.padLine('Run /dream-loop to establish your vision and roadmap.'));
     } else if (event.versionStatus === 'update_available') {
-      // Update available
       lines.push(this.formatTitle('UPDATE AVAILABLE'));
       lines.push(this.emptyLine());
-
       lines.push(this.padLine(`Current: ${event.version} -> Latest: ${event.latestVersion}`));
       lines.push(this.emptyLine());
-
       lines.push(this.padLine('Run /orchestrator-start-loop to update.'));
       lines.push(this.emptyLine());
-
       if (event.updateNotes && event.updateNotes.length > 0) {
         lines.push(this.padLine(`What's new in ${event.latestVersion}:`));
         for (const note of event.updateNotes.slice(0, 3)) {
@@ -702,25 +831,20 @@ export class MessageFormatter {
         }
       }
     } else {
-      // Normal daily welcome
       lines.push(this.formatTitle(event.greeting));
       lines.push(this.emptyLine());
 
-      // Dream State progress
       if (event.dreamStateProgress) {
         const progress = event.dreamStateProgress;
         const pct = Math.round((progress.modulesComplete / progress.modulesTotal) * 100);
         lines.push(this.padLine(`Dream State: ${progress.name}`));
         lines.push(this.padLine(`  ${progress.modulesComplete}/${progress.modulesTotal} modules (${pct}%)`));
-
-        // Progress bar
         const barWidth = 30;
         const filled = Math.round((pct / 100) * barWidth);
         const bar = '[' + '='.repeat(filled) + ' '.repeat(barWidth - filled) + ']';
         lines.push(this.padLine(`  ${bar}`));
       }
 
-      // Roadmap drift warning
       if (event.hasRoadmap && event.roadmapDrift?.hasDrift) {
         lines.push(this.emptyLine());
         lines.push(this.padLine('ROADMAP DRIFT DETECTED'));
@@ -731,7 +855,6 @@ export class MessageFormatter {
         lines.push(this.padLine('Run update_roadmap_status to sync.'));
       }
 
-      // Available moves
       if (event.availableMoves && event.availableMoves.length > 0) {
         lines.push(this.emptyLine());
         lines.push(this.padLine('AVAILABLE MOVES'));
@@ -742,14 +865,11 @@ export class MessageFormatter {
       }
 
       lines.push(this.emptyLine());
-
       if (event.pendingProposals > 0) {
         lines.push(this.padLine(`Proposals: ${event.pendingProposals} pending review`));
       }
-
       lines.push(this.padLine(`Version: ${event.version} (up to date)`));
       lines.push(this.emptyLine());
-
       lines.push(this.padLine('Recommended:'));
       if (event.recommendedTarget) {
         lines.push(this.padLine(`  /${event.recommendedLoop} -> ${event.recommendedTarget}`));
@@ -762,12 +882,65 @@ export class MessageFormatter {
     lines.push(this.border());
     lines.push('```');
 
+    // Slack blocks (clean, no ASCII)
+    const slackBlocks: Array<{ type: string; text?: { type: string; text: string }; elements?: Array<{ type: string; text: string }> }> = [];
+
+    if (!event.hasDreamState) {
+      slackBlocks.push({
+        type: 'section',
+        text: { type: 'mrkdwn', text: `*Welcome to Orchestrator*\nVersion: ${event.version}\n\nNo Dream State. Run /dream-loop to get started.` },
+      });
+    } else if (event.versionStatus === 'update_available') {
+      let updateText = `*Update Available*\nCurrent: ${event.version} → Latest: ${event.latestVersion}`;
+      if (event.updateNotes && event.updateNotes.length > 0) {
+        updateText += `\n\nWhat's new:\n`;
+        for (const note of event.updateNotes.slice(0, 3)) {
+          updateText += `• ${note}\n`;
+        }
+      }
+      slackBlocks.push({ type: 'section', text: { type: 'mrkdwn', text: updateText } });
+    } else {
+      let headerText = `*${event.greeting}*\n`;
+      if (event.dreamStateProgress) {
+        const p = event.dreamStateProgress;
+        const pct = Math.round((p.modulesComplete / p.modulesTotal) * 100);
+        headerText += `\n*Dream State:* ${p.name}\nModules: ${p.modulesComplete}/${p.modulesTotal} (${pct}%)`;
+      }
+      slackBlocks.push({ type: 'section', text: { type: 'mrkdwn', text: headerText } });
+
+      if (event.hasRoadmap && event.roadmapDrift?.hasDrift) {
+        slackBlocks.push({
+          type: 'section',
+          text: { type: 'mrkdwn', text: `*Roadmap Drift:* ${event.roadmapDrift.driftAmount} modules out of sync` },
+        });
+      }
+
+      if (event.availableMoves && event.availableMoves.length > 0) {
+        const movesText = event.availableMoves.slice(0, 3)
+          .map(m => `${m.moduleName} (L${m.layer}) - ${m.score.toFixed(1)}`)
+          .join('\n');
+        slackBlocks.push({
+          type: 'context',
+          elements: [{ type: 'mrkdwn', text: `Available moves:\n${movesText}` }],
+        });
+      }
+
+      const nextMove = event.recommendedTarget
+        ? `/${event.recommendedLoop} → ${event.recommendedTarget}`
+        : `/${event.recommendedLoop}`;
+      slackBlocks.push({
+        type: 'section',
+        text: { type: 'mrkdwn', text: `*Next:* ${nextMove}` },
+      });
+    }
+
     const progressText = event.dreamStateProgress
       ? ` — ${event.dreamStateProgress.modulesComplete}/${event.dreamStateProgress.modulesTotal} modules`
       : '';
     return {
       text: lines.join('\n'),
       notificationText: `${event.greeting}${progressText}`,
+      blocks: slackBlocks,
       metadata: {
         interactionId,
         eventType: 'daily_welcome',
@@ -776,24 +949,99 @@ export class MessageFormatter {
   }
 
   private formatUnknown(event: ProactiveEvent, interactionId: string): FormattedMessage {
+    // Terminal display with ASCII
     const lines: string[] = [];
-
     lines.push('```');
     lines.push(this.border());
     lines.push(this.formatTitle('NOTIFICATION'));
     lines.push(this.emptyLine());
-
     lines.push(this.padLine(JSON.stringify(event).slice(0, this.width - 4)));
-
     lines.push(this.emptyLine());
     lines.push(this.border());
     lines.push('```');
 
+    // Slack blocks (clean, no ASCII)
+    const eventType = (event as { type: string }).type || 'unknown';
+    const slackBlocks = [
+      { type: 'section', text: { type: 'mrkdwn', text: `*Notification:* ${eventType}` } },
+    ];
+
     return {
       text: lines.join('\n'),
+      notificationText: `Notification: ${eventType}`,
+      blocks: slackBlocks,
       metadata: {
         interactionId,
-        eventType: (event as { type: string }).type || 'unknown',
+        eventType,
+      },
+    };
+  }
+
+  private formatCoherenceCheck(event: CoherenceCheckEvent, interactionId: string): FormattedMessage {
+    // Determine severity and formatting based on issues
+    const isCritical = event.criticalIssues > 0;
+    const hasWarnings = event.warnings > 0;
+
+    // Calculate delta for loop checks
+    const delta = event.baselineScore !== undefined ? event.score - event.baselineScore : null;
+    const deltaStr = delta !== null ? (delta >= 0 ? `+${delta}` : `${delta}`) : '';
+    const deltaColor = delta !== null && delta < 0 ? ' (degraded)' : delta !== null && delta > 0 ? ' (improved)' : '';
+
+    // Build text based on check type
+    let text: string;
+    let notificationText: string;
+
+    switch (event.checkType) {
+      case 'tick':
+        if (isCritical) {
+          text = `*Coherence Alert* — ${event.criticalIssues} critical issue${event.criticalIssues !== 1 ? 's' : ''}\nScore: ${event.score}/100`;
+          notificationText = `Coherence: ${event.criticalIssues} critical issues (score: ${event.score})`;
+        } else if (hasWarnings) {
+          text = `Coherence: ${event.score}/100 — ${event.warnings} warning${event.warnings !== 1 ? 's' : ''}`;
+          notificationText = `Coherence: ${event.score}/100`;
+        } else {
+          text = `Coherence: ${event.score}/100`;
+          notificationText = `Coherence check passed`;
+        }
+        break;
+
+      case 'phase':
+        text = `*${event.phase}* coherence check: ${event.score}/100`;
+        if (isCritical) {
+          text += `\n${event.criticalIssues} critical issue${event.criticalIssues !== 1 ? 's' : ''} detected`;
+        }
+        notificationText = `${event.phase || 'Phase'} coherence: ${event.score}`;
+        break;
+
+      case 'loop':
+        text = `*Loop coherence*: ${event.score}/100`;
+        if (delta !== null) {
+          text += ` (${deltaStr}${deltaColor})`;
+          text += `\nBaseline: ${event.baselineScore} → Final: ${event.score}`;
+        }
+        if (isCritical) {
+          text += `\n${event.criticalIssues} critical issue${event.criticalIssues !== 1 ? 's' : ''}`;
+        }
+        notificationText = `Loop coherence: ${event.score} (${deltaStr})`;
+        break;
+
+      default:
+        text = `Coherence: ${event.score}/100`;
+        notificationText = 'Coherence check';
+    }
+
+    const slackBlocks = [
+      { type: 'section', text: { type: 'mrkdwn', text } },
+    ];
+
+    return {
+      text,
+      notificationText,
+      blocks: slackBlocks,
+      metadata: {
+        interactionId,
+        eventType: 'coherence_check',
+        executionId: event.executionId,
       },
     };
   }
@@ -842,5 +1090,42 @@ export class MessageFormatter {
     if (currentLine) lines.push(currentLine);
 
     return lines;
+  }
+
+  // Helper: categorize loops for organized display
+  private categorizeLoops(loops: string[]): Record<string, string[]> {
+    const categories: Record<string, string[]> = {
+      'Build': [],
+      'Plan': [],
+      'Sales': [],
+      'Other': [],
+    };
+
+    const buildLoops = ['engineering', 'bugfix', 'distribution', 'infra', 'infrastructure'];
+    const planLoops = ['dream', 'learning', 'audit', 'proposal', 'async', 'transpose', 'meta'];
+    const salesLoops = ['champion', 'close-prep', 'cultivation', 'deal-intake', 'deal-review', 'discovery', 'pipeline', 'intelligence'];
+
+    for (const loop of loops) {
+      const base = loop.replace(/-loop$/, '');
+
+      if (buildLoops.some(b => base.includes(b))) {
+        categories['Build'].push(loop);
+      } else if (planLoops.some(p => base.includes(p))) {
+        categories['Plan'].push(loop);
+      } else if (salesLoops.some(s => base.includes(s))) {
+        categories['Sales'].push(loop);
+      } else {
+        categories['Other'].push(loop);
+      }
+    }
+
+    // Remove empty categories
+    for (const key of Object.keys(categories)) {
+      if (categories[key].length === 0) {
+        delete categories[key];
+      }
+    }
+
+    return categories;
   }
 }
