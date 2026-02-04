@@ -405,12 +405,16 @@ package.json (single source of truth)
 
 ### Version Bump Rules
 
+**Default to patch bumps.** Only bump minor/major when explicitly warranted.
+
 | Change Type | Bump | Example |
 |-------------|------|---------|
-| Breaking change | Major | 0.7.0 → 1.0.0 |
-| New feature | Minor | 0.7.0 → 0.8.0 |
-| Bug fix only | Patch | 0.7.0 → 0.7.1 |
+| Breaking API change | Major | 0.7.0 → 1.0.0 |
+| Major new user-facing capability | Minor | 0.7.0 → 0.8.0 |
+| Features, fixes, refactors | **Patch** | 0.7.0 → 0.7.1 |
 | No code changes | None | Stay at 0.7.0 |
+
+**Guidance:** Internal architecture changes, new services, and most features are patch bumps. Reserve minor bumps for significant user-facing capabilities. Reserve major bumps for breaking changes only.
 
 ### During INIT Phase
 
