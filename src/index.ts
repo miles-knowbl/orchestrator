@@ -44,6 +44,7 @@ import { ProposingDecksService } from './services/proposing-decks/index.js';
 import { ProactiveMessagingService } from './services/proactive-messaging/index.js';
 import { SlackIntegrationService } from './services/slack-integration/index.js';
 import { InstallStateService } from './services/InstallStateService.js';
+import { ShutdownManager } from './services/ShutdownManager.js';
 import { skillToolDefinitions, createSkillToolHandlers } from './tools/skillTools.js';
 import { loopToolDefinitions, createLoopToolHandlers } from './tools/loopTools.js';
 import { executionToolDefinitions, createExecutionToolHandlers } from './tools/executionTools.js';
@@ -771,7 +772,7 @@ async function main() {
       knopilotService,
     },
   });
-  await startHttpServer(app, config);
+  const httpServer = await startHttpServer(app, config);
 
   // Startup banner
   const baseUrl = `http://${config.host === '0.0.0.0' ? 'localhost' : config.host}:${config.port}`;
@@ -798,14 +799,21 @@ async function main() {
     availableLoops,
   });
 
-  // Handle graceful shutdown
-  const shutdown = () => {
-    skillRegistry.destroy();
-    loopComposer.destroy();
-  };
+  // Initialize graceful shutdown manager
+  const shutdownManager = new ShutdownManager({
+    forceExitTimeout: 15000,  // 15 seconds before force exit
+  });
 
-  process.on('SIGTERM', shutdown);
-  process.on('SIGINT', shutdown);
+  // Register cleanup handlers (higher priority = runs first)
+  shutdownManager.register('http-server', httpServer.close, 100);
+  shutdownManager.register('proactive-messaging', () => proactiveMessagingService.disconnect(), 90);
+  shutdownManager.register('autonomous-executor', () => autonomousExecutor.stop(), 80);
+  shutdownManager.register('dream-engine', () => dreamEngine.stop(), 70);
+  shutdownManager.register('skill-registry', () => skillRegistry.destroy(), 10);
+  shutdownManager.register('loop-composer', () => loopComposer.destroy(), 10);
+
+  // Start listening for shutdown signals
+  shutdownManager.initialize();
 }
 
 main().catch((error) => {

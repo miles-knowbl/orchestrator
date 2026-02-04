@@ -170,10 +170,17 @@ export function createHttpServer(options: HttpServerOptions): Express {
   return app;
 }
 
+import type { Server as HttpServer } from 'http';
+
+export interface HttpServerResult {
+  server: HttpServer;
+  close: () => Promise<void>;
+}
+
 export function startHttpServer(
   app: Express,
   config: OrchestratorConfig
-): Promise<void> {
+): Promise<HttpServerResult> {
   return new Promise((resolve, reject) => {
     const server = app.listen(config.port, config.host, () => {
       console.error(JSON.stringify({
@@ -197,36 +204,16 @@ export function startHttpServer(
           dreaming: `http://${config.host}:${config.port}/api/dreaming`,
         },
       }));
-      resolve();
+
+      // Return server and close function for ShutdownManager
+      resolve({
+        server,
+        close: () => new Promise<void>((resolveClose) => {
+          server.close(() => resolveClose());
+        }),
+      });
     });
 
     server.on('error', reject);
-
-    // Graceful shutdown
-    const shutdown = () => {
-      console.error(JSON.stringify({
-        timestamp: new Date().toISOString(),
-        level: 'info',
-        message: 'Shutting down server...',
-      }));
-
-      server.close(() => {
-        console.error(JSON.stringify({
-          timestamp: new Date().toISOString(),
-          level: 'info',
-          message: 'Server closed',
-        }));
-        process.exit(0);
-      });
-
-      // Force exit after 10 seconds
-      setTimeout(() => {
-        console.error('Forced shutdown');
-        process.exit(1);
-      }, 10000);
-    };
-
-    process.on('SIGTERM', shutdown);
-    process.on('SIGINT', shutdown);
   });
 }
