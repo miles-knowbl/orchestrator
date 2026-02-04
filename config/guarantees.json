@@ -1520,63 +1520,8 @@
     },
     "git-workflow": {
       "skillId": "git-workflow",
-      "guarantees": [
-        {
-          "id": "GUA-GITWORKF-001",
-          "name": "PR_DESCRIPTION.md created",
-          "type": "deliverable",
-          "required": true,
-          "validation": {
-            "files": [
-              {
-                "pattern": "PR_DESCRIPTION.md",
-                "minCount": 1
-              }
-            ]
-          }
-        },
-        {
-          "id": "GUA-GITWORKF-002",
-          "name": "PR_DESCRIPTION.md has required content",
-          "type": "content",
-          "required": true,
-          "validation": {
-            "contentChecks": [
-              {
-                "file": "PR_DESCRIPTION.md",
-                "minLines": 50
-              }
-            ]
-          }
-        },
-        {
-          "id": "GUA-GITWORKF-003",
-          "name": "git-workflow passes verification",
-          "type": "quality",
-          "required": true,
-          "validation": {
-            "qualityThresholds": [
-              {
-                "metric": "verification_pass_rate",
-                "operator": "eq",
-                "value": 1,
-                "source": "file",
-                "path": "PR_DESCRIPTION.md"
-              }
-            ]
-          }
-        },
-        {
-          "id": "GUA-GITWORKF-004",
-          "name": "git-workflow steps executed",
-          "type": "step_proof",
-          "required": true,
-          "validation": {
-            "proofType": "artifact",
-            "proofPattern": "git-workflow-PROOF.json"
-          }
-        }
-      ]
+      "comment": "git-workflow guarantees removed - too specific to PR workflows. Distribution-loop pushes directly to main.",
+      "guarantees": []
     },
     "implement": {
       "skillId": "implement",
