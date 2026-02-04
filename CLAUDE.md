@@ -84,15 +84,33 @@ SLACK_APP_TOKEN=xapp-...    # App-Level Token (Socket Mode)
 ```
 
 ### Code Location
-- **USE THIS:** `src/services/proactive-messaging/adapters/SlackAdapter.ts`
-- **DEPRECATED:** `src/services/slack-integration/` (over-engineered, will be removed)
+- **NEW:** `src/services/slack/` - Unified Slack service (notifications + commands + threads)
+- **LEGACY:** `src/services/proactive-messaging/` - Being replaced by unified service
+- **LEGACY:** `src/services/slack-integration/` - Being replaced by unified service
+
+### Unified Slack Architecture
+```
+src/services/slack/
+  UnifiedSlackService.ts   # Main service
+  MessageComposer.ts       # Slack-native formatting (no terminal borders)
+  ThreadManager.ts         # Persistent thread tracking
+  CommandParser.ts         # Natural language commands
+  types.ts                 # Shared types
+```
+
+Design principles:
+- Glanceable: 2-second comprehension
+- Speakable: Natural conversational voice
+- Thread-smart: One thread per execution, persistent
+- No emojis
 
 ## Directory Structure
 
 - `src/` - TypeScript source code
   - `services/` - Core services (SkillRegistry, LoopComposer, ExecutionEngine, MemoryService, LearningService, CalibrationService, InboxProcessor, ProactiveMessagingService)
-  - `services/proactive-messaging/` - Slack/notification system (USE THIS)
-  - `services/slack-integration/` - DEPRECATED, do not use
+  - `services/slack/` - Unified Slack service (notifications, commands, threads)
+  - `services/proactive-messaging/` - Legacy notification system (being replaced)
+  - `services/slack-integration/` - Legacy command handling (being replaced)
   - `tools/` - MCP tool handlers
   - `server/` - HTTP server and API routes
   - `generator/` - Loop App generation

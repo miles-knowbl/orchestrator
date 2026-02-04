@@ -351,14 +351,16 @@
       "target": "distribution-loop",
       "description": "Guarantee that all commits are rounded up and pushed. No orphaned local commits after distribution completes.",
       "priority": "high",
-      "status": "pending"
+      "status": "complete",
+      "completedAt": "2026-02-04"
     },
     {
       "id": "update-inboxprocessor",
       "target": "inbox-processor",
       "description": "Finish the second brain inbox implementation. Complete the skill harvesting pipeline.",
       "priority": "medium",
-      "status": "pending"
+      "status": "complete",
+      "completedAt": "2026-02-04"
     }
   ],
   "brainstorm": [
