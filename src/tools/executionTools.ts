@@ -113,10 +113,21 @@ const RevalidateGuaranteesSchema = z.object({
   skillId: z.string().min(1),
 });
 
+const RevalidateGateSchema = z.object({
+  executionId: z.string().min(1),
+  gateId: z.string().min(1),
+});
+
 const RetrySkillSchema = z.object({
   executionId: z.string().min(1),
   skillId: z.string().min(1),
   deliverables: z.array(z.string()).optional(),
+});
+
+const ResetSkillSchema = z.object({
+  executionId: z.string().min(1),
+  skillId: z.string().min(1),
+  clearAcknowledgments: z.boolean().optional(),
 });
 
 const PauseResumeSchema = z.object({
@@ -496,6 +507,24 @@ export const executionToolDefinitions = [
     },
   },
   {
+    name: 'revalidate_gate',
+    description: 'Check which guarantees pass/fail for a gate without trying to approve it. Use to see what still needs resolving before attempting gate approval.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        executionId: {
+          type: 'string',
+          description: 'Execution ID',
+        },
+        gateId: {
+          type: 'string',
+          description: 'Gate ID to revalidate',
+        },
+      },
+      required: ['executionId', 'gateId'],
+    },
+  },
+  {
     name: 'retry_skill',
     description: 'Retry completing a skill after fixing deliverables. Automatically unblocks execution if blocked.',
     inputSchema: {
@@ -513,6 +542,28 @@ export const executionToolDefinitions = [
           type: 'array',
           items: { type: 'string' },
           description: 'List of deliverables produced',
+        },
+      },
+      required: ['executionId', 'skillId'],
+    },
+  },
+  {
+    name: 'reset_skill',
+    description: 'Reset a skill back to pending status to re-execute from scratch. Clears previous acknowledgments by default. Use when you need to redo all the work for a skill, not just retry completion.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        executionId: {
+          type: 'string',
+          description: 'Execution ID',
+        },
+        skillId: {
+          type: 'string',
+          description: 'Skill ID to reset',
+        },
+        clearAcknowledgments: {
+          type: 'boolean',
+          description: 'Whether to clear guarantee acknowledgments (default: true)',
         },
       },
       required: ['executionId', 'skillId'],
@@ -930,6 +981,27 @@ export function createExecutionToolHandlers(
       return result;
     },
 
+    revalidate_gate: async (params: unknown) => {
+      const validated = RevalidateGateSchema.parse(params);
+      const result = await executionEngine.getGateGuaranteeStatus(
+        validated.executionId,
+        validated.gateId
+      );
+
+      let message: string;
+      if (result.canApprove) {
+        message = `Gate "${validated.gateId}" can be approved. ${result.passed}/${result.total} guarantees pass.`;
+      } else {
+        message = `Gate "${validated.gateId}" cannot be approved yet. ${result.failed} guarantee(s) still failing. Use resolve_guarantee to acknowledge or fix the issues.`;
+      }
+
+      return {
+        gateId: validated.gateId,
+        ...result,
+        message,
+      };
+    },
+
     retry_skill: async (params: unknown) => {
       const validated = RetrySkillSchema.parse(params);
       const execution = await executionEngine.retrySkillCompletion(
@@ -942,6 +1014,22 @@ export function createExecutionToolHandlers(
         status: execution.status,
         currentPhase: execution.currentPhase,
         message: `Skill "${validated.skillId}" completion retried`,
+      };
+    },
+
+    reset_skill: async (params: unknown) => {
+      const validated = ResetSkillSchema.parse(params);
+      const execution = await executionEngine.resetSkill(
+        validated.executionId,
+        validated.skillId,
+        { clearAcknowledgments: validated.clearAcknowledgments }
+      );
+      return {
+        id: execution.id,
+        status: execution.status,
+        currentPhase: execution.currentPhase,
+        skillId: validated.skillId,
+        message: `Skill "${validated.skillId}" reset to pending status`,
       };
     },
 

@@ -1012,6 +1012,74 @@ export class ExecutionEngine {
     return this.completeSkill(executionId, skillId, result);
   }
 
+  /**
+   * Reset a skill back to pending status.
+   * Use when you need to re-execute a skill from scratch (not just retry completion).
+   * Clears any previous acknowledgments for this skill.
+   */
+  async resetSkill(
+    executionId: string,
+    skillId: string,
+    options?: { clearAcknowledgments?: boolean }
+  ): Promise<LoopExecution> {
+    const execution = this.executions.get(executionId);
+    if (!execution) {
+      throw new Error(`Execution not found: ${executionId}`);
+    }
+
+    const skillExec = execution.skillExecutions.find(s => s.skillId === skillId);
+    if (!skillExec) {
+      throw new Error(`Skill "${skillId}" not found in execution`);
+    }
+
+    // Reset the skill execution
+    skillExec.status = 'pending';
+    skillExec.completedAt = undefined;
+    skillExec.deliverables = [];
+    skillExec.outcome = undefined;
+
+    // Clear acknowledgments if requested (default: true)
+    const shouldClearAcks = options?.clearAcknowledgments !== false;
+    if (shouldClearAcks && this.guaranteeService) {
+      this.guaranteeService.clearSkillAcknowledgments(executionId, skillId);
+    }
+
+    // Update phase status if needed (reset to in-progress since skill is now pending)
+    const phaseState = execution.phases.find(p => p.phase === execution.currentPhase);
+    if (phaseState && phaseState.status === 'completed') {
+      phaseState.status = 'in-progress';
+      phaseState.completedAt = undefined;
+    }
+
+    // Also reset the skill status in the phase's skills array
+    if (phaseState) {
+      const phaseSkill = phaseState.skills.find(s => s.skillId === skillId);
+      if (phaseSkill) {
+        phaseSkill.status = 'pending';
+      }
+    }
+
+    // Resume if blocked
+    if (execution.status === 'blocked') {
+      execution.status = 'active';
+    }
+
+    this.addExecutionLog(execution, {
+      level: 'info',
+      category: 'skill',
+      phase: execution.currentPhase,
+      skillId,
+      message: `Skill "${skillId}" reset to pending`,
+      details: { clearAcknowledgments: shouldClearAcks },
+    });
+
+    execution.updatedAt = new Date();
+    await this.saveExecution(execution);
+
+    this.log('info', `Skill ${skillId} reset to pending for execution ${executionId}`);
+    return execution;
+  }
+
   // ==========================================================================
   // GATE HANDLING
   // ==========================================================================

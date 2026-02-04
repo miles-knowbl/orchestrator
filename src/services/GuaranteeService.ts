@@ -986,6 +986,23 @@ export class GuaranteeService {
     }
   }
 
+  /**
+   * Clear acknowledgments for a specific skill (e.g., when skill is reset)
+   */
+  clearSkillAcknowledgments(executionId: string, skillId: string): void {
+    const before = this.acknowledgments.length;
+    this.acknowledgments = this.acknowledgments.filter(
+      a => !(a.executionId === executionId && a.skillId === skillId)
+    );
+    if (this.acknowledgments.length !== before) {
+      this.acknowledgmentsDirty = true;
+      this.log('info', `Cleared ${before - this.acknowledgments.length} acknowledgment(s) for skill ${skillId}`);
+      this.saveAcknowledgments().catch(err => {
+        this.log('error', `Failed to save acknowledgments: ${err}`);
+      });
+    }
+  }
+
   // ==========================================================================
   // UTILITY METHODS
   // ==========================================================================
