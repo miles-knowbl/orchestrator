@@ -590,6 +590,29 @@ export class ProactiveMessagingService {
     });
   }
 
+  /**
+   * Send a system notification (startup, shutdown, errors)
+   */
+  async sendSystemNotification(options: {
+    type: 'startup' | 'shutdown' | 'error';
+    message: string;
+  }): Promise<void> {
+    const title = options.type === 'shutdown' ? '🛑 Shutdown'
+      : options.type === 'startup' ? '🟢 Startup'
+      : '❌ Error';
+
+    try {
+      await this.notify({
+        type: 'custom',
+        title,
+        message: options.message,
+      });
+    } catch (err) {
+      // Don't throw during system notifications - just log
+      console.error(`[ProactiveMessaging] Failed to send ${options.type} notification:`, err);
+    }
+  }
+
   // ─────────────────────────────────────────────────────────────────────────
   // Event shortcuts for common notifications
   // ─────────────────────────────────────────────────────────────────────────

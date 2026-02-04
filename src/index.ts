@@ -805,10 +805,31 @@ async function main() {
   });
 
   // Register cleanup handlers (higher priority = runs first)
+  // Phase 1: Stop accepting new work (priority 100)
   shutdownManager.register('http-server', httpServer.close, 100);
-  shutdownManager.register('proactive-messaging', () => proactiveMessagingService.disconnect(), 90);
+
+  // Phase 2: Notify and disconnect external services (priority 90)
+  shutdownManager.register('proactive-messaging', async () => {
+    // Send shutdown notification before disconnecting
+    try {
+      await proactiveMessagingService.sendSystemNotification({
+        type: 'shutdown',
+        message: 'Orchestrator shutting down gracefully...',
+      });
+    } catch {
+      // Ignore notification failures during shutdown
+    }
+    proactiveMessagingService.disconnect();
+  }, 90);
+
+  // Phase 3: Stop long-running processes (priority 80-70)
   shutdownManager.register('autonomous-executor', () => autonomousExecutor.stop(), 80);
   shutdownManager.register('dream-engine', () => dreamEngine.stop(), 70);
+
+  // Phase 4: Flush pending writes to disk (priority 50)
+  shutdownManager.register('guarantee-service', () => guaranteeService.flush(), 50);
+
+  // Phase 5: Clean up file watchers and resources (priority 10)
   shutdownManager.register('skill-registry', () => skillRegistry.destroy(), 10);
   shutdownManager.register('loop-composer', () => loopComposer.destroy(), 10);
 

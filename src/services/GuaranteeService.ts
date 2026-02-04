@@ -43,8 +43,57 @@ export class GuaranteeService {
   private acknowledgments: GuaranteeAcknowledgment[] = [];
   private aggregator: LoopGuaranteeAggregator | null = null;
   private deliverableManager: DeliverableManager | null = null;
+  private acknowledgmentsDirty = false;  // Track if acknowledgments need saving
 
-  constructor(private options: GuaranteeServiceOptions) {}
+  constructor(private options: GuaranteeServiceOptions) {
+    // Load persisted acknowledgments on startup
+    this.loadAcknowledgments().catch(err => {
+      this.log('warn', `Failed to load acknowledgments: ${err}`);
+    });
+  }
+
+  /**
+   * Load acknowledgments from disk
+   */
+  private async loadAcknowledgments(): Promise<void> {
+    const { join } = await import('path');
+    const { readFile } = await import('fs/promises');
+    const ackPath = join(this.options.dataPath, 'acknowledgments.json');
+    try {
+      const content = await readFile(ackPath, 'utf-8');
+      const data = JSON.parse(content) as GuaranteeAcknowledgment[];
+      this.acknowledgments = data.map(a => ({
+        ...a,
+        acknowledgedAt: new Date(a.acknowledgedAt),
+      }));
+      this.log('info', `Loaded ${this.acknowledgments.length} acknowledgments`);
+    } catch {
+      // File doesn't exist yet, start fresh
+    }
+  }
+
+  /**
+   * Save acknowledgments to disk
+   */
+  private async saveAcknowledgments(): Promise<void> {
+    if (!this.acknowledgmentsDirty) return;
+
+    const { join, dirname } = await import('path');
+    const { writeFile, mkdir } = await import('fs/promises');
+    const ackPath = join(this.options.dataPath, 'acknowledgments.json');
+    await mkdir(dirname(ackPath), { recursive: true });
+    await writeFile(ackPath, JSON.stringify(this.acknowledgments, null, 2));
+    this.acknowledgmentsDirty = false;
+    this.log('debug', `Saved ${this.acknowledgments.length} acknowledgments`);
+  }
+
+  /**
+   * Flush all pending writes to disk (for graceful shutdown)
+   */
+  async flush(): Promise<void> {
+    await this.saveAcknowledgments();
+    this.log('info', 'GuaranteeService flushed to disk');
+  }
 
   /**
    * Set the deliverable manager for organized deliverable validation
@@ -881,6 +930,11 @@ export class GuaranteeService {
     };
 
     this.acknowledgments.push(acknowledgment);
+    this.acknowledgmentsDirty = true;
+    // Save asynchronously (don't block the caller)
+    this.saveAcknowledgments().catch(err => {
+      this.log('error', `Failed to save acknowledgments: ${err}`);
+    });
     this.log('info', `Acknowledged guarantee ${guaranteeId} for skill ${skillId}: ${resolutionType}`);
     return acknowledgment;
   }
@@ -920,9 +974,16 @@ export class GuaranteeService {
    * Clear acknowledgments for an execution (e.g., when execution completes)
    */
   clearAcknowledgments(executionId: string): void {
+    const before = this.acknowledgments.length;
     this.acknowledgments = this.acknowledgments.filter(
       a => a.executionId !== executionId
     );
+    if (this.acknowledgments.length !== before) {
+      this.acknowledgmentsDirty = true;
+      this.saveAcknowledgments().catch(err => {
+        this.log('error', `Failed to save acknowledgments: ${err}`);
+      });
+    }
   }
 
   // ==========================================================================
