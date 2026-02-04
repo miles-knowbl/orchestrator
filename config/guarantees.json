@@ -4362,7 +4362,8 @@
             "validation": {
               "gitChecks": [
                 {
-                  "check": "no_uncommitted"
+                  "check": "no_uncommitted",
+                  "excludePatterns": ["memory/", "data/", ".orchestra/"]
                 },
                 {
                   "check": "no_unpushed"
