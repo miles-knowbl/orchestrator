@@ -4081,6 +4081,134 @@
           }
         }
       ]
+    },
+    "taste-codifier": {
+      "skillId": "taste-codifier",
+      "guarantees": [
+        {
+          "id": "GUA-TASTE-001",
+          "name": "Taste schema JSON created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "*-taste-schema.json",
+                "minCount": 1
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "taste-to-image-schema": {
+      "skillId": "taste-to-image-schema",
+      "guarantees": [
+        {
+          "id": "GUA-IMG-SCHEMA-001",
+          "name": "Image schema JSON created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "*-image-schema.json",
+                "minCount": 1
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "taste-to-text-schema": {
+      "skillId": "taste-to-text-schema",
+      "guarantees": [
+        {
+          "id": "GUA-TXT-SCHEMA-001",
+          "name": "Text schema JSON created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "*-text-schema.json",
+                "minCount": 1
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "html-slides": {
+      "skillId": "html-slides",
+      "guarantees": [
+        {
+          "id": "GUA-SLIDES-001",
+          "name": "HTML presentation created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "index.html",
+                "minCount": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "GUA-SLIDES-002",
+          "name": "Render manifest created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "render-manifest.json",
+                "minCount": 1
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "state-loader": {
+      "skillId": "state-loader",
+      "guarantees": [
+        {
+          "id": "GUA-STATE-001",
+          "name": "Async state file created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "memory/async-state.json",
+                "minCount": 1
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "queue-builder": {
+      "skillId": "queue-builder",
+      "guarantees": [
+        {
+          "id": "GUA-QUEUE-001",
+          "name": "Async queue file created",
+          "type": "deliverable",
+          "required": true,
+          "validation": {
+            "files": [
+              {
+                "pattern": "memory/async-queue.json",
+                "minCount": 1
+              }
+            ]
+          }
+        }
+      ]
     }
   },
   "loops": {
