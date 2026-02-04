@@ -4,7 +4,7 @@ description: "Define visual schema for presentation content specifying image typ
 phase: IMPLEMENT
 category: specialized
 version: "1.0.0"
-depends_on: ["taste-schema", "content-analysis"]
+depends_on: ["taste-codifier", "content-analysis"]
 tags: [specialized, design, schema, visual, presentation]
 ---
 

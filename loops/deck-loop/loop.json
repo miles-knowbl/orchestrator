@@ -1,8 +1,8 @@
 {
   "id": "deck-loop",
   "name": "Deck Loop",
-  "version": "1.0.0",
-  "description": "Presentation generation loop that transforms discovery context and brand assets into polished slide decks. Sequences context gathering, brand extraction, slide composition, quality validation, and PowerPoint rendering.",
+  "version": "1.1.0",
+  "description": "Presentation generation loop that transforms discovery context and brand assets into polished slide decks. Outputs HTML (reveal.js) as the canonical format with optional Google Slides export.",
   "phases": [
     {
       "name": "INIT",
@@ -14,7 +14,7 @@
     {
       "name": "SCAFFOLD",
       "skills": [
-        "taste-schema"
+        "taste-codifier"
       ],
       "required": true
     },
@@ -36,7 +36,7 @@
     {
       "name": "DOCUMENT",
       "skills": [
-        "pptx"
+        "html-slides"
       ],
       "required": true
     },
@@ -98,6 +98,7 @@
       "required": true,
       "approvalType": "human",
       "deliverables": [
+        "index.html",
         "render-manifest.json"
       ]
     }
@@ -127,8 +128,8 @@
       "icon": "inbox",
       "outputDisplay": "markdown"
     },
-    "taste-schema": {
-      "displayName": "Brand Identity",
+    "taste-codifier": {
+      "displayName": "Taste Codifier",
       "icon": "palette",
       "outputDisplay": "json"
     },
@@ -147,10 +148,10 @@
       "icon": "shield-check",
       "outputDisplay": "markdown"
     },
-    "pptx": {
-      "displayName": "PowerPoint Render",
+    "html-slides": {
+      "displayName": "HTML Slides",
       "icon": "presentation-chart-bar",
-      "outputDisplay": "markdown"
+      "outputDisplay": "html"
     },
     "retrospective": {
       "displayName": "Retrospective",
@@ -164,10 +165,12 @@
       "presentation",
       "deck",
       "slides",
-      "pptx"
+      "html",
+      "reveal.js"
     ],
     "changelog": {
-      "1.0.0": "Initial deck loop with 6 phases, 7 skills, 5 gates. Context → brand → composition → validation → render pipeline."
+      "1.0.0": "Initial deck loop with 6 phases, 7 skills, 5 gates. Context → brand → composition → validation → render pipeline.",
+      "1.1.0": "Changed output format from PPTX to HTML (reveal.js). Renamed document skill to html-slides."
     },
     "category": "operations"
   }
