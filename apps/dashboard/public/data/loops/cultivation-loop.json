@@ -1,0 +1,82 @@
+{
+  "id": "cultivation-loop",
+  "name": "Context Cultivation",
+  "version": "1.0.0",
+  "description": "Build and maintain project knowledge through systematic context gathering, gotcha documentation, guarantee tracking, and pattern recognition.",
+  "category": "development",
+  "content": "# Context Cultivation Loop\n\nBuild and maintain project knowledge through systematic context gathering and documentation.\n\n## When to Use\n\n- **Starting a new project** - Gather and document initial context\n- **Onboarding to existing codebase** - Build understanding systematically\n- **Knowledge is scattered** - Consolidate tribal knowledge\n- **Gotchas need documenting** - Capture what trips people up\n- **Guarantees need tracking** - Document contracts and invariants\n- **Patterns emerging** - Recognize and formalize recurring patterns\n\n## Phases\n\n```\nGATHER → ANALYZE → DOCUMENT → COMPLETE\n```\n\n### GATHER\nCollect context from multiple sources:\n- Codebase exploration\n- Documentation review\n- Conversation/chat history\n- External resources\n\n**Skill:** context-ingestion\n\n### ANALYZE\nCultivate gathered context into insights:\n- Identify themes and patterns\n- Surface contradictions\n- Find gaps in knowledge\n- Prioritize findings\n\n**Skill:** context-cultivation\n\n### DOCUMENT\nCapture specific knowledge types:\n- **Gotchas** - Things that trip people up\n- **Guarantees** - Contracts and invariants\n- **Patterns** - Recurring solutions\n\n**Skills:** gotcha-documenter, guarantee-tracker, pattern-collector\n\n### COMPLETE\nIntegrate knowledge into the project:\n- Update CLAUDE.md with key insights\n- Link to detailed documentation\n- Set up ongoing maintenance\n\n**Skill:** knowledge-integrator\n\n## Deliverables\n\n| Phase | Deliverable | Description |\n|-------|-------------|-------------|\n| GATHER | `CONTEXT-SOURCES.md` | List of ingested sources |\n| ANALYZE | `CULTIVATED-CONTEXT.md` | Synthesized insights |\n| DOCUMENT | `GOTCHAS.md` | Documented gotchas |\n| DOCUMENT | `GUARANTEES.md` | Tracked guarantees |\n| DOCUMENT | `PATTERNS.md` | Recognized patterns |\n| COMPLETE | Updated `CLAUDE.md` | Integrated knowledge |\n\n## Related Loops\n\n- **dream-loop** - Strategic evolution (uses cultivation output)\n- **learning-loop** - Learning from execution (produces patterns)\n- **audit-loop** - Systematic review (validates knowledge)\n\n## Example Usage\n\n```\n/cultivation-loop\n\n# Onboarding to a new codebase\n- Ingests: codebase, docs, Slack history\n- Produces: GOTCHAS.md, GUARANTEES.md\n- Updates: CLAUDE.md with key insights\n```\n",
+  "phases": [
+    {
+      "name": "GATHER",
+      "order": 0,
+      "skills": [
+        {
+          "skillId": "context-ingestion",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "ANALYZE",
+      "order": 1,
+      "skills": [
+        {
+          "skillId": "context-cultivation",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "DOCUMENT",
+      "order": 2,
+      "skills": [
+        {
+          "skillId": "gotcha-documenter",
+          "required": true,
+          "order": 0
+        },
+        {
+          "skillId": "guarantee-tracker",
+          "required": true,
+          "order": 1
+        },
+        {
+          "skillId": "pattern-collector",
+          "required": true,
+          "order": 2
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "COMPLETE",
+      "order": 3,
+      "skills": [
+        {
+          "skillId": "knowledge-integrator",
+          "required": true,
+          "order": 0
+        }
+      ],
+      "required": true
+    }
+  ],
+  "gates": [
+    {
+      "id": "context-gate",
+      "name": "Context Quality Gate",
+      "afterPhase": "ANALYZE",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": []
+    }
+  ],
+  "defaultMode": "greenfield",
+  "defaultAutonomy": "supervised",
+  "skillCount": 6,
+  "phaseCount": 4
+}

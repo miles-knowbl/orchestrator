@@ -46,6 +46,15 @@
       "skillCount": 5
     },
     {
+      "id": "cultivation-loop",
+      "name": "Context Cultivation",
+      "version": "1.0.0",
+      "description": "Build and maintain project knowledge through systematic context gathering, gotcha documentation, guarantee tracking, and pattern recognition.",
+      "category": "development",
+      "phaseCount": 4,
+      "skillCount": 6
+    },
+    {
       "id": "deal-intake-loop",
       "name": "Deal Intake Loop",
       "version": "1.0.0",
@@ -66,8 +75,8 @@
     {
       "id": "deck-loop",
       "name": "Deck Loop",
-      "version": "1.0.0",
-      "description": "Presentation generation loop that transforms discovery context and brand assets into polished slide decks. Sequences context gathering, brand extraction, slide composition, quality validation, and Pow",
+      "version": "1.1.0",
+      "description": "Presentation generation loop that transforms discovery context and brand assets into polished slide decks. Outputs HTML (reveal.js) as the canonical format with optional Google Slides export.",
       "category": "operations",
       "phaseCount": 6,
       "skillCount": 7
@@ -151,7 +160,7 @@
       "description": "Weekly pipeline review across all deals including snapshot, prioritization, and weekly focus planning.",
       "category": "development",
       "phaseCount": 4,
-      "skillCount": 3
+      "skillCount": 4
     },
     {
       "id": "proposal-loop",

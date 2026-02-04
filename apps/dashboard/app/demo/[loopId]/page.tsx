@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import {
   ArrowLeft, Play, Pause, RotateCcw, FlaskConical, Shield,
@@ -12,6 +12,90 @@ import { PhaseTimeline } from '@/components/execution/PhaseTimeline';
 import { GateStatus } from '@/components/execution/GateStatus';
 import type { GateDefinition } from '@/components/execution/types';
 import { LogViewer } from '@/components/execution/LogViewer';
+import OODAClock from '@/components/ooda-clock/OODAClock';
+
+// ---------------------------------------------------------------------------
+// Clock event transformation
+// ---------------------------------------------------------------------------
+
+interface ClockEvent {
+  id: string;
+  type: 'skill' | 'pattern' | 'gate' | 'phase';
+  name: string;
+  startAngle: number;
+  endAngle?: number;
+  radius: 'inner' | 'middle' | 'outer';
+  color: string;
+  timestamp: string;
+  duration?: number;
+  status: 'pending' | 'active' | 'complete' | 'failed';
+}
+
+const PHASE_ANGLES: Record<string, { start: number; end: number }> = {
+  INIT: { start: 270, end: 315 },
+  SCAFFOLD: { start: 315, end: 360 },
+  IMPLEMENT: { start: 0, end: 45 },
+  TEST: { start: 45, end: 90 },
+  VERIFY: { start: 90, end: 120 },
+  VALIDATE: { start: 120, end: 150 },
+  DOCUMENT: { start: 150, end: 180 },
+  REVIEW: { start: 180, end: 210 },
+  SHIP: { start: 210, end: 240 },
+  COMPLETE: { start: 240, end: 270 },
+};
+
+const CLOCK_COLORS = {
+  skill: '#10b981',
+  gate: '#f59e0b',
+  pattern: '#0ea5e9',
+  phase: '#8b5cf6',
+};
+
+function transformLogsToClockEvents(logs: Array<{
+  id: string;
+  timestamp: string;
+  level: string;
+  category: string;
+  message: string;
+  phase?: string;
+  skillId?: string;
+  gateId?: string;
+  durationMs?: number;
+}>): ClockEvent[] {
+  return logs
+    .filter(log => ['skill', 'gate', 'phase'].includes(log.category))
+    .map(log => {
+      const type: ClockEvent['type'] = log.category === 'skill' ? 'skill' :
+                   log.category === 'gate' ? 'gate' :
+                   log.category === 'pattern' ? 'pattern' : 'phase';
+      const phase = log.phase || 'INIT';
+      const phaseAngles = PHASE_ANGLES[phase] || PHASE_ANGLES.INIT;
+      const angle = (phaseAngles.start + phaseAngles.end) / 2;
+
+      const name = log.skillId || log.gateId || log.phase || log.message.substring(0, 20);
+
+      const msg = log.message.toLowerCase();
+      let status: ClockEvent['status'] = 'pending';
+      if (log.level === 'error') status = 'failed';
+      else if (msg.includes('complete') || msg.includes('passed') || msg.includes('approved')) status = 'complete';
+      else if (msg.includes('start') || msg.includes('begin') || msg.includes('running')) status = 'active';
+
+      const radius: ClockEvent['radius'] = type === 'gate' ? 'outer' : type === 'pattern' ? 'middle' : 'inner';
+
+      return {
+        id: log.id,
+        type,
+        name,
+        startAngle: angle,
+        endAngle: log.durationMs ? angle + (log.durationMs / 60000) * 360 : undefined,
+        radius,
+        color: log.level === 'error' ? '#ef4444' : CLOCK_COLORS[type],
+        timestamp: log.timestamp,
+        duration: log.durationMs,
+        status,
+      };
+    });
+}
 
 // ---------------------------------------------------------------------------
 // Launch form (shown before demo starts)
@@ -130,6 +214,11 @@ function DemoExecutionView({
     reset,
   } = useDemoExecution(loop, config);
 
+  // Transform logs to clock events
+  const clockEvents = useMemo(() => {
+    return transformLogsToClockEvents(execution.logs);
+  }, [execution.logs]);
+
   const totalSkills = execution.phases.reduce((sum, p) => sum + p.skills.length, 0);
   const completedSkills = execution.phases.reduce(
     (sum, p) => sum + p.skills.filter(s => s.status === 'completed' || s.status === 'skipped').length, 0,
@@ -243,6 +332,58 @@ function DemoExecutionView({
             <RotateCcw className="w-4 h-4" />
           </button>
         )}
+      </div>
+
+      {/* Hero: OODA Clock */}
+      <div className="mb-6 bg-[#111] border border-[#222] rounded-xl p-6">
+        <div className="flex items-start gap-8">
+          {/* Clock visualization */}
+          <div className="shrink-0">
+            <OODAClock
+              events={clockEvents}
+              currentPhase={execution.currentPhase}
+              isLive={execution.status === 'active' && isPlaying}
+              size={280}
+            />
+          </div>
+
+          {/* Clock stats */}
+          <div className="flex-1 min-w-0">
+            <h3 className="text-sm font-medium text-gray-400 mb-4">OODA Rhythm</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-[#0a0a0a] rounded-lg p-3">
+                <div className="text-2xl font-bold text-white">{clockEvents.length}</div>
+                <div className="text-xs text-gray-500">Events</div>
+              </div>
+              <div className="bg-[#0a0a0a] rounded-lg p-3">
+                <div className="text-2xl font-bold text-emerald-400">
+                  {clockEvents.filter(e => e.type === 'skill').length}
+                </div>
+                <div className="text-xs text-gray-500">Skills</div>
+              </div>
+              <div className="bg-[#0a0a0a] rounded-lg p-3">
+                <div className="text-2xl font-bold text-amber-400">
+                  {clockEvents.filter(e => e.type === 'gate').length}
+                </div>
+                <div className="text-xs text-gray-500">Gates</div>
+              </div>
+              <div className="bg-[#0a0a0a] rounded-lg p-3">
+                <div className="text-2xl font-bold text-violet-400">
+                  {clockEvents.filter(e => e.type === 'phase').length}
+                </div>
+                <div className="text-xs text-gray-500">Phases</div>
+              </div>
+            </div>
+            <div className="mt-4 text-xs text-gray-500">
+              Current quadrant: <span className="text-white font-medium">{
+                execution.currentPhase === 'INIT' || execution.currentPhase === 'SCAFFOLD' ? 'OBSERVE → ORIENT' :
+                execution.currentPhase === 'IMPLEMENT' || execution.currentPhase === 'TEST' ? 'ORIENT → DECIDE' :
+                execution.currentPhase === 'VERIFY' || execution.currentPhase === 'VALIDATE' || execution.currentPhase === 'DOCUMENT' ? 'DECIDE → ACT' :
+                'ACT → COMPLETE'
+              }</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Content Grid */}

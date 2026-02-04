@@ -6,6 +6,7 @@ import { ArrowLeft, Layers, Play, Zap, Shield, Settings, BookOpen, WifiOff, Flas
 import { getApprovalTypeConfig } from '@/lib/gate-utils';
 import { Prose } from '@/components/Prose';
 import { fetchWithFallback } from '@/lib/api';
+import SignatureRhythm from '@/components/ooda-clock/SignatureRhythm';
 
 const phaseColors: Record<string, string> = {
   INIT: 'bg-purple-500',
@@ -245,6 +246,13 @@ export default function LoopDetailPage() {
         <div className="mb-6 flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-4 py-2 text-sm text-yellow-400">
           <WifiOff className="w-4 h-4 shrink-0" />
           <span>Viewing static loop data. Try the demo to see this loop in action, or connect to the orchestrator server for real executions.</span>
+        </div>
+      )}
+
+      {/* Signature Rhythm - Hero visualization */}
+      {!isStatic && (
+        <div className="mb-6">
+          <SignatureRhythm loopId={loop.id} />
         </div>
       )}
 

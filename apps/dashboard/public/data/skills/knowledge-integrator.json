@@ -1,0 +1,19 @@
+{
+  "id": "knowledge-integrator",
+  "name": "knowledge-integrator",
+  "version": "1.0.0",
+  "description": "Integrate cultivated knowledge into the project. Updates CLAUDE.md with key insights, links to detailed documentation, and ensures knowledge is discoverable and actionable.",
+  "phase": "COMPLETE",
+  "category": "meta",
+  "content": "# Knowledge Integrator\n\nMake cultivated knowledge actionable.\n\n## When to Use\n\n- **End of cultivation loop** - Insights ready for integration\n- **CLAUDE.md needs updating** - New patterns, gotchas, or guarantees\n- **Knowledge scattered** - Need to consolidate references\n- **Onboarding improvement** - Make project more accessible\n\n## Required Deliverables\n\n| Deliverable | Location | Condition |\n|-------------|----------|-----------|\n| Updated `CLAUDE.md` | Project root | Always |\n| `KNOWLEDGE-INDEX.md` | Project root | When 3+ knowledge docs exist |\n\n## Integration Points\n\n### CLAUDE.md Updates\n\nAdd sections for:\n- **Key Gotchas** - Top 5 things that trip people up\n- **Critical Guarantees** - Must-know system promises\n- **Common Patterns** - Recurring solutions in this codebase\n- **Context Links** - Pointers to detailed docs\n\n### Knowledge Index\n\nCreate a discoverable index:\n```markdown\n# Knowledge Index\n\n## Quick Reference\n- [GOTCHAS.md](./GOTCHAS.md) - Things that trip people up\n- [GUARANTEES.md](./GUARANTEES.md) - System promises\n- [PATTERNS.md](./PATTERNS.md) - Recurring solutions\n\n## By Topic\n- Authentication: GOTCHAS.md#auth, GUARANTEES.md#tokens\n- Data Model: PATTERNS.md#models, GUARANTEES.md#data\n- API: GOTCHAS.md#api, GUARANTEES.md#api\n\n## Recent Updates\n- [Date]: Added gotcha about X\n- [Date]: Documented guarantee Y\n```\n\n## Integration Checklist\n\n- [ ] CLAUDE.md has \"Key Gotchas\" section\n- [ ] CLAUDE.md has \"Critical Guarantees\" section\n- [ ] CLAUDE.md links to detailed docs\n- [ ] Knowledge docs are cross-referenced\n- [ ] Index exists if 3+ knowledge docs\n- [ ] Recent updates section maintained\n\n## Quality Criteria\n\nGood integration:\n- Knowledge is discoverable from CLAUDE.md\n- Links are valid and maintained\n- Most important items surfaced first\n- Cross-references aid navigation\n- Updates are dated for freshness",
+  "references": [],
+  "tags": [
+    "integration",
+    "knowledge-management",
+    "documentation",
+    "claude-md"
+  ],
+  "dependsOn": [
+    "context-cultivation"
+  ]
+}

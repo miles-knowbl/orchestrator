@@ -41,6 +41,14 @@
       "category": "core"
     },
     {
+      "id": "blocker-analyzer",
+      "name": "blocker-analyzer",
+      "version": "1.0.0",
+      "description": "Analyzes blockers preventing module progress. Identifies blocked modules, their dependencies, and potential unblocking strategies.",
+      "phase": "SCORE",
+      "category": "async"
+    },
+    {
       "id": "budget-timeline-extraction",
       "name": "budget-timeline-extraction",
       "version": "1.0.0",
@@ -55,6 +63,14 @@
       "description": "Create minimal, reliable reproduction of reported bugs from issues, logs, and user reports. Produces step-by-step reproduction cases with expected vs actual behavior.",
       "phase": "INIT",
       "category": "core"
+    },
+    {
+      "id": "calibration-sync",
+      "name": "calibration-sync",
+      "version": "1.0.0",
+      "description": "Syncs calibration data for async operation. Loads effort estimates, accuracy history, and adjustment factors to improve planning accuracy.",
+      "phase": "GATHER",
+      "category": "async"
     },
     {
       "id": "calibration-tracker",
@@ -305,6 +321,14 @@
       "category": "core"
     },
     {
+      "id": "dream-sync",
+      "name": "dream-sync",
+      "version": "1.0.0",
+      "description": "Synchronizes dream state context for async operation. Loads and caches the current dream state hierarchy (org → system → module) for offline reference.",
+      "phase": "GATHER",
+      "category": "async"
+    },
+    {
       "id": "entry-portal",
       "name": "entry-portal",
       "version": "1.0.0",
@@ -351,6 +375,46 @@
       "description": "Manages git workflows for the engineering loop. Handles worktrees for parallel development, branching conventions, PR creation, and coordination between agents and human engineers. Provides isolation ",
       "phase": "SHIP",
       "category": "core"
+    },
+    {
+      "id": "gotcha-documenter",
+      "name": "gotcha-documenter",
+      "version": "1.0.0",
+      "description": "Document project gotchas - the non-obvious things that trip people up. Captures edge cases, surprising behaviors, common mistakes, and workarounds that aren't immediately apparent from code or docs.",
+      "phase": "DOCUMENT",
+      "category": "meta"
+    },
+    {
+      "id": "guarantee-tracker",
+      "name": "guarantee-tracker",
+      "version": "1.0.0",
+      "description": "Track and document project guarantees - the contracts, invariants, and promises that the codebase maintains. Captures what must always be true, what can never happen, and the boundaries of acceptable ",
+      "phase": "DOCUMENT",
+      "category": "meta"
+    },
+    {
+      "id": "handoff-confirmer",
+      "name": "handoff-confirmer",
+      "version": "1.0.0",
+      "description": "Confirms system is ready for async handoff. Performs final validation and produces handoff summary before entering mobile operation mode.",
+      "phase": "HANDOFF",
+      "category": "async"
+    },
+    {
+      "id": "history-collector",
+      "name": "history-collector",
+      "version": "1.0.0",
+      "description": "Collects execution history for async context. Gathers recent loop executions, outcomes, and learnings to inform queue planning.",
+      "phase": "GATHER",
+      "category": "async"
+    },
+    {
+      "id": "html-slides",
+      "name": "html-slides",
+      "version": "1.0.0",
+      "description": "Renders presentation schemas into a self-contained HTML file using reveal.js. The HTML is version-controllable, hostable anywhere, and can be converted to other formats. Optionally exports to Google S",
+      "phase": "DOCUMENT",
+      "category": "specialized"
     },
     {
       "id": "implement",
@@ -425,12 +489,28 @@
       "category": "meta"
     },
     {
+      "id": "knowledge-integrator",
+      "name": "knowledge-integrator",
+      "version": "1.0.0",
+      "description": "Integrate cultivated knowledge into the project. Updates CLAUDE.md with key insights, links to detailed documentation, and ensures knowledge is discoverable and actionable.",
+      "phase": "COMPLETE",
+      "category": "meta"
+    },
+    {
       "id": "lead-research",
       "name": "lead-research",
       "version": "1.0.0",
       "description": "Research leads before outreach. Gathers company background, identifies likely pain points, finds stakeholders, and determines AI fit to prioritize and personalize engagement.",
       "phase": "INIT",
       "category": "sales"
+    },
+    {
+      "id": "leverage-calculator",
+      "name": "leverage-calculator",
+      "version": "1.0.0",
+      "description": "Calculates leverage scores for queue planning. Uses the leverage protocol to determine optimal work ordering for async operation.",
+      "phase": "PLAN",
+      "category": "async"
     },
     {
       "id": "loop-composer",
@@ -497,12 +577,28 @@
       "category": "core"
     },
     {
+      "id": "module-scorer",
+      "name": "module-scorer",
+      "version": "1.0.0",
+      "description": "Scores available modules for async queue prioritization. Calculates leverage scores using dream state alignment, downstream impact, and execution likelihood.",
+      "phase": "SCORE",
+      "category": "async"
+    },
+    {
       "id": "next-best-action",
       "name": "next-best-action",
       "version": "1.0.0",
       "description": "Generate prioritized action recommendations using the NBA Engine. Scores actions by likelihood of success, effort required, and champion value to identify highest-impact next moves.",
       "phase": "ACT",
       "category": "sales"
+    },
+    {
+      "id": "notification-tester",
+      "name": "notification-tester",
+      "version": "1.0.0",
+      "description": "Tests notification delivery for async operation. Verifies that notifications reach the user across all configured channels.",
+      "phase": "VERIFY",
+      "category": "async"
     },
     {
       "id": "observe",
@@ -527,6 +623,14 @@
       "description": "Extract and categorize pain points from parsed communications. Identifies volume, cost, quality, speed, compliance, security, experience, talent, legacy, and integration issues with severity assessmen",
       "phase": "ANALYZE",
       "category": "sales"
+    },
+    {
+      "id": "pattern-collector",
+      "name": "pattern-collector",
+      "version": "1.0.0",
+      "description": "Collects and organizes patterns from memory for async context. Gathers relevant patterns that inform autonomous decision-making.",
+      "phase": "GATHER",
+      "category": "async"
     },
     {
       "id": "perf-analysis",
@@ -569,6 +673,14 @@
       "category": "core"
     },
     {
+      "id": "prereq-checker",
+      "name": "prereq-checker",
+      "version": "1.0.0",
+      "description": "Validates prerequisites for async operation. Ensures Slack is configured, modules are available for work, and system is ready for autonomous execution.",
+      "phase": "INIT",
+      "category": "async"
+    },
+    {
       "id": "priority-matrix",
       "name": "priority-matrix",
       "version": "2.0.0",
@@ -599,6 +711,14 @@
       "description": "Design content and UX quality evaluation frameworks. Creates scoring rubrics, defines evaluation methodology, and produces eval documentation that can be used for ongoing quality assessment.",
       "phase": "REVIEW",
       "category": "core"
+    },
+    {
+      "id": "queue-builder",
+      "name": "queue-builder",
+      "version": "1.0.0",
+      "description": "Builds prioritized work queue for async operation. Creates a 5-10 move plan with estimated durations and gate points.",
+      "phase": "PLAN",
+      "category": "async"
     },
     {
       "id": "refactor",
@@ -713,6 +833,14 @@
       "category": "meta"
     },
     {
+      "id": "slack-validator",
+      "name": "slack-validator",
+      "version": "1.0.0",
+      "description": "Validates Slack connection and configuration for async operation. Ensures bidirectional communication is working before handoff.",
+      "phase": "VERIFY",
+      "category": "async"
+    },
+    {
       "id": "smoke-test",
       "name": "smoke-test",
       "version": "1.0.0",
@@ -753,6 +881,22 @@
       "category": "sales"
     },
     {
+      "id": "state-loader",
+      "name": "state-loader",
+      "version": "1.0.0",
+      "description": "Loads and validates system state for async operation. Reads memory files, execution history, and current configuration to establish baseline context.",
+      "phase": "INIT",
+      "category": "async"
+    },
+    {
+      "id": "taste-codifier",
+      "name": "taste-codifier",
+      "version": "1.0.0",
+      "description": "Analyzes diverse source material (text, images, video) to extract and codify a creator's 'taste'—their distinctive voice patterns across textual and visual dimensions. Use this skill when: (1) Creatin",
+      "phase": "SCAFFOLD",
+      "category": "specialized"
+    },
+    {
       "id": "taste-discovery",
       "name": "taste-discovery",
       "version": "1.0.0",
@@ -775,6 +919,22 @@
       "description": "Generate taste-ordered checklist for shipping. Uses trace data to prioritize failure modes by taste impact: Tier 1 (taste-critical), Tier 2 (taste-significant), Tier 3 (technical-only). Updates AUDIT-",
       "phase": "DOCUMENT",
       "category": "core"
+    },
+    {
+      "id": "taste-to-image-schema",
+      "name": "taste-to-image-schema",
+      "version": "1.0.0",
+      "description": "Derives a fully-specified image schema from a taste schema + topic. Use when: (1) Generating social media graphics aligned to a voice, (2) Creating infographics, illustrations, or photo-based content ",
+      "phase": "IMPLEMENT",
+      "category": "specialized"
+    },
+    {
+      "id": "taste-to-text-schema",
+      "name": "taste-to-text-schema",
+      "version": "1.0.0",
+      "description": "Derives a fully-specified text schema from a taste schema + topic. Use when: (1) Writing threads or articles aligned to a voice, (2) Creating social media content or blog posts that maintain voice con",
+      "phase": "IMPLEMENT",
+      "category": "specialized"
     },
     {
       "id": "taste-trace",

@@ -15,7 +15,7 @@
     "presentation"
   ],
   "dependsOn": [
-    "taste-schema",
+    "taste-codifier",
     "content-analysis"
   ]
 }

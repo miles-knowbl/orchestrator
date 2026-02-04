@@ -45,7 +45,13 @@
     {
       "name": "Complete",
       "order": 3,
-      "skills": [],
+      "skills": [
+        {
+          "skillId": "retrospective",
+          "required": true,
+          "order": 0
+        }
+      ],
       "required": true
     }
   ],
@@ -61,7 +67,7 @@
   ],
   "defaultMode": "greenfield",
   "defaultAutonomy": "supervised",
-  "skillCount": 3,
+  "skillCount": 4,
   "phaseCount": 4,
   "author": "KnoPilot"
 }

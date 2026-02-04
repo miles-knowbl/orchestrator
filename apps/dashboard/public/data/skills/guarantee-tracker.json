@@ -1,0 +1,20 @@
+{
+  "id": "guarantee-tracker",
+  "name": "guarantee-tracker",
+  "version": "1.0.0",
+  "description": "Track and document project guarantees - the contracts, invariants, and promises that the codebase maintains. Captures what must always be true, what can never happen, and the boundaries of acceptable behavior.",
+  "phase": "DOCUMENT",
+  "category": "meta",
+  "content": "# Guarantee Tracker\n\nDocument what the system promises.\n\n## When to Use\n\n- **After context cultivation** - Insights reveal implicit guarantees\n- **API design** - Document what callers can rely on\n- **Architecture decisions** - Capture system invariants\n- **Bug fix** - Root cause was a violated guarantee\n- **Code review** - Reviewer asks \"is this always true?\"\n\n## Required Deliverables\n\n| Deliverable | Location | Condition |\n|-------------|----------|-----------|\n| `GUARANTEES.md` | Project root | Always |\n\n## Guarantee Types\n\n### Behavioral Guarantees\n- \"This function never throws\"\n- \"This operation is idempotent\"\n- \"This call is thread-safe\"\n- \"Results are always sorted\"\n\n### Data Guarantees\n- \"This field is never null\"\n- \"IDs are globally unique\"\n- \"Timestamps are always UTC\"\n- \"Amounts are always positive\"\n\n### Performance Guarantees\n- \"Response time < 100ms for p99\"\n- \"Memory usage bounded by X\"\n- \"Batch size never exceeds Y\"\n\n### Security Guarantees\n- \"User data is always encrypted at rest\"\n- \"Tokens expire within 24 hours\"\n- \"PII is never logged\"\n\n### Lifecycle Guarantees\n- \"Resources are always cleaned up\"\n- \"Connections are pooled and reused\"\n- \"Retry with exponential backoff\"\n\n## Template\n\n```markdown\n## [Type]: [Guarantee Name]\n\n**Guarantee:** [What is always/never true]\n\n**Scope:** [Where this applies]\n\n**Rationale:** [Why this guarantee exists]\n\n**Enforcement:**\n- [ ] Compile-time (types, lint rules)\n- [ ] Runtime (assertions, validation)\n- [ ] Testing (unit, integration, property)\n- [ ] Review (checklist, automated)\n\n**Violations:** [What happens if violated, how to detect]\n\n**Related:** [Links to code, tests, docs]\n```\n\n## Quality Criteria\n\nA good guarantee entry:\n- Is precise and testable\n- Specifies scope clearly\n- Explains enforcement mechanism\n- Documents what happens on violation\n- Links to relevant code/tests",
+  "references": [],
+  "tags": [
+    "documentation",
+    "contracts",
+    "invariants",
+    "guarantees",
+    "quality"
+  ],
+  "dependsOn": [
+    "context-cultivation"
+  ]
+}
