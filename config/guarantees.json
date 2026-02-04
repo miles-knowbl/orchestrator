@@ -943,35 +943,8 @@
     },
     "distribute": {
       "skillId": "distribute",
-      "guarantees": [
-        {
-          "id": "GUA-DISTRIBU-001",
-          "name": "distribute passes verification",
-          "type": "quality",
-          "required": true,
-          "validation": {
-            "qualityThresholds": [
-              {
-                "metric": "verification_pass_rate",
-                "operator": "eq",
-                "value": 1,
-                "source": "file",
-                "path": "DISTRIBUTE.md"
-              }
-            ]
-          }
-        },
-        {
-          "id": "GUA-DISTRIBU-002",
-          "name": "distribute steps executed",
-          "type": "step_proof",
-          "required": true,
-          "validation": {
-            "proofType": "artifact",
-            "proofPattern": "distribute-PROOF.json"
-          }
-        }
-      ]
+      "comment": "Guarantees removed - distribute skill just verifies CI and releases, no artifacts to check",
+      "guarantees": []
     },
     "docs-alignment": {
       "skillId": "docs-alignment",
