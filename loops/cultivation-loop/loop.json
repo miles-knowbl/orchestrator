@@ -1,0 +1,56 @@
+{
+  "id": "cultivation-loop",
+  "name": "Context Cultivation",
+  "description": "Build and maintain project knowledge through systematic context gathering, gotcha documentation, guarantee tracking, and pattern recognition.",
+  "version": "1.0.0",
+  "category": "meta",
+  "defaultMode": "greenfield",
+  "defaultAutonomy": "supervised",
+  "phases": [
+    {
+      "name": "GATHER",
+      "description": "Gather context from multiple sources",
+      "skills": [
+        { "skillId": "context-ingestion", "required": true }
+      ]
+    },
+    {
+      "name": "ANALYZE",
+      "description": "Analyze and cultivate gathered context",
+      "skills": [
+        { "skillId": "context-cultivation", "required": true }
+      ]
+    },
+    {
+      "name": "DOCUMENT",
+      "description": "Document gotchas, guarantees, and patterns",
+      "skills": [
+        { "skillId": "gotcha-documenter", "required": false },
+        { "skillId": "guarantee-tracker", "required": false },
+        { "skillId": "pattern-collector", "required": false }
+      ]
+    },
+    {
+      "name": "COMPLETE",
+      "description": "Finalize and integrate knowledge",
+      "skills": [
+        { "skillId": "knowledge-integrator", "required": true }
+      ]
+    }
+  ],
+  "gates": [
+    {
+      "id": "context-gate",
+      "name": "Context Quality Gate",
+      "afterPhase": "ANALYZE",
+      "approvalType": "human",
+      "required": true,
+      "description": "Verify cultivated context is accurate and complete"
+    }
+  ],
+  "ui": {
+    "theme": "default",
+    "layout": "standard"
+  },
+  "skillUI": {}
+}
