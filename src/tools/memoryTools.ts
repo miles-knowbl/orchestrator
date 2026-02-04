@@ -80,7 +80,7 @@ const ApplyProposalSchema = z.object({
   proposalId: z.string().min(1),
   content: z.string().optional(),
   description: z.string().optional(),
-  versionBump: z.enum(['patch', 'minor', 'major']),
+  versionBump: z.enum(['patch', 'minor', 'major']).default('patch'),
 });
 
 const ProposalActionSchema = z.object({
@@ -381,10 +381,10 @@ export const memoryToolDefinitions = [
         versionBump: {
           type: 'string',
           enum: ['patch', 'minor', 'major'],
-          description: 'Version bump type',
+          description: 'Version bump type (defaults to patch)',
         },
       },
-      required: ['proposalId', 'versionBump'],
+      required: ['proposalId'],
     },
   },
   {

@@ -40,7 +40,7 @@ const UpdateSkillSchema = z.object({
   name: z.string().min(1),
   content: z.string().optional(),
   description: z.string().optional(),
-  versionBump: z.enum(['patch', 'minor', 'major']),
+  versionBump: z.enum(['patch', 'minor', 'major']).default('patch'),
   changeDescription: z.string().min(1),
 });
 
@@ -175,14 +175,14 @@ export const skillToolDefinitions = [
         versionBump: {
           type: 'string',
           enum: ['patch', 'minor', 'major'],
-          description: 'Type of version bump',
+          description: 'Type of version bump (defaults to patch)',
         },
         changeDescription: {
           type: 'string',
           description: 'Description of changes for changelog',
         },
       },
-      required: ['name', 'versionBump', 'changeDescription'],
+      required: ['name', 'changeDescription'],
     },
   },
   {
