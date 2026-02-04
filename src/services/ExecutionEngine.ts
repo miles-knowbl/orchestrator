@@ -808,42 +808,20 @@ export class ExecutionEngine {
 
   /**
    * Skip a skill
+   *
+   * @deprecated Skills should not be skipped. Use resolve_guarantee to acknowledge
+   * guarantees that were satisfied through alternative means, then complete the skill.
    */
   async skipSkill(
     executionId: string,
     skillId: string,
     reason: string
   ): Promise<LoopExecution> {
-    const execution = this.executions.get(executionId);
-    if (!execution) {
-      throw new Error(`Execution not found: ${executionId}`);
-    }
-
-    const phaseState = execution.phases.find(p => p.phase === execution.currentPhase);
-    if (!phaseState) {
-      throw new Error(`Phase state not found`);
-    }
-
-    const skillState = phaseState.skills.find(s => s.skillId === skillId);
-    if (!skillState) {
-      throw new Error(`Skill not found in current phase: ${skillId}`);
-    }
-
-    skillState.status = 'skipped';
-    execution.updatedAt = new Date();
-
-    this.addExecutionLog(execution, {
-      level: 'info',
-      category: 'skill',
-      phase: execution.currentPhase,
-      skillId,
-      message: `Skill "${skillId}" skipped`,
-      details: { reason },
-    });
-
-    await this.saveExecution(execution);
-    this.log('info', `Skill ${skillId} skipped: ${reason}`);
-    return execution;
+    throw new Error(
+      `Skills cannot be skipped. Use resolve_guarantee to acknowledge guarantees ` +
+      `satisfied through alternative means, then call complete_skill. ` +
+      `Reason provided: ${reason}`
+    );
   }
 
   /**
@@ -856,18 +834,18 @@ export class ExecutionEngine {
    * - The guarantee is not applicable for this specific case
    *
    * @param executionId - The execution ID
-   * @param skillId - The skill ID
+   * @param skillId - The skill ID (optional - will auto-discover from guarantee ID if not provided)
    * @param guaranteeId - The guarantee ID to resolve
    * @param resolutionType - How the guarantee was satisfied
    * @param evidence - Explanation of how the guarantee was satisfied
    */
   async resolveGuarantee(
     executionId: string,
-    skillId: string,
+    skillId: string | undefined,
     guaranteeId: string,
     resolutionType: 'satisfied_alternatively' | 'acceptable_deviation' | 'waived_with_reason',
     evidence: string
-  ): Promise<{ success: boolean; message: string; acknowledgment?: unknown }> {
+  ): Promise<{ success: boolean; message: string; acknowledgment?: unknown; skillId?: string }> {
     const execution = this.executions.get(executionId);
     if (!execution) {
       throw new Error(`Execution not found: ${executionId}`);
@@ -877,10 +855,21 @@ export class ExecutionEngine {
       throw new Error('GuaranteeService not available');
     }
 
+    // Auto-discover skill ID if not provided
+    let resolvedSkillId = skillId;
+    if (!resolvedSkillId) {
+      const discoveredSkillId = this.guaranteeService.findGuaranteeOwner(guaranteeId);
+      if (!discoveredSkillId) {
+        throw new Error(`Could not find skill that owns guarantee "${guaranteeId}". Please provide skillId explicitly.`);
+      }
+      resolvedSkillId = discoveredSkillId;
+      this.log('info', `Auto-discovered skill "${resolvedSkillId}" for guarantee "${guaranteeId}"`);
+    }
+
     // Acknowledge the guarantee
     const acknowledgment = this.guaranteeService.acknowledgeGuarantee(
       executionId,
-      skillId,
+      resolvedSkillId,
       guaranteeId,
       resolutionType,
       evidence
@@ -897,7 +886,7 @@ export class ExecutionEngine {
       level: 'info',
       category: 'skill',
       phase: execution.currentPhase,
-      skillId,
+      skillId: resolvedSkillId,
       message: `Guarantee "${guaranteeId}" resolved: ${resolutionType}`,
       details: {
         guaranteeId,
@@ -909,11 +898,12 @@ export class ExecutionEngine {
     execution.updatedAt = new Date();
     await this.saveExecution(execution);
 
-    this.log('info', `Guarantee ${guaranteeId} resolved for skill ${skillId}: ${resolutionType}`);
+    this.log('info', `Guarantee ${guaranteeId} resolved for skill ${resolvedSkillId}: ${resolutionType}`);
     return {
       success: true,
-      message: `Guarantee "${guaranteeId}" acknowledged as ${resolutionType}. You can now retry completing the skill.`,
+      message: `Guarantee "${guaranteeId}" acknowledged as ${resolutionType}. You can now retry completing the skill or approving the gate.`,
       acknowledgment,
+      skillId: resolvedSkillId,
     };
   }
 

@@ -65,7 +65,7 @@ const SkipSkillSchema = z.object({
 
 const ResolveGuaranteeSchema = z.object({
   executionId: z.string().min(1),
-  skillId: z.string().min(1),
+  skillId: z.string().optional(),  // Optional - will auto-discover from guarantee ID if not provided
   guaranteeId: z.string().min(1),
   resolutionType: z.enum(['satisfied_alternatively', 'acceptable_deviation', 'waived_with_reason']),
   evidence: z.string().min(1),
@@ -319,7 +319,7 @@ export const executionToolDefinitions = [
   },
   {
     name: 'resolve_guarantee',
-    description: 'Resolve a guarantee by acknowledging it was satisfied through alternative means. Use this when a skill cannot complete due to guarantee failures but the guarantee intent was actually met (e.g., deliverable exists in different location, intent satisfied differently). After resolving, retry complete_skill.',
+    description: 'Resolve a guarantee by acknowledging it was satisfied through alternative means. Use this when a skill or gate cannot proceed due to guarantee failures but the guarantee intent was actually met (e.g., deliverable exists in different location, work done via CI/CD). The skillId is optional - if not provided, it will be auto-discovered from the guarantee ID.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -329,7 +329,7 @@ export const executionToolDefinitions = [
         },
         skillId: {
           type: 'string',
-          description: 'Skill ID that has the guarantee',
+          description: 'Skill ID that has the guarantee (optional - will auto-discover if not provided)',
         },
         guaranteeId: {
           type: 'string',
@@ -345,7 +345,7 @@ export const executionToolDefinitions = [
           description: 'Explanation of how the guarantee was satisfied or why waiver is acceptable',
         },
       },
-      required: ['executionId', 'skillId', 'guaranteeId', 'resolutionType', 'evidence'],
+      required: ['executionId', 'guaranteeId', 'resolutionType', 'evidence'],
     },
   },
   {

@@ -245,6 +245,25 @@ export class GuaranteeService {
         continue;
       }
 
+      // Check if this guarantee has been acknowledged (resolved through alternative means)
+      // Use the "any skill" check since gate guarantees aggregate from multiple skills
+      if (this.isGuaranteeAcknowledgedAny(context.executionId, guarantee.id)) {
+        this.log('info', `Skipping gate guarantee ${guarantee.id} - acknowledged/resolved`);
+        // Create a synthetic "passed" result for acknowledged guarantees
+        results.push({
+          guaranteeId: guarantee.id,
+          name: guarantee.name,
+          type: guarantee.type,
+          passed: true,
+          required: guarantee.required,
+          evidence: [{ type: 'proof', value: 'Acknowledged by user' }],
+          errors: [],
+          warnings: [],
+          timestamp: new Date(),
+        });
+        continue;
+      }
+
       const result = await this.validateGuarantee(guarantee, context);
       results.push(result);
 
@@ -1048,5 +1067,31 @@ export class GuaranteeService {
    */
   getRegistryVersion(): string {
     return this.registry?.version || '0.0.0';
+  }
+
+  /**
+   * Find which skill owns a guarantee by its ID.
+   * Searches all skills in the registry to find the owner.
+   */
+  findGuaranteeOwner(guaranteeId: string): string | null {
+    if (!this.registry) return null;
+
+    for (const [skillId, skillGuarantees] of Object.entries(this.registry.skills)) {
+      if (skillGuarantees.guarantees.some(g => g.id === guaranteeId)) {
+        return skillId;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Check if a guarantee has been acknowledged, looking up the skill owner if needed.
+   * This is useful for gate-level validation where the skillId isn't known upfront.
+   */
+  isGuaranteeAcknowledgedAny(executionId: string, guaranteeId: string): boolean {
+    // Check if acknowledged for any skill
+    return this.acknowledgments.some(
+      a => a.executionId === executionId && a.guaranteeId === guaranteeId
+    );
   }
 }
