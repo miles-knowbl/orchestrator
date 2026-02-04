@@ -24,11 +24,18 @@ export const PHASES = [
 export type Phase = typeof PHASES[number];
 
 export const SKILL_CATEGORIES = [
-  'core',
-  'infra',
-  'meta',
-  'specialized',
-  'custom'
+  // Primary categories
+  'core',           // Essential skills used across most loops
+  'infra',          // Infrastructure, deployment, DevOps
+  'meta',           // Self-improvement, learning, meta-operations
+  'specialized',    // Domain-specific but not categorized elsewhere
+  'custom',         // User-defined skills
+  // Domain categories
+  'sales',          // Sales/CRM skills (KnoPilot)
+  'async',          // Asynchronous/background operation skills
+  'content',        // Content creation, documentation
+  'planning',       // Strategic planning, roadmapping
+  'operations',     // Operational/runtime management
 ] as const;
 
 export type SkillCategory = typeof SKILL_CATEGORIES[number];
@@ -285,6 +292,22 @@ export interface FormField {
 }
 
 // =============================================================================
+// LOOP CATEGORIES
+// =============================================================================
+
+export const LOOP_CATEGORIES = [
+  // Primary categories
+  'engineering',    // Software development workflows
+  'distribution',   // Deployment, release, publishing
+  'meta',           // Self-improvement, learning, system evolution
+  'content',        // Content creation, documentation, decks
+  'sales',          // Sales/CRM workflows (KnoPilot)
+  'operations',     // Operational/runtime management
+  'planning',       // Strategic planning, roadmapping
+] as const;
+
+export type LoopCategory = typeof LOOP_CATEGORIES[number];
+
 // LOOP TYPES
 // =============================================================================
 
@@ -312,7 +335,7 @@ export interface Loop {
 
   // Metadata
   skillCount: number;
-  category: string;
+  category: LoopCategory | string;  // LoopCategory preferred, string for backwards compat
   author?: string;
   createdAt: Date;
   updatedAt: Date;
