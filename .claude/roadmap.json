@@ -59,7 +59,7 @@
       "name": "dreaming",
       "description": "Sleep/background processing mode for proposing new modules→system and systems→org. The system \"dreams up\" new work while idle, ready for review when you return. Needs roadmap state sync before useful.",
       "layer": 1,
-      "status": "deferred",
+      "status": "complete",
       "dependsOn": [
         "autonomous"
       ],
@@ -350,7 +350,7 @@
       "name": "proposing-decks",
       "description": "Wake up to decks ready for review: (1) Knowledge decks for spaced repetition learning, (2) Project/module/system proposal decks. Learn from them and approve scopes for autonomous execution.",
       "layer": 5,
-      "status": "deferred",
+      "status": "complete",
       "dependsOn": [
         "dreaming",
         "spaced-repetition-learning"
@@ -402,5 +402,5 @@
   ],
   "version": "1.0.0",
   "createdAt": "2026-02-03T13:25:11.157Z",
-  "updatedAt": "2026-02-04T17:16:56.068Z"
+  "updatedAt": "2026-02-04T17:48:21.218Z"
 }

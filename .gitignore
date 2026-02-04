@@ -33,6 +33,8 @@ coverage/
 # Generated artifacts
 *.pptx
 *-state.json
+!.claude/dream-state.json
+!.claude/roadmap.json
 render-manifest.json
 .vercel
 docs/

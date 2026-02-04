@@ -1,0 +1,2032 @@
+{
+  "system": "orchestrator",
+  "organization": "superorganism",
+  "location": "~/workspaces/orchestrator",
+  "roadmapRef": "../ROADMAP.md",
+  "vision": "A self-improving meta-system where skills are the atomic primitive. Orchestrator manages skills, composes them into loops, executes loops with quality gates, learns from every execution, and maintains context across sessions. The system should enable \"show up, say go\" workflows where complex engineering tasks are decomposed and executed with rigor.",
+  "dreamStatement": "Autonomous, coherent, local-first system that compounds leverage through skill-based ontology.",
+  "modules": [
+    {
+      "id": "core-infrastructure",
+      "path": "src/services/",
+      "status": "complete",
+      "functions": [
+        {
+          "name": "[skill-registry] list_skills operational",
+          "complete": true
+        },
+        {
+          "name": "[skill-registry] get_skill operational",
+          "complete": true
+        },
+        {
+          "name": "[skill-registry] create_skill operational",
+          "complete": true
+        },
+        {
+          "name": "[skill-registry] update_skill operational",
+          "complete": true
+        },
+        {
+          "name": "[skill-registry] search_skills operational",
+          "complete": true
+        },
+        {
+          "name": "[skill-registry] capture_improvement operational",
+          "complete": true
+        },
+        {
+          "name": "[loop-composer] list_loops operational",
+          "complete": true
+        },
+        {
+          "name": "[loop-composer] get_loop operational",
+          "complete": true
+        },
+        {
+          "name": "[loop-composer] create_loop operational",
+          "complete": true
+        },
+        {
+          "name": "[loop-composer] validate_loop operational",
+          "complete": true
+        },
+        {
+          "name": "[loop-composer] compose from skills operational",
+          "complete": true
+        },
+        {
+          "name": "[execution-engine] start_execution operational",
+          "complete": true
+        },
+        {
+          "name": "[execution-engine] get_execution operational",
+          "complete": true
+        },
+        {
+          "name": "[execution-engine] advance_phase operational",
+          "complete": true
+        },
+        {
+          "name": "[execution-engine] complete_phase operational",
+          "complete": true
+        },
+        {
+          "name": "[execution-engine] complete_skill operational",
+          "complete": true
+        },
+        {
+          "name": "[execution-engine] skip_skill operational",
+          "complete": true
+        },
+        {
+          "name": "[execution-engine] approve_gate operational",
+          "complete": true
+        },
+        {
+          "name": "[execution-engine] reject_gate operational",
+          "complete": true
+        },
+        {
+          "name": "[execution-engine] pause_execution operational",
+          "complete": true
+        },
+        {
+          "name": "[execution-engine] resume_execution operational",
+          "complete": true
+        },
+        {
+          "name": "[memory-service] get_memory operational",
+          "complete": true
+        },
+        {
+          "name": "[memory-service] update_summary operational",
+          "complete": true
+        },
+        {
+          "name": "[memory-service] record_decision operational",
+          "complete": true
+        },
+        {
+          "name": "[memory-service] record_pattern operational",
+          "complete": true
+        },
+        {
+          "name": "[memory-service] create_handoff operational",
+          "complete": true
+        },
+        {
+          "name": "[memory-service] load_context operational",
+          "complete": true
+        },
+        {
+          "name": "[learning-service] capture_skill_improvement operational",
+          "complete": true
+        },
+        {
+          "name": "[learning-service] list_proposals operational",
+          "complete": true
+        },
+        {
+          "name": "[learning-service] apply_proposal operational",
+          "complete": true
+        },
+        {
+          "name": "[learning-service] approve_proposal operational",
+          "complete": true
+        },
+        {
+          "name": "[learning-service] reject_proposal operational",
+          "complete": true
+        },
+        {
+          "name": "[learning-service] get_skill_metrics operational",
+          "complete": true
+        },
+        {
+          "name": "[learning-service] get_learning_status operational",
+          "complete": true
+        },
+        {
+          "name": "[learning-service] identify_underutilized_skills operational",
+          "complete": true
+        },
+        {
+          "name": "[calibration-service] get_calibrated_estimate operational",
+          "complete": true
+        },
+        {
+          "name": "[calibration-service] record_estimate_result operational",
+          "complete": true
+        },
+        {
+          "name": "[calibration-service] get_calibration_report operational",
+          "complete": true
+        },
+        {
+          "name": "[calibration-service] get_calibration_recommendations operational",
+          "complete": true
+        },
+        {
+          "name": "[inbox-processor] add_to_inbox operational",
+          "complete": true
+        },
+        {
+          "name": "[inbox-processor] add_url_to_inbox operational",
+          "complete": true
+        },
+        {
+          "name": "[inbox-processor] list_inbox operational",
+          "complete": true
+        },
+        {
+          "name": "[inbox-processor] process_inbox_item operational",
+          "complete": true
+        },
+        {
+          "name": "[inbox-processor] approve_extraction operational",
+          "complete": true
+        },
+        {
+          "name": "[run-archival] query_runs operational",
+          "complete": true
+        },
+        {
+          "name": "[run-archival] archive_run operational",
+          "complete": true
+        },
+        {
+          "name": "[run-archival] get_recent_context operational",
+          "complete": true
+        },
+        {
+          "name": "[run-archival] createRunSummary operational",
+          "complete": true
+        },
+        {
+          "name": "[run-archival] pruneStateFile operational",
+          "complete": true
+        },
+        {
+          "name": "[guarantee-service] registerSkillGuarantee operational",
+          "complete": true
+        },
+        {
+          "name": "[guarantee-service] getSkillGuarantees operational",
+          "complete": true
+        },
+        {
+          "name": "[guarantee-service] validateGuarantees operational",
+          "complete": true
+        },
+        {
+          "name": "[guarantee-service] enforceGuarantees operational",
+          "complete": true
+        },
+        {
+          "name": "[guarantee-service] getLoopGuaranteeMap operational",
+          "complete": true
+        },
+        {
+          "name": "[guarantee-service] aggregateLoopGuarantees operational",
+          "complete": true
+        },
+        {
+          "name": "[guarantee-service] setAggregator operational",
+          "complete": true
+        },
+        {
+          "name": "[guarantee-service] getRegistryVersion operational",
+          "complete": true
+        },
+        {
+          "name": "[loop-guarantee-aggregator] aggregateForLoop operational",
+          "complete": true
+        },
+        {
+          "name": "[loop-guarantee-aggregator] aggregateAll operational",
+          "complete": true
+        },
+        {
+          "name": "[loop-guarantee-aggregator] getSummary operational",
+          "complete": true
+        },
+        {
+          "name": "[loop-guarantee-aggregator] getLoopGuarantees operational",
+          "complete": true
+        },
+        {
+          "name": "[deliverable-manager] initialize operational",
+          "complete": true
+        },
+        {
+          "name": "[deliverable-manager] storeDeliverable operational",
+          "complete": true
+        },
+        {
+          "name": "[deliverable-manager] getDeliverable operational",
+          "complete": true
+        },
+        {
+          "name": "[deliverable-manager] listDeliverables operational",
+          "complete": true
+        },
+        {
+          "name": "[deliverable-manager] getDeliverablePath operational",
+          "complete": true
+        },
+        {
+          "name": "[version-utility] getVersion — reads from package.json at runtime",
+          "complete": true
+        },
+        {
+          "name": "[loop-commands] engineering-loop — v5.0.0 with hierarchy + completion + leverage",
+          "complete": true
+        },
+        {
+          "name": "[loop-commands] learning-loop — v2.0.0 with hierarchy + completion + leverage",
+          "complete": true
+        },
+        {
+          "name": "[loop-commands] bugfix-loop — v2.0.0 with hierarchy + completion + leverage",
+          "complete": true
+        },
+        {
+          "name": "[loop-commands] proposal-loop — v3.0.0 with hierarchy + completion + leverage",
+          "complete": true
+        },
+        {
+          "name": "[loop-commands] meta-loop — v2.0.0 with hierarchy + completion + leverage",
+          "complete": true
+        },
+        {
+          "name": "[loop-commands] infra-loop — v2.0.0 with hierarchy + completion + leverage",
+          "complete": true
+        },
+        {
+          "name": "[loop-commands] distribution-loop — v2.0.0 with version bump + leverage",
+          "complete": true
+        },
+        {
+          "name": "[loop-commands] audit-loop — v2.0.0 with hierarchy + completion + leverage",
+          "complete": true
+        },
+        {
+          "name": "[loop-commands] deck-loop — v2.0.0 with hierarchy + completion + leverage",
+          "complete": true
+        },
+        {
+          "name": "[loop-commands] transpose-loop — v2.0.0 with hierarchy + completion + leverage",
+          "complete": true
+        },
+        {
+          "name": "[loop-commands] dream-loop — v1.0.0 with tier detection + leverage",
+          "complete": true
+        },
+        {
+          "name": "[analytics] collectRunMetrics — parse run archives",
+          "complete": true
+        },
+        {
+          "name": "[analytics] collectRubricMetrics — aggregate from LearningService",
+          "complete": true
+        },
+        {
+          "name": "[analytics] collectCalibrationMetrics — pull from CalibrationService",
+          "complete": true
+        },
+        {
+          "name": "[analytics] collectGateMetrics — extract from run archives",
+          "complete": true
+        },
+        {
+          "name": "[analytics] collectPatternMetrics — pull from MemoryService",
+          "complete": true
+        },
+        {
+          "name": "[analytics] collectProposalMetrics — pull from LearningService",
+          "complete": true
+        },
+        {
+          "name": "[analytics] computeAggregates — rates, averages, trends",
+          "complete": true
+        },
+        {
+          "name": "[analytics] getAnalyticsSummary — dashboard-ready summary",
+          "complete": true
+        },
+        {
+          "name": "[analytics] getSkillHealth — rankings by rubric dimension",
+          "complete": true
+        },
+        {
+          "name": "[analytics] getLoopPerformance — duration/success metrics",
+          "complete": true
+        },
+        {
+          "name": "[analytics] getCalibrationAccuracy — estimate accuracy trends",
+          "complete": true
+        },
+        {
+          "name": "[analytics] getTrends — time-series data",
+          "complete": true
+        },
+        {
+          "name": "[analytics] API endpoints — /api/analytics/* (11 endpoints)",
+          "complete": true
+        },
+        {
+          "name": "[analytics] Dashboard view — apps/dashboard/app/analytics/page.tsx",
+          "complete": true
+        },
+        {
+          "name": "[learning] processAnalyticsSignals — consume analytics, identify targets",
+          "complete": true
+        },
+        {
+          "name": "[learning] identifyLowHealthSkills — find skills below threshold",
+          "complete": true
+        },
+        {
+          "name": "[learning] identifyCalibrationDrift — find poor estimate accuracy",
+          "complete": true
+        },
+        {
+          "name": "[learning] identifyPatternCandidates — find repeated behaviors",
+          "complete": true
+        },
+        {
+          "name": "[learning] generateSkillProposal — exists in LearningService",
+          "complete": true
+        },
+        {
+          "name": "[learning] generateCalibrationAdjustment — ImprovementOrchestrator",
+          "complete": true
+        },
+        {
+          "name": "[learning] generatePatternProposal — ImprovementOrchestrator",
+          "complete": true
+        },
+        {
+          "name": "[learning] prioritizeProposals — leverage protocol scoring",
+          "complete": true
+        },
+        {
+          "name": "[learning] applySkillUpgrade — exists in LearningService",
+          "complete": true
+        },
+        {
+          "name": "[learning] applyCalibrationAdjustment — ImprovementOrchestrator",
+          "complete": true
+        },
+        {
+          "name": "[learning] applyPatternRecording — via MemoryService",
+          "complete": true
+        },
+        {
+          "name": "[learning] bumpSkillVersion — exists in SkillRegistry",
+          "complete": true
+        },
+        {
+          "name": "[learning] runImprovementCycle — full analyze→propose→apply cycle",
+          "complete": true
+        },
+        {
+          "name": "[learning] getImprovementQueue — prioritized proposals",
+          "complete": true
+        },
+        {
+          "name": "[learning] getImprovementHistory — past improvements",
+          "complete": true
+        },
+        {
+          "name": "[learning] API endpoints — /api/learning/* (10 endpoints)",
+          "complete": true
+        },
+        {
+          "name": "[learning] Dashboard enhancements — improvements page updates (optional)",
+          "complete": false
+        }
+      ]
+    },
+    {
+      "id": "2-layer-orchestration",
+      "path": "src/services/orchestration/",
+      "status": "complete",
+      "functions": [
+        {
+          "name": "initializeOrchestrator — create/resume Layer 1 orchestrator",
+          "complete": true
+        },
+        {
+          "name": "setDependencies — wire up services",
+          "complete": true
+        },
+        {
+          "name": "getOrchestrator — get orchestrator state",
+          "complete": true
+        },
+        {
+          "name": "getNextWorkItems — leverage-scored work items",
+          "complete": true
+        },
+        {
+          "name": "spawnAgentsForWork — spawn Layer 2 agents",
+          "complete": true
+        },
+        {
+          "name": "handleAgentComplete — handle agent completion",
+          "complete": true
+        },
+        {
+          "name": "handleAgentFailed — handle escalation",
+          "complete": true
+        },
+        {
+          "name": "runAutonomousCycle — full autonomous cycle",
+          "complete": true
+        },
+        {
+          "name": "getAgents — list all agents",
+          "complete": true
+        },
+        {
+          "name": "getAgent — get specific agent",
+          "complete": true
+        },
+        {
+          "name": "getWorkQueue — work queue state",
+          "complete": true
+        },
+        {
+          "name": "getEventLog — orchestration events",
+          "complete": true
+        },
+        {
+          "name": "getProgressSummary — dashboard summary",
+          "complete": true
+        },
+        {
+          "name": "pause/resume/shutdown — orchestrator lifecycle",
+          "complete": true
+        },
+        {
+          "name": "generateTerminalView — terminal visualization",
+          "complete": true
+        },
+        {
+          "name": "AgentManager — spawn, monitor, coordinate agents",
+          "complete": true
+        },
+        {
+          "name": "WorktreeManager — git worktree per module",
+          "complete": true
+        },
+        {
+          "name": "Concurrency modes — sequential, parallel-async, parallel-threads",
+          "complete": true
+        },
+        {
+          "name": "Failure cascade — retry → reassign → escalate",
+          "complete": true
+        },
+        {
+          "name": "API endpoints — /api/orchestration/* (15 endpoints)",
+          "complete": true
+        },
+        {
+          "name": "MCP tools — 17 tools",
+          "complete": true
+        }
+      ]
+    },
+    {
+      "id": "knowledge-graph-ontology",
+      "path": "src/services/knowledge-graph/",
+      "status": "complete",
+      "functions": [
+        {
+          "name": "build — build/rebuild from skills and run archives",
+          "complete": true
+        },
+        {
+          "name": "load/save — persist to JSON",
+          "complete": true
+        },
+        {
+          "name": "getGraph — full graph structure",
+          "complete": true
+        },
+        {
+          "name": "getNode — single node with edges",
+          "complete": true
+        },
+        {
+          "name": "getNodesByPhase — filter by phase",
+          "complete": true
+        },
+        {
+          "name": "getNodesByTag — filter by tag",
+          "complete": true
+        },
+        {
+          "name": "getEdges — incoming/outgoing for skill",
+          "complete": true
+        },
+        {
+          "name": "getEdgesByType — filter by edge type",
+          "complete": true
+        },
+        {
+          "name": "getNeighbors — connected skills",
+          "complete": true
+        },
+        {
+          "name": "findPath — BFS path between skills",
+          "complete": true
+        },
+        {
+          "name": "getClusters — all clusters",
+          "complete": true
+        },
+        {
+          "name": "getClusterByTag — specific cluster",
+          "complete": true
+        },
+        {
+          "name": "getHighLeverageSkills — top leverage skills",
+          "complete": true
+        },
+        {
+          "name": "getIsolatedSkills — unconnected skills",
+          "complete": true
+        },
+        {
+          "name": "getUnusedSkills — stale skills",
+          "complete": true
+        },
+        {
+          "name": "analyzeGaps — full gap analysis",
+          "complete": true
+        },
+        {
+          "name": "getStats — graph statistics",
+          "complete": true
+        },
+        {
+          "name": "refreshNode — refresh single node",
+          "complete": true
+        },
+        {
+          "name": "removeNode — remove node and edges",
+          "complete": true
+        },
+        {
+          "name": "generateTerminalView — terminal visualization",
+          "complete": true
+        },
+        {
+          "name": "API endpoints — /api/knowledge-graph/* (17 endpoints)",
+          "complete": true
+        },
+        {
+          "name": "MCP tools — 19 tools",
+          "complete": true
+        }
+      ]
+    },
+    {
+      "id": "roadmapping",
+      "path": "src/services/roadmapping/",
+      "status": "complete",
+      "functions": []
+    },
+    {
+      "id": "autonomous",
+      "path": "src/services/autonomous/",
+      "status": "complete",
+      "functions": [
+        {
+          "name": "AutonomousExecutor — src/services/autonomous/AutonomousExecutor.ts",
+          "complete": true
+        },
+        {
+          "name": "start/stop/pause/resume — background lifecycle control",
+          "complete": true
+        },
+        {
+          "name": "tick — single autonomous processing cycle",
+          "complete": true
+        },
+        {
+          "name": "getStatus — current executor state",
+          "complete": true
+        },
+        {
+          "name": "configure — update tick interval, max parallel, max retries",
+          "complete": true
+        },
+        {
+          "name": "canAutoApprove — check if gate can be auto-approved",
+          "complete": true
+        },
+        {
+          "name": "tryAutoApproveGates — auto-approve based on approvalType",
+          "complete": true
+        },
+        {
+          "name": "tryCompletePhase — auto-complete when skills done",
+          "complete": true
+        },
+        {
+          "name": "tryAdvancePhase — auto-advance when gates approved",
+          "complete": true
+        },
+        {
+          "name": "getAutonomousExecutions — list autonomy=full executions",
+          "complete": true
+        },
+        {
+          "name": "getEligibleExecutions — list autonomy=full|supervised",
+          "complete": true
+        },
+        {
+          "name": "Guarantee validation — validates before auto-approval",
+          "complete": true
+        },
+        {
+          "name": "API endpoints — /api/autonomous/* (8 endpoints)",
+          "complete": true
+        },
+        {
+          "name": "MCP tools — 9 tools for autonomous control",
+          "complete": true
+        }
+      ]
+    },
+    {
+      "id": "dreaming",
+      "path": "src/services/dreaming/",
+      "status": "complete",
+      "functions": [
+        {
+          "name": "DreamEngine — src/services/dreaming/DreamEngine.ts",
+          "complete": true
+        },
+        {
+          "name": "start/stop — background dreaming lifecycle",
+          "complete": true
+        },
+        {
+          "name": "triggerDream — manually trigger dream cycle",
+          "complete": true
+        },
+        {
+          "name": "getStatus — current engine state (running, idle, isIdle)",
+          "complete": true
+        },
+        {
+          "name": "getStats — dreaming statistics",
+          "complete": true
+        },
+        {
+          "name": "configure — idleThreshold, dreamInterval, maxProposalsPerCycle",
+          "complete": true
+        },
+        {
+          "name": "listProposals — filter by status/type/limit",
+          "complete": true
+        },
+        {
+          "name": "getProposal — get specific proposal",
+          "complete": true
+        },
+        {
+          "name": "approveProposal — approve for implementation",
+          "complete": true
+        },
+        {
+          "name": "rejectProposal — reject with reason",
+          "complete": true
+        },
+        {
+          "name": "markImplemented — mark as implemented",
+          "complete": true
+        },
+        {
+          "name": "listSessions — dream session history",
+          "complete": true
+        },
+        {
+          "name": "generateNewModuleProposals — analyze blocked modules",
+          "complete": true
+        },
+        {
+          "name": "generateSkillImprovementProposals — from learning service",
+          "complete": true
+        },
+        {
+          "name": "generatePatternCaptureProposals — from pattern gaps",
+          "complete": true
+        },
+        {
+          "name": "Idle detection — monitors activity timestamps",
+          "complete": true
+        },
+        {
+          "name": "API endpoints — /api/dreaming/* (11 endpoints)",
+          "complete": true
+        },
+        {
+          "name": "MCP tools — 12 tools for dreaming control",
+          "complete": true
+        }
+      ]
+    },
+    {
+      "id": "kanban",
+      "path": "apps/dashboard/app/roadmap/",
+      "status": "complete",
+      "functions": [
+        {
+          "name": "Dashboard page — apps/dashboard/app/roadmap/page.tsx",
+          "complete": true
+        },
+        {
+          "name": "Navigation link — Added to layout.tsx",
+          "complete": true
+        },
+        {
+          "name": "Overall progress panel — Aggregate stats with progress bar",
+          "complete": true
+        },
+        {
+          "name": "Leverage scoring panel — Top 3 next modules with scores",
+          "complete": true
+        },
+        {
+          "name": "Layer sections — Collapsible layer groupings (0-6)",
+          "complete": true
+        },
+        {
+          "name": "Module cards — Status, details, expand/collapse",
+          "complete": true
+        },
+        {
+          "name": "Status indicators — Color-coded icons per status",
+          "complete": true
+        },
+        {
+          "name": "Critical path display — Shows highest-impact modules",
+          "complete": true
+        }
+      ]
+    },
+    {
+      "id": "ladder-of-abstraction-interfaces",
+      "path": "",
+      "status": "deferred",
+      "functions": []
+    },
+    {
+      "id": "loop-sequencing",
+      "path": "src/services/loop-sequencing/",
+      "status": "complete",
+      "functions": [
+        {
+          "name": "LoopSequencingService — src/services/loop-sequencing/LoopSequencingService.ts",
+          "complete": true
+        },
+        {
+          "name": "analyzeRunHistory — detect loop co-occurrence patterns from run archives",
+          "complete": true
+        },
+        {
+          "name": "getTransitions — list loop-to-loop transitions with statistics",
+          "complete": true
+        },
+        {
+          "name": "getTransition — get specific transition details",
+          "complete": true
+        },
+        {
+          "name": "getSequences — list multi-loop sequences",
+          "complete": true
+        },
+        {
+          "name": "getSequence — get specific sequence details",
+          "complete": true
+        },
+        {
+          "name": "generateLine — create multi-move plan with compound leverage",
+          "complete": true
+        },
+        {
+          "name": "getLines — list generated lines",
+          "complete": true
+        },
+        {
+          "name": "getLine — get specific line details",
+          "complete": true
+        },
+        {
+          "name": "getLastAnalysis — retrieve last sequence analysis",
+          "complete": true
+        },
+        {
+          "name": "getStatus — current service status",
+          "complete": true
+        },
+        {
+          "name": "generateTerminalView — terminal-friendly sequencing view",
+          "complete": true
+        },
+        {
+          "name": "API endpoints — /api/sequencing/* (11 endpoints)",
+          "complete": true
+        },
+        {
+          "name": "MCP tools — 12 tools for sequencing operations",
+          "complete": true
+        }
+      ]
+    },
+    {
+      "id": "multi-agent-worktrees",
+      "path": "src/services/multi-agent/",
+      "status": "complete",
+      "functions": [
+        {
+          "name": "MultiAgentCoordinator — src/services/multi-agent/MultiAgentCoordinator.ts",
+          "complete": true
+        },
+        {
+          "name": "registerCollaborator — register human collaborator",
+          "complete": true
+        },
+        {
+          "name": "listCollaborators — list all collaborators",
+          "complete": true
+        },
+        {
+          "name": "getCollaborator — get collaborator details",
+          "complete": true
+        },
+        {
+          "name": "touchCollaborator — update activity timestamp",
+          "complete": true
+        },
+        {
+          "name": "disconnectCollaborator — mark as disconnected",
+          "complete": true
+        },
+        {
+          "name": "createAgentSet — create agent set for collaborator",
+          "complete": true
+        },
+        {
+          "name": "listAgentSets — list agent sets",
+          "complete": true
+        },
+        {
+          "name": "getAgentSet — get agent set details",
+          "complete": true
+        },
+        {
+          "name": "addAgentToSet — add agent to set",
+          "complete": true
+        },
+        {
+          "name": "addWorktreeToSet — add worktree module to set",
+          "complete": true
+        },
+        {
+          "name": "pauseAgentSet/resumeAgentSet — lifecycle control",
+          "complete": true
+        },
+        {
+          "name": "createReservation — claim module/file/path for exclusive work",
+          "complete": true
+        },
+        {
+          "name": "listReservations — list reservations",
+          "complete": true
+        },
+        {
+          "name": "releaseReservation — release a claim",
+          "complete": true
+        },
+        {
+          "name": "extendReservation — extend reservation duration",
+          "complete": true
+        },
+        {
+          "name": "checkResourceBlocked — check if resource is claimed",
+          "complete": true
+        },
+        {
+          "name": "requestMerge — request to merge worktree to main",
+          "complete": true
+        },
+        {
+          "name": "checkMergeConflicts — check for conflicts",
+          "complete": true
+        },
+        {
+          "name": "executeMerge — execute approved merge",
+          "complete": true
+        },
+        {
+          "name": "listMergeQueue — list merge queue",
+          "complete": true
+        },
+        {
+          "name": "checkCanWork — check if collaborator can work on module",
+          "complete": true
+        },
+        {
+          "name": "getAllActiveWork — cross-collaborator visibility",
+          "complete": true
+        },
+        {
+          "name": "API endpoints — /api/multi-agent/* (20 endpoints)",
+          "complete": true
+        },
+        {
+          "name": "MCP tools — 24 tools for multi-agent coordination",
+          "complete": true
+        }
+      ]
+    },
+    {
+      "id": "ooda-clocks-visual",
+      "path": "src/services/ooda-clock/, apps/dashboard/app/ooda-clock/",
+      "status": "complete",
+      "functions": [
+        {
+          "name": "OODAClockService — src/services/ooda-clock/OODAClockService.ts",
+          "complete": true
+        },
+        {
+          "name": "RhythmAnalyzer — src/services/ooda-clock/RhythmAnalyzer.ts",
+          "complete": true
+        },
+        {
+          "name": "Types — src/services/ooda-clock/types.ts",
+          "complete": true
+        },
+        {
+          "name": "MCP tools — src/tools/oodaClockTools.ts",
+          "complete": true
+        },
+        {
+          "name": "Dashboard page — apps/dashboard/app/ooda-clock/page.tsx",
+          "complete": true
+        },
+        {
+          "name": "Execution view — apps/dashboard/app/ooda-clock/[executionId]/page.tsx",
+          "complete": true
+        },
+        {
+          "name": "OODAClock component — circular visualization container",
+          "complete": true
+        },
+        {
+          "name": "ClockFace component — SVG with OODA quadrants",
+          "complete": true
+        },
+        {
+          "name": "EventMarker component — individual events on clock",
+          "complete": true
+        },
+        {
+          "name": "EventArc component — duration arcs",
+          "complete": true
+        },
+        {
+          "name": "PlaybackControls component — replay functionality",
+          "complete": true
+        },
+        {
+          "name": "ClockLegend component — color/shape legend",
+          "complete": true
+        },
+        {
+          "name": "Navigation link — Added to layout.tsx",
+          "complete": true
+        },
+        {
+          "name": "See ARCHITECTURE.md for full design documentation",
+          "complete": true
+        }
+      ]
+    },
+    {
+      "id": "skill-trees",
+      "path": "src/services/skill-trees/",
+      "status": "complete",
+      "functions": [
+        {
+          "name": "SkillTreeService — src/services/skill-trees/SkillTreeService.ts",
+          "complete": true
+        },
+        {
+          "name": "generateTree — generate skill tree for domain (phase, tag, category, loop)",
+          "complete": true
+        },
+        {
+          "name": "getTrees — list all generated trees",
+          "complete": true
+        },
+        {
+          "name": "getTree — get specific tree by ID",
+          "complete": true
+        },
+        {
+          "name": "getAvailableDomains — list available domains for tree generation",
+          "complete": true
+        },
+        {
+          "name": "getProgression — get skill progression status",
+          "complete": true
+        },
+        {
+          "name": "updateProgression — update skill progression",
+          "complete": true
+        },
+        {
+          "name": "recordSkillOutput — record user saw skill output",
+          "complete": true
+        },
+        {
+          "name": "recordSkillUsage — record user used skill in loop",
+          "complete": true
+        },
+        {
+          "name": "generateLearningPath — create learning path to target skill",
+          "complete": true
+        },
+        {
+          "name": "getLearningPaths — list learning paths",
+          "complete": true
+        },
+        {
+          "name": "getLearningPath — get specific learning path",
+          "complete": true
+        },
+        {
+          "name": "getStatus — service status",
+          "complete": true
+        },
+        {
+          "name": "generateTerminalView — terminal-friendly tree visualization",
+          "complete": true
+        },
+        {
+          "name": "API endpoints — /api/skill-trees/* (13 endpoints)",
+          "complete": true
+        },
+        {
+          "name": "MCP tools — 13 tools for skill tree operations",
+          "complete": true
+        }
+      ]
+    },
+    {
+      "id": "tech-trees",
+      "path": "",
+      "status": "deferred",
+      "functions": []
+    },
+    {
+      "id": "behavior-guarantees",
+      "path": "",
+      "status": "deferred",
+      "functions": []
+    },
+    {
+      "id": "coherence-system",
+      "path": "src/services/coherence/",
+      "status": "complete",
+      "functions": [
+        {
+          "name": "CoherenceService — src/services/coherence/CoherenceService.ts",
+          "complete": true
+        },
+        {
+          "name": "runValidation — run full coherence validation",
+          "complete": true
+        },
+        {
+          "name": "getStatus — current coherence status",
+          "complete": true
+        },
+        {
+          "name": "getLastReport — retrieve last validation report",
+          "complete": true
+        },
+        {
+          "name": "getIssues — list issues with filtering",
+          "complete": true
+        },
+        {
+          "name": "getIssue — get specific issue details",
+          "complete": true
+        },
+        {
+          "name": "updateIssueStatus — update issue status",
+          "complete": true
+        },
+        {
+          "name": "generateTerminalView — terminal-friendly coherence view",
+          "complete": true
+        },
+        {
+          "name": "10 validation rules across 8 alignment domains",
+          "complete": true
+        },
+        {
+          "name": "Domain scoring and overall coherence score",
+          "complete": true
+        },
+        {
+          "name": "Recommendation generation from detected issues",
+          "complete": true
+        },
+        {
+          "name": "API endpoints — /api/coherence/* (7 endpoints)",
+          "complete": true
+        },
+        {
+          "name": "MCP tools — 7 tools for coherence operations",
+          "complete": true
+        }
+      ]
+    },
+    {
+      "id": "mece-opportunity-mapping",
+      "path": "src/services/mece/",
+      "status": "complete",
+      "functions": [
+        {
+          "name": "MECEOpportunityService — src/services/mece/MECEOpportunityService.ts",
+          "complete": true
+        },
+        {
+          "name": "runAnalysis — full MECE analysis of opportunities",
+          "complete": true
+        },
+        {
+          "name": "getTaxonomy — get category taxonomy",
+          "complete": true
+        },
+        {
+          "name": "setCategory — add/update categories",
+          "complete": true
+        },
+        {
+          "name": "getOpportunities — list opportunities with filtering",
+          "complete": true
+        },
+        {
+          "name": "addOpportunity — manually add opportunity",
+          "complete": true
+        },
+        {
+          "name": "updateOpportunity — update opportunity status/details",
+          "complete": true
+        },
+        {
+          "name": "removeOpportunity — remove opportunity",
+          "complete": true
+        },
+        {
+          "name": "getGaps — list coverage gaps",
+          "complete": true
+        },
+        {
+          "name": "getOverlaps — list overlapping opportunities",
+          "complete": true
+        },
+        {
+          "name": "getStatus — service status summary",
+          "complete": true
+        },
+        {
+          "name": "getLastAnalysis — get last analysis results",
+          "complete": true
+        },
+        {
+          "name": "generateTerminalView — terminal-friendly coverage view",
+          "complete": true
+        },
+        {
+          "name": "Default 9-category taxonomy covering all system aspects",
+          "complete": true
+        },
+        {
+          "name": "Automatic classification using keyword matching",
+          "complete": true
+        },
+        {
+          "name": "Recommendation generation from gaps and overlaps",
+          "complete": true
+        },
+        {
+          "name": "API endpoints — /api/mece/* (10 endpoints)",
+          "complete": true
+        },
+        {
+          "name": "MCP tools — 12 tools for MECE operations",
+          "complete": true
+        }
+      ]
+    },
+    {
+      "id": "patterns-roundup",
+      "path": "src/services/patterns/",
+      "status": "complete",
+      "functions": [
+        {
+          "name": "PatternsService — src/services/patterns/PatternsService.ts",
+          "complete": true
+        },
+        {
+          "name": "queryPatterns — Search and filter across all levels",
+          "complete": true
+        },
+        {
+          "name": "getPattern — Get single pattern by ID",
+          "complete": true
+        },
+        {
+          "name": "generateRoundup — Export formatted summary (summary/full/markdown)",
+          "complete": true
+        },
+        {
+          "name": "detectBehavioralPatterns — Detect from run archives (success/failure/skip)",
+          "complete": true
+        },
+        {
+          "name": "detectCodebasePatterns — Detect from skills/loops",
+          "complete": true
+        },
+        {
+          "name": "identifyPatternGaps — Gap coverage analysis (8 categories)",
+          "complete": true
+        },
+        {
+          "name": "formalizePattern — Convert detected to formal pattern",
+          "complete": true
+        },
+        {
+          "name": "API endpoints — /api/patterns/* (6 endpoints)",
+          "complete": true
+        },
+        {
+          "name": "MCP tools — 6 tools for pattern operations",
+          "complete": true
+        }
+      ]
+    },
+    {
+      "id": "scoring",
+      "path": "src/services/scoring/",
+      "status": "complete",
+      "functions": [
+        {
+          "name": "ScoringService — src/services/scoring/ScoringService.ts",
+          "complete": true
+        },
+        {
+          "name": "scoreModule — comprehensive module score (0-100)",
+          "complete": true
+        },
+        {
+          "name": "scoreAllModules — ranked list of all modules",
+          "complete": true
+        },
+        {
+          "name": "scoreSystem — system health score with metrics",
+          "complete": true
+        },
+        {
+          "name": "getModulesNeedingAttention — low score/blocked modules",
+          "complete": true
+        },
+        {
+          "name": "recordHistory — persist score snapshots",
+          "complete": true
+        },
+        {
+          "name": "getHistory — retrieve historical scores",
+          "complete": true
+        },
+        {
+          "name": "getScoreTrends — trend analysis (improving/stable/declining)",
+          "complete": true
+        },
+        {
+          "name": "compareScores — compare two points in time",
+          "complete": true
+        },
+        {
+          "name": "generateTerminalView — terminal-friendly scorecard",
+          "complete": true
+        },
+        {
+          "name": "API endpoints — /api/scoring/* (8 endpoints)",
+          "complete": true
+        },
+        {
+          "name": "MCP tools — 8 tools for scoring operations",
+          "complete": true
+        }
+      ]
+    },
+    {
+      "id": "multiplayer",
+      "path": "",
+      "status": "deferred",
+      "functions": []
+    },
+    {
+      "id": "natural-conversation",
+      "path": "",
+      "status": "deferred",
+      "functions": []
+    },
+    {
+      "id": "proactive-messaging",
+      "path": "src/services/proactive-messaging/",
+      "status": "complete",
+      "functions": [
+        {
+          "name": "ProactiveMessagingService — src/services/proactive-messaging/ProactiveMessagingService.ts",
+          "complete": true
+        },
+        {
+          "name": "TerminalAdapter — console + OS notifications",
+          "complete": true
+        },
+        {
+          "name": "SlackAdapter — Bolt SDK with Block Kit buttons",
+          "complete": true
+        },
+        {
+          "name": "MessageFormatter — terminal-style formatting for all channels",
+          "complete": true
+        },
+        {
+          "name": "ConversationState — track pending interactions",
+          "complete": true
+        },
+        {
+          "name": "notify — send events to all channels",
+          "complete": true
+        },
+        {
+          "name": "notifyGateWaiting — gate approval notifications with buttons",
+          "complete": true
+        },
+        {
+          "name": "notifyLoopComplete — loop completion notifications",
+          "complete": true
+        },
+        {
+          "name": "notifyDreamProposalsReady — proposal deck notifications",
+          "complete": true
+        },
+        {
+          "name": "notifyExecutorBlocked — blocker notifications",
+          "complete": true
+        },
+        {
+          "name": "notifyError — error/warning notifications",
+          "complete": true
+        },
+        {
+          "name": "notifyDeckReady — deck ready notifications",
+          "complete": true
+        },
+        {
+          "name": "configureChannel — enable/disable and configure channels",
+          "complete": true
+        },
+        {
+          "name": "getChannelStatus — connection status per channel",
+          "complete": true
+        },
+        {
+          "name": "getPendingInteractions — interactions awaiting response",
+          "complete": true
+        },
+        {
+          "name": "API endpoints — /api/messaging/* (6 endpoints)",
+          "complete": true
+        },
+        {
+          "name": "MCP tools — 10 tools for messaging operations",
+          "complete": true
+        },
+        {
+          "name": "Bidirectional Slack interaction via Socket Mode",
+          "complete": true
+        },
+        {
+          "name": "Foundation for \"work from anywhere\" async loops",
+          "complete": true
+        },
+        {
+          "name": "See src/services/proactive-messaging/ProactiveMessagingService.ts",
+          "complete": true
+        }
+      ]
+    },
+    {
+      "id": "slack-integration",
+      "path": "src/services/slack-integration/",
+      "status": "complete",
+      "functions": [
+        {
+          "name": "SlackIntegrationService — src/services/slack-integration/SlackIntegrationService.ts",
+          "complete": true
+        },
+        {
+          "name": "SlackCommandParser — semantic command parsing from text",
+          "complete": true
+        },
+        {
+          "name": "SlackThreadManager — thread-per-execution tracking",
+          "complete": true
+        },
+        {
+          "name": "SlackMergeWorkflow — merge/rebase coordination",
+          "complete": true
+        },
+        {
+          "name": "types — SlackChannelConfig, SemanticCommand, ExecutionThread, EngineerStatus",
+          "complete": true
+        },
+        {
+          "name": "handleMessage — route incoming messages to handlers",
+          "complete": true
+        },
+        {
+          "name": "handleButtonClick — handle Slack button interactions",
+          "complete": true
+        },
+        {
+          "name": "handleStartLoop — start loop from Slack command",
+          "complete": true
+        },
+        {
+          "name": "handleApproval — approve gates from Slack",
+          "complete": true
+        },
+        {
+          "name": "handleMerge/handleRebase — git operations from Slack",
+          "complete": true
+        },
+        {
+          "name": "handleCapture — inbox capture from Slack",
+          "complete": true
+        },
+        {
+          "name": "API endpoints — /api/slack/* (8 endpoints)",
+          "complete": true
+        },
+        {
+          "name": "MCP tools — 15 tools for Slack integration",
+          "complete": true
+        },
+        {
+          "name": "Tests — 55 tests passing (slackIntegration.test.ts)",
+          "complete": true
+        },
+        {
+          "name": "See src/services/slack-integration/SlackIntegrationService.ts",
+          "complete": true
+        }
+      ]
+    },
+    {
+      "id": "brownfield-specialization",
+      "path": "",
+      "status": "deferred",
+      "functions": []
+    },
+    {
+      "id": "business-model-loop",
+      "path": "",
+      "status": "deferred",
+      "functions": []
+    },
+    {
+      "id": "go-to-market-loop",
+      "path": "",
+      "status": "deferred",
+      "functions": []
+    },
+    {
+      "id": "marketing-loop",
+      "path": "",
+      "status": "deferred",
+      "functions": []
+    },
+    {
+      "id": "ops-loop",
+      "path": "",
+      "status": "deferred",
+      "functions": []
+    },
+    {
+      "id": "runtime-contexts",
+      "path": "",
+      "status": "deferred",
+      "functions": []
+    },
+    {
+      "id": "sales-loop",
+      "path": "",
+      "status": "complete",
+      "functions": []
+    },
+    {
+      "id": "auto-updating",
+      "path": "",
+      "status": "complete",
+      "functions": []
+    },
+    {
+      "id": "co-op-skill-acquisition",
+      "path": "",
+      "status": "deferred",
+      "functions": []
+    },
+    {
+      "id": "ecosystem-roundup",
+      "path": "",
+      "status": "deferred",
+      "functions": []
+    },
+    {
+      "id": "game-design",
+      "path": "src/services/game-design/",
+      "status": "complete",
+      "functions": [
+        {
+          "name": "GameDesignService — src/services/game-design/GameDesignService.ts",
+          "complete": true
+        },
+        {
+          "name": "createFiniteGame — create finite game for module/system",
+          "complete": true
+        },
+        {
+          "name": "startGame — start tracking game progress",
+          "complete": true
+        },
+        {
+          "name": "satisfyWinCondition — mark condition as satisfied",
+          "complete": true
+        },
+        {
+          "name": "getFiniteGame — get game by ID",
+          "complete": true
+        },
+        {
+          "name": "listFiniteGames — list with filtering (scope, status)",
+          "complete": true
+        },
+        {
+          "name": "createInfiniteGame — create infinite game for organization",
+          "complete": true
+        },
+        {
+          "name": "linkFiniteGame — link finite to infinite game",
+          "complete": true
+        },
+        {
+          "name": "updateHealthMetric — update infinite game health metrics",
+          "complete": true
+        },
+        {
+          "name": "getInfiniteGame — get infinite game by ID",
+          "complete": true
+        },
+        {
+          "name": "listInfiniteGames — list all infinite games",
+          "complete": true
+        },
+        {
+          "name": "generateGamesFromRoadmap — auto-generate games from modules",
+          "complete": true
+        },
+        {
+          "name": "getGameState — overall game state summary",
+          "complete": true
+        },
+        {
+          "name": "getStatus — service status",
+          "complete": true
+        },
+        {
+          "name": "generateTerminalView — terminal-friendly game view",
+          "complete": true
+        },
+        {
+          "name": "API endpoints — /api/game-design/* (12 endpoints)",
+          "complete": true
+        },
+        {
+          "name": "MCP tools — 15 tools for game design operations",
+          "complete": true
+        }
+      ]
+    },
+    {
+      "id": "proposing-decks",
+      "path": "src/services/proposing-decks/",
+      "status": "complete",
+      "functions": [
+        {
+          "name": "ProposingDecksService — src/services/proposing-decks/ProposingDecksService.ts",
+          "complete": true
+        },
+        {
+          "name": "getDailyReviewSummary — get today's review summary",
+          "complete": true
+        },
+        {
+          "name": "generateDailyDeck — generate daily decks (knowledge + proposals)",
+          "complete": true
+        },
+        {
+          "name": "listDecks — list review decks with filtering",
+          "complete": true
+        },
+        {
+          "name": "getDeck — get specific deck details",
+          "complete": true
+        },
+        {
+          "name": "startReview — start reviewing a deck",
+          "complete": true
+        },
+        {
+          "name": "completeReview — complete deck review with results",
+          "complete": true
+        },
+        {
+          "name": "skipDeck — skip a deck with reason",
+          "complete": true
+        },
+        {
+          "name": "getSchedule — get generation schedule",
+          "complete": true
+        },
+        {
+          "name": "configureSchedule — configure auto-generation schedule",
+          "complete": true
+        },
+        {
+          "name": "getStats — get service statistics (streak, completion rates)",
+          "complete": true
+        },
+        {
+          "name": "getHistory — get review history",
+          "complete": true
+        },
+        {
+          "name": "DreamEngine integration for proposal decks",
+          "complete": true
+        },
+        {
+          "name": "SpacedRepetitionService integration for knowledge cards",
+          "complete": true
+        },
+        {
+          "name": "SM-2 algorithm leveraged for card scheduling",
+          "complete": true
+        },
+        {
+          "name": "API endpoints — /api/proposing-decks/* (10 endpoints)",
+          "complete": true
+        },
+        {
+          "name": "MCP tools — 12 tools for proposing decks operations",
+          "complete": true
+        },
+        {
+          "name": "Terminal view for morning review",
+          "complete": true
+        },
+        {
+          "name": "Foundation for \"wake up to decks ready for review\"",
+          "complete": true
+        },
+        {
+          "name": "See src/services/proposing-decks/ProposingDecksService.ts",
+          "complete": true
+        }
+      ]
+    },
+    {
+      "id": "spaced-repetition-learning",
+      "path": "src/services/spaced-repetition/",
+      "status": "complete",
+      "functions": [
+        {
+          "name": "SpacedRepetitionService — src/services/spaced-repetition/SpacedRepetitionService.ts",
+          "complete": true
+        },
+        {
+          "name": "createCard — create SRS card",
+          "complete": true
+        },
+        {
+          "name": "getCard — get card by ID",
+          "complete": true
+        },
+        {
+          "name": "listCards — list with filtering (type, deck, tag, due, suspended)",
+          "complete": true
+        },
+        {
+          "name": "updateCard — update card content/tags/suspended",
+          "complete": true
+        },
+        {
+          "name": "deleteCard — remove card",
+          "complete": true
+        },
+        {
+          "name": "createDeck — create card deck",
+          "complete": true
+        },
+        {
+          "name": "getDeck — get deck by ID",
+          "complete": true
+        },
+        {
+          "name": "listDecks — list all decks",
+          "complete": true
+        },
+        {
+          "name": "addCardToDeck — add card to deck",
+          "complete": true
+        },
+        {
+          "name": "removeCardFromDeck — remove card from deck",
+          "complete": true
+        },
+        {
+          "name": "getDueCards — get cards due for review",
+          "complete": true
+        },
+        {
+          "name": "startReviewSession — start review session",
+          "complete": true
+        },
+        {
+          "name": "recordReview — record response with SM-2 algorithm",
+          "complete": true
+        },
+        {
+          "name": "completeSession — complete review session",
+          "complete": true
+        },
+        {
+          "name": "getSessions — list review sessions",
+          "complete": true
+        },
+        {
+          "name": "getSession — get specific session",
+          "complete": true
+        },
+        {
+          "name": "generateCardsFromSkills — auto-generate from knowledge graph",
+          "complete": true
+        },
+        {
+          "name": "generateCardsFromPatterns — auto-generate from memory patterns",
+          "complete": true
+        },
+        {
+          "name": "getLearningStats — learning statistics",
+          "complete": true
+        },
+        {
+          "name": "getStatus — service status",
+          "complete": true
+        },
+        {
+          "name": "generateTerminalView — terminal-friendly SRS view",
+          "complete": true
+        },
+        {
+          "name": "API endpoints — /api/srs/* (19 endpoints)",
+          "complete": true
+        },
+        {
+          "name": "MCP tools — 22 tools for SRS operations",
+          "complete": true
+        }
+      ]
+    },
+    {
+      "id": "local-first",
+      "path": "",
+      "status": "deferred",
+      "functions": []
+    }
+  ],
+  "completionAlgebra": {
+    "formula": "System.done = ALL(Module.done)",
+    "current": "21/21 active modules complete (100%) + 14 deferred",
+    "pending": "None",
+    "status": "409/410 functions (100%)",
+    "version": "2.0.0"
+  },
+  "activeLoops": [],
+  "recentCompletions": [
+    {
+      "date": "2026-02-02",
+      "loop": "engineering-loop",
+      "scope": "slack-integration",
+      "outcome": "success",
+      "deliverables": "SlackIntegrationService, 8 API endpoints, 15 MCP tools, full bidirectional control"
+    },
+    {
+      "date": "2026-02-01",
+      "loop": "engineering-loop",
+      "scope": "proactive-messaging",
+      "outcome": "success",
+      "deliverables": "ProactiveMessagingService, 6 API endpoints, 10 MCP tools, Slack bidirectional"
+    },
+    {
+      "date": "2026-02-01",
+      "loop": "engineering-loop",
+      "scope": "proposing-decks",
+      "outcome": "success",
+      "deliverables": "ProposingDecksService, 10 API endpoints, 12 MCP tools, morning review decks"
+    },
+    {
+      "date": "2026-02-01",
+      "loop": "engineering-loop",
+      "scope": "spaced-repetition",
+      "outcome": "success",
+      "deliverables": "SpacedRepetitionService, 19 API endpoints, 22 MCP tools, SM-2 algorithm"
+    },
+    {
+      "date": "2026-02-01",
+      "loop": "engineering-loop",
+      "scope": "game-design",
+      "outcome": "success",
+      "deliverables": "GameDesignService, 12 API endpoints, 15 MCP tools, finite/infinite game framing"
+    },
+    {
+      "date": "2026-02-01",
+      "loop": "engineering-loop",
+      "scope": "skill-trees",
+      "outcome": "success",
+      "deliverables": "SkillTreeService, 13 API endpoints, 13 MCP tools, DAG visualization"
+    },
+    {
+      "date": "2026-02-01",
+      "loop": "engineering-loop",
+      "scope": "loop-sequencing",
+      "outcome": "success",
+      "deliverables": "LoopSequencingService, 11 API endpoints, 12 MCP tools, multi-move planning"
+    },
+    {
+      "date": "2026-02-01",
+      "loop": "engineering-loop",
+      "scope": "coherence-system",
+      "outcome": "success",
+      "deliverables": "CoherenceService, 7 API endpoints, 7 MCP tools, 10 validation rules across 8 domains"
+    },
+    {
+      "date": "2026-02-01",
+      "loop": "engineering-loop",
+      "scope": "mece-opportunity-mapping",
+      "outcome": "success",
+      "deliverables": "MECEOpportunityService, 10 API endpoints, 12 MCP tools, gap/overlap detection"
+    },
+    {
+      "date": "2026-02-01",
+      "loop": "engineering-loop",
+      "scope": "multi-agent-worktrees",
+      "outcome": "success",
+      "deliverables": "MultiAgentCoordinator, 20 API endpoints, 24 MCP tools, parallel development coordination"
+    },
+    {
+      "date": "2026-02-01",
+      "loop": "engineering-loop",
+      "scope": "dreaming",
+      "outcome": "success",
+      "deliverables": "DreamEngine, 11 API endpoints, 12 MCP tools, idle proposal generation"
+    },
+    {
+      "date": "2026-02-01",
+      "loop": "engineering-loop",
+      "scope": "autonomous",
+      "outcome": "success",
+      "deliverables": "AutonomousExecutor, 8 API endpoints, 9 MCP tools, background execution"
+    },
+    {
+      "date": "2026-02-01",
+      "loop": "engineering-loop",
+      "scope": "scoring",
+      "outcome": "success",
+      "deliverables": "ScoringService, 8 API endpoints, 8 MCP tools, system scorecard"
+    },
+    {
+      "date": "2026-02-01",
+      "loop": "engineering-loop",
+      "scope": "patterns-roundup",
+      "outcome": "success",
+      "deliverables": "PatternsService, 6 API endpoints, 6 MCP tools, pattern detection"
+    },
+    {
+      "date": "2026-02-01",
+      "loop": "engineering-loop",
+      "scope": "kanban",
+      "outcome": "success",
+      "deliverables": "Dashboard roadmap page, layer visualization, leverage scoring panel"
+    },
+    {
+      "date": "2026-02-01",
+      "loop": "engineering-loop",
+      "scope": "2-layer-orchestration",
+      "outcome": "success",
+      "deliverables": "OrchestrationService, AgentManager, WorktreeManager, 15 API endpoints, 17 MCP tools"
+    },
+    {
+      "date": "2026-01-31",
+      "loop": "engineering-loop",
+      "scope": "knowledge-graph-ontology",
+      "outcome": "success",
+      "deliverables": "KnowledgeGraphService, 17 API endpoints, 19 MCP tools"
+    },
+    {
+      "date": "2026-01-31",
+      "loop": "engineering-loop",
+      "scope": "roadmapping-module",
+      "outcome": "success",
+      "deliverables": "RoadmapService, 10 API endpoints, leverage integration"
+    }
+  ],
+  "dependencies": {
+    "dependsOn": [],
+    "dependedOnBy": [
+      "dashboard",
+      "all other projects using orchestrator"
+    ]
+  },
+  "notes": [],
+  "version": "2.0.0",
+  "createdAt": "2026-02-04T17:28:05.689Z",
+  "updatedAt": "2026-02-04T17:48:21.226Z"
+}
