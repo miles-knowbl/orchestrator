@@ -4333,13 +4333,14 @@
         "SHIP": [
           {
             "id": "GUA-DIST-SHIP-001",
-            "name": "No uncommitted changes",
+            "name": "No uncommitted changes (excluding runtime state)",
             "type": "git_state",
             "required": true,
             "validation": {
               "gitChecks": [
                 {
-                  "check": "no_uncommitted"
+                  "check": "no_uncommitted",
+                  "excludePatterns": ["memory/", "data/", ".orchestra/"]
                 }
               ]
             }

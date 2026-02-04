@@ -702,13 +702,26 @@ export class GuaranteeService {
           case 'no_uncommitted': {
             // Check for uncommitted changes (staged or unstaged)
             const { stdout } = await execAsync('git status --porcelain', { cwd });
-            const changes = stdout.trim().split('\n').filter(l => l.length > 0);
+            let changes = stdout.trim().split('\n').filter(l => l.length > 0);
+
+            // Apply exclude patterns if specified
+            const excludePatterns = check.excludePatterns || [];
+            if (excludePatterns.length > 0) {
+              changes = changes.filter(change => {
+                // Extract file path from git status line (format: "XY path" or "XY old -> new")
+                const filePath = change.slice(3).split(' -> ').pop() || '';
+                return !excludePatterns.some(pattern => filePath.startsWith(pattern));
+              });
+            }
 
             result.evidence.push({
               type: 'proof',
               path: 'git status',
               value: changes.length,
-              details: { uncommittedFiles: changes.slice(0, 10) },
+              details: {
+                uncommittedFiles: changes.slice(0, 10),
+                excludedPatterns: excludePatterns,
+              },
             });
 
             if (changes.length > 0) {
