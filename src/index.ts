@@ -527,22 +527,24 @@ async function main() {
     message: 'Spaced repetition service initialized',
   }));
 
-  // Initialize proposing decks service (wake up to decks ready for review)
-  const proposingDecksService = new ProposingDecksService({
-    dataPath: join(config.repoPath, 'data', 'proposing-decks', 'state.json'),
-  });
-  proposingDecksService.setDependencies({
-    dreamEngine,
-    spacedRepetitionService,
-    knowledgeGraphService,
-    skillRegistry,
-  });
-  await proposingDecksService.initialize();
+  // DEFERRED: proposing-decks module depends on dreaming module
+  // Re-enable when dreaming is un-deferred. See ROADMAP.md deferred items.
+  // const proposingDecksService = new ProposingDecksService({
+  //   dataPath: join(config.repoPath, 'data', 'proposing-decks', 'state.json'),
+  // });
+  // proposingDecksService.setDependencies({
+  //   dreamEngine,
+  //   spacedRepetitionService,
+  //   knowledgeGraphService,
+  //   skillRegistry,
+  // });
+  // await proposingDecksService.initialize();
+  const proposingDecksService = undefined; // Deferred - service disabled
 
   console.error(JSON.stringify({
     timestamp: new Date().toISOString(),
     level: 'info',
-    message: 'Proposing decks service initialized',
+    message: 'Proposing decks service DEFERRED (depends on dreaming module)',
   }));
 
   // Initialize proactive messaging service (multi-channel notifications)
@@ -619,7 +621,9 @@ async function main() {
   const skillTreeHandlers = createSkillTreeToolHandlers(skillTreeService);
   const gameDesignHandlers = createGameDesignToolHandlers(gameDesignService);
   const spacedRepetitionHandlers = createSpacedRepetitionToolHandlers(spacedRepetitionService);
-  const proposingDecksHandlers = createProposingDecksToolHandlers(proposingDecksService);
+  // DEFERRED: proposing-decks tools disabled while module is deferred
+  const proposingDecksHandlers = {}; // Empty handlers while deferred
+  // const proposingDecksHandlers = createProposingDecksToolHandlers(proposingDecksService);
   const proactiveMessagingHandlers = createProactiveMessagingToolHandlers(
     proactiveMessagingService,
     installStateService,
@@ -674,7 +678,8 @@ async function main() {
     ...skillTreeTools,
     ...gameDesignTools,
     ...spacedRepetitionTools,
-    ...proposingDecksTools,
+    // DEFERRED: proposingDecksTools disabled while module is deferred
+    // ...proposingDecksTools,
     ...proactiveMessagingTools,
     ...slackIntegrationTools,
     ...knopilotToolDefinitions,

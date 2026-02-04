@@ -849,3 +849,88 @@ Version: 1.2.0
   - 55 tests covering all components
   - Foundation for "work from Slack" async orchestration
   - See src/services/slack-integration/SlackIntegrationService.ts
+
+---
+
+## Architecture Evolution v2.0 (2026-02-03)
+
+> Strategic direction for the next phase of orchestrator development.
+
+### Three-Layer Persistence Architecture
+
+The system persistence is organized into three layers with distinct ownership:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                 THREE-LAYER ARCHITECTURE                     │
+├─────────────────────────────────────────────────────────────┤
+│  LAYER 1: Orchestrator Core (immutable knowledge)           │
+│  ├── skills/*  (skill definitions)                          │
+│  ├── loops/*   (loop definitions)                           │
+│  ├── commands/*.md (slash commands)                         │
+│  └── memory/orchestrator.json (patterns, decisions)         │
+│                                                             │
+│  LAYER 2: User Context (travels with user)                  │
+│  ├── ~/.claude/profile.json (user identity, preferences)    │
+│  ├── ~/.claude/calibration/ (estimate accuracy)             │
+│  ├── ~/.claude/preferences.json (UI, notification prefs)    │
+│  └── ~/.claude/commands/ (user commands)                    │
+│                                                             │
+│  LAYER 3: Project Context (stays with project)              │
+│  ├── {project}/.claude/DREAM-STATE.md                       │
+│  ├── {project}/.claude/runs/ (archived executions)          │
+│  ├── {project}/.claude/memory.json (project patterns)       │
+│  └── {project}/ROADMAP.md (module ladder)                   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Active vs Passive Mode
+
+Mode governs what can mutate when the user is away:
+
+| Mode | Human Presence | Layer 3 | Notification Style |
+|------|----------------|---------|-------------------|
+| **Active** | Present | Mutable | Interactive prompts |
+| **Passive** | Away | Read-only | Queue to inbox |
+
+Active mode: Human-in-loop, executing work, mutable project state.
+Passive mode: Autonomous observation, proposals queued to user inbox.
+
+*Note: Mode architecture documented in deferred dreaming module scope (ROADMAP.md).*
+
+### Execution Model Improvements
+
+| Improvement | Description | Task |
+|-------------|-------------|------|
+| **Per-loop transient state** | Each loop has `{loop-id}-state.json` pattern | #1 |
+| **Resolve guarantee** | "I satisfied the guarantee another way" semantic | Done |
+| **Retry deliverable** | Explicit retry path for failed deliverables | #3 |
+| **Version patch default** | Versions advance 1.0.x by default | #5 |
+| **Gate CRUD** | Add/remove/disable gates dynamically | #6 |
+| **Clean shutdown** | Registry for server, loops, agents cleanup | #7 |
+
+### Quality & Context Improvements
+
+| Improvement | Description | Task |
+|-------------|-------------|------|
+| **Taxonomy audit** | Review skill/loop categories and guarantees | #4 |
+| **User profile** | Canonical ~/.claude/profile.json structure | #9 |
+| **Context cultivation loops** | /gotchas, /guarantee for coherence discovery | #10 |
+| **Architecture documentation** | Formalize three-layer model | #11 |
+
+### Key Findings
+
+1. **AGENTS.md vs SKILL.md**: Complementary, not competing. AGENTS.md is cross-tool project context; SKILL.md is structured reusable capabilities. Our system is more sophisticated.
+
+2. **Persistence inventory**: Discovered 5 layers of persistence across memory/, data/, skills/, loops/, ~/.claude/, and project .claude/ directories.
+
+3. **Guarantee resolution**: Implemented new semantic allowing guarantee intent to be acknowledged when formal checks fail but intent is satisfied.
+
+### Next Phase Priority
+
+The highest-leverage tasks for v2.0:
+
+1. **Gate CRUD** (#6) — Enables mobile workflow flexibility
+2. **User profile** (#9) — Foundation for Layer 2
+3. **Clean shutdown** (#7) — Operational reliability
+4. **Context cultivation loops** (#10) — Coherence discovery

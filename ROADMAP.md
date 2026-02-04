@@ -8,7 +8,7 @@
 
 **System**: Orchestrator — Self-improving meta-system where skills are the atomic primitive
 **Dream State**: Autonomous, coherent, local-first system that compounds leverage through skill-based ontology
-**Progress**: 20/31 modules complete (65%) + 13 deferred
+**Progress**: 19/34 modules complete (56%) + 15 deferred
 **Remaining**: None (all active modules complete)
 
 ---
@@ -20,16 +20,16 @@ Layer 6  ───────────────────────�
          local-first (deferred)
 
 Layer 5  ───────────────────────────────────────────────────────────────────────
-         game-design ✓, co-op (deferred), proposing-decks ✓, spaced-repetition ✓, auto-updating ✓, ecosystem-roundup (deferred)
+         game-design ✓, co-op (deferred), proposing-decks (deferred), spaced-repetition ✓, auto-updating ✓, ecosystem-roundup (deferred)
 
 Layer 4  ───────────────────────────────────────────────────────────────────────
-         sales-loop ✓, business-model-loop (deferred), go-to-market-loop (deferred), brownfield-specialization (deferred)
+         sales-loop ✓, business-model-loop (deferred), go-to-market-loop (deferred), brownfield-specialization (deferred), runtime-contexts (deferred), marketing-loop (deferred)
 
 Layer 3  ───────────────────────────────────────────────────────────────────────
          proactive-messaging ✓, slack-integration ✓, natural-conversation (deferred), multiplayer-async-worktrees (deferred)
 
 Layer 2  ───────────────────────────────────────────────────────────────────────
-         patterns-roundup ✓, scoring ✓, mece-opportunity-mapping ✓, coherence-system ✓
+         patterns-roundup ✓, scoring ✓, mece-opportunity-mapping ✓, coherence-system ✓, behavior-guarantees (deferred)
 
 Layer 1  ───────────────────────────────────────────────────────────────────────
          autonomous ✓, dreaming (deferred), multi-agent-worktrees ✓, loop-sequencing ✓, kanban ✓, ooda-clocks ✓, skill-trees ✓, tech-trees (deferred), ladder-of-abstraction (deferred)
@@ -60,7 +60,7 @@ Layer 0  ───────────────────────�
 | **tech-trees** | Macroscopic technology progressions that cultures/orgs pursue. Predictive capabilities (potentially RL-based like AlphaGo with Markov decision trees) that inspire MECE opportunity mapping at system and module levels. | knowledge-graph-ontology, mece-opportunity-mapping | *deferred* |
 | **ladder-of-abstraction-interfaces** | UI showing the same loop at different zoom levels (module/system/org). Music-gear-like looping interfaces for piloting, co-piloting, or playing co-op PvE with the orchestrator. | kanban | *deferred*
 | **autonomous** ✓ | Full loop execution without human gates + background continuous operation. "It works while I sleep." The orchestrator advances dream state while you're away. | 2-layer-orchestration, proactive-messaging |
-| **dreaming** | Sleep/background processing mode for proposing new modules→system and systems→org. The system "dreams up" new work while idle, ready for review when you return. Needs roadmap state sync before useful. | autonomous | *deferred* |
+| **dreaming** | Sleep/background processing mode for proposing new modules→system and systems→org. The system "dreams up" new work while idle, ready for review when you return. **Includes Active vs Passive Mode architecture:** Active mode = human present, Layer 3 mutable, executing work; Passive mode = human away, Layer 3 read-only, proposals queued to inbox. Mode governs what can mutate and notification behavior. Needs roadmap state sync before useful. | autonomous | *deferred* |
 | **multi-agent-worktrees** ✓ | Multiple sets of parallel agents across two hierarchy levels and multiple humans. Thoughtful coordination when collaborators each have their own agent sets working on isolated git worktrees. | 2-layer-orchestration |
 | **loop-sequencing** ✓ | Developing intuition for which loops commonly run together (like NLP pattern detection) and using that to look multiple moves ahead in the "line" (chess-inspired). Beyond single-move leverage protocol to multi-move planning. | leverage-protocol (exists) |
 
@@ -74,6 +74,7 @@ Layer 0  ───────────────────────�
 | **scoring** ✓ | System-level evaluation around module-specific value. Quantifies how much each module contributes to dream state advancement. | analytics (exists) |
 | **mece-opportunity-mapping** ✓ | Mutually Exclusive, Collectively Exhaustive opportunity analysis at system and module levels. Ensures no blind spots in roadmap coverage. | knowledge-graph-ontology |
 | **coherence-system** ✓ | Alignment of all orchestrator components. Skill-based ontology + dream state + roadmapping form the spine of a "spec-driven organization." Ensures modules don't drift or conflict. | roadmapping, knowledge-graph-ontology |
+| **behavior-guarantees** | System for enforcing/guaranteeing LLM behavior. Explicit rules enforcement patterns for ensuring consistent agent behavior. | coherence-system | *deferred* |
 
 ---
 
@@ -95,7 +96,9 @@ Layer 0  ───────────────────────�
 | **sales-loop** ✓ | KnoPilot runtime context: 24 skills across 6 layers, 7 loops covering full sales lifecycle (Lead → Target → Discovery → Contracting → Production → Closed). See `runtimes/knopilot/RUNTIME.md`. | — |
 | **business-model-loop** | Full loop for creating business model artifacts. Structured exploration of value proposition, revenue streams, cost structure, channels. | — | *deferred* |
 | **go-to-market-loop** | Full loop for GTM strategy artifacts. Market analysis, positioning, launch planning, channel strategy. | — | *deferred* |
-| **brownfield-specialization** | Special patterns and loops for brownfield contexts. Making orchestrator as good at brownfield as it is at greenfield — essential for getting systems to "completion" for launch or checkpoint. | — | *deferred*
+| **brownfield-specialization** | Special patterns and loops for brownfield contexts. Making orchestrator as good at brownfield as it is at greenfield — essential for getting systems to "completion" for launch or checkpoint. | — | *deferred* |
+| **runtime-contexts** | Constructed environments providing domain ontology (vocabulary, entities, operations, workflows, shared concepts). KnoPilot is reference implementation. | sales-loop | *deferred* |
+| **marketing-loop** | Domain loop for marketing workflows. Content creation, campaign management, audience development, analytics. | — | *deferred* |
 
 ---
 
@@ -105,7 +108,7 @@ Layer 0  ───────────────────────�
 |--------|-------------|------------|
 | **game-design** ✓ | Framing the dream state ladder at each of the two levels (module→system, system→org) as finite games with clear win conditions. Understanding the infinite game the org plays in a cosmic, mission sense. | coherence-system |
 | **co-op-skill-acquisition** | Collaborative ontology building across multiple users, multiple AI agents, and user+AI combinations. Creating multiple ontologies with different participant combinations. | knowledge-graph-ontology, multi-agent-worktrees | *deferred* |
-| **proposing-decks** ✓ | Wake up to decks ready for review: (1) Knowledge decks for spaced repetition learning, (2) Project/module/system proposal decks. Learn from them and approve scopes for autonomous execution. | dreaming, spaced-repetition-learning |
+| **proposing-decks** | Wake up to decks ready for review: (1) Knowledge decks for spaced repetition learning, (2) Project/module/system proposal decks. Learn from them and approve scopes for autonomous execution. | dreaming, spaced-repetition-learning | *deferred*
 | **spaced-repetition-learning** ✓ | SRS for skill mastery and knowledge retention. The orchestrator helps you internalize patterns and skills through timed review. | knowledge-graph-ontology |
 | **auto-updating** ✓ | Other users receive updates without manually downloading from docs site. Push-based distribution of improvements via daily welcome notification. | — |
 | **ecosystem-roundup** | Collecting and organizing tools, patterns, frameworks, skills, and loops across the ecosystem. Ensuring nothing useful is orphaned. | — | *deferred*
@@ -145,7 +148,8 @@ Layer 0  ───────────────────────�
 | brownfield-specialization | Patterns exist, needs formalization | When brownfield work increases |
 | natural-conversation | Voice I/O not immediately needed | When mobile-first usage increases |
 | multiplayer-async-worktrees | Multi-engineer coordination exists but needs consolidation | When team usage begins; consolidate slack-integration service into proactive-messaging |
-| dreaming | Needs roadmap state sync; will integrate ADIR-reasoning-cycle | After roadmap integration fixed |
+| dreaming | Needs roadmap state sync; will integrate ADIR-reasoning-cycle. **Now also includes Active/Passive Mode architecture:** three-layer state model (Orchestrator Core → User Context → Project Context) where mode governs mutability. Active = human-in-loop, mutable project state. Passive = read-only project state, proposals to user inbox. | After roadmap integration fixed |
+| proposing-decks | Depends on dreaming module; service implemented but disabled | When dreaming module is un-deferred |
 | behavior-guarantees | System for enforcing/guaranteeing LLM behavior; explicit-rules-enforcement pattern will live here | When behavior enforcement patterns mature |
 | runtime-contexts | Constructed environments providing domain ontology (vocabulary, entities, operations, workflows, shared concepts). KnoPilot is reference implementation. Concept needs to mature before building infrastructure. | When second runtime context needed or pattern proves out |
 | marketing-loop | Domain loop for marketing workflows. Content creation, campaign management, audience development, analytics. | When marketing work patterns emerge |
@@ -158,6 +162,12 @@ Layer 0  ───────────────────────�
 |------|-------|
 | **audit loops for missing skills** | Systematic audit to find gaps in skill coverage |
 
+## Known Issues
+
+| Issue | Description | Workaround |
+|-------|-------------|------------|
+| **CoherenceService graph-skill stale data** | The graph-skill coherence domain reports skills as "stale" when they exist on disk. Root cause: CoherenceService uses cached SkillRegistry data instead of fresh disk data. Affects validation accuracy. | Re-run `refresh_index` before coherence validation, or ignore graph-skill domain until fixed. |
+
 ---
 
 ## Module Count Summary
@@ -166,12 +176,12 @@ Layer 0  ───────────────────────�
 |-------|----------|-------|---------|
 | 0 | 3 | 3 | roadmapping ✓, 2-layer-orchestration ✓, knowledge-graph-ontology ✓ |
 | 1 | 6 | 9 | kanban ✓, ooda-clocks ✓, skill-trees ✓, tech-trees (deferred), ladder-of-abstraction (deferred), autonomous ✓, dreaming (deferred), multi-agent-worktrees ✓, loop-sequencing ✓ |
-| 2 | 4 | 4 | patterns-roundup ✓, scoring ✓, mece-opportunity-mapping ✓, coherence-system ✓ |
+| 2 | 4 | 5 | patterns-roundup ✓, scoring ✓, mece-opportunity-mapping ✓, coherence-system ✓, behavior-guarantees (deferred) |
 | 3 | 2 | 4 | proactive-messaging ✓, slack-integration ✓, natural-conversation (deferred), multiplayer-async-worktrees (deferred) |
-| 4 | 1 | 4 | sales-loop ✓, business-model-loop (deferred), go-to-market-loop (deferred), brownfield-specialization (deferred) |
-| 5 | 4 | 6 | game-design ✓, co-op-skill-acquisition (deferred), proposing-decks ✓, spaced-repetition ✓, auto-updating ✓, ecosystem-roundup (deferred) |
+| 4 | 1 | 6 | sales-loop ✓, business-model-loop (deferred), go-to-market-loop (deferred), brownfield-specialization (deferred), runtime-contexts (deferred), marketing-loop (deferred) |
+| 5 | 3 | 6 | game-design ✓, co-op-skill-acquisition (deferred), proposing-decks (deferred), spaced-repetition ✓, auto-updating ✓, ecosystem-roundup (deferred) |
 | 6 | 0 | 1 | local-first (deferred) |
-| **Complete** | **20** | **31** | **65%** |
+| **Complete** | **19** | **34** | **56%** |
 | Updates | 2 | 2 | distribution-loop ✓, InboxProcessor ✓ |
 
 ---
@@ -312,7 +322,7 @@ Deferred:
 
 ## Next Action
 
-**Progress**: 20/31 modules complete (65%) + 13 deferred
+**Progress**: 19/34 modules complete (56%) + 15 deferred
 **Available Modules** (unblocked, not deferred): None
 
 **Status**: All active modules complete. Remaining work is explicitly deferred with revisit criteria.
