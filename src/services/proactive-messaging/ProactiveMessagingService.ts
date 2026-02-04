@@ -79,6 +79,19 @@ export class ProactiveMessagingService {
   }
 
   /**
+   * Structured logging
+   */
+  private log(level: 'info' | 'warn' | 'error', message: string, context?: Record<string, unknown>): void {
+    console.error(JSON.stringify({
+      timestamp: new Date().toISOString(),
+      level,
+      service: 'ProactiveMessaging',
+      message,
+      ...(context && { context }),
+    }));
+  }
+
+  /**
    * Initialize the service and all channel adapters
    */
   async initialize(): Promise<void> {
@@ -383,11 +396,6 @@ export class ProactiveMessagingService {
         await this.handleNextLeverageQuery();
         break;
 
-      case 'skip':
-        // Skip current skill or gate
-        await this.handleSkip(command);
-        break;
-
       case 'start_loop':
         // Start a specific loop
         await this.handleStartLoop(command);
@@ -453,53 +461,6 @@ export class ProactiveMessagingService {
       '• `learning-loop` - Review patterns\n\n' +
       'Say a loop name to start.'
     );
-  }
-
-  /**
-   * Handle skip command - skip current skill or gate
-   */
-  private async handleSkip(command: { type: 'skip'; executionId?: string; skillId?: string; gateId?: string; reason: string; dangerous?: boolean }): Promise<void> {
-    if (!this.executionEngine) {
-      await this.sendNotification('Skip', 'No execution engine available');
-      return;
-    }
-
-    // Find active execution if not specified
-    let executionId = command.executionId;
-    if (!executionId) {
-      const active = this.executionEngine.listExecutions({ status: 'active' });
-      if (active.length === 0) {
-        await this.sendNotification('Skip', 'No active execution to skip');
-        return;
-      }
-      executionId = active[0].id;
-    }
-
-    const execution = this.executionEngine.getExecution(executionId);
-    if (!execution) {
-      await this.sendNotification('Skip', 'Execution not found');
-      return;
-    }
-
-    // Find the current phase and pending skill
-    const currentPhase = execution.phases.find(p => p.status === 'in-progress');
-    if (!currentPhase) {
-      await this.sendNotification('Skip', 'No in-progress phase found');
-      return;
-    }
-
-    const pendingSkill = currentPhase.skills.find(s => s.status === 'pending');
-    if (pendingSkill) {
-      try {
-        await this.executionEngine.skipSkill(executionId, pendingSkill.skillId, command.reason);
-        await this.sendNotification('Skipped', `Skipped skill: ${pendingSkill.skillId}`);
-      } catch (err) {
-        const msg = err instanceof Error ? err.message : String(err);
-        await this.sendNotification('Skip Failed', msg);
-      }
-    } else {
-      await this.sendNotification('Skip', 'No pending skill to skip in current phase');
-    }
   }
 
   /**

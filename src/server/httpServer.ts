@@ -28,8 +28,8 @@ import type { GameDesignService } from '../services/game-design/index.js';
 import type { SpacedRepetitionService } from '../services/spaced-repetition/index.js';
 import type { ProposingDecksService } from '../services/proposing-decks/index.js';
 import type { ProactiveMessagingService } from '../services/proactive-messaging/index.js';
-import type { SlackIntegrationService } from '../services/slack-integration/index.js';
 import type { KnoPilotService } from '../services/knopilot/KnoPilotService.js';
+import type { OODAClockService } from '../services/ooda-clock/index.js';
 import { createApiRoutes } from './apiRoutes.js';
 import { getVersion } from '../version.js';
 
@@ -59,8 +59,8 @@ export interface HttpServerOptions {
     spacedRepetitionService?: SpacedRepetitionService;
     proposingDecksService?: ProposingDecksService;
     proactiveMessagingService?: ProactiveMessagingService;
-    slackIntegrationService?: SlackIntegrationService;
     knopilotService?: KnoPilotService;
+    oodaClockService?: OODAClockService;
   };
 }
 

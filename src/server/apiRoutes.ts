@@ -31,8 +31,8 @@ import type { GameDesignService, FiniteGame } from '../services/game-design/inde
 import type { SpacedRepetitionService, CardType, Card } from '../services/spaced-repetition/index.js';
 import type { ProposingDecksService, ReviewDeckType } from '../services/proposing-decks/index.js';
 import type { ProactiveMessagingService } from '../services/proactive-messaging/index.js';
-import type { SlackIntegrationService } from '../services/slack-integration/index.js';
 import type { KnoPilotService } from '../services/knopilot/KnoPilotService.js';
+import type { OODAClockService } from '../services/ooda-clock/index.js';
 
 export interface ApiRoutesOptions {
   executionEngine: ExecutionEngine;
@@ -58,8 +58,8 @@ export interface ApiRoutesOptions {
   spacedRepetitionService?: SpacedRepetitionService;
   proposingDecksService?: ProposingDecksService;
   proactiveMessagingService?: ProactiveMessagingService;
-  slackIntegrationService?: SlackIntegrationService;
   knopilotService?: KnoPilotService;
+  oodaClockService?: OODAClockService;
 }
 
 // Helper to get string param
@@ -68,8 +68,15 @@ function getParam(req: Request, name: string): string {
   return Array.isArray(value) ? value[0] : value;
 }
 
+// Helper to safely get query param as string (for enum validation)
+function queryString(value: unknown): string | undefined {
+  if (typeof value === 'string') return value;
+  if (Array.isArray(value) && typeof value[0] === 'string') return value[0];
+  return undefined;
+}
+
 export function createApiRoutes(options: ApiRoutesOptions): Router {
-  const { executionEngine, skillRegistry, loopComposer, inboxProcessor, learningService, analyticsService, improvementOrchestrator, roadmapService, knowledgeGraphService, orchestrationService, patternsService, scoringService, autonomousExecutor, dreamEngine, multiAgentCoordinator, meceService, coherenceService, loopSequencingService, skillTreeService, gameDesignService, spacedRepetitionService, proposingDecksService, proactiveMessagingService, slackIntegrationService, knopilotService } = options;
+  const { executionEngine, skillRegistry, loopComposer, inboxProcessor, learningService, analyticsService, improvementOrchestrator, roadmapService, knowledgeGraphService, orchestrationService, patternsService, scoringService, autonomousExecutor, dreamEngine, multiAgentCoordinator, meceService, coherenceService, loopSequencingService, skillTreeService, gameDesignService, spacedRepetitionService, proposingDecksService, proactiveMessagingService, knopilotService, oodaClockService } = options;
   const router = Router();
 
   // ==========================================================================
@@ -108,10 +115,10 @@ export function createApiRoutes(options: ApiRoutesOptions): Router {
     const { level, category, since, limit } = req.query;
 
     const logs = executionEngine.getLogs(getParam(req, 'id'), {
-      level: level as any,
-      category: category as any,
-      since: since ? new Date(since as string) : undefined,
-      limit: limit ? parseInt(limit as string, 10) : undefined,
+      level: queryString(level) as 'info' | 'warn' | 'error' | undefined,
+      category: queryString(category) as 'phase' | 'skill' | 'gate' | 'system' | undefined,
+      since: since ? new Date(String(since)) : undefined,
+      limit: limit ? parseInt(String(limit), 10) : undefined,
     });
 
     res.json({
@@ -213,11 +220,11 @@ export function createApiRoutes(options: ApiRoutesOptions): Router {
     const { phase, category, query, limit, offset } = req.query;
 
     const result = skillRegistry.listSkills({
-      phase: phase as any,
-      category: category as any,
-      query: query as string,
-      limit: limit ? parseInt(limit as string, 10) : undefined,
-      offset: offset ? parseInt(offset as string, 10) : undefined,
+      phase: queryString(phase) as 'INIT' | 'SCAFFOLD' | 'IMPLEMENT' | 'TEST' | 'VERIFY' | 'VALIDATE' | 'DOCUMENT' | 'REVIEW' | 'SHIP' | 'COMPLETE' | undefined,
+      category: queryString(category) as 'core' | 'infra' | 'meta' | 'specialized' | 'custom' | 'sales' | 'async' | 'content' | 'planning' | 'operations' | undefined,
+      query: queryString(query),
+      limit: limit ? parseInt(String(limit), 10) : undefined,
+      offset: offset ? parseInt(String(offset), 10) : undefined,
     });
 
     res.json(result);
@@ -306,6 +313,105 @@ export function createApiRoutes(options: ApiRoutesOptions): Router {
     res.json(loop);
   });
 
+  /**
+   * Get loop rhythm data (aggregate patterns from past executions)
+   */
+  router.get('/loops/:id/rhythm', (req: Request, res: Response) => {
+    const loopId = getParam(req, 'id');
+    const loop = loopComposer.getLoop(loopId);
+
+    if (!loop) {
+      res.status(404).json({ error: 'Loop not found' });
+      return;
+    }
+
+    // Get all executions for this loop
+    const allExecutions = executionEngine.listExecutions();
+    const loopExecutions = allExecutions.filter(e => e.loopId === loopId);
+
+    // Get completed executions for rhythm analysis
+    const completedExecutions = loopExecutions.filter(e =>
+      e.status === 'completed' || e.status === 'failed'
+    );
+
+    // Transform logs to clock events and analyze rhythm
+    if (!oodaClockService) {
+      res.json({
+        loopId,
+        executionCount: loopExecutions.length,
+        completedCount: completedExecutions.length,
+        events: [],
+        patterns: [],
+        stats: null,
+      });
+      return;
+    }
+
+    // Aggregate events from all completed executions
+    const allEvents: ReturnType<typeof oodaClockService.processLogs> = [];
+    const durations: number[] = [];
+
+    for (const execSummary of completedExecutions) {
+      const execution = executionEngine.getExecution(execSummary.id);
+      if (execution?.logs) {
+        const events = oodaClockService.processLogs(execution.logs);
+        allEvents.push(...events);
+
+        // Calculate duration
+        if (execution.startedAt && execution.completedAt) {
+          const duration = new Date(execution.completedAt).getTime() -
+                          new Date(execution.startedAt).getTime();
+          durations.push(duration);
+        }
+      }
+    }
+
+    // Analyze rhythm patterns
+    const patterns = oodaClockService.analyzeRhythm(allEvents);
+
+    // Calculate stats
+    const avgDuration = durations.length > 0
+      ? durations.reduce((a, b) => a + b, 0) / durations.length
+      : null;
+
+    // Count events by type
+    const eventsByType = allEvents.reduce((acc, e) => {
+      acc[e.type] = (acc[e.type] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    // Count events by phase (approximate from angle)
+    const phaseFromAngle = (angle: number): string => {
+      if (angle >= 270 || angle < 0) return 'OBSERVE';
+      if (angle >= 0 && angle < 90) return 'ORIENT';
+      if (angle >= 90 && angle < 180) return 'DECIDE';
+      return 'ACT';
+    };
+
+    const eventsByQuadrant = allEvents.reduce((acc, e) => {
+      const quadrant = phaseFromAngle(e.startAngle);
+      acc[quadrant] = (acc[quadrant] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    res.json({
+      loopId,
+      executionCount: loopExecutions.length,
+      completedCount: completedExecutions.length,
+      events: allEvents.slice(-100), // Last 100 events for visualization
+      patterns: patterns.slice(0, 10), // Top 10 patterns
+      stats: {
+        avgDurationMs: avgDuration,
+        avgDurationFormatted: avgDuration
+          ? `${Math.round(avgDuration / 60000)}m`
+          : null,
+        eventsByType,
+        eventsByQuadrant,
+        totalEvents: allEvents.length,
+      },
+    });
+  });
+
   // ==========================================================================
   // EXECUTIONS - Create
   // ==========================================================================
@@ -376,27 +482,6 @@ export function createApiRoutes(options: ApiRoutesOptions): Router {
       res.json(execution);
     } catch (err) {
       res.status(400).json({ error: err instanceof Error ? err.message : 'Failed to complete skill' });
-    }
-  });
-
-  /**
-   * Skip a skill
-   */
-  router.put('/executions/:id/skills/:skillId/skip', async (req: Request, res: Response) => {
-    try {
-      const reason = req.body?.reason;
-      if (!reason) {
-        res.status(400).json({ error: 'reason is required' });
-        return;
-      }
-      const execution = await executionEngine.skipSkill(
-        getParam(req, 'id'),
-        getParam(req, 'skillId'),
-        reason
-      );
-      res.json(execution);
-    } catch (err) {
-      res.status(400).json({ error: err instanceof Error ? err.message : 'Failed to skip skill' });
     }
   });
 
@@ -559,8 +644,8 @@ export function createApiRoutes(options: ApiRoutesOptions): Router {
     const { status, sourceType } = req.query;
 
     const items = inboxProcessor.listItems({
-      status: status as any,
-      sourceType: sourceType as any,
+      status: queryString(status) as 'pending' | 'processing' | 'extracted' | 'rejected' | undefined,
+      sourceType: queryString(sourceType) as 'url' | 'file' | 'paste' | 'conversation' | undefined,
     });
 
     res.json({
@@ -843,8 +928,8 @@ export function createApiRoutes(options: ApiRoutesOptions): Router {
 
     const { skill, status } = req.query;
     const proposals = learningService.listUpgradeProposals({
-      skill: skill as string,
-      status: status as any,
+      skill: queryString(skill),
+      status: queryString(status) as 'pending' | 'approved' | 'rejected' | 'applied' | undefined,
     });
 
     res.json({
@@ -1200,7 +1285,7 @@ export function createApiRoutes(options: ApiRoutesOptions): Router {
       return;
     }
 
-    const status = req.query.status as any;
+    const status = queryString(req.query.status) as 'pending' | 'approved' | 'rejected' | 'applied' | undefined;
     const proposals = improvementOrchestrator.getPatternProposals(status);
     res.json({ count: proposals.length, proposals });
   });
@@ -1279,7 +1364,7 @@ export function createApiRoutes(options: ApiRoutesOptions): Router {
       return;
     }
 
-    const status = req.query.status as any;
+    const status = queryString(req.query.status) as 'pending' | 'approved' | 'applied' | undefined;
     const adjustments = improvementOrchestrator.getCalibrationAdjustments(status);
     res.json({ count: adjustments.length, adjustments });
   });
@@ -1599,7 +1684,7 @@ export function createApiRoutes(options: ApiRoutesOptions): Router {
       return;
     }
 
-    const type = getParam(req, 'type') as any;
+    const type = getParam(req, 'type') as 'depends_on' | 'tag_cluster' | 'sequence' | 'co_executed' | 'improved_by';
     const edges = knowledgeGraphService.getEdgesByType(type);
     res.json({ type, count: edges.length, edges });
   });
@@ -4742,234 +4827,6 @@ export function createApiRoutes(options: ApiRoutesOptions): Router {
   }
 
   // ==========================================================================
-  // SLACK INTEGRATION (Full Bidirectional Control)
-  // ==========================================================================
-
-  if (slackIntegrationService) {
-    /**
-     * List configured channels
-     */
-    router.get('/slack/channels', (_req: Request, res: Response) => {
-      const engineers = slackIntegrationService.getEngineers();
-      const channels = engineers.map(engineer => {
-        const status = slackIntegrationService.getEngineerStatus(engineer);
-        return {
-          engineer,
-          channelId: status?.channelId,
-          projectPath: status?.projectPath,
-          worktreePath: status?.worktreePath,
-          currentBranch: status?.currentBranch,
-          activeExecution: status?.activeExecution,
-        };
-      });
-      res.json({ success: true, count: channels.length, channels });
-    });
-
-    /**
-     * Get engineer status
-     */
-    router.get('/slack/engineers/:engineer', (req: Request, res: Response) => {
-      const engineer = getParam(req, 'engineer');
-      const status = slackIntegrationService.getEngineerStatus(engineer);
-      if (!status) {
-        res.status(404).json({ error: `Engineer not found: ${engineer}` });
-        return;
-      }
-      res.json({ success: true, status });
-    });
-
-    /**
-     * List all engineers
-     */
-    router.get('/slack/engineers', (_req: Request, res: Response) => {
-      const engineers = slackIntegrationService.getEngineers();
-      const statuses = engineers.map(engineer => ({
-        engineer,
-        ...slackIntegrationService.getEngineerStatus(engineer),
-      }));
-      res.json({ success: true, count: engineers.length, engineers: statuses });
-    });
-
-    /**
-     * Get active threads
-     */
-    router.get('/slack/threads', (req: Request, res: Response) => {
-      const channelId = req.query.channelId as string | undefined;
-      const engineer = req.query.engineer as string | undefined;
-      const status = req.query.status as 'active' | 'complete' | 'failed' | undefined;
-      const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
-
-      const threadManager = slackIntegrationService.getThreadManager();
-      const threads = threadManager.listThreads({ channelId, engineer, status, limit });
-      res.json({ success: true, count: threads.length, threads });
-    });
-
-    /**
-     * Get thread context
-     */
-    router.get('/slack/threads/:threadTs', (req: Request, res: Response) => {
-      const threadTs = getParam(req, 'threadTs');
-      const threadManager = slackIntegrationService.getThreadManager();
-      const context = threadManager.getThreadContext(threadTs);
-      if (!context) {
-        res.status(404).json({ error: 'Thread not found' });
-        return;
-      }
-      res.json({ success: true, context });
-    });
-
-    /**
-     * Parse command (without executing)
-     */
-    router.post('/slack/parse', (req: Request, res: Response) => {
-      const { text } = req.body;
-      if (!text) {
-        res.status(400).json({ error: 'text is required' });
-        return;
-      }
-
-      const parser = slackIntegrationService.getCommandParser();
-      const command = parser.parse(text, 'slack');
-      res.json({ success: true, isCommand: parser.isCommand(text), command });
-    });
-
-    /**
-     * Execute command (for testing)
-     */
-    router.post('/slack/command', async (req: Request, res: Response) => {
-      try {
-        const { channelId, threadTs, command, engineer } = req.body;
-        if (!channelId || !command || !engineer) {
-          res.status(400).json({ error: 'channelId, command, and engineer are required' });
-          return;
-        }
-
-        const result = await slackIntegrationService.handleMessage(command, {
-          channelId,
-          threadTs,
-          userId: engineer,
-          engineer,
-        });
-        res.json(result);
-      } catch (err) {
-        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
-      }
-    });
-
-    /**
-     * Get branch status
-     */
-    router.get('/slack/branch-status/:engineer', async (req: Request, res: Response) => {
-      try {
-        const engineer = getParam(req, 'engineer');
-        const branch = req.query.branch as string | undefined;
-
-        const status = slackIntegrationService.getEngineerStatus(engineer);
-        if (!status) {
-          res.status(404).json({ error: `Engineer not found: ${engineer}` });
-          return;
-        }
-
-        const targetBranch = branch || status.currentBranch;
-        if (!targetBranch) {
-          res.status(400).json({ error: 'No active branch' });
-          return;
-        }
-
-        const mergeWorkflow = slackIntegrationService.getMergeWorkflow();
-        const branchStatus = await mergeWorkflow.getBranchStatus(status.worktreePath, targetBranch);
-        res.json({ success: true, status: { ...branchStatus, engineer } });
-      } catch (err) {
-        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
-      }
-    });
-
-    /**
-     * Get pending merges
-     */
-    router.get('/slack/merges/:engineer', (req: Request, res: Response) => {
-      const engineer = getParam(req, 'engineer');
-      const mergeWorkflow = slackIntegrationService.getMergeWorkflow();
-      const pending = mergeWorkflow.getPendingMerges(engineer);
-      res.json({ success: true, count: pending.length, merges: pending });
-    });
-
-    /**
-     * Get pending rebases
-     */
-    router.get('/slack/rebases/:engineer', (req: Request, res: Response) => {
-      const engineer = getParam(req, 'engineer');
-      const mergeWorkflow = slackIntegrationService.getMergeWorkflow();
-      const pending = mergeWorkflow.getPendingRebases(engineer);
-      res.json({ success: true, count: pending.length, rebases: pending });
-    });
-
-    /**
-     * Trigger merge
-     */
-    router.post('/slack/merge', async (req: Request, res: Response) => {
-      try {
-        const { engineer } = req.body;
-        if (!engineer) {
-          res.status(400).json({ error: 'engineer is required' });
-          return;
-        }
-
-        const status = slackIntegrationService.getEngineerStatus(engineer);
-        if (!status) {
-          res.status(404).json({ error: `Engineer not found: ${engineer}` });
-          return;
-        }
-
-        const result = await slackIntegrationService.handleMessage('merge', {
-          channelId: status.channelId,
-          userId: engineer,
-          engineer,
-        });
-        res.json(result);
-      } catch (err) {
-        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
-      }
-    });
-
-    /**
-     * Trigger rebase
-     */
-    router.post('/slack/rebase', async (req: Request, res: Response) => {
-      try {
-        const { engineer } = req.body;
-        if (!engineer) {
-          res.status(400).json({ error: 'engineer is required' });
-          return;
-        }
-
-        const status = slackIntegrationService.getEngineerStatus(engineer);
-        if (!status) {
-          res.status(404).json({ error: `Engineer not found: ${engineer}` });
-          return;
-        }
-
-        const result = await slackIntegrationService.handleMessage('rebase', {
-          channelId: status.channelId,
-          userId: engineer,
-          engineer,
-        });
-        res.json(result);
-      } catch (err) {
-        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
-      }
-    });
-
-    /**
-     * Get command help
-     */
-    router.get('/slack/help', (_req: Request, res: Response) => {
-      const parser = slackIntegrationService.getCommandParser();
-      res.json({ success: true, help: parser.getCommandHelp() });
-    });
-  }
-
-  // ==========================================================================
   // VOICE
   // ==========================================================================
 
@@ -5079,11 +4936,11 @@ export function createApiRoutes(options: ApiRoutesOptions): Router {
       try {
         const { stage, company, minValue, maxValue, search } = req.query;
         const deals = await knopilotService.listDeals({
-          stage: stage as any,
-          company: company as string | undefined,
+          stage: queryString(stage) as 'lead' | 'target' | 'discovery' | 'contracting' | 'production' | undefined,
+          company: queryString(company),
           minValue: minValue ? Number(minValue) : undefined,
           maxValue: maxValue ? Number(maxValue) : undefined,
-          search: search as string | undefined,
+          search: queryString(search),
         });
         res.json({ count: deals.length, deals });
       } catch (err) {
