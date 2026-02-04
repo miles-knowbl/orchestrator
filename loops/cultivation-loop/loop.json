@@ -10,32 +10,22 @@
     {
       "name": "GATHER",
       "description": "Gather context from multiple sources",
-      "skills": [
-        { "skillId": "context-ingestion", "required": true }
-      ]
+      "skills": ["context-ingestion"]
     },
     {
       "name": "ANALYZE",
       "description": "Analyze and cultivate gathered context",
-      "skills": [
-        { "skillId": "context-cultivation", "required": true }
-      ]
+      "skills": ["context-cultivation"]
     },
     {
       "name": "DOCUMENT",
       "description": "Document gotchas, guarantees, and patterns",
-      "skills": [
-        { "skillId": "gotcha-documenter", "required": false },
-        { "skillId": "guarantee-tracker", "required": false },
-        { "skillId": "pattern-collector", "required": false }
-      ]
+      "skills": ["gotcha-documenter", "guarantee-tracker", "pattern-collector"]
     },
     {
       "name": "COMPLETE",
       "description": "Finalize and integrate knowledge",
-      "skills": [
-        { "skillId": "knowledge-integrator", "required": true }
-      ]
+      "skills": ["knowledge-integrator"]
     }
   ],
   "gates": [

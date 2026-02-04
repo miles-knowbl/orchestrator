@@ -30,7 +30,7 @@
       "id": "COMPLETE",
       "name": "Complete",
       "description": "Finalize and commit to plan",
-      "skills": [],
+      "skills": ["retrospective"],
       "requiredDeliverables": ["committed plan"]
     }
   ],
