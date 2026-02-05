@@ -186,6 +186,174 @@ rm ~/.claude/orchestrator.json
 # Then run /orchestrator-start-loop in Claude Code
 ```
 
+## Deep Dive: How the System Works
+
+This section is for those who want to understand the internals, customize behavior, or contribute.
+
+### Skills Are Files
+
+Every skill is a markdown file (`SKILL.md`) in the `skills/` directory:
+
+```
+skills/
+├── implement/
+│   ├── SKILL.md           # The skill definition
+│   ├── CHANGELOG.md       # Version history
+│   └── references/        # Supporting docs the skill can reference
+│       ├── api-layer-patterns.md
+│       └── testing-patterns.md
+├── architect/
+│   └── SKILL.md
+└── code-review/
+    └── SKILL.md
+```
+
+A skill file contains:
+- **Purpose**: What this skill accomplishes
+- **Inputs**: What context it needs
+- **Process**: Step-by-step instructions for Claude
+- **Outputs**: What it produces (files, decisions, etc.)
+- **Guarantees**: Quality criteria that must be met
+
+When a phase executes a skill, Claude receives the skill's instructions as part of its prompt. The skill tells Claude exactly how to approach the task.
+
+### Loops Are Compositions
+
+A loop is defined by two files:
+- `loop.json` — Machine-readable: phases, skills per phase, gates
+- `LOOP.md` — Human-readable: documentation and examples
+
+```json
+// loops/engineering-loop/loop.json
+{
+  "id": "engineering-loop",
+  "phases": [
+    { "id": "INIT", "skills": ["requirements", "spec"] },
+    { "id": "SCAFFOLD", "skills": ["architect", "scaffold"] },
+    { "id": "IMPLEMENT", "skills": ["implement"] },
+    { "id": "TEST", "skills": ["test-generation"] },
+    { "id": "VERIFY", "skills": ["code-verification"] },
+    { "id": "REVIEW", "skills": ["code-review"] },
+    { "id": "SHIP", "skills": ["deploy", "distribute"] }
+  ],
+  "gates": [
+    { "after": "TEST", "type": "auto", "criteria": "tests_pass" },
+    { "after": "REVIEW", "type": "approval", "approver": "user" }
+  ]
+}
+```
+
+The orchestrator reads this definition and steps through it, loading each skill's instructions when its phase is active.
+
+### Execution Tracking
+
+When you run a loop, the ExecutionEngine creates an execution record:
+
+```json
+{
+  "id": "exec_abc123",
+  "loopId": "engineering-loop",
+  "status": "active",
+  "currentPhase": "IMPLEMENT",
+  "completedPhases": ["INIT", "SCAFFOLD"],
+  "gateResults": [
+    { "gate": "scaffold-gate", "status": "passed", "timestamp": "..." }
+  ],
+  "log": [
+    { "type": "phase_start", "phase": "INIT", "timestamp": "..." },
+    { "type": "skill_complete", "skill": "requirements", "timestamp": "..." }
+  ]
+}
+```
+
+This is how the system knows where you are in a loop, enables resuming after interruption, and provides the data for the dashboard.
+
+### The MCP Bridge
+
+Claude Code communicates with the orchestrator via MCP (Model Context Protocol). The orchestrator exposes 50+ tools:
+
+| Category | Tools |
+|----------|-------|
+| Execution | `start_execution`, `advance_phase`, `complete_skill`, `approve_gate` |
+| Skills | `list_skills`, `get_skill`, `search_skills` |
+| Loops | `list_loops`, `get_loop`, `validate_loop` |
+| Memory | `get_memory`, `record_pattern`, `record_decision` |
+
+When Claude runs `/engineering-loop`, it calls `start_execution`. As it works through phases, it calls `complete_skill` and `advance_phase`. The orchestrator tracks everything.
+
+### Memory and Learning
+
+The system maintains memory at three levels:
+
+```
+memory/
+├── orchestrator.json    # Global patterns and decisions
+├── loops/
+│   └── engineering-loop.json   # Loop-specific learnings
+└── skills/
+    └── implement.json   # Skill-specific calibration
+```
+
+**Patterns** are reusable insights: "When working with React, always check for useEffect cleanup."
+
+**Decisions** are architectural records (ADRs): "Chose PostgreSQL over MongoDB because..."
+
+**Calibration** tracks estimation accuracy: "implement skill typically takes 1.5x estimated time for new codebases."
+
+When you run `improve: [feedback]`, it creates an improvement proposal that can update skill instructions.
+
+### Skill Evolution
+
+Skills improve through feedback loops:
+
+1. **Execution** — Skill runs, produces output
+2. **Observation** — Quality metrics captured (did tests pass? was review approved?)
+3. **Feedback** — User provides `improve:` comments
+4. **Proposal** — System generates upgrade proposal
+5. **Application** — Approved changes update the skill file
+6. **Versioning** — Skill version increments, changelog updated
+
+This is the "self-improving" aspect. Skills that consistently produce good results stay stable. Skills that get friction feedback evolve.
+
+### Creating Custom Loops
+
+Use `/meta-loop` to create new loops, or manually:
+
+1. Create `loops/my-loop/loop.json` with phases and skills
+2. Create `loops/my-loop/LOOP.md` with documentation
+3. Create `commands/my-loop.md` as the slash command
+4. The orchestrator picks it up automatically on restart
+
+You can compose existing skills in new ways, or create new skills for domain-specific workflows.
+
+### Service Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     HTTP Server (Express)                    │
+│  /mcp — MCP protocol    /api/* — REST endpoints             │
+└─────────────────────────┬───────────────────────────────────┘
+                          │
+┌─────────────────────────▼───────────────────────────────────┐
+│                      Core Services                           │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐       │
+│  │SkillRegistry │  │ LoopComposer │  │ExecutionEngine│       │
+│  │ loads skills │  │ loads loops  │  │ runs loops    │       │
+│  └──────────────┘  └──────────────┘  └──────────────┘       │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐       │
+│  │MemoryService │  │LearningService│ │AnalyticsService│      │
+│  │ patterns/ADRs│  │ improvements │  │ metrics      │       │
+│  └──────────────┘  └──────────────┘  └──────────────┘       │
+└─────────────────────────────────────────────────────────────┘
+                          │
+┌─────────────────────────▼───────────────────────────────────┐
+│                     File System                              │
+│  skills/    loops/    memory/    data/                      │
+└─────────────────────────────────────────────────────────────┘
+```
+
+All state lives in files. No database required. This makes it easy to version control your customizations and share configurations.
+
 ## Development
 
 ```bash
