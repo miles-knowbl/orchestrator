@@ -312,8 +312,17 @@
       "description": "Design and analyze competitive moats and defensibility strategies. Framework for identifying, evaluating, and strengthening business moats.",
       "dependsOn": [],
       "notes": "10 moat types taxonomy to be integrated when implemented."
+    },
+    {
+      "id": "mece-audit-dimensions",
+      "layer": 2,
+      "description": "MECE-complete dimensions and criteria for the audit-loop to evaluate skills, loops, and modules. Ensures audits cover all relevant quality dimensions without gaps or overlaps.",
+      "dependsOn": [
+        "mece-opportunity-mapping"
+      ],
+      "notes": "Seed idea — nothing decided beyond defining MECE-complete audit dimensions."
     }
   ],
   "createdAt": "2026-02-04T18:30:00.000Z",
-  "updatedAt": "2026-02-05T12:00:00.000Z"
+  "updatedAt": "2026-02-05T00:00:00.000Z"
 }
