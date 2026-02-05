@@ -233,8 +233,8 @@ export default function DistributePage() {
               <div className="flex items-start gap-3">
                 <span className="w-6 h-6 rounded-full bg-orch-500/10 text-orch-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">7</span>
                 <div className="w-full">
-                  <p className="text-sm text-gray-300 mb-2">Just use Claude Code normally</p>
-                  <p className="text-xs text-gray-500 mb-3">The server <strong className="text-gray-400">starts automatically</strong> in a Terminal window when you call any orchestrator tool or loop.</p>
+                  <p className="text-sm text-gray-300 mb-2">Start each session with /orchestrator-start-loop</p>
+                  <p className="text-xs text-gray-500 mb-3">This ensures the server is running and checks for updates. Then use any loop command from any project directory.</p>
                   <div className="bg-[#0a0a0a] border border-[#222] rounded-lg px-4 py-3">
                     <p className="text-xs text-gray-500 mb-2">Available loops (11):</p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5 text-sm">
@@ -259,7 +259,7 @@ export default function DistributePage() {
 
         <div className="mt-6 pt-4 border-t border-[#222]">
           <p className="text-xs text-gray-500">
-            <strong className="text-gray-400">You don&apos;t need to:</strong> manually start the server, keep a terminal open, or remember any commands.
+            <strong className="text-gray-400">Tip:</strong> Run <code className="text-orch-400">/orchestrator-start-loop</code> at the start of each session.
             The Terminal window shows server logs and can be minimized but should stay open.
           </p>
         </div>
