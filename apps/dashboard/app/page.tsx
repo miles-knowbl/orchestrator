@@ -137,8 +137,8 @@ const STATIC_RUNS: Run[] = [
 ];
 
 const CATEGORIES = [
-  { key: 'general', label: 'General' },
-  { key: 'sales', label: 'Sales' },
+  { key: 'development', label: 'Development' },
+  { key: 'operations', label: 'Operations' },
   { key: 'meta', label: 'Meta' },
 ] as const;
 
@@ -234,7 +234,7 @@ export default function LoopsPage() {
   const [runs, setRuns] = useState<Run[]>(STATIC_RUNS);
   const [error, setError] = useState<string | null>(null);
   const [isStatic, setIsStatic] = useState(false);
-  const [activeCategory, setActiveCategory] = useState('general');
+  const [activeCategory, setActiveCategory] = useState('development');
   const [runsExpanded, setRunsExpanded] = useState(false);
 
   useEffect(() => {

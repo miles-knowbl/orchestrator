@@ -5,13 +5,10 @@ import {
   Zap,
   Search,
   ChevronRight,
-  ChevronDown,
   Tag,
   WifiOff,
-  Inbox,
-  Lightbulb
 } from 'lucide-react';
-import { fetchWithFallback, fetchApi } from '@/lib/api';
+import { fetchWithFallback } from '@/lib/api';
 
 interface Skill {
   id: string;
@@ -20,37 +17,6 @@ interface Skill {
   description: string;
   phase?: string;
   category: string;
-}
-
-interface InboxItem {
-  id: string;
-  source: { type: string; name: string };
-  status: 'pending' | 'processing' | 'extracted' | 'rejected';
-  createdAt: string;
-  extractedSkillsCount: number;
-  contentPreview: string;
-}
-
-interface InboxStats {
-  total: number;
-  pending: number;
-  extracted: number;
-}
-
-interface UpgradeProposal {
-  id: string;
-  skill: string;
-  currentVersion: string;
-  proposedVersion: string;
-  createdAt: string;
-  status: 'pending' | 'approved' | 'rejected' | 'applied';
-  changes: { type: string; section: string; reason: string }[];
-}
-
-interface ImprovementStats {
-  pending: number;
-  applied: number;
-  rejected: number;
 }
 
 const phaseColors: Record<string, string> = {
@@ -66,81 +32,21 @@ const phaseColors: Record<string, string> = {
   COMPLETE: 'bg-gray-500/10 text-gray-400',
 };
 
-const statusColors: Record<string, string> = {
-  pending: 'bg-yellow-500/10 text-yellow-400',
-  processing: 'bg-blue-500/10 text-blue-400',
-  extracted: 'bg-orch-500/10 text-orch-400',
-  rejected: 'bg-red-500/10 text-red-400',
-  applied: 'bg-green-500/10 text-green-400',
-};
-
-function InboxRow({ item }: { item: InboxItem }) {
-  return (
-    <div className="flex items-center justify-between p-3 bg-[#0a0a0a] rounded-lg hover:bg-[#111] transition-colors">
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-sm font-medium text-white truncate">{item.source.name}</span>
-          <span className={`text-xs px-2 py-0.5 rounded ${statusColors[item.status]}`}>
-            {item.status}
-          </span>
-        </div>
-        <p className="text-xs text-gray-500 truncate">{item.contentPreview}</p>
-      </div>
-      <div className="flex items-center gap-2 ml-4">
-        {item.extractedSkillsCount > 0 && (
-          <span className="text-xs text-orch-400">{item.extractedSkillsCount} skills</span>
-        )}
-        <span className="text-xs text-gray-500">
-          {new Date(item.createdAt).toLocaleDateString()}
-        </span>
-      </div>
-    </div>
-  );
-}
-
-function ImprovementRow({ proposal }: { proposal: UpgradeProposal }) {
-  return (
-    <div className="flex items-center justify-between p-3 bg-[#0a0a0a] rounded-lg hover:bg-[#111] transition-colors">
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-sm font-medium text-white">{proposal.skill}</span>
-          <span className="text-xs text-gray-500">v{proposal.currentVersion}</span>
-          <span className="text-xs text-gray-600">→</span>
-          <span className="text-xs text-orch-400">v{proposal.proposedVersion}</span>
-          <span className={`text-xs px-2 py-0.5 rounded ${statusColors[proposal.status]}`}>
-            {proposal.status}
-          </span>
-        </div>
-        <p className="text-xs text-gray-500">
-          {proposal.changes.length} change{proposal.changes.length !== 1 ? 's' : ''} proposed
-        </p>
-      </div>
-      <span className="text-xs text-gray-500 ml-4">
-        {new Date(proposal.createdAt).toLocaleDateString()}
-      </span>
-    </div>
-  );
-}
+const CATEGORIES = [
+  { key: 'engineering', label: 'Engineering' },
+  { key: 'operations', label: 'Operations' },
+  { key: 'sales', label: 'Sales' },
+  { key: 'content', label: 'Content' },
+  { key: 'strategy', label: 'Strategy' },
+] as const;
 
 export default function SkillsPage() {
   const [allSkills, setAllSkills] = useState<Skill[]>([]);
   const [skills, setSkills] = useState<Skill[]>([]);
   const [search, setSearch] = useState('');
-  const [phaseFilter, setPhaseFilter] = useState<string>('');
+  const [categoryFilter, setCategoryFilter] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [isStatic, setIsStatic] = useState(false);
-
-  // Inbox state
-  const [inboxItems, setInboxItems] = useState<InboxItem[]>([]);
-  const [inboxStats, setInboxStats] = useState<InboxStats | null>(null);
-  const [inboxExpanded, setInboxExpanded] = useState(false);
-  const [inboxOffline, setInboxOffline] = useState(false);
-
-  // Improvements state
-  const [proposals, setProposals] = useState<UpgradeProposal[]>([]);
-  const [improvementStats, setImprovementStats] = useState<ImprovementStats | null>(null);
-  const [improvementsExpanded, setImprovementsExpanded] = useState(false);
-  const [improvementsOffline, setImprovementsOffline] = useState(false);
 
   // Initial load
   useEffect(() => {
@@ -157,54 +63,14 @@ export default function SkillsPage() {
       }
     };
 
-    const fetchInbox = async () => {
-      try {
-        const itemsRes = await fetchApi('/api/inbox');
-        if (itemsRes.ok) {
-          const data = await itemsRes.json();
-          setInboxItems(data.items || []);
-        }
-
-        const statsRes = await fetchApi('/api/inbox/stats');
-        if (statsRes.ok) {
-          const data = await statsRes.json();
-          setInboxStats(data);
-        }
-        setInboxOffline(false);
-      } catch {
-        setInboxOffline(true);
-      }
-    };
-
-    const fetchImprovements = async () => {
-      try {
-        const summaryRes = await fetchApi('/api/improvements/summary');
-        if (summaryRes.ok) {
-          const data = await summaryRes.json();
-          setImprovementStats(data.upgradeProposals);
-        }
-
-        const proposalsRes = await fetchApi('/api/improvements');
-        if (proposalsRes.ok) {
-          const data = await proposalsRes.json();
-          setProposals(data.proposals || []);
-        }
-        setImprovementsOffline(false);
-      } catch {
-        setImprovementsOffline(true);
-      }
-    };
-
     fetchSkills();
-    fetchInbox();
-    fetchImprovements();
   }, []);
 
   // Client-side filtering
   useEffect(() => {
     let filtered = allSkills;
-    if (phaseFilter) {
-      filtered = filtered.filter(s => s.phase === phaseFilter);
+    if (categoryFilter) {
+      filtered = filtered.filter(s => s.category === categoryFilter);
     }
     if (search) {
       const q = search.toLowerCase();
@@ -215,12 +81,12 @@ export default function SkillsPage() {
       );
     }
     setSkills(filtered);
-  }, [search, phaseFilter, allSkills]);
+  }, [search, categoryFilter, allSkills]);
 
-  const phases = ['INIT', 'SCAFFOLD', 'IMPLEMENT', 'TEST', 'VERIFY', 'VALIDATE', 'DOCUMENT', 'REVIEW', 'SHIP', 'COMPLETE'];
-
-  const pendingInboxCount = inboxStats?.pending ?? inboxItems.filter(i => i.status === 'pending').length;
-  const pendingImprovementsCount = improvementStats?.pending ?? proposals.filter(p => p.status === 'pending').length;
+  const categoryCounts = allSkills.reduce<Record<string, number>>((acc, s) => {
+    acc[s.category] = (acc[s.category] || 0) + 1;
+    return acc;
+  }, {});
 
   if (error) {
     return (
@@ -251,29 +117,49 @@ export default function SkillsPage() {
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="flex items-center gap-4 mb-6">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-          <input
-            type="text"
-            placeholder="Search skills..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-[#111] border border-[#222] rounded-lg pl-10 pr-4 py-2 text-sm text-white placeholder-gray-500 focus:border-orch-500 focus:outline-none"
-          />
-        </div>
-
-        <select
-          value={phaseFilter}
-          onChange={(e) => setPhaseFilter(e.target.value)}
-          className="bg-[#111] border border-[#222] rounded-lg px-4 py-2 text-sm text-white focus:border-orch-500 focus:outline-none"
+      {/* Category Filter */}
+      <div className="flex flex-wrap items-center gap-2 mb-4">
+        <button
+          onClick={() => setCategoryFilter('')}
+          className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+            categoryFilter === ''
+              ? 'bg-orch-500/20 text-orch-400 border border-orch-500/30'
+              : 'bg-[#111] text-gray-400 border border-[#222] hover:border-[#333] hover:text-white'
+          }`}
         >
-          <option value="">All Phases</option>
-          {phases.map((phase) => (
-            <option key={phase} value={phase}>{phase}</option>
-          ))}
-        </select>
+          All
+          <span className="ml-1.5 text-xs opacity-60">{allSkills.length}</span>
+        </button>
+        {CATEGORIES.map(({ key, label }) => {
+          const count = categoryCounts[key] || 0;
+          if (count === 0) return null;
+          return (
+            <button
+              key={key}
+              onClick={() => setCategoryFilter(key)}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                categoryFilter === key
+                  ? 'bg-orch-500/20 text-orch-400 border border-orch-500/30'
+                  : 'bg-[#111] text-gray-400 border border-[#222] hover:border-[#333] hover:text-white'
+              }`}
+            >
+              {label}
+              <span className="ml-1.5 text-xs opacity-60">{count}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Search */}
+      <div className="relative max-w-md mb-6">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+        <input
+          type="text"
+          placeholder="Search skills..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full bg-[#111] border border-[#222] rounded-lg pl-10 pr-4 py-2 text-sm text-white placeholder-gray-500 focus:border-orch-500 focus:outline-none"
+        />
       </div>
 
       {/* Skills Grid */}
@@ -314,125 +200,6 @@ export default function SkillsPage() {
           <p className="text-gray-500">No skills found</p>
         </div>
       )}
-
-      {/* Collapsible Sections */}
-      <div className="mt-8 border-t border-[#222] pt-6 space-y-3">
-        {/* Inbox Section */}
-        <div>
-          <button
-            onClick={() => setInboxExpanded(!inboxExpanded)}
-            className="w-full flex items-center justify-between p-3 bg-[#111] border border-[#222] rounded-lg hover:border-[#333] transition-colors"
-          >
-            <div className="flex items-center gap-2">
-              <Inbox className="w-4 h-4 text-orange-400" />
-              <span className="text-sm font-medium text-gray-300">Inbox</span>
-              {pendingInboxCount > 0 && (
-                <span className="text-xs bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded-full">
-                  {pendingInboxCount} pending
-                </span>
-              )}
-              {pendingInboxCount === 0 && (
-                <span className="text-xs bg-[#222] text-gray-400 px-2 py-0.5 rounded-full">
-                  {inboxItems.length}
-                </span>
-              )}
-            </div>
-            {inboxExpanded ? (
-              <ChevronDown className="w-4 h-4 text-gray-400" />
-            ) : (
-              <ChevronRight className="w-4 h-4 text-gray-400" />
-            )}
-          </button>
-
-          {inboxExpanded && (
-            <div className="mt-3 space-y-2">
-              {inboxOffline ? (
-                <div className="p-4 bg-[#0a0a0a] rounded-lg text-center">
-                  <WifiOff className="w-5 h-5 text-gray-600 mx-auto mb-2" />
-                  <p className="text-xs text-gray-500">Server offline</p>
-                </div>
-              ) : inboxItems.length === 0 ? (
-                <div className="p-4 bg-[#0a0a0a] rounded-lg text-center">
-                  <Inbox className="w-5 h-5 text-gray-600 mx-auto mb-2" />
-                  <p className="text-xs text-gray-500">No inbox items</p>
-                </div>
-              ) : (
-                <>
-                  {inboxItems.slice(0, 3).map((item) => (
-                    <InboxRow key={item.id} item={item} />
-                  ))}
-                  {inboxItems.length > 3 && (
-                    <a
-                      href="/inbox"
-                      className="block text-center text-xs text-gray-500 hover:text-gray-300 py-2"
-                    >
-                      View all {inboxItems.length} items →
-                    </a>
-                  )}
-                </>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Improvements Section */}
-        <div>
-          <button
-            onClick={() => setImprovementsExpanded(!improvementsExpanded)}
-            className="w-full flex items-center justify-between p-3 bg-[#111] border border-[#222] rounded-lg hover:border-[#333] transition-colors"
-          >
-            <div className="flex items-center gap-2">
-              <Lightbulb className="w-4 h-4 text-orch-400" />
-              <span className="text-sm font-medium text-gray-300">Improvements</span>
-              {pendingImprovementsCount > 0 && (
-                <span className="text-xs bg-orch-500/20 text-orch-400 px-2 py-0.5 rounded-full">
-                  {pendingImprovementsCount} pending
-                </span>
-              )}
-              {pendingImprovementsCount === 0 && (
-                <span className="text-xs bg-[#222] text-gray-400 px-2 py-0.5 rounded-full">
-                  {proposals.length}
-                </span>
-              )}
-            </div>
-            {improvementsExpanded ? (
-              <ChevronDown className="w-4 h-4 text-gray-400" />
-            ) : (
-              <ChevronRight className="w-4 h-4 text-gray-400" />
-            )}
-          </button>
-
-          {improvementsExpanded && (
-            <div className="mt-3 space-y-2">
-              {improvementsOffline ? (
-                <div className="p-4 bg-[#0a0a0a] rounded-lg text-center">
-                  <WifiOff className="w-5 h-5 text-gray-600 mx-auto mb-2" />
-                  <p className="text-xs text-gray-500">Server offline</p>
-                </div>
-              ) : proposals.length === 0 ? (
-                <div className="p-4 bg-[#0a0a0a] rounded-lg text-center">
-                  <Lightbulb className="w-5 h-5 text-gray-600 mx-auto mb-2" />
-                  <p className="text-xs text-gray-500">No improvement proposals</p>
-                </div>
-              ) : (
-                <>
-                  {proposals.filter(p => p.status === 'pending').slice(0, 3).map((proposal) => (
-                    <ImprovementRow key={proposal.id} proposal={proposal} />
-                  ))}
-                  {proposals.length > 3 && (
-                    <a
-                      href="/improvements"
-                      className="block text-center text-xs text-gray-500 hover:text-gray-300 py-2"
-                    >
-                      View all {proposals.length} proposals →
-                    </a>
-                  )}
-                </>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
     </div>
   );
 }
