@@ -575,6 +575,18 @@ When enabled:
 - If update available, shows notification
 - User confirms or it auto-applies based on settings
 
+## Server Resilience (CRITICAL)
+
+**If any MCP tool call fails with a connection error, DO NOT exit the loop.** Follow the retry protocol in `commands/_shared/server-resilience-protocol.md`:
+
+1. Tell the user the server connection was lost
+2. Wait 5 seconds, then retry the same call (the PreToolUse hook will restart the server)
+3. If 3 retries fail, ask the user whether to wait, skip, or stop
+4. Your executionId survives server restarts — do NOT create a new execution
+5. Continue the loop from where you left off
+
+---
+
 ## Troubleshooting
 
 **Port 3002 already in use:**

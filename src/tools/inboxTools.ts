@@ -74,7 +74,7 @@ export interface InboxToolDefinition {
 export const inboxToolDefinitions: InboxToolDefinition[] = [
   {
     name: 'add_to_inbox',
-    description: 'Add content to the inbox for skill extraction. Use for pastes, conversation excerpts, or file content.',
+    description: 'Adding to inbox — captures content for skill extraction',
     inputSchema: {
       type: 'object',
       properties: {
@@ -97,7 +97,7 @@ export const inboxToolDefinitions: InboxToolDefinition[] = [
   },
   {
     name: 'add_url_to_inbox',
-    description: 'Add a URL to the inbox. Fetches content and prepares for skill extraction.',
+    description: 'Fetching URL — downloads content and adds to inbox for extraction',
     inputSchema: {
       type: 'object',
       properties: {
@@ -111,7 +111,7 @@ export const inboxToolDefinitions: InboxToolDefinition[] = [
   },
   {
     name: 'list_inbox',
-    description: 'List items in the inbox with optional filtering',
+    description: 'Checking inbox — lists items with optional filtering',
     inputSchema: {
       type: 'object',
       properties: {
@@ -130,7 +130,7 @@ export const inboxToolDefinitions: InboxToolDefinition[] = [
   },
   {
     name: 'get_inbox_item',
-    description: 'Get details of a specific inbox item including extracted skills/patterns',
+    description: 'Loading inbox item — retrieves details and extracted skills',
     inputSchema: {
       type: 'object',
       properties: {
@@ -144,7 +144,7 @@ export const inboxToolDefinitions: InboxToolDefinition[] = [
   },
   {
     name: 'process_inbox_item',
-    description: 'Process an inbox item to extract skills and patterns using AI analysis',
+    description: 'Processing inbox item — extracting skills and patterns via AI analysis',
     inputSchema: {
       type: 'object',
       properties: {
@@ -158,7 +158,7 @@ export const inboxToolDefinitions: InboxToolDefinition[] = [
   },
   {
     name: 'approve_extraction',
-    description: 'Approve an extracted skill and create it in the skill registry',
+    description: 'Approving extraction — creates skill from inbox item in registry',
     inputSchema: {
       type: 'object',
       properties: {
@@ -186,7 +186,7 @@ export const inboxToolDefinitions: InboxToolDefinition[] = [
   },
   {
     name: 'reject_extraction',
-    description: 'Reject an extracted skill (removes from pending extractions)',
+    description: 'Rejecting extraction — removes skill from pending extractions',
     inputSchema: {
       type: 'object',
       properties: {
@@ -208,7 +208,7 @@ export const inboxToolDefinitions: InboxToolDefinition[] = [
   },
   {
     name: 'reject_inbox_item',
-    description: 'Reject an entire inbox item (marks as rejected, keeps for reference)',
+    description: 'Rejecting inbox item — marks as rejected, keeps for reference',
     inputSchema: {
       type: 'object',
       properties: {
@@ -226,7 +226,7 @@ export const inboxToolDefinitions: InboxToolDefinition[] = [
   },
   {
     name: 'delete_inbox_item',
-    description: 'Permanently delete an inbox item and its source file',
+    description: 'Deleting inbox item — permanently removes item and source file',
     inputSchema: {
       type: 'object',
       properties: {
@@ -240,7 +240,7 @@ export const inboxToolDefinitions: InboxToolDefinition[] = [
   },
   {
     name: 'get_inbox_stats',
-    description: 'Get statistics about the inbox (counts by status, extracted skills/patterns)',
+    description: 'Checking inbox stats — counts by status and extracted skills',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -248,7 +248,7 @@ export const inboxToolDefinitions: InboxToolDefinition[] = [
   },
   {
     name: 'refresh_inbox',
-    description: 'Scan inbox directory for new files that were added externally',
+    description: 'Scanning inbox — discovers new externally-added files',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -256,7 +256,7 @@ export const inboxToolDefinitions: InboxToolDefinition[] = [
   },
   {
     name: 'approve_classified_extraction',
-    description: 'Approve a classified extraction (standalone skill, enhancement, or reference doc)',
+    description: 'Approving classified extraction — creates skill, enhancement, or reference doc',
     inputSchema: {
       type: 'object',
       properties: {
@@ -283,7 +283,7 @@ export const inboxToolDefinitions: InboxToolDefinition[] = [
   },
   {
     name: 'reject_classified_extraction',
-    description: 'Reject a classified extraction',
+    description: 'Rejecting classified extraction — declines with reason',
     inputSchema: {
       type: 'object',
       properties: {

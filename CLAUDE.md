@@ -121,7 +121,7 @@ Design principles:
 - `apps/` - Generated applications
   - `dashboard/` - Real-time monitoring UI (deployed to Vercel, not used in local dev)
 
-## MCP Tools (54+ tools)
+## MCP Tools (311 tools across 26 modules)
 
 ### Skill Tools
 | Tool | Purpose |
@@ -195,15 +195,19 @@ Design principles:
 
 ## Available Loops
 
-### Engineering Loop (engineering-loop)
-Complete engineering workflow with 9 phases:
-INIT → SCAFFOLD → IMPLEMENT → TEST → VERIFY → VALIDATE → DOCUMENT → REVIEW → SHIP
-
-Gates after: SCAFFOLD, IMPLEMENT, TEST, VALIDATE, DOCUMENT, REVIEW
-
-### Proposal Loop (proposal-loop)
-Proposal generation with 4 phases:
-INIT → SCAFFOLD → IMPLEMENT → COMPLETE
+| Loop | Purpose | Phases |
+|------|---------|--------|
+| engineering-loop | Full engineering workflow | INIT → SCAFFOLD → IMPLEMENT → TEST → VERIFY → VALIDATE → DOCUMENT → REVIEW → SHIP |
+| bugfix-loop | Bug investigation and fix | INIT → INVESTIGATE → FIX → VERIFY → COMPLETE |
+| proposal-loop | Proposal generation | INIT → SCAFFOLD → IMPLEMENT → COMPLETE |
+| learning-loop | Review runs and improve skills | INIT → REVIEW → IMPROVE → COMPLETE |
+| meta-loop | Create new loops | INIT → DESIGN → BUILD → TEST → COMPLETE |
+| distribution-loop | Ship to all targets | INIT → VERIFY → SHIP → COMPLETE |
+| audit-loop | Audit skills and loops | INIT → AUDIT → REPORT → COMPLETE |
+| deck-loop | Create presentation decks | INIT → RESEARCH → BUILD → REVIEW → COMPLETE |
+| dream-loop | Define dream states | DISCOVER → DEFINE → VALIDATE → COMPLETE |
+| infra-loop | Infrastructure work | INIT → PLAN → IMPLEMENT → VERIFY → COMPLETE |
+| transpose-loop | Cross-cutting concerns | INIT → ANALYZE → IMPLEMENT → VERIFY → COMPLETE |
 
 ## Workflow Example
 

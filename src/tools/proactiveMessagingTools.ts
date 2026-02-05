@@ -21,7 +21,7 @@ export const proactiveMessagingTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'send_notification',
-    description: 'Send a custom notification to all enabled channels (terminal + Slack).',
+    description: 'Sending notification — delivers to all enabled channels',
     inputSchema: {
       type: 'object',
       properties: {
@@ -51,7 +51,7 @@ export const proactiveMessagingTools: Tool[] = [
   },
   {
     name: 'notify_gate_waiting',
-    description: 'Send notification that a gate is waiting for approval.',
+    description: 'Notifying gate approval — alerts channels about waiting gate',
     inputSchema: {
       type: 'object',
       properties: {
@@ -82,7 +82,7 @@ export const proactiveMessagingTools: Tool[] = [
   },
   {
     name: 'notify_loop_complete',
-    description: 'Send notification that a loop has completed.',
+    description: 'Notifying loop completion — alerts channels about finished loop',
     inputSchema: {
       type: 'object',
       properties: {
@@ -117,7 +117,7 @@ export const proactiveMessagingTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'get_pending_interactions',
-    description: 'List gates, proposals, and other items awaiting response.',
+    description: 'Listing pending interactions — retrieves items awaiting response',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -125,7 +125,7 @@ export const proactiveMessagingTools: Tool[] = [
   },
   {
     name: 'respond_to_interaction',
-    description: 'Programmatically respond to a pending interaction.',
+    description: 'Responding to interaction — processes pending item response',
     inputSchema: {
       type: 'object',
       properties: {
@@ -152,7 +152,7 @@ export const proactiveMessagingTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'configure_messaging_channel',
-    description: 'Enable/disable channels and set configuration (Slack tokens, etc.).',
+    description: 'Configuring messaging — enables/disables channels and sets tokens',
     inputSchema: {
       type: 'object',
       properties: {
@@ -187,7 +187,7 @@ export const proactiveMessagingTools: Tool[] = [
   },
   {
     name: 'get_messaging_config',
-    description: 'Get current proactive messaging configuration.',
+    description: 'Checking messaging config — retrieves channel settings',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -199,7 +199,7 @@ export const proactiveMessagingTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'get_channel_status',
-    description: 'Check connection status for all messaging channels.',
+    description: 'Checking channel connections — tests all messaging channels',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -207,7 +207,7 @@ export const proactiveMessagingTools: Tool[] = [
   },
   {
     name: 'test_messaging_channel',
-    description: 'Send a test message to verify channel setup.',
+    description: 'Testing messaging — sends verification message to channel',
     inputSchema: {
       type: 'object',
       properties: {
@@ -226,7 +226,7 @@ export const proactiveMessagingTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'list_message_conversations',
-    description: 'List recent notification conversations and their responses.',
+    description: 'Listing notification history — retrieves recent conversations',
     inputSchema: {
       type: 'object',
       properties: {
@@ -239,7 +239,7 @@ export const proactiveMessagingTools: Tool[] = [
   },
   {
     name: 'get_messaging_stats',
-    description: 'Get statistics about messaging channels and interactions.',
+    description: 'Checking messaging statistics — retrieves channel and interaction metrics',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -251,7 +251,7 @@ export const proactiveMessagingTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'check_daily_status',
-    description: 'Check daily status and show welcome message if first call of day. Call this at the start of each session.',
+    description: 'Checking daily status — shows welcome message if first call of day',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -263,7 +263,7 @@ export const proactiveMessagingTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'get_pending_slack_tasks',
-    description: 'Get tasks queued from Slack that need to be handled. Call this when you receive a notification about queued tasks, or periodically during a loop to check for async requests.',
+    description: 'Loading queued tasks — retrieves Slack-queued items needing handling',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -271,7 +271,7 @@ export const proactiveMessagingTools: Tool[] = [
   },
   {
     name: 'complete_slack_task',
-    description: 'Mark a Slack-queued task as completed after handling it.',
+    description: 'Completing queued task — marks Slack-queued item as handled',
     inputSchema: {
       type: 'object',
       properties: {

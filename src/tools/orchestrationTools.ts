@@ -53,7 +53,7 @@ export function createOrchestrationTools(options: OrchestrationToolsOptions) {
       // =======================================================================
       {
         name: 'init_orchestrator',
-        description: 'Initialize or resume a Layer 1 orchestrator for a system. Creates the orchestrator if new, resumes if existing.',
+        description: 'Initializing orchestrator — creates or resumes Layer 1 orchestration for a system',
         inputSchema: {
           type: 'object' as const,
           properties: {
@@ -65,22 +65,22 @@ export function createOrchestrationTools(options: OrchestrationToolsOptions) {
       },
       {
         name: 'get_orchestrator',
-        description: 'Get the current orchestrator state including status, active agents, and module progress',
+        description: 'Checking orchestrator — retrieves status, active agents, and module progress',
         inputSchema: { type: 'object' as const, properties: {}, required: [] },
       },
       {
         name: 'pause_orchestrator',
-        description: 'Pause the orchestrator. Active agents will complete current work but no new work will be assigned.',
+        description: 'Pausing orchestrator — active agents complete but no new work assigned',
         inputSchema: { type: 'object' as const, properties: {}, required: [] },
       },
       {
         name: 'resume_orchestrator',
-        description: 'Resume a paused orchestrator',
+        description: 'Resuming orchestrator — continues paused orchestration',
         inputSchema: { type: 'object' as const, properties: {}, required: [] },
       },
       {
         name: 'shutdown_orchestrator',
-        description: 'Gracefully shutdown the orchestrator and all agents',
+        description: 'Shutting down orchestrator — gracefully stops all agents',
         inputSchema: { type: 'object' as const, properties: {}, required: [] },
       },
 
@@ -89,7 +89,7 @@ export function createOrchestrationTools(options: OrchestrationToolsOptions) {
       // =======================================================================
       {
         name: 'spawn_agent',
-        description: 'Spawn a single Layer 2 agent for a specific module and loop',
+        description: 'Spawning agent — creates Layer 2 agent for a specific module and loop',
         inputSchema: {
           type: 'object' as const,
           properties: {
@@ -102,7 +102,7 @@ export function createOrchestrationTools(options: OrchestrationToolsOptions) {
       },
       {
         name: 'spawn_agents_auto',
-        description: 'Automatically spawn agents for the next highest-leverage work items',
+        description: 'Auto-spawning agents — assigns highest-leverage work items',
         inputSchema: {
           type: 'object' as const,
           properties: {
@@ -113,7 +113,7 @@ export function createOrchestrationTools(options: OrchestrationToolsOptions) {
       },
       {
         name: 'get_agent',
-        description: 'Get details about a specific agent',
+        description: 'Checking agent — retrieves agent details and status',
         inputSchema: {
           type: 'object' as const,
           properties: {
@@ -124,12 +124,12 @@ export function createOrchestrationTools(options: OrchestrationToolsOptions) {
       },
       {
         name: 'list_agents',
-        description: 'List all agents with their current status',
+        description: 'Listing agents — retrieves all agents with current status',
         inputSchema: { type: 'object' as const, properties: {}, required: [] },
       },
       {
         name: 'get_agents_by_module',
-        description: 'Get all agents working on a specific module',
+        description: 'Finding module agents — lists agents assigned to a module',
         inputSchema: {
           type: 'object' as const,
           properties: {
@@ -140,7 +140,7 @@ export function createOrchestrationTools(options: OrchestrationToolsOptions) {
       },
       {
         name: 'terminate_agent',
-        description: 'Terminate a specific agent',
+        description: 'Terminating agent — stops a specific agent',
         inputSchema: {
           type: 'object' as const,
           properties: {
@@ -155,12 +155,12 @@ export function createOrchestrationTools(options: OrchestrationToolsOptions) {
       // =======================================================================
       {
         name: 'get_work_queue',
-        description: 'Get the current work queue showing pending, in-progress, completed, and failed work items',
+        description: 'Checking work queue — shows pending, in-progress, completed, and failed items',
         inputSchema: { type: 'object' as const, properties: {}, required: [] },
       },
       {
         name: 'get_next_work',
-        description: 'Get the next recommended work items based on leverage scoring and dependencies',
+        description: 'Getting next work — recommends items based on leverage scoring',
         inputSchema: {
           type: 'object' as const,
           properties: {
@@ -175,12 +175,12 @@ export function createOrchestrationTools(options: OrchestrationToolsOptions) {
       // =======================================================================
       {
         name: 'get_orchestration_progress',
-        description: 'Get a summary of orchestration progress including modules, agents, and work queue',
+        description: 'Checking orchestration progress — summarizes modules, agents, and work queue',
         inputSchema: { type: 'object' as const, properties: {}, required: [] },
       },
       {
         name: 'get_orchestration_events',
-        description: 'Get recent orchestration events',
+        description: 'Loading orchestration events — retrieves recent activity log',
         inputSchema: {
           type: 'object' as const,
           properties: {
@@ -191,7 +191,7 @@ export function createOrchestrationTools(options: OrchestrationToolsOptions) {
       },
       {
         name: 'render_orchestration_terminal',
-        description: 'Get a terminal-friendly visualization of orchestration status',
+        description: 'Visualizing orchestration — generates terminal-friendly status display',
         inputSchema: { type: 'object' as const, properties: {}, required: [] },
       },
 
@@ -200,7 +200,7 @@ export function createOrchestrationTools(options: OrchestrationToolsOptions) {
       // =======================================================================
       {
         name: 'run_autonomous_cycle',
-        description: 'Run one autonomous execution cycle: identify work, spawn agents, begin execution',
+        description: 'Running orchestration cycle — identifies work, spawns agents, begins execution',
         inputSchema: { type: 'object' as const, properties: {}, required: [] },
       },
     ],
