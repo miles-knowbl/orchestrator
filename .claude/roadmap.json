@@ -167,7 +167,6 @@
       "status": "complete",
       "dependsOn": [],
       "unlocks": [
-        "kanban",
         "coherence-system",
         "dream-state-service"
       ]
@@ -183,18 +182,6 @@
         "proactive-messaging"
       ],
       "unlocks": []
-    },
-    {
-      "id": "kanban",
-      "name": "kanban",
-      "description": "Linear-style visualization of the module ladder to system completion. Human-readable checklist showing scope completion.",
-      "layer": 1,
-      "status": "complete",
-      "dependsOn": [
-        "roadmapping"
-      ],
-      "unlocks": [],
-      "completedAt": "2026-02-04T17:16:56.068Z"
     },
     {
       "id": "loop-sequencing",

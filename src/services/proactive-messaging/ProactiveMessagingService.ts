@@ -1086,7 +1086,7 @@ export class ProactiveMessagingService {
         `Steps: ` +
         `1. Read ${cwd}/memory/async-queue.json to get the pre-computed work queue. ` +
         `2. Pop the first move from the queue (rank #1). ` +
-        `3. If queue is empty or expired, notify user: "Queue empty. Run /async-loop to plan more moves." ` +
+        `3. If queue is empty or expired, notify user: "Queue empty. Run the leverage protocol to plan more moves." ` +
         `4. Otherwise, start the loop for that move (e.g., /engineering-loop auth-service). ` +
         `5. Call mcp__orchestrator__complete_slack_task with taskId="${task.id}" when the loop starts. ` +
         `6. Update async-queue.json to remove the executed move. ` +

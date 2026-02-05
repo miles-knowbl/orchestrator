@@ -257,7 +257,7 @@
       "confidence": "high",
       "createdAt": "2026-01-31T00:00:00Z",
       "updatedAt": "2026-02-01T00:00:00Z",
-      "lastUsed": null
+      "lastUsed": "2026-02-05T00:00:00.000Z"
     },
     {
       "id": "PAT-013",
@@ -307,7 +307,7 @@
       "uses": 1,
       "confidence": "high",
       "createdAt": "2026-02-01T00:00:00Z",
-      "lastUsed": "2026-02-01T00:00:00Z",
+      "lastUsed": "2026-02-05T00:00:00.000Z",
       "implementedVia": "ADR-008 (Slack Autonomy Mode)"
     },
     {
@@ -342,7 +342,7 @@
       "uses": 0,
       "confidence": "high",
       "createdAt": "2026-02-04T00:00:00Z",
-      "lastUsed": null,
+      "lastUsed": "2026-02-05T00:00:00.000Z",
       "learnedFrom": "Structured Document Architecture change failed 2026-02-04"
     }
   ],

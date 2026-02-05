@@ -693,45 +693,6 @@
       ]
     },
     {
-      "id": "kanban",
-      "path": "apps/dashboard/app/roadmap/",
-      "status": "complete",
-      "functions": [
-        {
-          "name": "Dashboard page — apps/dashboard/app/roadmap/page.tsx",
-          "complete": true
-        },
-        {
-          "name": "Navigation link — Added to layout.tsx",
-          "complete": true
-        },
-        {
-          "name": "Overall progress panel — Aggregate stats with progress bar",
-          "complete": true
-        },
-        {
-          "name": "Leverage scoring panel — Top 3 next modules with scores",
-          "complete": true
-        },
-        {
-          "name": "Layer sections — Collapsible layer groupings (0-6)",
-          "complete": true
-        },
-        {
-          "name": "Module cards — Status, details, expand/collapse",
-          "complete": true
-        },
-        {
-          "name": "Status indicators — Color-coded icons per status",
-          "complete": true
-        },
-        {
-          "name": "Critical path display — Shows highest-impact modules",
-          "complete": true
-        }
-      ]
-    },
-    {
       "id": "loop-sequencing",
       "path": "src/services/loop-sequencing/",
       "status": "complete",
@@ -1404,9 +1365,9 @@
   ],
   "completionAlgebra": {
     "formula": "System.done = ALL(Module.done)",
-    "current": "27 modules active",
+    "current": "26 modules active",
     "pending": "None",
-    "status": "301 functions complete",
+    "status": "293 functions complete",
     "version": "3.0.0"
   },
   "activeLoops": [],

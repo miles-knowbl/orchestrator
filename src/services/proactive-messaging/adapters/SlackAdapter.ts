@@ -197,7 +197,7 @@ export class SlackAdapter implements ChannelAdapter {
     const loops = [
       'engineering-loop', 'bugfix-loop', 'distribution-loop', 'proposal-loop',
       'audit-loop', 'dream-loop', 'learning-loop', 'infrastructure-loop',
-      'deck-loop', 'transpose-loop', 'loop-composer', 'async-loop', 'cultivation-loop'
+      'deck-loop', 'transpose-loop', 'loop-composer'
     ];
 
     // Normalize: remove hyphens for matching

@@ -16,7 +16,7 @@ Define the visual specification for presentation slide imagery.
 
 - **Deck generation** — Creating the image specification for a presentation
 - **Visual consistency** — Establishing image rules across slides
-- **Brand alignment** — Ensuring images match the taste-schema identity
+- **Brand alignment** — Ensuring images match the taste-codifier identity
 - When you say: "image schema", "visual specification", "deck images"
 
 ## Required Deliverables
@@ -30,10 +30,10 @@ Define the visual specification for presentation slide imagery.
 Image schema answers: **"What images appear on each slide, where, and how should they look?"**
 
 ```
-Taste Schema (brand) → Image Schema (visual rules) → Slide Generation (applied)
+Taste Codifier (brand) → Image Schema (visual rules) → Slide Generation (applied)
 ```
 
-The image schema bridges brand identity (from taste-schema) to concrete visual specifications per slide type.
+The image schema bridges brand identity (from taste-codifier) to concrete visual specifications per slide type.
 
 ## Schema Structure
 
@@ -95,14 +95,14 @@ The image schema bridges brand identity (from taste-schema) to concrete visual s
 - [ ] Image types defined with sizing rules
 - [ ] Layout positions specified per slide type
 - [ ] Aspect ratio and quality defaults set
-- [ ] Visual style aligned with taste-schema
+- [ ] Visual style aligned with taste-codifier
 - [ ] Schema exported as deck-image-schema.json
 
 ## Relationship to Other Skills
 
 | Skill | Relationship |
 |-------|--------------|
-| `taste-schema` | Provides brand identity that images must match |
+| `taste-codifier` | Provides brand identity that images must match |
 | `deck-text-schema` | Text and image schemas coordinate for slide layout |
 | `content-analysis` | Analyzed content determines which images are needed |
 

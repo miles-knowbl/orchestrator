@@ -18,7 +18,7 @@
  */
 
 import { EventEmitter } from 'events';
-import { randomUUID } from 'crypto';
+import { randomUUID, createHash } from 'crypto';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import type { RoadmapService, Module } from '../roadmapping/index.js';
@@ -294,6 +294,9 @@ export class CoherenceService extends EventEmitter {
     const domainValidations: DomainValidation[] = [];
     const allIssues: CoherenceIssue[] = [];
 
+    // Clear previous issues — each validation is a fresh snapshot
+    this.issues.clear();
+
     // Group rules by domain
     const rulesByDomain = new Map<AlignmentDomain, CoherenceRule[]>();
     for (const rule of this.rules) {
@@ -419,8 +422,9 @@ export class CoherenceService extends EventEmitter {
       ));
     }
 
-    // Check for layers with no modules (potential gap)
-    for (let layer = 0; layer <= 6; layer++) {
+    // Check for gaps in used layers (only check layers that exist in the roadmap)
+    const maxLayer = progress.layerProgress.reduce((max, lp) => Math.max(max, lp.layer), 0);
+    for (let layer = 0; layer <= maxLayer; layer++) {
       const layerModules = progress.layerProgress.find(lp => lp.layer === layer);
       if (!layerModules || layerModules.total === 0) {
         issues.push(this.createIssue(
@@ -849,8 +853,13 @@ export class CoherenceService extends EventEmitter {
     evidence: string[],
     suggestedFix?: string
   ): CoherenceIssue {
+    // Deterministic ID based on content so the same issue doesn't duplicate across runs
+    const contentHash = createHash('sha256')
+      .update(`${domain}:${title}:${affectedComponents.sort().join(',')}`)
+      .digest('hex')
+      .slice(0, 8);
     return {
-      id: `${domain}-${randomUUID().slice(0, 8)}`,
+      id: `${domain}-${contentHash}`,
       domain,
       severity,
       status: 'open',

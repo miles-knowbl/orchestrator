@@ -30,7 +30,7 @@ Define the text content structure and typography for presentation slides.
 Text schema answers: **"What text appears on each slide, how is it structured, and how should it be styled?"**
 
 ```
-Taste Schema (brand) → Text Schema (content rules) → Slide Generation (applied)
+Taste Codifier (brand) → Text Schema (content rules) → Slide Generation (applied)
 ```
 
 The text schema defines content types, hierarchy, and formatting rules that ensure every slide communicates clearly.
@@ -116,7 +116,7 @@ Slide Title (one per slide)
 
 | Skill | Relationship |
 |-------|--------------|
-| `taste-schema` | Provides brand identity that typography must match |
+| `taste-codifier` | Provides brand identity that typography must match |
 | `deck-image-schema` | Text and image schemas coordinate for slide layout |
 | `content-analysis` | Analyzed content feeds into text structure |
 

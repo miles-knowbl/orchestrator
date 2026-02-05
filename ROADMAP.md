@@ -7,8 +7,8 @@
 ## Overview
 
 **System**: Orchestrator — Autonomous, coherent, local-first system that compounds leverage through skill-based ontology
-**Progress**: 27/27 active modules complete (100%)
-**Functions**: 301/301 complete
+**Progress**: 26/26 active modules complete (100%)
+**Functions**: 293/293 complete
 **Deferred**: 37 modules ([deferred-modules-in-progress.json](.claude/deferred-modules-in-progress.json))
 
 ---
@@ -26,7 +26,7 @@ Layer 2  ───────────────────────�
          coherence-system, mece-opportunity-mapping, patterns-roundup, scoring
 
 Layer 1  ──────────────────────────────────────────────────────────────────
-         autonomous, kanban, loop-sequencing, ooda-clocks-visual, skill-trees
+         autonomous, loop-sequencing, ooda-clocks-visual, skill-trees
 
 Layer 0  ──────────────────────────────────────────────────────────────────
          skill-registry, loop-composer, execution-engine, memory-service,
@@ -56,7 +56,7 @@ All modules complete.
 | **analytics** | Collect and aggregate metrics from runs, skills, calibration, gates, patterns. | complete | learning-service, patterns-roundup, scoring |
 | **dream-state-service** | Manage dream state JSON, sync from roadmap, render markdown views. | complete | — |
 | **knowledge-graph-ontology** | The skill-based knowledge graph where compound leverage accumulates. | complete | skill-trees, mece-opportunity-mapping |
-| **roadmapping** | System-level visibility into module progress, dependencies, and completion status. | complete | kanban, coherence-system, dream-state-service |
+| **roadmapping** | System-level visibility into module progress, dependencies, and completion status. | complete | coherence-system, dream-state-service |
 
 ---
 
@@ -65,7 +65,6 @@ All modules complete.
 | Module | Description | Status | Depends On |
 |--------|-------------|--------|------------|
 | **autonomous** | Full loop execution without human gates + background continuous operation. | complete | execution-engine, proactive-messaging |
-| **kanban** | Linear-style visualization of the module ladder to system completion. | complete | roadmapping |
 | **loop-sequencing** | Multi-move planning: which loops commonly run together, looking multiple moves ahead. | complete | — |
 | **ooda-clocks-visual** | Gamelan-inspired circular visualization showing when patterns, hooks, and skills fire. | complete | — |
 | **skill-trees** | DAG-like domain-specific sequences of skills with progression tracking. | complete | knowledge-graph-ontology |
@@ -123,11 +122,11 @@ All modules complete.
 | Layer | Complete | Total | Modules |
 |-------|----------|-------|---------|
 | 0 | 14 | 14 | skill-registry, loop-composer, execution-engine, memory-service, learning-service, calibration-service, inbox-processor, run-archival, guarantee-service, deliverable-manager, analytics, dream-state-service, knowledge-graph-ontology, roadmapping |
-| 1 | 5 | 5 | autonomous, kanban, loop-sequencing, ooda-clocks-visual, skill-trees |
+| 1 | 4 | 4 | autonomous, loop-sequencing, ooda-clocks-visual, skill-trees |
 | 2 | 4 | 4 | coherence-system, mece-opportunity-mapping, patterns-roundup, scoring |
 | 3 | 3 | 3 | proactive-messaging, slack-integration, voice |
 | 4 | 1 | 1 | knopilot |
-| **Total** | **27** | **27** | **100%** |
+| **Total** | **26** | **26** | **100%** |
 
 ---
 
