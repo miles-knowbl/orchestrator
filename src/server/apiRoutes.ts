@@ -80,6 +80,28 @@ export function createApiRoutes(options: ApiRoutesOptions): Router {
   const router = Router();
 
   // ==========================================================================
+  // STATUS LINE (for Claude Code integration)
+  // ==========================================================================
+
+  /**
+   * Get current execution status as plain text for Claude Code statusline
+   * Returns: "⟳ loop-name:PHASE" or empty string if no active execution
+   */
+  router.get('/status', (_req: Request, res: Response) => {
+    const executions = executionEngine.listExecutions();
+    const active = executions.find(e => e.status === 'active' || e.status === 'paused');
+
+    if (active) {
+      // Format: ⟳ engineering-loop:IMPLEMENT
+      const loopShort = active.loopId.replace(/-loop$/, '');
+      const status = active.status === 'paused' ? '⏸' : '⟳';
+      res.type('text/plain').send(`${status} ${loopShort}:${active.currentPhase}`);
+    } else {
+      res.type('text/plain').send('');
+    }
+  });
+
+  // ==========================================================================
   // EXECUTIONS
   // ==========================================================================
 
