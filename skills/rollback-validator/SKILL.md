@@ -2,7 +2,7 @@
 name: rollback-validator
 description: "Validate that rollback paths work correctly during migrations. Tests downgrade procedures, data reversibility, and state recovery to ensure safe retreat from failed migrations."
 phase: VALIDATE
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: [migration-planner, compatibility-checker]
 tags: [migration, rollback, safety, validation]

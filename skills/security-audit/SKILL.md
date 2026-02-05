@@ -2,7 +2,7 @@
 name: security-audit
 description: "Perform comprehensive security analysis of code and systems. Identifies vulnerabilities including injection attacks, authentication flaws, data exposure, and misconfigurations. Follows OWASP guidelines and security best practices. Provides actionable remediation guidance."
 phase: VALIDATE
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: [implement]
 tags: [security, validation, audit, owasp, core-workflow]

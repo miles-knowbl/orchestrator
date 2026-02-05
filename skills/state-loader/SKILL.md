@@ -2,7 +2,7 @@
 name: state-loader
 description: "Loads and validates system state for async operation. Reads memory files, execution history, and current configuration to establish baseline context."
 phase: INIT
-category: async
+category: operations
 version: "1.0.0"
 depends_on: []
 tags: [async, state, initialization, context, memory]

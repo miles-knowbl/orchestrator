@@ -2,7 +2,7 @@
 name: taste-report
 description: "Generate taste-ordered checklist for shipping. Uses trace data to prioritize failure modes by taste impact: Tier 1 (taste-critical), Tier 2 (taste-significant), Tier 3 (technical-only). Updates AUDIT-REPORT.md with taste-weighted prioritization."
 phase: DOCUMENT
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: [taste-trace]
 tags: [audit, taste, report, checklist, prioritization]

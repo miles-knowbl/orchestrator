@@ -2,7 +2,7 @@
 name: ui-pipeline-discovery
 description: "Identify client-side UI pipelines (U-series) in the codebase. Discovers interaction flows involving chat, tool handlers, context synchronization, and real-time updates. Foundation for UI-specific failure mode analysis."
 phase: INIT
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: [requirements]
 tags: [audit, pipeline, discovery, ui, frontend, interaction]

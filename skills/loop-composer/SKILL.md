@@ -2,7 +2,7 @@
 name: loop-composer
 description: "Design and compose loops from requirements. Handles skill selection, phase sequencing, gate placement, dependency validation, and loop.json generation. The architectural counterpart to loop-controller's runtime execution."
 phase: SCAFFOLD
-category: meta
+category: operations
 version: "1.0.0"
 depends_on: [skill-design]
 tags: [meta, loops, composition, design, orchestration]

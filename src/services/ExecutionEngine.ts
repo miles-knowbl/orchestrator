@@ -568,6 +568,16 @@ export class ExecutionEngine {
         } catch (err) {
           this.log('warn', `Failed to clean up transient state: ${err}`);
         }
+
+        // Archive old runs (keep last 10)
+        try {
+          const archived = await this.deliverableManager.archiveOldRuns(10);
+          if (archived.length > 0) {
+            this.log('info', `Archived ${archived.length} old runs (keeping last 10)`);
+          }
+        } catch (err) {
+          this.log('warn', `Failed to archive old runs: ${err}`);
+        }
       }
 
       this.log('info', `Execution ${executionId} completed`);

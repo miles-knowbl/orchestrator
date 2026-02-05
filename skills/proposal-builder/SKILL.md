@@ -2,7 +2,7 @@
 name: proposal-builder
 description: "Generate polished proposal documents from cultivated context and priorities. Transform insights, patterns, and ranked opportunities into compelling narratives with clear value propositions, scope definitions, pricing strategies, and calls to action. The final output skill of the proposal loop."
 phase: COMPLETE
-category: specialized
+category: content
 version: "2.0.0"
 depends_on: ["priority-matrix"]
 tags: [planning, proposal, documentation, persuasion, sales]

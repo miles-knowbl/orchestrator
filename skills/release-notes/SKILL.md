@@ -2,7 +2,7 @@
 name: release-notes
 description: "Write user-facing release notes that communicate what changed, why it matters, and what to do. Translates technical changes into user impact language."
 phase: DOCUMENT
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: [changelog-generator]
 tags: [release, documentation, communication, users]

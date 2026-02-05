@@ -2,7 +2,7 @@
 name: error-handling
 description: "Implement robust error handling strategies for applications. Covers error classification, custom error hierarchies, propagation patterns, recovery mechanisms (retry, fallback, circuit breaker, bulkhead), logging and observability, user-facing messages, and boundary error handling across API, UI, and background job layers."
 phase: IMPLEMENT
-category: core
+category: engineering
 version: "2.0.0"
 depends_on: ["implement"]
 tags: [implementation, quality, patterns, reliability]

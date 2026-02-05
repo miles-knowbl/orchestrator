@@ -2,7 +2,7 @@
 name: taste-codifier
 description: "Analyzes diverse source material (text, images, video) to extract and codify a creator's 'taste'—their distinctive voice patterns across textual and visual dimensions. Use this skill when: (1) Creating a taste schema from source material, (2) Documenting a voice for consistent reproduction, (3) Building a style guide for AI-assisted content generation, (4) Capturing brand voice or personal voice patterns. Outputs a comprehensive JSON taste schema."
 phase: SCAFFOLD
-category: specialized
+category: content
 version: "1.0.0"
 depends_on: []
 tags: [specialized, voice, branding, schema, content-generation]

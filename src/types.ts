@@ -24,18 +24,11 @@ export const PHASES = [
 export type Phase = typeof PHASES[number];
 
 export const SKILL_CATEGORIES = [
-  // Primary categories
-  'core',           // Essential skills used across most loops
-  'infra',          // Infrastructure, deployment, DevOps
-  'meta',           // Self-improvement, learning, meta-operations
-  'specialized',    // Domain-specific but not categorized elsewhere
-  'custom',         // User-defined skills
-  // Domain categories
-  'sales',          // Sales/CRM skills (KnoPilot)
-  'async',          // Asynchronous/background operation skills
-  'content',        // Content creation, documentation
-  'planning',       // Strategic planning, roadmapping
-  'operations',     // Operational/runtime management
+  'engineering',    // Building software (core development, infra, technical analysis)
+  'sales',          // Revenue generation (CRM, deal management, stakeholder analysis)
+  'operations',     // Running/monitoring/improving the system (orchestration, learning, async)
+  'content',        // Creating artifacts (docs, decks, schemas, presentations)
+  'strategy',       // Planning/prioritization (roadmapping, dream state, leverage)
 ] as const;
 
 export type SkillCategory = typeof SKILL_CATEGORIES[number];

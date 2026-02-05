@@ -2,7 +2,7 @@
 name: calibration-sync
 description: "Syncs calibration data for async operation. Loads effort estimates, accuracy history, and adjustment factors to improve planning accuracy."
 phase: GATHER
-category: async
+category: operations
 version: "1.0.0"
 depends_on: [state-loader]
 tags: [async, calibration, estimation, planning]

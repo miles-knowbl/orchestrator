@@ -2,7 +2,7 @@
 name: infra-services
 description: "Configure service layer with lazy singleton initialization, dependency management, and lifecycle hooks."
 phase: IMPLEMENT
-category: infra
+category: engineering
 version: "1.0.0"
 depends_on: ["infra-database", "scaffold"]
 tags: [infrastructure, services, dependency-injection, singletons, initialization]

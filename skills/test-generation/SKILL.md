@@ -2,7 +2,7 @@
 name: test-generation
 description: "Generate comprehensive test suites for code. Creates unit tests, integration tests, and end-to-end tests. Identifies what to test, designs test cases, and produces readable, maintainable tests. Ensures adequate coverage of happy paths, edge cases, and error conditions."
 phase: TEST
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: ["implement"]
 tags: [quality, testing, core-workflow]

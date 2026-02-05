@@ -2,7 +2,7 @@
 name: content-analysis
 description: "Analyze provided content to extract meaningful information, reusable skills, and recurring patterns. Applies structured decomposition, taxonomy-driven classification, and confidence-scored extraction to transform raw content into actionable knowledge components. Powers the inbox/second-brain extraction pipeline."
 phase: VALIDATE
-category: meta
+category: operations
 version: "2.0.0"
 depends_on: []
 tags: [meta, analysis, extraction, patterns, knowledge, taxonomy, second-brain]

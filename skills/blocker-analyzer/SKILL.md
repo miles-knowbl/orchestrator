@@ -2,7 +2,7 @@
 name: blocker-analyzer
 description: "Analyzes blockers preventing module progress. Identifies blocked modules, their dependencies, and potential unblocking strategies."
 phase: SCORE
-category: async
+category: operations
 version: "1.0.0"
 depends_on: [dream-sync]
 tags: [async, blockers, dependencies, analysis]

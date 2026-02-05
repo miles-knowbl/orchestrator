@@ -2,7 +2,7 @@
 name: dependency-mapping
 description: "Map cross-pipeline dependencies and handoffs (X-series). Identifies where pipelines connect, share data, or have timing dependencies. Documents failure modes at integration boundaries that span multiple pipelines."
 phase: INIT
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: [pipeline-discovery, ui-pipeline-discovery]
 tags: [audit, pipeline, dependencies, integration, cross-cutting]

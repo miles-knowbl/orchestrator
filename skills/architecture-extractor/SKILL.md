@@ -2,7 +2,7 @@
 name: architecture-extractor
 description: "Analyze a source system — codebase, documentation, diagrams, or verbal description — and extract a clean, structured architecture document. Reverse-engineers components, data flows, interfaces, patterns, and constraints into ARCHITECTURE.md."
 phase: EXTRACT
-category: specialized
+category: engineering
 version: "1.0.0"
 depends_on: []
 tags: [architecture, analysis, extraction, reverse-engineering, transposition]

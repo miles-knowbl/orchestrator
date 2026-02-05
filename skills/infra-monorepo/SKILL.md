@@ -2,7 +2,7 @@
 name: infra-monorepo
 description: "Configure monorepo tooling with workspace management, task orchestration, and build caching for multi-package projects."
 phase: IMPLEMENT
-category: infra
+category: engineering
 version: "1.0.0"
 depends_on: ["scaffold"]
 tags: [infrastructure, monorepo, turbo, workspace, build-system]

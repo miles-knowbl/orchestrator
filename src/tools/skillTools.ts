@@ -13,7 +13,9 @@ const ListSkillsSchema = z.object({
     'INIT', 'SCAFFOLD', 'IMPLEMENT', 'TEST', 'VERIFY',
     'VALIDATE', 'DOCUMENT', 'REVIEW', 'SHIP', 'COMPLETE'
   ]).optional(),
-  category: z.enum(['core', 'infra', 'meta', 'specialized', 'custom']).optional(),
+  category: z.enum([
+    'engineering', 'sales', 'operations', 'content', 'strategy'
+  ]).optional(),
   query: z.string().optional(),
   limit: z.number().min(1).max(500).optional(),
   offset: z.number().min(0).optional(),
@@ -33,7 +35,9 @@ const CreateSkillSchema = z.object({
     'INIT', 'SCAFFOLD', 'IMPLEMENT', 'TEST', 'VERIFY',
     'VALIDATE', 'DOCUMENT', 'REVIEW', 'SHIP', 'COMPLETE'
   ]).optional(),
-  category: z.enum(['core', 'infra', 'meta', 'specialized', 'custom']).optional(),
+  category: z.enum([
+    'engineering', 'sales', 'operations', 'content', 'strategy'
+  ]).optional(),
 });
 
 const UpdateSkillSchema = z.object({
@@ -82,7 +86,7 @@ export const skillToolDefinitions = [
         },
         category: {
           type: 'string',
-          enum: ['core', 'infra', 'meta', 'specialized', 'custom'],
+          enum: ['engineering', 'sales', 'operations', 'content', 'strategy'],
           description: 'Filter by category',
         },
         query: {
@@ -147,7 +151,7 @@ export const skillToolDefinitions = [
         },
         category: {
           type: 'string',
-          enum: ['core', 'infra', 'meta', 'specialized', 'custom'],
+          enum: ['engineering', 'sales', 'operations', 'content', 'strategy'],
           description: 'Skill category',
         },
       },

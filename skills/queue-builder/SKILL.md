@@ -2,7 +2,7 @@
 name: queue-builder
 description: "Builds prioritized work queue for async operation. Creates a 5-10 move plan with estimated durations and gate points."
 phase: PLAN
-category: async
+category: operations
 version: "1.0.0"
 depends_on: [leverage-calculator]
 tags: [async, queue, planning, execution]

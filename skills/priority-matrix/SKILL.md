@@ -2,7 +2,7 @@
 name: priority-matrix
 description: "Rank opportunities and work threads across multiple prioritization dimensions. Produces actionable priority matrices with calibrated scores, bias-checked rationale, and stakeholder-aligned rankings. Creates the prioritized backlog that feeds into proposal building."
 phase: IMPLEMENT
-category: specialized
+category: strategy
 version: "2.0.0"
 depends_on: ["context-cultivation"]
 tags: [planning, prioritization, analysis, decision-making, frameworks]

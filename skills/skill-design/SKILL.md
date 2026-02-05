@@ -2,7 +2,7 @@
 name: skill-design
 description: "Design, create, and maintain skills in the skill library. Codifies the 13-section template, quality standards, MECE validation, lifecycle management, and extraction pipeline integration. The authoritative meta-skill for skill governance."
 phase: SCAFFOLD
-category: meta
+category: operations
 version: "1.0.0"
 depends_on: []
 tags: [meta, skill-library, quality, templates, governance]

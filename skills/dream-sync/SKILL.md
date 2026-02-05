@@ -2,7 +2,7 @@
 name: dream-sync
 description: "Synchronizes dream state context for async operation. Loads and caches the current dream state hierarchy (org → system → module) for offline reference."
 phase: GATHER
-category: async
+category: operations
 version: "1.0.0"
 depends_on: [state-loader]
 tags: [async, dream-state, context, synchronization]

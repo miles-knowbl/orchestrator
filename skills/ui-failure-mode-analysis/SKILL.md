@@ -2,7 +2,7 @@
 name: ui-failure-mode-analysis
 description: "Apply MECE failure mode taxonomy to UI pipelines with L5/L6 extensions. Identifies UI-specific failure patterns like Dead Click, Stale Closure, State Desync. Produces UI-FAILURE-MODES.md with coverage calculation."
 phase: REVIEW
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: [ui-pipeline-discovery]
 tags: [audit, failure-modes, mece, ui, frontend, analysis]

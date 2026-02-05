@@ -2,7 +2,7 @@
 name: taste-to-text-schema
 description: "Derives a fully-specified text schema from a taste schema + topic. Use when: (1) Writing threads or articles aligned to a voice, (2) Creating social media content or blog posts that maintain voice consistency, (3) Generating content outlines with voice-aware structure. Input: taste schema JSON + topic/message. Output: text schema JSON with complete content or detailed outline. Every output includes a companion micro-post (140 chars) for sharing."
 phase: IMPLEMENT
-category: specialized
+category: content
 version: "1.0.0"
 depends_on: [taste-codifier]
 tags: [specialized, text, writing, schema, content-generation]

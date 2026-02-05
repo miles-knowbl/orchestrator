@@ -34,10 +34,6 @@ export default function RootLayout({
               <nav className="flex items-center gap-6">
                 <a href="/" className="text-sm text-gray-400 hover:text-white transition-colors">Loops</a>
                 <a href="/skills" className="text-sm text-gray-400 hover:text-white transition-colors">Skills</a>
-                <a href="/ooda-clock" className="text-sm text-gray-400 hover:text-white transition-colors">OODA Clock</a>
-                <a href="/roadmap" className="text-sm text-gray-400 hover:text-white transition-colors">Roadmap</a>
-                <a href="/analytics" className="text-sm text-gray-400 hover:text-white transition-colors">Analytics</a>
-                <a href="/dream-state" className="text-sm text-gray-400 hover:text-white transition-colors">Dream State</a>
                 <a href="/distribute" className="text-sm text-gray-400 hover:text-white transition-colors">Distribute</a>
               </nav>
             </div>

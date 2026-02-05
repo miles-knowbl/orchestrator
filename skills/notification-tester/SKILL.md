@@ -2,7 +2,7 @@
 name: notification-tester
 description: "Tests notification delivery for async operation. Verifies that notifications reach the user across all configured channels."
 phase: VERIFY
-category: async
+category: operations
 version: "1.0.0"
 depends_on: [slack-validator]
 tags: [async, notifications, testing, communication]

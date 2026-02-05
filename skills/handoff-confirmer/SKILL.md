@@ -2,7 +2,7 @@
 name: handoff-confirmer
 description: "Confirms system is ready for async handoff. Performs final validation and produces handoff summary before entering mobile operation mode."
 phase: HANDOFF
-category: async
+category: operations
 version: "1.0.0"
 depends_on: [queue-builder, notification-tester]
 tags: [async, handoff, confirmation, mobile]

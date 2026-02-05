@@ -2,7 +2,7 @@
 name: migration-planner
 description: "Plan technology migrations with dependency mapping, risk assessment, rollback strategy, and phased execution timeline. Handles framework upgrades, database changes, and architecture shifts."
 phase: INIT
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: []
 tags: [migration, planning, upgrade, strategy]

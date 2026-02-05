@@ -2,7 +2,7 @@
 name: guarantee-tracker
 description: "Track and document project guarantees - the contracts, invariants, and promises that the codebase maintains. Captures what must always be true, what can never happen, and the boundaries of acceptable behavior."
 phase: DOCUMENT
-category: meta
+category: operations
 version: "1.0.0"
 depends_on: ["context-cultivation"]
 tags: [documentation, contracts, invariants, guarantees, quality]

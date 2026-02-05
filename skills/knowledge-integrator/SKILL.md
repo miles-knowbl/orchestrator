@@ -2,7 +2,7 @@
 name: knowledge-integrator
 description: "Integrate cultivated knowledge into the project. Updates CLAUDE.md with key insights, links to detailed documentation, and ensures knowledge is discoverable and actionable."
 phase: COMPLETE
-category: meta
+category: operations
 version: "1.0.0"
 depends_on: ["context-cultivation"]
 tags: [integration, knowledge-management, documentation, claude-md]

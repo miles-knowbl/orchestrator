@@ -2,7 +2,7 @@
 name: deploy
 description: "Guides deployment of systems to production environments. Covers deployment strategies, production validation, rollback procedures, and monitoring setup. Completes the engineering loop by bridging the gap between merged code and running production systems."
 phase: SHIP
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: ["code-review"]
 tags: [shipping, operations, core-workflow]

@@ -2,7 +2,7 @@
 name: root-cause-analysis
 description: "Systematic root cause identification using 5-whys, git bisect, hypothesis testing, and fault tree analysis. Traces symptoms to their origin."
 phase: SCAFFOLD
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: [bug-reproducer]
 tags: [debugging, analysis, root-cause, diagnosis]

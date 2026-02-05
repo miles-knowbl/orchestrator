@@ -19,27 +19,31 @@ import type {
   ImprovementRecord,
 } from '../types.js';
 
-// Skill categorization
-const META_SKILLS = [
+// Skill categorization fallbacks (when frontmatter category is missing)
+const OPERATIONS_SKILLS = [
   'loop-controller', 'skill-verifier', 'journey-tracer', 'retrospective',
   'calibration-tracker', 'coordination-protocol', 'portability',
-  'manifest-manager', 'roadmap-tracker',
+  'manifest-manager', 'memory-manager', 'orchestrator', 'orchestration',
+  'patterns-roundup', 'knowledge-graph', 'kanban', 'collect-bugs',
 ];
 
-const CORE_SKILLS = [
+const ENGINEERING_SKILLS = [
   'entry-portal', 'requirements', 'spec', 'estimation', 'triage',
-  'memory-manager', 'architect', 'architecture-review', 'scaffold',
+  'architect', 'architecture-review', 'scaffold',
   'git-workflow', 'implement', 'test-generation', 'code-verification',
   'debug-assist', 'code-validation', 'integration-test', 'security-audit',
   'perf-analysis', 'document', 'code-review', 'refactor', 'deploy', 'distribute',
-];
-
-const INFRA_SKILLS = [
   'infra-database', 'infra-docker', 'infra-services', 'infra-devenv', 'infra-monorepo',
+  'frontend-design', 'architecture-extractor', 'stack-analyzer',
 ];
 
-const SPECIALIZED_SKILLS = [
-  'frontend-design', 'engineering-loop', 'taste-schema', 'deck-image-schema', 'deck-text-schema',
+const STRATEGY_SKILLS = [
+  'roadmap-tracker', 'define-dream-state', 'roadmapping', 'priority-matrix', 'leverage-calculator',
+];
+
+const CONTENT_SKILLS = [
+  'deck-image-schema', 'deck-text-schema', 'html-slides', 'proposal-builder',
+  'taste-codifier', 'taste-to-image-schema', 'taste-to-text-schema',
 ];
 
 export interface SkillRegistryOptions {
@@ -265,11 +269,11 @@ export class SkillRegistry {
     frontmatterCategory?: SkillCategory
   ): SkillCategory {
     if (frontmatterCategory) return frontmatterCategory;
-    if (META_SKILLS.includes(name)) return 'meta';
-    if (CORE_SKILLS.includes(name)) return 'core';
-    if (INFRA_SKILLS.includes(name)) return 'infra';
-    if (SPECIALIZED_SKILLS.includes(name)) return 'specialized';
-    return 'custom';
+    if (OPERATIONS_SKILLS.includes(name)) return 'operations';
+    if (ENGINEERING_SKILLS.includes(name)) return 'engineering';
+    if (STRATEGY_SKILLS.includes(name)) return 'strategy';
+    if (CONTENT_SKILLS.includes(name)) return 'content';
+    return 'engineering'; // default fallback
   }
 
   /**

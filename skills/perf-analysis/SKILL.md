@@ -2,7 +2,7 @@
 name: perf-analysis
 description: "Identify and resolve performance bottlenecks in code and systems. Profiles CPU, memory, and I/O usage. Analyzes database queries, API latency, and frontend rendering. Conducts load testing and provides optimization recommendations with measurable impact."
 phase: VALIDATE
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: [implement]
 tags: [performance, validation, optimization, profiling, core-workflow]

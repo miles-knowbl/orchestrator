@@ -2,7 +2,7 @@
 name: skill-verifier
 description: "Verifies that skills were applied correctly. Self-audit mechanism that checks process compliance and outcome quality. Ensures required deliverables exist, checklists were completed, and reference documents were consulted. Produces verification report with gaps and remediation actions."
 phase: VERIFY
-category: meta
+category: operations
 version: "1.0.0"
 depends_on: []
 tags: [meta, verification, quality, audit]

@@ -2,7 +2,7 @@
 name: infra-docker
 description: "Create Docker configuration with multi-stage builds, docker-compose for local development, and container optimization."
 phase: IMPLEMENT
-category: infra
+category: engineering
 version: "1.0.0"
 depends_on: ["scaffold"]
 tags: [infrastructure, docker, containerization, deployment, images]

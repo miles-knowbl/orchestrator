@@ -2,7 +2,7 @@
 name: quality-eval-design
 description: "Design content and UX quality evaluation frameworks. Creates scoring rubrics, defines evaluation methodology, and produces eval documentation that can be used for ongoing quality assessment."
 phase: REVIEW
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: [pipeline-discovery, ui-pipeline-discovery]
 tags: [audit, quality, evaluation, content, ux]

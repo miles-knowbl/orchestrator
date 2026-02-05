@@ -2,7 +2,7 @@
 name: refactor
 description: "Improve existing code without changing its external behavior. Identifies code smells, applies proven refactoring patterns, and ensures safety through tests. Makes code more readable, maintainable, and performant while preserving functionality."
 phase: REVIEW
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: [implement]
 tags: [quality, refactoring, improvement, code-quality]

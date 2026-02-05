@@ -2,7 +2,7 @@
 name: prereq-checker
 description: "Validates prerequisites for async operation. Ensures Slack is configured, modules are available for work, and system is ready for autonomous execution."
 phase: INIT
-category: async
+category: operations
 version: "1.0.0"
 depends_on: [state-loader]
 tags: [async, validation, prerequisites, readiness]

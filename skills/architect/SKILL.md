@@ -2,7 +2,7 @@
 name: architect
 description: "Design system and feature architecture from requirements. Produces high-level technical designs with component decomposition, data flow, integration patterns, and technology choices. Documents decisions via ADRs. Creates the architectural foundation that feeds into spec compilation."
 phase: INIT
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: []
 tags: [planning, design, architecture, decisions]

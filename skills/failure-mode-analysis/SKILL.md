@@ -2,7 +2,7 @@
 name: failure-mode-analysis
 description: "Apply MECE failure mode taxonomy to backend pipelines. Classifies failures by Location (L1-L4), Type (T1-T5), and Severity (S1-S4). Produces comprehensive failure mode inventory with validation status and coverage calculation."
 phase: REVIEW
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: [pipeline-discovery]
 tags: [audit, failure-modes, mece, backend, analysis]

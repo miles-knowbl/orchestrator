@@ -2,7 +2,7 @@
 name: incident-triage
 description: "Rapidly classify production incidents by severity, identify blast radius, assign ownership, and determine immediate response strategy. Time-critical first response."
 phase: INIT
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: []
 tags: [incident, triage, production, severity]

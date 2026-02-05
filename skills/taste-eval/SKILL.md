@@ -2,7 +2,7 @@
 name: taste-eval
 description: "Execute taste evaluation against discovered dimensions. Scores each dimension 1-5 with evidence, calculates weighted scores, identifies gaps where score falls below floor, and determines ship status. Produces TASTE-EVAL.md and TASTE-GAPS.md."
 phase: TASTE
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: [taste-discovery]
 tags: [audit, taste, quality, evaluation, scoring]

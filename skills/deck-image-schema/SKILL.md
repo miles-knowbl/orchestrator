@@ -2,7 +2,7 @@
 name: deck-image-schema
 description: "Define visual schema for presentation content specifying image types, layout positions, sizing, and styling rules for deck generation."
 phase: IMPLEMENT
-category: specialized
+category: content
 version: "1.0.0"
 depends_on: ["taste-codifier", "content-analysis"]
 tags: [specialized, design, schema, visual, presentation]

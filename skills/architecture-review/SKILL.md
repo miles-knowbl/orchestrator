@@ -2,7 +2,7 @@
 name: architecture-review
 description: "Evaluate existing system architecture for soundness, risks, and improvement opportunities. Assesses structural integrity, quality attributes, technical debt, and alignment with business needs. Produces actionable findings with prioritized recommendations. Complements architect skill which designs new architecture."
 phase: REVIEW
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: [architect]
 tags: [quality, review, architecture, assessment]

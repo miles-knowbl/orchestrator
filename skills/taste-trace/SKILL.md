@@ -2,7 +2,7 @@
 name: taste-trace
 description: "Link taste gaps to technical failure modes. Creates traceability from subjective quality gaps to specific technical failures, enabling taste-ordered prioritization of fixes. Produces TASTE-TRACE.md with gap-to-failure-mode mappings."
 phase: REVIEW
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: [taste-eval, failure-mode-analysis, ui-failure-mode-analysis]
 tags: [audit, taste, traceability, failure-modes, prioritization]

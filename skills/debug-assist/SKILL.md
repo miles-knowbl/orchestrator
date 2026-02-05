@@ -2,7 +2,7 @@
 name: debug-assist
 description: "Systematic bug isolation for when you're stuck. Guides structured debugging using hypothesis generation, binary search, and systematic elimination. Tracks debugging state across turns. Specialized modes for memory issues, concurrency bugs, performance problems, and production incidents."
 phase: VERIFY
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: []
 tags: [debugging, diagnosis, troubleshooting, error-analysis, core-workflow]

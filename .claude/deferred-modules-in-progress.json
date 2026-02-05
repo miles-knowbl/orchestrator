@@ -23,11 +23,11 @@
     {
       "id": "behavior-guarantees",
       "layer": 2,
-      "description": "System for enforcing/guaranteeing LLM behavior. Explicit rules enforcement patterns for ensuring consistent agent behavior.",
+      "description": "System for enforcing/guaranteeing LLM behavior. AGENT.md files define agent personalities, constraints, and behavioral rules. Explicit rules enforcement patterns for ensuring consistent agent behavior across Layer 2 agents.",
       "dependsOn": [
         "coherence-system"
       ],
-      "notes": "Partially implemented in GuaranteeService for skill guarantees"
+      "notes": "Partially implemented in GuaranteeService for skill guarantees. AGENT.md exploration included — configuration format for per-agent behavior definitions."
     },
     {
       "id": "multiplayer",
@@ -110,11 +110,11 @@
     {
       "id": "dreaming",
       "layer": 1,
-      "description": "Sleep/background processing mode for proposing new modules and improvements. The system dreams up new work while idle, ready for review when you return.",
+      "description": "Sleep/background processing mode using ADIR reasoning cycle (Abductive→Deductive→Inductive→Reflexive) to propose improvements. Produces Context Deltas (keep/discard/add/reweight/next_tests/guardrails) while idle, ready for review when you return.",
       "dependsOn": [
         "autonomous"
       ],
-      "notes": "Service exists but not production-ready"
+      "notes": "Service exists but not production-ready. ADIR (PAT-012) provides the meta-cognitive reasoning engine. Passive mode counterpart to learning-loop's active ADIR integration."
     },
     {
       "id": "game-design",
@@ -291,8 +291,15 @@
       "description": "Layer 1 persistent orchestrator spawns Layer 2 ephemeral agents for parallel work. Work distribution, concurrency modes, failure handling cascade.",
       "dependsOn": [],
       "notes": "Framework complete (17 tools, 15 endpoints) but agents don't run loops. ExecutionEngine not wired, auto-merge disabled, no crash recovery."
+    },
+    {
+      "id": "transient-file-config",
+      "layer": 2,
+      "description": "Per-loop and per-phase transient file configuration. Allows loops to declare file retention policies, deliverable vs transient intent, phase-level cleanup strategies, and skill file declarations.",
+      "dependsOn": [],
+      "notes": "Foundation exists (3-tier storage, cleanup, checkpoints). Missing: loop.json schema for fileManagement config, phase-level cleanup hooks, skill output declarations. Retention policies now wired up (archiveOldRuns called on completion)."
     }
   ],
   "createdAt": "2026-02-04T18:30:00.000Z",
-  "updatedAt": "2026-02-04T23:30:00.000Z"
+  "updatedAt": "2026-02-05T01:00:00.000Z"
 }

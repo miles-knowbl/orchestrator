@@ -2,7 +2,7 @@
 name: stack-analyzer
 description: "Evaluate a target tech stack and map architectural concepts to stack-specific idioms, patterns, and libraries. Produces STACK-MAP.md with concept mapping, gap analysis, and risk assessment. Bridges the gap between source architecture and target implementation."
 phase: MAP
-category: specialized
+category: engineering
 version: "1.0.0"
 depends_on: ["architecture-extractor"]
 tags: [stack, analysis, mapping, technology, transposition]

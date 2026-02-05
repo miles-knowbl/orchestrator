@@ -2,7 +2,7 @@
 name: postmortem
 description: "Write blameless postmortems after incidents. Document timeline, root cause, impact, mitigation taken, and prevention measures. Focus on systemic improvements, not individual blame."
 phase: DOCUMENT
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: [incident-triage, mitigation]
 tags: [incident, postmortem, learning, prevention]

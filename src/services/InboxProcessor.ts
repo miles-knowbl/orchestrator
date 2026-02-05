@@ -583,7 +583,7 @@ Include ONLY the fields relevant to each type (skill for standalone_skill, targe
       description: skill.description,
       content: skill.content,
       phase: skill.phase,
-      category: 'custom',
+      category: 'engineering', // default for user-created skills
     });
 
     // Mark as approved

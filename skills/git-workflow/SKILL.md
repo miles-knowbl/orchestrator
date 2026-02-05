@@ -2,7 +2,7 @@
 name: git-workflow
 description: "Manages git workflows for the engineering loop. Handles worktrees for parallel development, branching conventions, PR creation, and coordination between agents and human engineers. Provides isolation for concurrent system development."
 phase: SHIP
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: []
 tags: [git, branching, deployment, pr, core-workflow]

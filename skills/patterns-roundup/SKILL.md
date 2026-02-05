@@ -1,3 +1,13 @@
+---
+name: patterns-roundup
+description: "Round up existing patterns and automatic pattern detection from observed behaviors. Query, filter, and formalize patterns from the memory hierarchy."
+phase: COMPLETE
+category: operations
+version: "1.0.0"
+depends_on: []
+tags: [patterns, learning, detection, memory]
+---
+
 # Patterns Roundup Skill
 
 > Round up existing patterns and automatic pattern detection from observed behaviors

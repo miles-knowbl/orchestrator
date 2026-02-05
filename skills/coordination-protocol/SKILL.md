@@ -2,7 +2,7 @@
 name: coordination-protocol
 description: "Define communication patterns and handoff protocols for multi-agent orchestration with locks, heartbeats, and conflict resolution."
 phase: COMPLETE
-category: meta
+category: operations
 version: "1.0.0"
 depends_on: ["memory-manager"]
 tags: [meta, coordination, multi-agent, locking, synchronization]

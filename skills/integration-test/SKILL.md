@@ -2,7 +2,7 @@
 name: integration-test
 description: "Validates that multiple systems work together correctly. Tests cross-system contracts, end-to-end workflows, and interface compatibility. Complements unit testing (test-generation) and code validation (code-validation) by focusing on system boundaries."
 phase: TEST
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: [test-generation]
 tags: [testing, integration, e2e, api-testing, core-workflow]

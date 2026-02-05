@@ -2,7 +2,7 @@
 name: deck-text-schema
 description: "Define text content schema for presentation slides specifying typography, hierarchy, formatting rules, and content structure."
 phase: IMPLEMENT
-category: specialized
+category: content
 version: "1.0.0"
 depends_on: ["taste-codifier", "content-analysis"]
 tags: [specialized, design, schema, typography, presentation]

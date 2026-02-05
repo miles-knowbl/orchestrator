@@ -2,7 +2,7 @@
 name: estimation
 description: "Estimate effort, complexity, and duration for systems and features. Provides frameworks for sizing work, accounting for risk, and calibrating estimates over time. Supports planning and expectation setting throughout the engineering loop."
 phase: INIT
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: []
 tags: [planning, estimation, sizing, effort]

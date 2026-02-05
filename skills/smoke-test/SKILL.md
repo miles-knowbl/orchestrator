@@ -2,7 +2,7 @@
 name: smoke-test
 description: "Verifies critical features actually work by calling live endpoints. Unlike integration-test (which writes test code), this skill executes manual verification against deployed/running services. Essential for audit-loop to catch functional regressions."
 phase: VERIFY
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: []
 tags: [testing, verification, live-testing, audit, functional]

@@ -1,3 +1,13 @@
+---
+name: orchestration
+description: "Spawn and coordinate sub-agents for parallel module execution. 2-layer system with persistent orchestrator and ephemeral task agents."
+phase: INIT
+category: operations
+version: "1.0.0"
+depends_on: []
+tags: [orchestration, multi-agent, coordination, autonomous]
+---
+
 # 2-Layer Orchestration Skill
 
 > Spawn and coordinate sub-agents for parallel module execution

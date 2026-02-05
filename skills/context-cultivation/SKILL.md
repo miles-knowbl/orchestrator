@@ -2,7 +2,7 @@
 name: context-cultivation
 description: "Process raw context into cultivated insights. Performs qualitative analysis across ingested sources to identify themes, patterns, contradictions, gaps, and opportunities. Produces a structured synthesis that transforms disparate information into actionable intelligence for downstream prioritization and proposal building."
 phase: SCAFFOLD
-category: specialized
+category: engineering
 version: "2.0.0"
 depends_on: ["context-ingestion"]
 tags: [planning, analysis, synthesis, qualitative-analysis, pattern-recognition]

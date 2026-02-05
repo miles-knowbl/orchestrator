@@ -2,7 +2,7 @@
 name: module-scorer
 description: "Scores available modules for async queue prioritization. Calculates leverage scores using dream state alignment, downstream impact, and execution likelihood."
 phase: SCORE
-category: async
+category: operations
 version: "1.0.0"
 depends_on: [dream-sync, pattern-collector, calibration-sync]
 tags: [async, scoring, leverage, prioritization]

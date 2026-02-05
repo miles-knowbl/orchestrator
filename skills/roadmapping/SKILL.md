@@ -2,7 +2,7 @@
 name: roadmapping
 description: "System-level visibility into module progress, dependencies, and completion status. Creates and maintains ROADMAP.md as the spine that makes everything else trackable. Integrates with engineering-loop and leverage protocol for optimal sequencing."
 phase: INIT
-category: planning
+category: strategy
 version: "1.0.0"
 depends_on: []
 tags: [planning, tracking, progress, visualization]

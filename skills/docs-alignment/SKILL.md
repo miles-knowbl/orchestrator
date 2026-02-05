@@ -2,7 +2,7 @@
 name: docs-alignment
 description: "Scans, updates, and maintains all documentation across the Organization → System → Module hierarchy. Ensures MECE (Mutually Exclusive, Collectively Exhaustive) categories stay aligned after every loop execution. Handles document lifecycle: create, update, move, prune, summarize, index, and cross-reference."
 phase: COMPLETE
-category: meta
+category: operations
 version: "1.0.0"
 depends_on: ["retrospective"]
 tags: [meta, documentation, alignment, mece, hierarchy, completion-protocol]

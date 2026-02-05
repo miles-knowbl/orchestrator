@@ -2,7 +2,7 @@
 name: context-ingestion
 description: "Gather and organize context from multiple sources into a structured format. Handles documents, URLs, conversations, and notes. Produces a verified source registry and compiled context corpus ready for downstream analysis."
 phase: INIT
-category: specialized
+category: engineering
 version: "2.0.0"
 depends_on: []
 tags: [planning, research, intake, sources, information-gathering]

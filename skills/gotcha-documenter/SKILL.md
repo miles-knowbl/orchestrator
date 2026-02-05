@@ -2,7 +2,7 @@
 name: gotcha-documenter
 description: "Document project gotchas - the non-obvious things that trip people up. Captures edge cases, surprising behaviors, common mistakes, and workarounds that aren't immediately apparent from code or docs."
 phase: DOCUMENT
-category: meta
+category: operations
 version: "1.0.0"
 depends_on: ["context-cultivation"]
 tags: [documentation, knowledge-management, onboarding, gotchas]

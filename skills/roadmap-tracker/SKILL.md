@@ -2,7 +2,7 @@
 name: roadmap-tracker
 description: "Maintain and evolve project roadmaps based on execution history, learnings, and re-prioritization signals."
 phase: COMPLETE
-category: meta
+category: strategy
 version: "1.0.0"
 depends_on: ["retrospective"]
 tags: [meta, planning, roadmap, milestones, prioritization]

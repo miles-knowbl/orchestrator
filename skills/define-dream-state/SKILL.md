@@ -2,7 +2,7 @@
 name: define-dream-state
 description: "Systematically define a dream state at any tier of the hierarchy"
 phase: INIT
-category: meta
+category: strategy
 version: "1.0.0"
 depends_on: []
 tags: [dream-state, vision, planning, spec, definition, hierarchy]

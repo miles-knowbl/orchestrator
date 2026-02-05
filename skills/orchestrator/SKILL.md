@@ -2,7 +2,7 @@
 name: orchestrator
 description: "Unified development orchestration across greenfield and brownfield modes. Detects project mode, performs pre-loop scope discovery, spawns parallel sub-agents, and coordinates execution to minimize loops needed to reach production-quality."
 phase: META
-category: meta
+category: operations
 version: "1.0.0"
 depends_on: []
 tags: [meta, orchestration, coordination, modes]

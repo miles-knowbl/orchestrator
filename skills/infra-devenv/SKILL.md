@@ -2,7 +2,7 @@
 name: infra-devenv
 description: "Set up local development environment with scripts, devcontainers, and environment variable templates for consistent onboarding."
 phase: SCAFFOLD
-category: infra
+category: engineering
 version: "1.0.0"
 depends_on: ["scaffold"]
 tags: [infrastructure, development, devcontainer, scripts, environment]

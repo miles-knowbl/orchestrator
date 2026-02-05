@@ -2,7 +2,7 @@
 name: taste-to-image-schema
 description: "Derives a fully-specified image schema from a taste schema + topic. Use when: (1) Generating social media graphics aligned to a voice, (2) Creating infographics, illustrations, or photo-based content that matches a style profile, (3) Producing image generation prompts (for Midjourney, DALL-E, Gemini, etc.) that maintain voice consistency. Input: taste schema JSON + topic/message. Output: image schema JSON + generation prompt."
 phase: IMPLEMENT
-category: specialized
+category: content
 version: "1.0.0"
 depends_on: [taste-codifier]
 tags: [specialized, visual, image-generation, schema, content-generation]

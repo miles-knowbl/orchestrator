@@ -2,7 +2,7 @@
 name: portability
 description: "Assess and document skill transferability across projects and domains, identifying required adaptations and context dependencies."
 phase: COMPLETE
-category: meta
+category: operations
 version: "1.0.0"
 depends_on: ["skill-verifier"]
 tags: [meta, portability, reusability, transfer, assessment]

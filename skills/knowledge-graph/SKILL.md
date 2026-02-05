@@ -1,3 +1,13 @@
+---
+name: knowledge-graph
+description: "Build and query the skill-based knowledge graph ontology. Enables discovery of high-leverage skills, gap analysis, and understanding skill dependencies."
+phase: INIT
+category: operations
+version: "1.0.0"
+depends_on: []
+tags: [knowledge-graph, ontology, skills, dependencies, learning]
+---
+
 # Knowledge Graph Skill
 
 > Build and query the skill-based knowledge graph ontology

@@ -2,7 +2,7 @@
 name: html-slides
 description: "Renders presentation schemas into a self-contained HTML file using reveal.js. The HTML is version-controllable, hostable anywhere, and can be converted to other formats. Optionally exports to Google Slides via API."
 phase: DOCUMENT
-category: specialized
+category: content
 version: "1.0.0"
 depends_on: [deck-text-schema, deck-image-schema]
 tags: [specialized, presentation, html, reveal.js, rendering]

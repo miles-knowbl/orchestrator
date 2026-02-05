@@ -2,7 +2,7 @@
 name: history-collector
 description: "Collects execution history for async context. Gathers recent loop executions, outcomes, and learnings to inform queue planning."
 phase: GATHER
-category: async
+category: operations
 version: "1.0.0"
 depends_on: [state-loader]
 tags: [async, history, executions, context]

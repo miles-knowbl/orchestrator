@@ -2,7 +2,7 @@
 name: mitigation
 description: "Execute immediate mitigation for production incidents. Decide between rollback, hotfix, feature flag, or traffic management. Prioritizes restoring service over finding root cause."
 phase: IMPLEMENT
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: [incident-triage]
 tags: [incident, mitigation, hotfix, rollback]

@@ -2,7 +2,7 @@
 name: code-validation
 description: "Semantic correctness checks at development checkpoints. Use before committing, before PR, or at feature milestones to verify the code solves the right problem correctly. Evaluates requirements alignment, edge case coverage, failure modes, operational readiness, and integration correctness. Complements code-verification (structural) with semantic analysis."
 phase: VALIDATE
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: [code-verification]
 tags: [validation, semantics, logic, correctness, core-workflow]

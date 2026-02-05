@@ -1,3 +1,13 @@
+---
+name: kanban
+description: "Linear-style visualization of the module ladder to system completion. Dashboard for tracking roadmap progress across all 7 layers."
+phase: COMPLETE
+category: operations
+version: "1.0.0"
+depends_on: []
+tags: [dashboard, visualization, roadmap, progress]
+---
+
 # Kanban Skill
 
 > Linear-style visualization of the module ladder to system completion

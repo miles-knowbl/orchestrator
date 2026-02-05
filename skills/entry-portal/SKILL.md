@@ -2,7 +2,7 @@
 name: entry-portal
 description: "Converts fuzzy requirements into structured FeatureSpecs and GitHub issues. Manages the system queue for a domain's journey toward its dream state. The entry point for all new systems and features entering the engineering loop."
 phase: INIT
-category: meta
+category: operations
 version: "1.0.0"
 depends_on: []
 tags: [meta, initialization, discovery, setup, queue]

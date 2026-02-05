@@ -2,7 +2,7 @@
 name: observe
 description: "Strategic orientation at loop start — grounding in reality, mapping opportunities for leverage"
 phase: INIT
-category: meta
+category: operations
 version: "1.0.0"
 depends_on: []
 tags: [orientation, context, leverage, opportunity, strategic, 100x]

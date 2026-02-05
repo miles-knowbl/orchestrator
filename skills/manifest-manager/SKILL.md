@@ -2,7 +2,7 @@
 name: manifest-manager
 description: "Generate and maintain execution manifests that specify what should run, in what order, with what constraints and expected outputs."
 phase: SHIP
-category: meta
+category: operations
 version: "1.0.0"
 depends_on: ["deploy"]
 tags: [meta, manifests, orchestration, deployment, specifications]

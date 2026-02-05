@@ -2,7 +2,7 @@
 name: leverage-calculator
 description: "Calculates leverage scores for queue planning. Uses the leverage protocol to determine optimal work ordering for async operation."
 phase: PLAN
-category: async
+category: strategy
 version: "1.0.0"
 depends_on: [module-scorer, blocker-analyzer]
 tags: [async, leverage, planning, prioritization]

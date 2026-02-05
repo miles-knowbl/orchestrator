@@ -2,7 +2,7 @@
 name: triage
 description: "Prioritize and re-prioritize work in the system queue based on changing conditions. Uses prioritization frameworks to order work by value, urgency, and dependencies. Responds to triggers like new requirements, blockers, and resource changes."
 phase: INIT
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: []
 tags: [planning, prioritization, queue, triage]

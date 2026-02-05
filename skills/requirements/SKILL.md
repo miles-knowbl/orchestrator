@@ -2,7 +2,7 @@
 name: requirements
 description: "Gather and clarify requirements from vague input. Transforms ambiguous requests into clear, testable requirements documents with explicit scope, acceptance criteria, and identified unknowns. Supports multiple formality levels from quick requirements for small features to full PRDs for major initiatives. Produces artifacts that feed directly into spec, architect, and implementation."
 phase: INIT
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: []
 tags: [planning, requirements, discovery, elicitation]

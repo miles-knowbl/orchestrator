@@ -2,7 +2,7 @@
 name: release-planner
 description: "Plan releases by scoping included changes, defining version strategy, coordinating cherry-picks, and establishing release criteria. Manages the ceremony of shipping."
 phase: INIT
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: []
 tags: [release, planning, versioning, coordination]

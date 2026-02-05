@@ -22,7 +22,7 @@
     },
     {
       "name": "VALIDATE",
-      "skills": ["memory-manager"],
+      "skills": ["memory-manager", "context-delta"],
       "required": true
     },
     {
@@ -101,6 +101,11 @@
     "memory-manager": {
       "displayName": "Memory Manager",
       "icon": "database",
+      "outputDisplay": "markdown"
+    },
+    "context-delta": {
+      "displayName": "Context Delta (ADIR-R)",
+      "icon": "refresh-cw",
       "outputDisplay": "markdown"
     }
   },

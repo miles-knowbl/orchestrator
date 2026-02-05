@@ -2,7 +2,7 @@
 name: loop-controller
 description: "Orchestrates the engineering loop execution. Manages state machine transitions, decides what to do next, handles failures and retries, determines completion, and triggers human handoffs. The 'brain' that runs the autonomous development cycle."
 phase: META
-category: meta
+category: operations
 version: "1.0.0"
 depends_on: []
 tags: [meta, orchestration, control]

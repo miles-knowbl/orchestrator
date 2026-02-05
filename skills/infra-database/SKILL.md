@@ -2,7 +2,7 @@
 name: infra-database
 description: "Set up database schema, ORM configuration, migrations, and data access layer with connection pooling and seed data."
 phase: IMPLEMENT
-category: infra
+category: engineering
 version: "1.0.0"
 depends_on: ["infra-devenv", "scaffold"]
 tags: [infrastructure, database, orm, schema, migrations]

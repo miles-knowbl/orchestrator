@@ -2,7 +2,7 @@
 name: test-spec-generation
 description: "Generate test specifications for unvalidated failure modes. Creates detailed test specs with setup, steps, and assertions for each unvalidated failure mode. Produces PIPELINE-TEST-SPECS.md and UI-TEST-SPECS.md."
 phase: VALIDATE
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: [failure-mode-analysis, ui-failure-mode-analysis]
 tags: [audit, testing, specs, validation, coverage]

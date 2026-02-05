@@ -2,7 +2,7 @@
 name: memory-manager
 description: "Maintains context across long-running autonomous tasks. Handles session handoffs, context compression, cold boot procedures, and domain memory persistence. Enables continuity between sessions and coordination between multiple agents working on the same domain."
 phase: META
-category: meta
+category: operations
 version: "1.0.0"
 depends_on: []
 tags: [meta, memory, context, session, handoff]

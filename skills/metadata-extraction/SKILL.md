@@ -2,7 +2,7 @@
 name: metadata-extraction
 description: "Extract, parse, and normalize metadata from diverse content sources including URLs, HTTP headers, HTML meta tags, structured data formats, and document structural elements. Produces standardized metadata records conforming to Dublin Core, OpenGraph, JSON-LD, and schema.org vocabularies. Supports the inbox/second-brain pipeline by ensuring every ingested item has rich, consistent, machine-readable metadata."
 phase: IMPLEMENT
-category: meta
+category: operations
 version: "2.0.0"
 depends_on: []
 tags: [meta, analysis, utilities, parsing]

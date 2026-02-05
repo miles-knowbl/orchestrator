@@ -2,7 +2,7 @@
 name: ui-interaction-test
 description: "Validate that UI flows actually work by tracing through each U-series pipeline step by step. Documents what works, what fails, and what needs attention. Produces UI-VALIDATION.md with interaction test results."
 phase: VALIDATE
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: [ui-pipeline-discovery]
 tags: [audit, testing, ui, validation, interaction]

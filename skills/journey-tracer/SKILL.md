@@ -2,7 +2,7 @@
 name: journey-tracer
 description: "Track execution journey through phases and skills with structured logging, state persistence, and timeline visualization for post-mortem analysis."
 phase: DOCUMENT
-category: meta
+category: operations
 version: "1.0.0"
 depends_on: ["retrospective"]
 tags: [meta, logging, tracing, state-machine, execution-log]

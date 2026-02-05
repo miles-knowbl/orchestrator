@@ -2,7 +2,7 @@
 name: calibration-tracker
 description: "Tracks estimate accuracy over time and adjusts future estimates based on historical data. Compares estimated vs actual effort, identifies systematic biases, and generates calibration adjustments. Enables increasingly accurate estimates as more data accumulates."
 phase: COMPLETE
-category: meta
+category: operations
 version: "1.0.0"
 depends_on: []
 tags: [meta, calibration, estimation, metrics]

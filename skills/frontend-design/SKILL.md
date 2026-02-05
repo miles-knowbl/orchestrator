@@ -2,7 +2,7 @@
 name: frontend-design
 description: "Design frontend components, layouts, and interactions before implementation. Creates component specifications, defines design tokens, and documents interaction patterns for consistent UI/UX across the application."
 phase: SCAFFOLD
-category: specialized
+category: engineering
 version: "1.0.0"
 depends_on: []
 tags: [design, frontend, ui, ux, components]

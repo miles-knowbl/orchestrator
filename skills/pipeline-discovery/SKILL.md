@@ -2,7 +2,7 @@
 name: pipeline-discovery
 description: "Identify backend data pipelines (P-series) in the codebase. Discovers server-side data flows triggered by user actions or system events, documenting triggers, steps, and outcomes. Foundation for MECE failure mode analysis."
 phase: INIT
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: [requirements]
 tags: [audit, pipeline, discovery, backend, data-flow]

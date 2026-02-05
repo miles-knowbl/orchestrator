@@ -221,7 +221,7 @@ export function createApiRoutes(options: ApiRoutesOptions): Router {
 
     const result = skillRegistry.listSkills({
       phase: queryString(phase) as 'INIT' | 'SCAFFOLD' | 'IMPLEMENT' | 'TEST' | 'VERIFY' | 'VALIDATE' | 'DOCUMENT' | 'REVIEW' | 'SHIP' | 'COMPLETE' | undefined,
-      category: queryString(category) as 'core' | 'infra' | 'meta' | 'specialized' | 'custom' | 'sales' | 'async' | 'content' | 'planning' | 'operations' | undefined,
+      category: queryString(category) as 'engineering' | 'sales' | 'operations' | 'content' | 'strategy' | undefined,
       query: queryString(query),
       limit: limit ? parseInt(String(limit), 10) : undefined,
       offset: offset ? parseInt(String(offset), 10) : undefined,

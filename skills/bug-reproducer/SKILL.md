@@ -2,7 +2,7 @@
 name: bug-reproducer
 description: "Create minimal, reliable reproduction of reported bugs from issues, logs, and user reports. Produces step-by-step reproduction cases with expected vs actual behavior."
 phase: INIT
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: []
 tags: [debugging, reproduction, bugs, triage]

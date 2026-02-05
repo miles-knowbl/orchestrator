@@ -2,7 +2,7 @@
 name: distribute
 description: "Set up CI/CD distribution pipelines for automated releases. Creates GitHub Actions workflows, configures platform deployment (Vercel or Railway), produces tarball releases with SHA256 checksums, and optionally publishes Docker images to GHCR."
 phase: SHIP
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: ["code-review"]
 tags: [shipping, ci-cd, release, distribution, core-workflow]

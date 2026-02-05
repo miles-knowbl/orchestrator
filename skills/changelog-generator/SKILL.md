@@ -2,7 +2,7 @@
 name: changelog-generator
 description: "Generate structured changelogs from git history, PRs, and commit messages. Categorizes changes by type (Added, Changed, Deprecated, Removed, Fixed, Security) following Keep a Changelog format."
 phase: DOCUMENT
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: [release-planner]
 tags: [release, changelog, documentation, versioning]

@@ -2,7 +2,7 @@
 name: slack-validator
 description: "Validates Slack connection and configuration for async operation. Ensures bidirectional communication is working before handoff."
 phase: VERIFY
-category: async
+category: operations
 version: "1.0.0"
 depends_on: [prereq-checker]
 tags: [async, slack, validation, communication]

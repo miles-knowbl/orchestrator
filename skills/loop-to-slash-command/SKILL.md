@@ -2,7 +2,7 @@
 name: loop-to-slash-command
 description: "Generate Claude Code slash command .md files from loop definitions. Transforms loop.json into executable CLI commands with state management, gate procedures, and skill integration instructions."
 phase: SHIP
-category: meta
+category: operations
 version: "1.0.0"
 depends_on: [loop-composer]
 tags: [meta, loops, cli, commands, generation]

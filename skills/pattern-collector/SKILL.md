@@ -2,7 +2,7 @@
 name: pattern-collector
 description: "Collects and organizes patterns from memory for async context. Gathers relevant patterns that inform autonomous decision-making."
 phase: GATHER
-category: async
+category: operations
 version: "1.0.0"
 depends_on: [state-loader]
 tags: [async, patterns, context, memory]

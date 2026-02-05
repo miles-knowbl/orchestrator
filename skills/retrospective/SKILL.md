@@ -2,7 +2,7 @@
 name: retrospective
 description: "Analyzes completed journeys to extract learning and propose improvements. Identifies what worked, what didn't, and why. Generates skill amendment proposals, calibration adjustments, and pattern candidates. Feeds improvements back into the skills library to make future journeys more effective."
 phase: COMPLETE
-category: meta
+category: operations
 version: "1.0.0"
 depends_on: []
 tags: [learning, improvement, metrics, feedback, core-workflow]

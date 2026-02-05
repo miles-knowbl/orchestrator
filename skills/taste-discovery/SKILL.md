@@ -2,7 +2,7 @@
 name: taste-discovery
 description: "Find and load project-specific taste evaluations. Discovers eval definitions through manifest, convention, or defaults. Provides the foundation for taste-first auditing by identifying what quality dimensions matter for this specific project."
 phase: TASTE
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: []
 tags: [audit, taste, quality, discovery, evals]

@@ -2,7 +2,7 @@
 name: compatibility-checker
 description: "Verify API, schema, and interface compatibility between old and new versions during migrations. Tests backward compatibility, data format changes, and integration contracts."
 phase: SCAFFOLD
-category: core
+category: engineering
 version: "1.0.0"
 depends_on: [migration-planner]
 tags: [migration, compatibility, testing, contracts]
