@@ -62,9 +62,9 @@ For each dream state:
 {
   "dream_context": {
     "org": {
-      "name": "superorganism",
+      "name": "my-org",
       "vision": "...",
-      "systems": ["orchestrator", "..."]
+      "systems": ["my-project", "..."]
     },
     "system": {
       "name": "orchestrator",

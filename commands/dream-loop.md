@@ -77,9 +77,9 @@ Create `dream-state.json`:
 
   "context": {
     "tier": "system",
-    "organization": "superorganism",
+    "organization": "my-org",
     "domain": null,
-    "system": "orchestrator",
+    "system": "my-project",
     "module": null,
     "grounding_complete": false
   },
@@ -368,7 +368,7 @@ Detected: git repository at ~/workspaces/my-app
 Inferred tier: system
 
 Organization context:
-  superorganism (.claude/DREAM-STATE.md exists)
+  my-org (.claude/DREAM-STATE.md exists)
 
 Domain context:
   Not specified. Which domain does this system belong to?

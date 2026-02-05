@@ -260,7 +260,7 @@ Claude: Let me walk through the dream state definition process.
    Location: ~/workspaces/orchestrator/.claude/DREAM-STATE.md
 
 2. CONTEXT GATHERING
-   - Organization: superorganism
+   - Organization: my-org
    - Domain: {to be defined}
    - Problem: Managing skills, loops, and meta-learning
 
@@ -295,7 +295,7 @@ Claude: Let me walk through the dream state definition process.
    → Write to ~/workspaces/orchestrator/.claude/DREAM-STATE.md
 
 10. UPDATE PARENT
-    → Add orchestrator to superorganism's system list
+    → Add orchestrator to my-org's system list
 ```
 
 ---

@@ -83,7 +83,7 @@ Systems declare their organizational affiliation in their dream state:
 <!-- In {project}/.claude/DREAM-STATE.md -->
 # System Dream State: {System Name}
 
-**Organization:** superorganism
+**Organization:** my-org
 **Domain:** infrastructure
 ```
 
@@ -97,9 +97,9 @@ All loop state files include:
 {
   "context": {
     "tier": "system",
-    "organization": "superorganism",
+    "organization": "my-org",
     "domain": "infrastructure",
-    "system": "orchestrator",
+    "system": "my-project",
     "module": null,
     "grounding_complete": true,
     "grounding_at": "2026-01-29T10:30:00Z"

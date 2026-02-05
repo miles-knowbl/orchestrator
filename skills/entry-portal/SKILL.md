@@ -376,7 +376,7 @@ Create `config.json` at domain root:
 ```json
 {
   "domain": "velocity-tracker",
-  "organization": "superorganism",
+  "organization": "my-org",
 
   "autonomy": {
     "defaultMode": "supervised",

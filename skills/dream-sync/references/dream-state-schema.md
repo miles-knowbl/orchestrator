@@ -77,7 +77,7 @@ Extracted from completion algebra or explicit depends_on fields.
 ```markdown
 # System Dream State: my-app
 
-**Organization:** superorganism
+**Organization:** my-org
 **Location:** ~/workspaces/my-app
 
 ## Vision

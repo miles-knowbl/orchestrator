@@ -49,7 +49,7 @@ interface DreamState {
 // Static fallback data
 const STATIC_DREAM_STATE: DreamState = {
   organization: {
-    name: 'superorganism',
+    name: 'my-org',
     vision: 'A self-improving AI-assisted development environment where loops orchestrate work across systems.',
     systems: [
       {

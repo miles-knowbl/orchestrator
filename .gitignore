@@ -9,6 +9,9 @@ dist/
 /data/
 .orchestra/
 
+# User-specific Claude Code settings
+.claude/settings.local.json
+
 # Environment
 .env
 .env.local

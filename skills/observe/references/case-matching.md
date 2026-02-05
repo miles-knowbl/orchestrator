@@ -64,9 +64,9 @@ Progression through dream state milestones over time.
 
 ```
 current_context = {
-  organization: "superorganism",
+  organization: "my-org",
   domain: "{domain-if-known}",
-  system: "orchestrator",
+  system: "my-project",
   module: "{module-if-scoped}",
   loop: "engineering-loop",
   goal: "{stated goal}",

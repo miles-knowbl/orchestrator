@@ -669,4 +669,4 @@ Orchestrator Start Loop: Starting server...
 
 - GitHub Releases API: `https://api.github.com/repos/miles-knowbl/orchestrator/releases/latest`
 - Claude MCP config: `~/.claude/mcp.json`
-- Orchestrator docs: https://orchestrator.dev
+- Dashboard: https://orchestrator-xi.vercel.app
