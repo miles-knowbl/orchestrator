@@ -109,7 +109,7 @@ orchestrator/
               │            │            │
          ┌────▼───┐  ┌────▼───┐  ┌────▼────┐
          │ Skills │  │ Loops  │  │ Memory  │
-         │ 60+    │  │ 10     │  │ learning│
+         │ 130+   │  │ 20     │  │ learning│
          └────────┘  └────────┘  └─────────┘
 ```
 
@@ -178,9 +178,9 @@ export ORCHESTRATOR_TERMINAL_CMD='warp -e "cd $ORCHESTRATOR_DIR && npm start"'
 ## Development
 
 ```bash
-npm run dev    # Hot reload (server)
-npm run build  # Compile TypeScript
-npm test       # Run tests
+npm run dev       # Hot reload (server)
+npm run build     # Compile TypeScript
+npm test -- --run # Run tests (--run flag required to exit)
 ```
 
 ## Live Deployment
