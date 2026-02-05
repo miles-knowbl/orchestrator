@@ -84,25 +84,15 @@ SLACK_APP_TOKEN=xapp-...    # App-Level Token (Socket Mode)
 ```
 
 ### Code Location
-- **NEW:** `src/services/slack/` - Unified Slack service (notifications + commands + threads)
-- **LEGACY:** `src/services/proactive-messaging/` - Being replaced by unified service
-- **LEGACY:** `src/services/slack-integration/` - Being replaced by unified service
+- **ACTIVE:** `src/services/proactive-messaging/` - Slack notifications via SlackAdapter (709 LOC)
+- **PLANNED:** `src/services/slack/` - Unified Slack service (not yet built, deferred)
 
-### Unified Slack Architecture
-```
-src/services/slack/
-  UnifiedSlackService.ts   # Main service
-  MessageComposer.ts       # Slack-native formatting (no terminal borders)
-  ThreadManager.ts         # Persistent thread tracking
-  CommandParser.ts         # Natural language commands
-  types.ts                 # Shared types
-```
+### Slack Adapter (Current)
 
-Design principles:
-- Glanceable: 2-second comprehension
-- Speakable: Natural conversational voice
-- Thread-smart: One thread per execution, persistent
-- No emojis
+Slack functionality lives in `src/services/proactive-messaging/adapters/SlackAdapter.ts`. It handles:
+- Notification delivery via Slack API
+- Socket mode for real-time commands
+- Thread-per-execution tracking
 
 ## Directory Structure
 
@@ -242,12 +232,7 @@ This creates an improvement proposal that can be reviewed and applied.
 | `GET /api/skills` | List skills |
 | `GET /api/loops` | List loops |
 | `GET /api/inbox/stats` | Inbox statistics |
-| `GET /api/slack/channels` | List configured channels |
-| `GET /api/slack/engineers` | List all engineers |
-| `GET /api/slack/threads` | Get active threads |
-| `POST /api/slack/command` | Execute command |
-| `POST /api/slack/merge` | Trigger merge |
-| `POST /api/slack/rebase` | Trigger rebase |
+| `GET /api/coherence/status` | Coherence score and issues |
 
 ## Key Patterns
 

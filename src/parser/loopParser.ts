@@ -13,7 +13,7 @@ export interface LoopConfig {
 
   phases: {
     name: Phase;
-    skills: string[];
+    skills: (string | { skillId: string; required?: boolean })[];
     required?: boolean;
     parallel?: boolean;
   }[];
@@ -89,9 +89,9 @@ export function configToLoop(config: LoopConfig, markdownContent?: string): Loop
   const phases: LoopPhase[] = config.phases.map((p, index) => ({
     name: p.name,
     order: index,
-    skills: p.skills.map((skillId, skillOrder) => ({
-      skillId,
-      required: true,
+    skills: p.skills.map((s, skillOrder) => ({
+      skillId: typeof s === 'string' ? s : s.skillId,
+      required: typeof s === 'string' ? true : s.required !== false,
       order: skillOrder,
     })),
     required: p.required !== false,

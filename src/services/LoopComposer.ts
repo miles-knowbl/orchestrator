@@ -304,8 +304,8 @@ export class LoopComposer {
       this.skillRegistry.listSkills({ limit: 500 }).skills.map(s => s.id)
     );
 
-    const allSkills = config.phases.flatMap(p => p.skills);
-    const missing = allSkills.filter(s => !availableSkills.has(s));
+    const allSkillIds = config.phases.flatMap(p => p.skills.map(s => typeof s === 'string' ? s : s.skillId));
+    const missing = allSkillIds.filter(s => !availableSkills.has(s));
 
     if (missing.length > 0) {
       throw new Error(`Missing skills: ${missing.join(', ')}`);
@@ -394,9 +394,10 @@ ${config.phases.map(p => `### ${p.name}\n${p.skills.map(s => `- ${s}`).join('\n'
     );
 
     for (const phase of config.phases || []) {
-      for (const skillId of phase.skills) {
-        if (!availableSkills.has(skillId)) {
-          errors.push(`Skill not found: ${skillId}`);
+      for (const s of phase.skills) {
+        const id = typeof s === 'string' ? s : s.skillId;
+        if (!availableSkills.has(id)) {
+          errors.push(`Skill not found: ${id}`);
         }
       }
     }
