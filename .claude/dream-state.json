@@ -488,97 +488,6 @@
       ]
     },
     {
-      "id": "2-layer-orchestration",
-      "path": "src/services/orchestration/",
-      "status": "deferred",
-      "functions": [
-        {
-          "name": "initializeOrchestrator — create/resume Layer 1 orchestrator",
-          "complete": true
-        },
-        {
-          "name": "setDependencies — wire up services",
-          "complete": true
-        },
-        {
-          "name": "getOrchestrator — get orchestrator state",
-          "complete": true
-        },
-        {
-          "name": "getNextWorkItems — leverage-scored work items",
-          "complete": true
-        },
-        {
-          "name": "spawnAgentsForWork — spawn Layer 2 agents",
-          "complete": true
-        },
-        {
-          "name": "handleAgentComplete — handle agent completion",
-          "complete": true
-        },
-        {
-          "name": "handleAgentFailed — handle escalation",
-          "complete": true
-        },
-        {
-          "name": "runAutonomousCycle — full autonomous cycle",
-          "complete": true
-        },
-        {
-          "name": "getAgents — list all agents",
-          "complete": true
-        },
-        {
-          "name": "getAgent — get specific agent",
-          "complete": true
-        },
-        {
-          "name": "getWorkQueue — work queue state",
-          "complete": true
-        },
-        {
-          "name": "getEventLog — orchestration events",
-          "complete": true
-        },
-        {
-          "name": "getProgressSummary — dashboard summary",
-          "complete": true
-        },
-        {
-          "name": "pause/resume/shutdown — orchestrator lifecycle",
-          "complete": true
-        },
-        {
-          "name": "generateTerminalView — terminal visualization",
-          "complete": true
-        },
-        {
-          "name": "AgentManager — spawn, monitor, coordinate agents",
-          "complete": true
-        },
-        {
-          "name": "WorktreeManager — git worktree per module",
-          "complete": true
-        },
-        {
-          "name": "Concurrency modes — sequential, parallel-async, parallel-threads",
-          "complete": true
-        },
-        {
-          "name": "Failure cascade — retry → reassign → escalate",
-          "complete": true
-        },
-        {
-          "name": "API endpoints — /api/orchestration/* (15 endpoints)",
-          "complete": true
-        },
-        {
-          "name": "MCP tools — 17 tools",
-          "complete": true
-        }
-      ]
-    },
-    {
       "id": "knowledge-graph-ontology",
       "path": "src/services/knowledge-graph/",
       "status": "complete",
@@ -881,97 +790,6 @@
         },
         {
           "name": "MCP tools — 12 tools for sequencing operations",
-          "complete": true
-        }
-      ]
-    },
-    {
-      "id": "multi-agent-worktrees",
-      "path": "src/services/multi-agent/",
-      "status": "deferred",
-      "functions": [
-        {
-          "name": "MultiAgentCoordinator — src/services/multi-agent/MultiAgentCoordinator.ts",
-          "complete": true
-        },
-        {
-          "name": "registerCollaborator — register human collaborator",
-          "complete": true
-        },
-        {
-          "name": "listCollaborators — list all collaborators",
-          "complete": true
-        },
-        {
-          "name": "getCollaborator — get collaborator details",
-          "complete": true
-        },
-        {
-          "name": "createAgentSet — create agent set for collaborator",
-          "complete": true
-        },
-        {
-          "name": "listAgentSets — list agent sets",
-          "complete": true
-        },
-        {
-          "name": "getAgentSet — get agent set details",
-          "complete": true
-        },
-        {
-          "name": "pauseAgentSet/resumeAgentSet — lifecycle control",
-          "complete": true
-        },
-        {
-          "name": "createReservation — claim module/file/path",
-          "complete": true
-        },
-        {
-          "name": "listReservations — list reservations",
-          "complete": true
-        },
-        {
-          "name": "releaseReservation — release a claim",
-          "complete": true
-        },
-        {
-          "name": "extendReservation — extend duration",
-          "complete": true
-        },
-        {
-          "name": "checkResourceBlocked — check if resource is claimed",
-          "complete": true
-        },
-        {
-          "name": "requestMerge — request to merge worktree to main",
-          "complete": true
-        },
-        {
-          "name": "checkMergeConflicts — check for conflicts",
-          "complete": true
-        },
-        {
-          "name": "executeMerge — execute approved merge",
-          "complete": true
-        },
-        {
-          "name": "listMergeQueue — list merge queue",
-          "complete": true
-        },
-        {
-          "name": "checkCanWork — check if collaborator can work",
-          "complete": true
-        },
-        {
-          "name": "getAllActiveWork — cross-collaborator visibility",
-          "complete": true
-        },
-        {
-          "name": "API endpoints — /api/multi-agent/* (20 endpoints)",
-          "complete": true
-        },
-        {
-          "name": "MCP tools — 24 tools for multi-agent coordination",
           "complete": true
         }
       ]
@@ -1586,9 +1404,9 @@
   ],
   "completionAlgebra": {
     "formula": "System.done = ALL(Module.done)",
-    "current": "29 modules active",
+    "current": "27 modules active",
     "pending": "None",
-    "status": "351 functions complete",
+    "status": "301 functions complete",
     "version": "3.0.0"
   },
   "activeLoops": [],

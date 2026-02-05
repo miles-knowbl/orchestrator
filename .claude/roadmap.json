@@ -146,21 +146,6 @@
       "unlocks": []
     },
     {
-      "id": "2-layer-orchestration",
-      "name": "2-layer-orchestration",
-      "description": "Orchestrator that spawns and manages sub-agents. One orchestrator per system, capable of spinning up/down any number of agents running any combination of loops to advance toward dream state.",
-      "layer": 0,
-      "status": "complete",
-      "dependsOn": [
-        "execution-engine"
-      ],
-      "unlocks": [
-        "autonomous",
-        "dreaming",
-        "multi-agent-worktrees"
-      ]
-    },
-    {
       "id": "knowledge-graph-ontology",
       "name": "knowledge-graph-ontology",
       "description": "The skill-based knowledge graph where compound leverage accumulates. Skills, patterns, loops, and learnings form nodes; relationships form edges.",
@@ -221,17 +206,6 @@
       "layer": 1,
       "status": "complete",
       "dependsOn": [],
-      "unlocks": []
-    },
-    {
-      "id": "multi-agent-worktrees",
-      "name": "multi-agent-worktrees",
-      "description": "Multiple sets of parallel agents across two hierarchy levels. Coordination when collaborators each have their own agent sets working on isolated git worktrees.",
-      "layer": 1,
-      "status": "complete",
-      "dependsOn": [
-        "2-layer-orchestration"
-      ],
       "unlocks": []
     },
     {
