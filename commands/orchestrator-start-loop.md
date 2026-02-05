@@ -95,6 +95,13 @@ for shared in "$ORCHESTRATOR_DIR"/commands/_shared/*.md; do
 done
 [ $SYNCED -gt 0 ] && echo "Synced $SYNCED missing commands. Restart Claude Code to load them."
 
+# Ensure MCP server is registered (checks ~/.claude.json via CLI)
+if ! claude mcp list 2>&1 | grep -q "orchestrator"; then
+  echo "MCP server not registered. Registering..."
+  claude mcp add --transport http --scope user orchestrator http://localhost:3002/mcp
+  echo "MCP server registered. Restart Claude Code to connect."
+fi
+
 # Check if server is running
 HEALTH_URL="http://localhost:3002/health"
 
@@ -271,34 +278,14 @@ echo "✓ $count loop commands installed to ~/.claude/commands/"
 Register MCP server and auto-start hook with Claude Code:
 
 ```bash
-# Register MCP server (HTTP transport, explicit config)
-MCP_FILE="$HOME/.claude/mcp.json"
-mkdir -p ~/.claude
-
-node -e "
-  const fs = require('fs');
-  const mcpFile = '$MCP_FILE';
-
-  // Load existing config or create new
-  let config = { mcpServers: {} };
-  if (fs.existsSync(mcpFile)) {
-    try {
-      config = JSON.parse(fs.readFileSync(mcpFile, 'utf8'));
-      config.mcpServers = config.mcpServers || {};
-    } catch (e) {
-      console.log('Warning: Could not parse existing mcp.json, creating new');
-    }
-  }
-
-  // Set orchestrator to HTTP transport (explicit, not stdio)
-  config.mcpServers.orchestrator = {
-    type: 'http',
-    url: 'http://localhost:3002/mcp'
-  };
-
-  fs.writeFileSync(mcpFile, JSON.stringify(config, null, 2));
-  console.log('MCP server registered (HTTP transport)');
-"
+# Register MCP server using the Claude Code CLI (writes to ~/.claude.json)
+# Check if already registered first
+if claude mcp list 2>&1 | grep -q "orchestrator"; then
+  echo "MCP server already registered"
+else
+  claude mcp add --transport http --scope user orchestrator http://localhost:3002/mcp
+  echo "MCP server registered (HTTP transport)"
+fi
 
 # Install auto-start hook (opens Terminal when MCP tools are called)
 mkdir -p ~/.claude/hooks
@@ -596,19 +583,17 @@ lsof -ti:3002 | xargs kill -9
 
 **MCP not connecting:**
 ```bash
-# Verify ~/.claude/mcp.json has the correct config:
-cat ~/.claude/mcp.json
-# Should contain:
-# {
-#   "mcpServers": {
-#     "orchestrator": {
-#       "type": "http",
-#       "url": "http://localhost:3002/mcp"
-#     }
-#   }
-# }
+# Check if orchestrator is registered with Claude Code:
+claude mcp list
 
-# If wrong, fix it manually or re-run /orchestrator-start-loop
+# If not listed, register it:
+claude mcp add --transport http --scope user orchestrator http://localhost:3002/mcp
+
+# If listed but not connecting, remove and re-add:
+claude mcp remove orchestrator
+claude mcp add --transport http --scope user orchestrator http://localhost:3002/mcp
+
+# Then restart Claude Code to pick up the new config
 ```
 
 **Server won't start / Opens in wrong directory:**
@@ -751,5 +736,5 @@ Orchestrator Start Loop: Starting server...
 ## References
 
 - GitHub Releases API: `https://api.github.com/repos/miles-knowbl/orchestrator/releases/latest`
-- Claude MCP config: `~/.claude/mcp.json`
+- Claude MCP config: `~/.claude.json` (managed via `claude mcp add`)
 - Dashboard: https://orchestrator-xi.vercel.app
