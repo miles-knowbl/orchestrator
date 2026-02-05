@@ -298,8 +298,15 @@
       "description": "Per-loop and per-phase transient file configuration. Allows loops to declare file retention policies, deliverable vs transient intent, phase-level cleanup strategies, and skill file declarations.",
       "dependsOn": [],
       "notes": "Foundation exists (3-tier storage, cleanup, checkpoints). Missing: loop.json schema for fileManagement config, phase-level cleanup hooks, skill output declarations. Retention policies now wired up (archiveOldRuns called on completion)."
+    },
+    {
+      "id": "secret-manager",
+      "layer": 2,
+      "description": "Secure credential and API key management. Environment-aware secret storage, rotation policies, secure injection into loops/skills, and git-safe patterns to prevent accidental commits. Integrates with local-first encryption.",
+      "dependsOn": [],
+      "notes": "Currently secrets are manually managed via .env files and config JSON. Need: encrypted storage, per-environment secrets, rotation tracking, audit logging, and integration with distribution workflow to validate no secrets in commits."
     }
   ],
   "createdAt": "2026-02-04T18:30:00.000Z",
-  "updatedAt": "2026-02-05T01:00:00.000Z"
+  "updatedAt": "2026-02-05T00:20:00.000Z"
 }
