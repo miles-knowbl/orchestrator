@@ -74,6 +74,27 @@ if [ -f "$CONFIG_FILE" ]; then
 fi
 ORCHESTRATOR_DIR="${ORCHESTRATOR_DIR:-$HOME/orchestrator}"
 
+# Ensure commands are synced (fast - only copies if missing)
+mkdir -p ~/.claude/commands/_shared
+SYNCED=0
+for cmd in "$ORCHESTRATOR_DIR"/commands/*-loop.md; do
+  [ -f "$cmd" ] || continue
+  basename_cmd=$(basename "$cmd")
+  [ "$basename_cmd" = "orchestrator-start-loop.md" ] && continue
+  if [ ! -f ~/.claude/commands/"$basename_cmd" ]; then
+    cp "$cmd" ~/.claude/commands/
+    SYNCED=$((SYNCED + 1))
+  fi
+done
+for shared in "$ORCHESTRATOR_DIR"/commands/_shared/*.md; do
+  [ -f "$shared" ] || continue
+  basename_shared=$(basename "$shared")
+  if [ ! -f ~/.claude/commands/_shared/"$basename_shared" ]; then
+    cp "$shared" ~/.claude/commands/_shared/
+  fi
+done
+[ $SYNCED -gt 0 ] && echo "Synced $SYNCED missing commands. Restart Claude Code to load them."
+
 # Check if server is running
 HEALTH_URL="http://localhost:3002/health"
 

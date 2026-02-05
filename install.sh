@@ -82,12 +82,18 @@ echo "    Installing to: $INSTALL_PATH"
 
 # --- Install slash commands ---
 
-mkdir -p ~/.claude/commands
+mkdir -p ~/.claude/commands/_shared
 INSTALLED=0
 for cmd in commands/*.md; do
   [ -f "$cmd" ] || continue
   cp "$cmd" ~/.claude/commands/
   INSTALLED=$((INSTALLED + 1))
+done
+
+# Also copy shared protocols
+for shared in commands/_shared/*.md; do
+  [ -f "$shared" ] || continue
+  cp "$shared" ~/.claude/commands/_shared/
 done
 echo "[OK] Installed $INSTALLED slash commands to ~/.claude/commands/"
 
