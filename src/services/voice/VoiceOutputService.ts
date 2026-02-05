@@ -40,18 +40,14 @@ export class VoiceOutputService {
    */
   async initialize(): Promise<void> {
     if (!this.config.enabled) {
-      console.log('[VoiceOutput] Service disabled');
       return;
     }
 
     const available = await MacOSTTS.isAvailable();
     if (!available) {
-      console.warn('[VoiceOutput] macOS say command not available');
       this.config.enabled = false;
       return;
     }
-
-    console.log('[VoiceOutput] Service initialized');
   }
 
   /**
@@ -92,7 +88,6 @@ export class VoiceOutputService {
 
     // Check quiet hours
     if (!this.quietHours.shouldSpeak(priority)) {
-      console.log('[VoiceOutput] Skipping speech during quiet hours');
       return;
     }
 
@@ -232,8 +227,8 @@ export class VoiceOutputService {
         try {
           await this.tts.speak(item.text);
           this.lastSpokenAt = new Date();
-        } catch (err) {
-          console.error('[VoiceOutput] Speech error:', err);
+        } catch {
+          // Speech error - continue processing queue
         }
 
         this.speaking = false;

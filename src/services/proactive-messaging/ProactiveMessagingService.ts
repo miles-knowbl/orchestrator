@@ -170,8 +170,6 @@ export class ProactiveMessagingService {
    * Handle inbound commands from any channel
    */
   private async handleInboundCommand(command: InboundCommand): Promise<void> {
-    console.log('[ProactiveMessaging] Handling inbound command:', command.type);
-
     // Resolve "latest" interaction ID
     if ('interactionId' in command && command.interactionId === 'latest') {
       const resolved = this.conversationState.resolveInteractionId('latest');
@@ -184,11 +182,9 @@ export class ProactiveMessagingService {
     let interaction: PendingInteraction | undefined;
     if ('interactionId' in command) {
       interaction = this.conversationState.getInteraction(command.interactionId);
-      console.log('[ProactiveMessaging] Found interaction:', !!interaction);
     }
 
     // Execute built-in handlers
-    console.log('[ProactiveMessaging] Executing built-in handler for:', command.type);
     await this.executeBuiltInHandler(command, interaction);
 
     // Notify external handlers
@@ -196,7 +192,7 @@ export class ProactiveMessagingService {
       try {
         await handler(command, interaction);
       } catch (err) {
-        console.error('[ProactiveMessaging] Command handler error:', err);
+        this.log('error', 'Command handler error', { error: String(err) });
       }
     }
   }
@@ -207,102 +203,71 @@ export class ProactiveMessagingService {
   ): Promise<void> {
     switch (command.type) {
       case 'approve':
-        console.log('[ProactiveMessaging] Approve command - gateId:', command.context.gateId,
-          'executionId:', command.context.executionId,
-          'hasExecutionEngine:', !!this.executionEngine);
-
         if (command.context.gateId && command.context.executionId && this.executionEngine) {
           try {
             const skipGuarantees = command.context.skipGuarantees ?? false;
-            console.log('[ProactiveMessaging] Calling executionEngine.approveGate...', { skipGuarantees });
             await this.executionEngine.approveGate(
               command.context.executionId,
               command.context.gateId,
               skipGuarantees ? 'force-approved-via-slack' : undefined,
               { skipGuarantees }
             );
-            console.log('[ProactiveMessaging] Gate approved successfully');
 
             // Advance to the next phase after gate approval
             try {
-              console.log('[ProactiveMessaging] Advancing to next phase...');
               await this.executionEngine.advancePhase(command.context.executionId);
-              console.log('[ProactiveMessaging] Phase advanced successfully');
-            } catch (advanceErr) {
-              // Log but don't fail - gate was approved, advance may fail for valid reasons
-              console.log('[ProactiveMessaging] Could not advance phase:', advanceErr);
+            } catch {
+              // Gate was approved, advance may fail for valid reasons (e.g., no next phase)
             }
 
             if (interaction) {
               this.conversationState.recordResponse(interaction.id, command, 'builtin');
             }
           } catch (err) {
-            console.error('[ProactiveMessaging] Failed to approve gate:', err);
-            throw err; // Re-throw so caller can report to user
+            this.log('error', 'Failed to approve gate', { error: String(err) });
+            throw err;
           }
-        } else {
-          const missing = [];
-          if (!command.context.gateId) missing.push('gateId');
-          if (!command.context.executionId) missing.push('executionId');
-          if (!this.executionEngine) missing.push('executionEngine');
-          console.error('[ProactiveMessaging] Cannot approve gate - missing:', missing.join(', '));
         }
         if (command.context.proposalId && this.dreamEngine) {
           try {
-            console.log('[ProactiveMessaging] Calling dreamEngine.approveProposal...');
             await this.dreamEngine.approveProposal(command.context.proposalId);
-            console.log('[ProactiveMessaging] Proposal approved successfully');
             if (interaction) {
               this.conversationState.recordResponse(interaction.id, command, 'builtin');
             }
           } catch (err) {
-            console.error('[ProactiveMessaging] Failed to approve proposal:', err);
+            this.log('error', 'Failed to approve proposal', { error: String(err) });
             throw err;
           }
         }
         break;
 
       case 'reject':
-        console.log('[ProactiveMessaging] Reject command - gateId:', command.context.gateId,
-          'executionId:', command.context.executionId,
-          'hasExecutionEngine:', !!this.executionEngine);
-
         if (command.context.gateId && command.context.executionId && this.executionEngine) {
           try {
-            console.log('[ProactiveMessaging] Calling executionEngine.rejectGate...');
             await this.executionEngine.rejectGate(
               command.context.executionId,
               command.context.gateId,
               command.reason || 'Rejected via proactive messaging'
             );
-            console.log('[ProactiveMessaging] Gate rejected successfully');
             if (interaction) {
               this.conversationState.recordResponse(interaction.id, command, 'builtin');
             }
           } catch (err) {
-            console.error('[ProactiveMessaging] Failed to reject gate:', err);
+            this.log('error', 'Failed to reject gate', { error: String(err) });
             throw err;
           }
-        } else {
-          const missing = [];
-          if (!command.context.gateId) missing.push('gateId');
-          if (!command.context.executionId) missing.push('executionId');
-          if (!this.executionEngine) missing.push('executionEngine');
-          console.error('[ProactiveMessaging] Cannot reject gate - missing:', missing.join(', '));
         }
         if (command.context.proposalId && this.dreamEngine) {
           try {
-            console.log('[ProactiveMessaging] Calling dreamEngine.rejectProposal...');
             await this.dreamEngine.rejectProposal(
               command.context.proposalId,
               command.reason || 'Rejected via proactive messaging'
             );
-            console.log('[ProactiveMessaging] Proposal rejected successfully');
             if (interaction) {
               this.conversationState.recordResponse(interaction.id, command, 'builtin');
             }
           } catch (err) {
-            console.error('[ProactiveMessaging] Failed to reject proposal:', err);
+            this.log('error', 'Failed to reject proposal', { error: String(err) });
             throw err;
           }
         }
@@ -316,7 +281,7 @@ export class ProactiveMessagingService {
               this.conversationState.recordResponse(interaction.id, command, 'builtin');
             }
           } catch (err) {
-            console.error('[ProactiveMessaging] Failed to advance phase:', err);
+            this.log('error', 'Failed to advance phase', { error: String(err) });
           }
         }
         break;
@@ -330,16 +295,13 @@ export class ProactiveMessagingService {
             if (interaction) {
               this.conversationState.recordResponse(interaction.id, command, 'builtin');
             }
-            console.log(`[ProactiveMessaging] Approved ${command.proposalIds.length} proposals`);
           } catch (err) {
-            console.error('[ProactiveMessaging] Failed to approve proposals:', err);
+            this.log('error', 'Failed to approve proposals', { error: String(err) });
           }
         }
         break;
 
-      case 'start_next_loop':
-        // Spawn Claude Code to run the leverage protocol and start the next loop
-        console.log(`[ProactiveMessaging] Start next loop requested after ${command.completedLoopId} -> ${command.completedModule}`);
+      case 'start_next_loop': {
         const nextLoopTaskId = `task-${Date.now()}`;
         const nextLoopTask: PendingClaudeTask = {
           id: nextLoopTaskId,
@@ -352,18 +314,15 @@ export class ProactiveMessagingService {
           requestedVia: 'slack',
         };
         this.pendingTasks.set(nextLoopTaskId, nextLoopTask);
-        console.log(`[ProactiveMessaging] Queued task ${nextLoopTaskId} for Claude Code: start next loop`);
-
-        // Auto-spawn Claude Code to start the next loop
         this.spawnClaudeCode(nextLoopTask);
 
         if (interaction) {
           this.conversationState.recordResponse(interaction.id, command, 'builtin');
         }
         break;
+      }
 
-      case 'create_deliverables':
-        // Queue a task for Claude Code to create the missing deliverables
+      case 'create_deliverables': {
         const taskId = `task-${Date.now()}`;
         const task: PendingClaudeTask = {
           id: taskId,
@@ -376,7 +335,6 @@ export class ProactiveMessagingService {
           requestedVia: 'slack',
         };
         this.pendingTasks.set(taskId, task);
-        console.log(`[ProactiveMessaging] Queued task ${taskId} for Claude Code: create ${command.missingFiles.join(', ')}`);
 
         // Auto-start Claude Code to pick up the task
         this.spawnClaudeCode(task);
@@ -385,6 +343,7 @@ export class ProactiveMessagingService {
           this.conversationState.recordResponse(interaction.id, command, 'builtin');
         }
         break;
+      }
 
       case 'status':
         // Query and respond with current execution state
@@ -523,7 +482,7 @@ export class ProactiveMessagingService {
           await adapter.send(message);
           channels.push(name);
         } catch (err) {
-          console.error(`[ProactiveMessaging] Failed to send to ${name}:`, err);
+          this.log('error', `Failed to send to ${name}`, { error: String(err) });
         }
       }
     }
@@ -570,7 +529,7 @@ export class ProactiveMessagingService {
       });
     } catch (err) {
       // Don't throw during system notifications - just log
-      console.error(`[ProactiveMessaging] Failed to send ${options.type} notification:`, err);
+      this.log('error', `Failed to send ${options.type} notification`, { error: String(err) });
     }
   }
 
@@ -616,7 +575,7 @@ export class ProactiveMessagingService {
       try {
         guarantees = await this.executionEngine.getGateGuaranteeStatus(executionId, gateId);
       } catch (err) {
-        console.error('[ProactiveMessaging] Failed to check guarantees:', err);
+        this.log('error', 'Failed to check guarantees', { error: String(err) });
       }
     }
 
@@ -1154,14 +1113,11 @@ export class ProactiveMessagingService {
     // Notify the running session about the incoming task
     if (hasActiveLoop && task.type !== 'start_next_loop') {
       const deliverables = task.deliverables?.join(', ') || 'missing deliverables';
-      console.log('[ProactiveMessaging] Active execution found - spawning task runner in new tab.');
       this.notify({
         type: 'custom',
         title: 'SLACK TASK SPAWNING',
         message: `Opening new terminal to create ${deliverables}. Gate will auto-approve when ready.`,
       });
-    } else if (task.type === 'start_next_loop') {
-      console.log('[ProactiveMessaging] Spawning Claude Code to start next loop.');
     }
 
     // Detect terminal: ORCHESTRATOR_TERMINAL_CMD > iTerm > Terminal.app
@@ -1184,9 +1140,8 @@ export class ProactiveMessagingService {
         .replace(/\$CMD/g, shellCmd);
       exec(cmd, (error) => {
         if (error) {
-          console.error('[ProactiveMessaging] Custom terminal command failed:', error.message);
+          this.log('error', 'Custom terminal command failed', { error: error.message });
         } else {
-          console.log('[ProactiveMessaging] Spawned Claude Code via custom terminal:', task.id);
           task.status = 'in_progress';
         }
       });
@@ -1225,7 +1180,7 @@ export class ProactiveMessagingService {
 
     exec(`osascript -e '${script.replace(/'/g, "'\\''")}'`, (error) => {
       if (error) {
-        console.error('[ProactiveMessaging] Failed to spawn Claude Code:', error.message);
+        this.log('error', 'Failed to spawn Claude Code', { error: error.message });
         // Fallback: just queue the task
         const taskDesc = task.type === 'start_next_loop'
           ? 'start next loop'
@@ -1236,7 +1191,6 @@ export class ProactiveMessagingService {
           message: `Could not spawn terminal. Task queued: ${taskDesc}`,
         });
       } else {
-        console.log('[ProactiveMessaging] Spawned Claude Code to handle task:', task.id);
         task.status = 'in_progress';
       }
     });
@@ -1318,7 +1272,7 @@ export class ProactiveMessagingService {
       try {
         await adapter.disconnect();
       } catch (err) {
-        console.error(`[ProactiveMessaging] Error disconnecting adapter:`, err);
+        this.log('error', 'Error disconnecting adapter', { error: String(err) });
       }
     }
     this.adapters.clear();

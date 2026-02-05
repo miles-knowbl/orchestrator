@@ -134,7 +134,7 @@ export function createHttpServer(options: HttpServerOptions): Express {
   // Create and connect MCP server
   const mcpServer = createServer();
   mcpServer.connect(mcpTransport).catch(err => {
-    console.error('Failed to connect MCP server:', err);
+    console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: 'error', message: 'Failed to connect MCP server', error: String(err) }));
   });
 
   // Handle MCP requests
@@ -142,7 +142,7 @@ export function createHttpServer(options: HttpServerOptions): Express {
     try {
       await mcpTransport.handleRequest(req, res, req.body);
     } catch (error) {
-      console.error('MCP request error:', error);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: 'error', message: 'MCP request error', error: String(error) }));
       res.status(500).json({ error: 'Internal server error' });
     }
   });
@@ -152,7 +152,7 @@ export function createHttpServer(options: HttpServerOptions): Express {
     try {
       await mcpTransport.handleRequest(req, res);
     } catch (error) {
-      console.error('MCP SSE error:', error);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: 'error', message: 'MCP SSE error', error: String(error) }));
       res.status(500).json({ error: 'Internal server error' });
     }
   });
@@ -162,7 +162,7 @@ export function createHttpServer(options: HttpServerOptions): Express {
     try {
       await mcpTransport.handleRequest(req, res);
     } catch (error) {
-      console.error('MCP delete error:', error);
+      console.error(JSON.stringify({ timestamp: new Date().toISOString(), level: 'error', message: 'MCP delete error', error: String(error) }));
       res.status(500).json({ error: 'Internal server error' });
     }
   });

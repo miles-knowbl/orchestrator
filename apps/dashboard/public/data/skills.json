@@ -20,25 +20,25 @@
       "id": "architect",
       "name": "architect",
       "version": "1.0.0",
-      "description": "Design system and feature architecture from requirements. Produces high-level technical designs with component decomposition, data flow, integration patterns, and technology choices. Documents decisio",
+      "description": "Design system and feature architecture from requirements. Produces high-level technical designs with component decomposition, data flow, integration patterns, and technology choices. Documents decisions via ADRs. Creates the architectural foundation that feeds into spec compilation.",
       "phase": "INIT",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "architecture-extractor",
       "name": "architecture-extractor",
       "version": "1.0.0",
-      "description": "Analyze a source system — codebase, documentation, diagrams, or verbal description — and extract a clean, structured architecture document. Reverse-engineers components, data flows, interfaces, patter",
+      "description": "Analyze a source system — codebase, documentation, diagrams, or verbal description — and extract a clean, structured architecture document. Reverse-engineers components, data flows, interfaces, patterns, and constraints into ARCHITECTURE.md.",
       "phase": "EXTRACT",
-      "category": "specialized"
+      "category": "engineering"
     },
     {
       "id": "architecture-review",
       "name": "architecture-review",
       "version": "1.0.0",
-      "description": "Evaluate existing system architecture for soundness, risks, and improvement opportunities. Assesses structural integrity, quality attributes, technical debt, and alignment with business needs. Produce",
+      "description": "Evaluate existing system architecture for soundness, risks, and improvement opportunities. Assesses structural integrity, quality attributes, technical debt, and alignment with business needs. Produces actionable findings with prioritized recommendations. Complements architect skill which designs new architecture.",
       "phase": "REVIEW",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "blocker-analyzer",
@@ -46,7 +46,7 @@
       "version": "1.0.0",
       "description": "Analyzes blockers preventing module progress. Identifies blocked modules, their dependencies, and potential unblocking strategies.",
       "phase": "SCORE",
-      "category": "async"
+      "category": "operations"
     },
     {
       "id": "budget-timeline-extraction",
@@ -62,7 +62,7 @@
       "version": "1.0.0",
       "description": "Create minimal, reliable reproduction of reported bugs from issues, logs, and user reports. Produces step-by-step reproduction cases with expected vs actual behavior.",
       "phase": "INIT",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "calibration-sync",
@@ -70,15 +70,15 @@
       "version": "1.0.0",
       "description": "Syncs calibration data for async operation. Loads effort estimates, accuracy history, and adjustment factors to improve planning accuracy.",
       "phase": "GATHER",
-      "category": "async"
+      "category": "operations"
     },
     {
       "id": "calibration-tracker",
       "name": "calibration-tracker",
       "version": "1.0.0",
-      "description": "Tracks estimate accuracy over time and adjusts future estimates based on historical data. Compares estimated vs actual effort, identifies systematic biases, and generates calibration adjustments. Enab",
+      "description": "Tracks estimate accuracy over time and adjusts future estimates based on historical data. Compares estimated vs actual effort, identifies systematic biases, and generates calibration adjustments. Enables increasingly accurate estimates as more data accumulates.",
       "phase": "COMPLETE",
-      "category": "meta"
+      "category": "operations"
     },
     {
       "id": "champion-enablement-asset",
@@ -102,31 +102,31 @@
       "version": "1.0.0",
       "description": "Generate structured changelogs from git history, PRs, and commit messages. Categorizes changes by type (Added, Changed, Deprecated, Removed, Fixed, Security) following Keep a Changelog format.",
       "phase": "DOCUMENT",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "code-review",
       "name": "code-review",
       "version": "1.0.0",
-      "description": "Comprehensive PR review combining structural verification, semantic validation, and PR-specific concerns. Use before merging to assess code quality, correctness, and merge readiness. Produces actionab",
+      "description": "Comprehensive PR review combining structural verification, semantic validation, and PR-specific concerns. Use before merging to assess code quality, correctness, and merge readiness. Produces actionable feedback formatted for PR comments with clear blocking vs. non-blocking distinctions.",
       "phase": "REVIEW",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "code-validation",
       "name": "code-validation",
       "version": "1.0.0",
-      "description": "Semantic correctness checks at development checkpoints. Use before committing, before PR, or at feature milestones to verify the code solves the right problem correctly. Evaluates requirements alignme",
+      "description": "Semantic correctness checks at development checkpoints. Use before committing, before PR, or at feature milestones to verify the code solves the right problem correctly. Evaluates requirements alignment, edge case coverage, failure modes, operational readiness, and integration correctness. Complements code-verification (structural) with semantic analysis.",
       "phase": "VALIDATE",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "code-verification",
       "name": "code-verification",
       "version": "1.0.0",
-      "description": "Fast structural correctness checks for code generation loops. Use after every code generation to catch complexity issues, security vulnerabilities, resource leaks, and error handling gaps before they ",
+      "description": "Fast structural correctness checks for code generation loops. Use after every code generation to catch complexity issues, security vulnerabilities, resource leaks, and error handling gaps before they compound. Supports two strictness levels: 'fast' for tight iteration loops, 'thorough' for pre-PR checks. Outputs pass/fail per category with specific issues.",
       "phase": "VERIFY",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "collect-bugs",
@@ -148,7 +148,7 @@
       "id": "communication-parse",
       "name": "communication-parse",
       "version": "1.0.0",
-      "description": "Extract structured intelligence from captured communications using Claude-powered analysis. Identifies pain points, budget signals, timeline indicators, stakeholder sentiment, and technical requiremen",
+      "description": "Extract structured intelligence from captured communications using Claude-powered analysis. Identifies pain points, budget signals, timeline indicators, stakeholder sentiment, and technical requirements.",
       "phase": "IMPLEMENT",
       "category": "sales"
     },
@@ -158,7 +158,7 @@
       "version": "1.0.0",
       "description": "Verify API, schema, and interface compatibility between old and new versions during migrations. Tests backward compatibility, data format changes, and integration contracts.",
       "phase": "SCAFFOLD",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "competitive-intel",
@@ -172,25 +172,33 @@
       "id": "content-analysis",
       "name": "content-analysis",
       "version": "2.0.0",
-      "description": "Analyze provided content to extract meaningful information, reusable skills, and recurring patterns. Applies structured decomposition, taxonomy-driven classification, and confidence-scored extraction ",
+      "description": "Analyze provided content to extract meaningful information, reusable skills, and recurring patterns. Applies structured decomposition, taxonomy-driven classification, and confidence-scored extraction to transform raw content into actionable knowledge components. Powers the inbox/second-brain extraction pipeline.",
       "phase": "VALIDATE",
-      "category": "meta"
+      "category": "operations"
     },
     {
       "id": "context-cultivation",
       "name": "context-cultivation",
       "version": "2.0.0",
-      "description": "Process raw context into cultivated insights. Performs qualitative analysis across ingested sources to identify themes, patterns, contradictions, gaps, and opportunities. Produces a structured synthes",
+      "description": "Process raw context into cultivated insights. Performs qualitative analysis across ingested sources to identify themes, patterns, contradictions, gaps, and opportunities. Produces a structured synthesis that transforms disparate information into actionable intelligence for downstream prioritization and proposal building.",
       "phase": "SCAFFOLD",
-      "category": "specialized"
+      "category": "engineering"
+    },
+    {
+      "id": "context-delta",
+      "name": "context-delta",
+      "version": "1.0.0",
+      "description": "The Reflexive phase of ADIR reasoning. Audits the frame itself after Abductive-Deductive-Inductive analysis, producing a Context Delta that captures what to keep, discard, add, reweight, test next, and guard against.",
+      "phase": "VALIDATE",
+      "category": "operations"
     },
     {
       "id": "context-ingestion",
       "name": "context-ingestion",
       "version": "2.0.0",
-      "description": "Gather and organize context from multiple sources into a structured format. Handles documents, URLs, conversations, and notes. Produces a verified source registry and compiled context corpus ready for",
+      "description": "Gather and organize context from multiple sources into a structured format. Handles documents, URLs, conversations, and notes. Produces a verified source registry and compiled context corpus ready for downstream analysis.",
       "phase": "INIT",
-      "category": "specialized"
+      "category": "engineering"
     },
     {
       "id": "contract-support",
@@ -206,7 +214,7 @@
       "version": "1.0.0",
       "description": "Define communication patterns and handoff protocols for multi-agent orchestration with locks, heartbeats, and conflict resolution.",
       "phase": "COMPLETE",
-      "category": "meta"
+      "category": "operations"
     },
     {
       "id": "deal-create",
@@ -236,9 +244,9 @@
       "id": "debug-assist",
       "name": "debug-assist",
       "version": "1.0.0",
-      "description": "Systematic bug isolation for when you're stuck. Guides structured debugging using hypothesis generation, binary search, and systematic elimination. Tracks debugging state across turns. Specialized mod",
+      "description": "Systematic bug isolation for when you're stuck. Guides structured debugging using hypothesis generation, binary search, and systematic elimination. Tracks debugging state across turns. Specialized modes for memory issues, concurrency bugs, performance problems, and production incidents.",
       "phase": "VERIFY",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "deck-image-schema",
@@ -246,7 +254,7 @@
       "version": "1.0.0",
       "description": "Define visual schema for presentation content specifying image types, layout positions, sizing, and styling rules for deck generation.",
       "phase": "IMPLEMENT",
-      "category": "specialized"
+      "category": "content"
     },
     {
       "id": "deck-text-schema",
@@ -254,7 +262,7 @@
       "version": "1.0.0",
       "description": "Define text content schema for presentation slides specifying typography, hierarchy, formatting rules, and content structure.",
       "phase": "IMPLEMENT",
-      "category": "specialized"
+      "category": "content"
     },
     {
       "id": "define-dream-state",
@@ -262,23 +270,23 @@
       "version": "1.0.0",
       "description": "Systematically define a dream state at any tier of the hierarchy",
       "phase": "INIT",
-      "category": "meta"
+      "category": "strategy"
     },
     {
       "id": "dependency-mapping",
       "name": "dependency-mapping",
       "version": "1.0.0",
-      "description": "Map cross-pipeline dependencies and handoffs (X-series). Identifies where pipelines connect, share data, or have timing dependencies. Documents failure modes at integration boundaries that span multip",
+      "description": "Map cross-pipeline dependencies and handoffs (X-series). Identifies where pipelines connect, share data, or have timing dependencies. Documents failure modes at integration boundaries that span multiple pipelines.",
       "phase": "INIT",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "deploy",
       "name": "deploy",
       "version": "1.0.0",
-      "description": "Guides deployment of systems to production environments. Covers deployment strategies, production validation, rollback procedures, and monitoring setup. Completes the engineering loop by bridging the ",
+      "description": "Guides deployment of systems to production environments. Covers deployment strategies, production validation, rollback procedures, and monitoring setup. Completes the engineering loop by bridging the gap between merged code and running production systems.",
       "phase": "SHIP",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "discovery-debrief",
@@ -300,25 +308,25 @@
       "id": "distribute",
       "name": "distribute",
       "version": "1.0.0",
-      "description": "Set up CI/CD distribution pipelines for automated releases. Creates GitHub Actions workflows, configures platform deployment (Vercel or Railway), produces tarball releases with SHA256 checksums, and o",
+      "description": "Set up CI/CD distribution pipelines for automated releases. Creates GitHub Actions workflows, configures platform deployment (Vercel or Railway), produces tarball releases with SHA256 checksums, and optionally publishes Docker images to GHCR.",
       "phase": "SHIP",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "docs-alignment",
       "name": "docs-alignment",
       "version": "1.0.0",
-      "description": "Scans, updates, and maintains all documentation across the Organization → System → Module hierarchy. Ensures MECE (Mutually Exclusive, Collectively Exhaustive) categories stay aligned after every loop",
+      "description": "Scans, updates, and maintains all documentation across the Organization → System → Module hierarchy. Ensures MECE (Mutually Exclusive, Collectively Exhaustive) categories stay aligned after every loop execution. Handles document lifecycle: create, update, move, prune, summarize, index, and cross-reference.",
       "phase": "COMPLETE",
-      "category": "meta"
+      "category": "operations"
     },
     {
       "id": "document",
       "name": "document",
       "version": "1.0.0",
-      "description": "Generate and maintain technical documentation. Creates README files, API documentation, code comments, architecture docs, and user guides. Ensures documentation stays accurate, accessible, and useful.",
+      "description": "Generate and maintain technical documentation. Creates README files, API documentation, code comments, architecture docs, and user guides. Ensures documentation stays accurate, accessible, and useful. Follows documentation standards and best practices for different audiences.",
       "phase": "DOCUMENT",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "dream-sync",
@@ -326,55 +334,55 @@
       "version": "1.0.0",
       "description": "Synchronizes dream state context for async operation. Loads and caches the current dream state hierarchy (org → system → module) for offline reference.",
       "phase": "GATHER",
-      "category": "async"
+      "category": "operations"
     },
     {
       "id": "entry-portal",
       "name": "entry-portal",
       "version": "1.0.0",
-      "description": "Converts fuzzy requirements into structured FeatureSpecs and GitHub issues. Manages the system queue for a domain's journey toward its dream state. The entry point for all new systems and features ent",
+      "description": "Converts fuzzy requirements into structured FeatureSpecs and GitHub issues. Manages the system queue for a domain's journey toward its dream state. The entry point for all new systems and features entering the engineering loop.",
       "phase": "INIT",
-      "category": "meta"
+      "category": "operations"
     },
     {
       "id": "error-handling",
       "name": "error-handling",
       "version": "2.0.0",
-      "description": "Implement robust error handling strategies for applications. Covers error classification, custom error hierarchies, propagation patterns, recovery mechanisms (retry, fallback, circuit breaker, bulkhea",
+      "description": "Implement robust error handling strategies for applications. Covers error classification, custom error hierarchies, propagation patterns, recovery mechanisms (retry, fallback, circuit breaker, bulkhead), logging and observability, user-facing messages, and boundary error handling across API, UI, and background job layers.",
       "phase": "IMPLEMENT",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "estimation",
       "name": "estimation",
       "version": "1.0.0",
-      "description": "Estimate effort, complexity, and duration for systems and features. Provides frameworks for sizing work, accounting for risk, and calibrating estimates over time. Supports planning and expectation set",
+      "description": "Estimate effort, complexity, and duration for systems and features. Provides frameworks for sizing work, accounting for risk, and calibrating estimates over time. Supports planning and expectation setting throughout the engineering loop.",
       "phase": "INIT",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "failure-mode-analysis",
       "name": "failure-mode-analysis",
       "version": "1.0.0",
-      "description": "Apply MECE failure mode taxonomy to backend pipelines. Classifies failures by Location (L1-L4), Type (T1-T5), and Severity (S1-S4). Produces comprehensive failure mode inventory with validation status",
+      "description": "Apply MECE failure mode taxonomy to backend pipelines. Classifies failures by Location (L1-L4), Type (T1-T5), and Severity (S1-S4). Produces comprehensive failure mode inventory with validation status and coverage calculation.",
       "phase": "REVIEW",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "frontend-design",
       "name": "frontend-design",
       "version": "1.0.0",
-      "description": "Design frontend components, layouts, and interactions before implementation. Creates component specifications, defines design tokens, and documents interaction patterns for consistent UI/UX across the",
+      "description": "Design frontend components, layouts, and interactions before implementation. Creates component specifications, defines design tokens, and documents interaction patterns for consistent UI/UX across the application.",
       "phase": "SCAFFOLD",
-      "category": "specialized"
+      "category": "engineering"
     },
     {
       "id": "git-workflow",
       "name": "git-workflow",
       "version": "1.0.0",
-      "description": "Manages git workflows for the engineering loop. Handles worktrees for parallel development, branching conventions, PR creation, and coordination between agents and human engineers. Provides isolation ",
+      "description": "Manages git workflows for the engineering loop. Handles worktrees for parallel development, branching conventions, PR creation, and coordination between agents and human engineers. Provides isolation for concurrent system development.",
       "phase": "SHIP",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "gotcha-documenter",
@@ -382,15 +390,15 @@
       "version": "1.0.0",
       "description": "Document project gotchas - the non-obvious things that trip people up. Captures edge cases, surprising behaviors, common mistakes, and workarounds that aren't immediately apparent from code or docs.",
       "phase": "DOCUMENT",
-      "category": "meta"
+      "category": "operations"
     },
     {
       "id": "guarantee-tracker",
       "name": "guarantee-tracker",
       "version": "1.0.0",
-      "description": "Track and document project guarantees - the contracts, invariants, and promises that the codebase maintains. Captures what must always be true, what can never happen, and the boundaries of acceptable ",
+      "description": "Track and document project guarantees - the contracts, invariants, and promises that the codebase maintains. Captures what must always be true, what can never happen, and the boundaries of acceptable behavior.",
       "phase": "DOCUMENT",
-      "category": "meta"
+      "category": "operations"
     },
     {
       "id": "handoff-confirmer",
@@ -398,7 +406,7 @@
       "version": "1.0.0",
       "description": "Confirms system is ready for async handoff. Performs final validation and produces handoff summary before entering mobile operation mode.",
       "phase": "HANDOFF",
-      "category": "async"
+      "category": "operations"
     },
     {
       "id": "history-collector",
@@ -406,23 +414,23 @@
       "version": "1.0.0",
       "description": "Collects execution history for async context. Gathers recent loop executions, outcomes, and learnings to inform queue planning.",
       "phase": "GATHER",
-      "category": "async"
+      "category": "operations"
     },
     {
       "id": "html-slides",
       "name": "html-slides",
       "version": "1.0.0",
-      "description": "Renders presentation schemas into a self-contained HTML file using reveal.js. The HTML is version-controllable, hostable anywhere, and can be converted to other formats. Optionally exports to Google S",
+      "description": "Renders presentation schemas into a self-contained HTML file using reveal.js. The HTML is version-controllable, hostable anywhere, and can be converted to other formats. Optionally exports to Google Slides via API.",
       "phase": "DOCUMENT",
-      "category": "specialized"
+      "category": "content"
     },
     {
       "id": "implement",
       "name": "implement",
       "version": "1.0.0",
-      "description": "Transform specifications into working, production-quality code. Takes FeatureSpecs, requirements, or design documents and produces complete implementations following established patterns. Handles data",
+      "description": "Transform specifications into working, production-quality code. Takes FeatureSpecs, requirements, or design documents and produces complete implementations following established patterns. Handles data layer, service layer, API layer, and UI components with proper error handling, validation, and tests.",
       "phase": "IMPLEMENT",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "incident-triage",
@@ -430,7 +438,7 @@
       "version": "1.0.0",
       "description": "Rapidly classify production incidents by severity, identify blast radius, assign ownership, and determine immediate response strategy. Time-critical first response.",
       "phase": "INIT",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "infra-database",
@@ -438,7 +446,7 @@
       "version": "1.0.0",
       "description": "Set up database schema, ORM configuration, migrations, and data access layer with connection pooling and seed data.",
       "phase": "IMPLEMENT",
-      "category": "infra"
+      "category": "engineering"
     },
     {
       "id": "infra-devenv",
@@ -446,7 +454,7 @@
       "version": "1.0.0",
       "description": "Set up local development environment with scripts, devcontainers, and environment variable templates for consistent onboarding.",
       "phase": "SCAFFOLD",
-      "category": "infra"
+      "category": "engineering"
     },
     {
       "id": "infra-docker",
@@ -454,7 +462,7 @@
       "version": "1.0.0",
       "description": "Create Docker configuration with multi-stage builds, docker-compose for local development, and container optimization.",
       "phase": "IMPLEMENT",
-      "category": "infra"
+      "category": "engineering"
     },
     {
       "id": "infra-monorepo",
@@ -462,7 +470,7 @@
       "version": "1.0.0",
       "description": "Configure monorepo tooling with workspace management, task orchestration, and build caching for multi-package projects.",
       "phase": "IMPLEMENT",
-      "category": "infra"
+      "category": "engineering"
     },
     {
       "id": "infra-services",
@@ -470,15 +478,15 @@
       "version": "1.0.0",
       "description": "Configure service layer with lazy singleton initialization, dependency management, and lifecycle hooks.",
       "phase": "IMPLEMENT",
-      "category": "infra"
+      "category": "engineering"
     },
     {
       "id": "integration-test",
       "name": "integration-test",
       "version": "1.0.0",
-      "description": "Validates that multiple systems work together correctly. Tests cross-system contracts, end-to-end workflows, and interface compatibility. Complements unit testing (test-generation) and code validation",
+      "description": "Validates that multiple systems work together correctly. Tests cross-system contracts, end-to-end workflows, and interface compatibility. Complements unit testing (test-generation) and code validation (code-validation) by focusing on system boundaries.",
       "phase": "TEST",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "journey-tracer",
@@ -486,7 +494,23 @@
       "version": "1.0.0",
       "description": "Track execution journey through phases and skills with structured logging, state persistence, and timeline visualization for post-mortem analysis.",
       "phase": "DOCUMENT",
-      "category": "meta"
+      "category": "operations"
+    },
+    {
+      "id": "kanban",
+      "name": "kanban",
+      "version": "1.0.0",
+      "description": "Linear-style visualization of the module ladder to system completion. Dashboard for tracking roadmap progress across all 7 layers.",
+      "phase": "COMPLETE",
+      "category": "operations"
+    },
+    {
+      "id": "knowledge-graph",
+      "name": "knowledge-graph",
+      "version": "1.0.0",
+      "description": "Build and query the skill-based knowledge graph ontology. Enables discovery of high-leverage skills, gap analysis, and understanding skill dependencies.",
+      "phase": "INIT",
+      "category": "operations"
     },
     {
       "id": "knowledge-integrator",
@@ -494,7 +518,7 @@
       "version": "1.0.0",
       "description": "Integrate cultivated knowledge into the project. Updates CLAUDE.md with key insights, links to detailed documentation, and ensures knowledge is discoverable and actionable.",
       "phase": "COMPLETE",
-      "category": "meta"
+      "category": "operations"
     },
     {
       "id": "lead-research",
@@ -510,23 +534,23 @@
       "version": "1.0.0",
       "description": "Calculates leverage scores for queue planning. Uses the leverage protocol to determine optimal work ordering for async operation.",
       "phase": "PLAN",
-      "category": "async"
+      "category": "strategy"
     },
     {
       "id": "loop-composer",
       "name": "loop-composer",
       "version": "1.0.0",
-      "description": "Design and compose loops from requirements. Handles skill selection, phase sequencing, gate placement, dependency validation, and loop.json generation. The architectural counterpart to loop-controller",
+      "description": "Design and compose loops from requirements. Handles skill selection, phase sequencing, gate placement, dependency validation, and loop.json generation. The architectural counterpart to loop-controller's runtime execution.",
       "phase": "SCAFFOLD",
-      "category": "meta"
+      "category": "operations"
     },
     {
       "id": "loop-controller",
       "name": "loop-controller",
       "version": "1.0.0",
-      "description": "Orchestrates the engineering loop execution. Manages state machine transitions, decides what to do next, handles failures and retries, determines completion, and triggers human handoffs. The 'brain' t",
+      "description": "Orchestrates the engineering loop execution. Manages state machine transitions, decides what to do next, handles failures and retries, determines completion, and triggers human handoffs. The 'brain' that runs the autonomous development cycle.",
       "phase": "META",
-      "category": "meta"
+      "category": "operations"
     },
     {
       "id": "loop-to-slash-command",
@@ -534,7 +558,7 @@
       "version": "1.0.0",
       "description": "Generate Claude Code slash command .md files from loop definitions. Transforms loop.json into executable CLI commands with state management, gate procedures, and skill integration instructions.",
       "phase": "SHIP",
-      "category": "meta"
+      "category": "operations"
     },
     {
       "id": "manifest-manager",
@@ -542,23 +566,23 @@
       "version": "1.0.0",
       "description": "Generate and maintain execution manifests that specify what should run, in what order, with what constraints and expected outputs.",
       "phase": "SHIP",
-      "category": "meta"
+      "category": "operations"
     },
     {
       "id": "memory-manager",
       "name": "memory-manager",
       "version": "1.0.0",
-      "description": "Maintains context across long-running autonomous tasks. Handles session handoffs, context compression, cold boot procedures, and domain memory persistence. Enables continuity between sessions and coor",
+      "description": "Maintains context across long-running autonomous tasks. Handles session handoffs, context compression, cold boot procedures, and domain memory persistence. Enables continuity between sessions and coordination between multiple agents working on the same domain.",
       "phase": "META",
-      "category": "meta"
+      "category": "operations"
     },
     {
       "id": "metadata-extraction",
       "name": "metadata-extraction",
       "version": "2.0.0",
-      "description": "Extract, parse, and normalize metadata from diverse content sources including URLs, HTTP headers, HTML meta tags, structured data formats, and document structural elements. Produces standardized metad",
+      "description": "Extract, parse, and normalize metadata from diverse content sources including URLs, HTTP headers, HTML meta tags, structured data formats, and document structural elements. Produces standardized metadata records conforming to Dublin Core, OpenGraph, JSON-LD, and schema.org vocabularies. Supports the inbox/second-brain pipeline by ensuring every ingested item has rich, consistent, machine-readable metadata.",
       "phase": "IMPLEMENT",
-      "category": "meta"
+      "category": "operations"
     },
     {
       "id": "migration-planner",
@@ -566,7 +590,7 @@
       "version": "1.0.0",
       "description": "Plan technology migrations with dependency mapping, risk assessment, rollback strategy, and phased execution timeline. Handles framework upgrades, database changes, and architecture shifts.",
       "phase": "INIT",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "mitigation",
@@ -574,7 +598,7 @@
       "version": "1.0.0",
       "description": "Execute immediate mitigation for production incidents. Decide between rollback, hotfix, feature flag, or traffic management. Prioritizes restoring service over finding root cause.",
       "phase": "IMPLEMENT",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "module-scorer",
@@ -582,7 +606,7 @@
       "version": "1.0.0",
       "description": "Scores available modules for async queue prioritization. Calculates leverage scores using dream state alignment, downstream impact, and execution likelihood.",
       "phase": "SCORE",
-      "category": "async"
+      "category": "operations"
     },
     {
       "id": "next-best-action",
@@ -598,7 +622,7 @@
       "version": "1.0.0",
       "description": "Tests notification delivery for async operation. Verifies that notifications reach the user across all configured channels.",
       "phase": "VERIFY",
-      "category": "async"
+      "category": "operations"
     },
     {
       "id": "observe",
@@ -606,21 +630,29 @@
       "version": "1.0.0",
       "description": "Strategic orientation at loop start — grounding in reality, mapping opportunities for leverage",
       "phase": "INIT",
-      "category": "meta"
+      "category": "operations"
+    },
+    {
+      "id": "orchestration",
+      "name": "orchestration",
+      "version": "1.0.0",
+      "description": "Spawn and coordinate sub-agents for parallel module execution. 2-layer system with persistent orchestrator and ephemeral task agents.",
+      "phase": "INIT",
+      "category": "operations"
     },
     {
       "id": "orchestrator",
       "name": "orchestrator",
       "version": "1.0.0",
-      "description": "Unified development orchestration across greenfield and brownfield modes. Detects project mode, performs pre-loop scope discovery, spawns parallel sub-agents, and coordinates execution to minimize loo",
+      "description": "Unified development orchestration across greenfield and brownfield modes. Detects project mode, performs pre-loop scope discovery, spawns parallel sub-agents, and coordinates execution to minimize loops needed to reach production-quality.",
       "phase": "META",
-      "category": "meta"
+      "category": "operations"
     },
     {
       "id": "pain-point-extraction",
       "name": "pain-point-extraction",
       "version": "1.0.0",
-      "description": "Extract and categorize pain points from parsed communications. Identifies volume, cost, quality, speed, compliance, security, experience, talent, legacy, and integration issues with severity assessmen",
+      "description": "Extract and categorize pain points from parsed communications. Identifies volume, cost, quality, speed, compliance, security, experience, talent, legacy, and integration issues with severity assessment.",
       "phase": "ANALYZE",
       "category": "sales"
     },
@@ -630,23 +662,31 @@
       "version": "1.0.0",
       "description": "Collects and organizes patterns from memory for async context. Gathers relevant patterns that inform autonomous decision-making.",
       "phase": "GATHER",
-      "category": "async"
+      "category": "operations"
+    },
+    {
+      "id": "patterns-roundup",
+      "name": "patterns-roundup",
+      "version": "1.0.0",
+      "description": "Round up existing patterns and automatic pattern detection from observed behaviors. Query, filter, and formalize patterns from the memory hierarchy.",
+      "phase": "COMPLETE",
+      "category": "operations"
     },
     {
       "id": "perf-analysis",
       "name": "perf-analysis",
       "version": "1.0.0",
-      "description": "Identify and resolve performance bottlenecks in code and systems. Profiles CPU, memory, and I/O usage. Analyzes database queries, API latency, and frontend rendering. Conducts load testing and provide",
+      "description": "Identify and resolve performance bottlenecks in code and systems. Profiles CPU, memory, and I/O usage. Analyzes database queries, API latency, and frontend rendering. Conducts load testing and provides optimization recommendations with measurable impact.",
       "phase": "VALIDATE",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "pipeline-discovery",
       "name": "pipeline-discovery",
       "version": "1.0.0",
-      "description": "Identify backend data pipelines (P-series) in the codebase. Discovers server-side data flows triggered by user actions or system events, documenting triggers, steps, and outcomes. Foundation for MECE ",
+      "description": "Identify backend data pipelines (P-series) in the codebase. Discovers server-side data flows triggered by user actions or system events, documenting triggers, steps, and outcomes. Foundation for MECE failure mode analysis.",
       "phase": "INIT",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "pipeline-snapshot",
@@ -662,7 +702,7 @@
       "version": "1.0.0",
       "description": "Assess and document skill transferability across projects and domains, identifying required adaptations and context dependencies.",
       "phase": "COMPLETE",
-      "category": "meta"
+      "category": "operations"
     },
     {
       "id": "postmortem",
@@ -670,7 +710,7 @@
       "version": "1.0.0",
       "description": "Write blameless postmortems after incidents. Document timeline, root cause, impact, mitigation taken, and prevention measures. Focus on systemic improvements, not individual blame.",
       "phase": "DOCUMENT",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "prereq-checker",
@@ -678,23 +718,23 @@
       "version": "1.0.0",
       "description": "Validates prerequisites for async operation. Ensures Slack is configured, modules are available for work, and system is ready for autonomous execution.",
       "phase": "INIT",
-      "category": "async"
+      "category": "operations"
     },
     {
       "id": "priority-matrix",
       "name": "priority-matrix",
       "version": "2.0.0",
-      "description": "Rank opportunities and work threads across multiple prioritization dimensions. Produces actionable priority matrices with calibrated scores, bias-checked rationale, and stakeholder-aligned rankings. C",
+      "description": "Rank opportunities and work threads across multiple prioritization dimensions. Produces actionable priority matrices with calibrated scores, bias-checked rationale, and stakeholder-aligned rankings. Creates the prioritized backlog that feeds into proposal building.",
       "phase": "IMPLEMENT",
-      "category": "specialized"
+      "category": "strategy"
     },
     {
       "id": "proposal-builder",
       "name": "proposal-builder",
       "version": "2.0.0",
-      "description": "Generate polished proposal documents from cultivated context and priorities. Transform insights, patterns, and ranked opportunities into compelling narratives with clear value propositions, scope defi",
+      "description": "Generate polished proposal documents from cultivated context and priorities. Transform insights, patterns, and ranked opportunities into compelling narratives with clear value propositions, scope definitions, pricing strategies, and calls to action. The final output skill of the proposal loop.",
       "phase": "COMPLETE",
-      "category": "specialized"
+      "category": "content"
     },
     {
       "id": "prototype-scoping",
@@ -710,7 +750,7 @@
       "version": "1.0.0",
       "description": "Design content and UX quality evaluation frameworks. Creates scoring rubrics, defines evaluation methodology, and produces eval documentation that can be used for ongoing quality assessment.",
       "phase": "REVIEW",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "queue-builder",
@@ -718,15 +758,15 @@
       "version": "1.0.0",
       "description": "Builds prioritized work queue for async operation. Creates a 5-10 move plan with estimated durations and gate points.",
       "phase": "PLAN",
-      "category": "async"
+      "category": "operations"
     },
     {
       "id": "refactor",
       "name": "refactor",
       "version": "1.0.0",
-      "description": "Improve existing code without changing its external behavior. Identifies code smells, applies proven refactoring patterns, and ensures safety through tests. Makes code more readable, maintainable, and",
+      "description": "Improve existing code without changing its external behavior. Identifies code smells, applies proven refactoring patterns, and ensures safety through tests. Makes code more readable, maintainable, and performant while preserving functionality.",
       "phase": "REVIEW",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "release-notes",
@@ -734,7 +774,7 @@
       "version": "1.0.0",
       "description": "Write user-facing release notes that communicate what changed, why it matters, and what to do. Translates technical changes into user impact language.",
       "phase": "DOCUMENT",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "release-planner",
@@ -742,23 +782,23 @@
       "version": "1.0.0",
       "description": "Plan releases by scoping included changes, defining version strategy, coordinating cherry-picks, and establishing release criteria. Manages the ceremony of shipping.",
       "phase": "INIT",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "requirements",
       "name": "requirements",
       "version": "1.0.0",
-      "description": "Gather and clarify requirements from vague input. Transforms ambiguous requests into clear, testable requirements documents with explicit scope, acceptance criteria, and identified unknowns. Supports ",
+      "description": "Gather and clarify requirements from vague input. Transforms ambiguous requests into clear, testable requirements documents with explicit scope, acceptance criteria, and identified unknowns. Supports multiple formality levels from quick requirements for small features to full PRDs for major initiatives. Produces artifacts that feed directly into spec, architect, and implementation.",
       "phase": "INIT",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "retrospective",
       "name": "retrospective",
       "version": "1.0.0",
-      "description": "Analyzes completed journeys to extract learning and propose improvements. Identifies what worked, what didn't, and why. Generates skill amendment proposals, calibration adjustments, and pattern candid",
+      "description": "Analyzes completed journeys to extract learning and propose improvements. Identifies what worked, what didn't, and why. Generates skill amendment proposals, calibration adjustments, and pattern candidates. Feeds improvements back into the skills library to make future journeys more effective.",
       "phase": "COMPLETE",
-      "category": "meta"
+      "category": "operations"
     },
     {
       "id": "risk-assessment",
@@ -774,15 +814,15 @@
       "version": "1.0.0",
       "description": "Maintain and evolve project roadmaps based on execution history, learnings, and re-prioritization signals.",
       "phase": "COMPLETE",
-      "category": "meta"
+      "category": "strategy"
     },
     {
       "id": "roadmapping",
       "name": "roadmapping",
       "version": "1.0.0",
-      "description": "System-level visibility into module progress, dependencies, and completion status. Creates and maintains ROADMAP.md as the spine that makes everything else trackable. Integrates with engineering-loop ",
+      "description": "System-level visibility into module progress, dependencies, and completion status. Creates and maintains ROADMAP.md as the spine that makes everything else trackable. Integrates with engineering-loop and leverage protocol for optimal sequencing.",
       "phase": "INIT",
-      "category": "planning"
+      "category": "strategy"
     },
     {
       "id": "rollback-validator",
@@ -790,7 +830,7 @@
       "version": "1.0.0",
       "description": "Validate that rollback paths work correctly during migrations. Tests downgrade procedures, data reversibility, and state recovery to ensure safe retreat from failed migrations.",
       "phase": "VALIDATE",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "root-cause-analysis",
@@ -798,39 +838,39 @@
       "version": "1.0.0",
       "description": "Systematic root cause identification using 5-whys, git bisect, hypothesis testing, and fault tree analysis. Traces symptoms to their origin.",
       "phase": "SCAFFOLD",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "scaffold",
       "name": "scaffold",
       "version": "1.0.0",
-      "description": "Generate project and feature scaffolding with proper structure, configuration, and boilerplate. Creates new projects from scratch or adds features to existing codebases. Applies stack-specific convent",
+      "description": "Generate project and feature scaffolding with proper structure, configuration, and boilerplate. Creates new projects from scratch or adds features to existing codebases. Applies stack-specific conventions, tooling setup, and best practices. Produces ready-to-develop foundations that follow team standards.",
       "phase": "SCAFFOLD",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "security-audit",
       "name": "security-audit",
       "version": "1.0.0",
-      "description": "Perform comprehensive security analysis of code and systems. Identifies vulnerabilities including injection attacks, authentication flaws, data exposure, and misconfigurations. Follows OWASP guideline",
+      "description": "Perform comprehensive security analysis of code and systems. Identifies vulnerabilities including injection attacks, authentication flaws, data exposure, and misconfigurations. Follows OWASP guidelines and security best practices. Provides actionable remediation guidance.",
       "phase": "VALIDATE",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "skill-design",
       "name": "skill-design",
       "version": "1.0.0",
-      "description": "Design, create, and maintain skills in the skill library. Codifies the 13-section template, quality standards, MECE validation, lifecycle management, and extraction pipeline integration. The authorita",
+      "description": "Design, create, and maintain skills in the skill library. Codifies the 13-section template, quality standards, MECE validation, lifecycle management, and extraction pipeline integration. The authoritative meta-skill for skill governance.",
       "phase": "SCAFFOLD",
-      "category": "meta"
+      "category": "operations"
     },
     {
       "id": "skill-verifier",
       "name": "skill-verifier",
       "version": "1.0.0",
-      "description": "Verifies that skills were applied correctly. Self-audit mechanism that checks process compliance and outcome quality. Ensures required deliverables exist, checklists were completed, and reference docu",
+      "description": "Verifies that skills were applied correctly. Self-audit mechanism that checks process compliance and outcome quality. Ensures required deliverables exist, checklists were completed, and reference documents were consulted. Produces verification report with gaps and remediation actions.",
       "phase": "VERIFY",
-      "category": "meta"
+      "category": "operations"
     },
     {
       "id": "slack-validator",
@@ -838,31 +878,31 @@
       "version": "1.0.0",
       "description": "Validates Slack connection and configuration for async operation. Ensures bidirectional communication is working before handoff.",
       "phase": "VERIFY",
-      "category": "async"
+      "category": "operations"
     },
     {
       "id": "smoke-test",
       "name": "smoke-test",
       "version": "1.0.0",
-      "description": "Verifies critical features actually work by calling live endpoints. Unlike integration-test (which writes test code), this skill executes manual verification against deployed/running services. Essenti",
+      "description": "Verifies critical features actually work by calling live endpoints. Unlike integration-test (which writes test code), this skill executes manual verification against deployed/running services. Essential for audit-loop to catch functional regressions.",
       "phase": "VERIFY",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "spec",
       "name": "spec",
       "version": "1.0.0",
-      "description": "Compile requirements into production-ready technical specifications. Transforms requirements documents into comprehensive 18-section FeatureSpecs (~2000+ lines) with full code, SQL migrations, UI comp",
+      "description": "Compile requirements into production-ready technical specifications. Transforms requirements documents into comprehensive 18-section FeatureSpecs (~2000+ lines) with full code, SQL migrations, UI components, feedback timing, and senior engineer audit. Maintains Process Map as system-of-record. The primary driver of the implementation process.",
       "phase": "INIT",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "stack-analyzer",
       "name": "stack-analyzer",
       "version": "1.0.0",
-      "description": "Evaluate a target tech stack and map architectural concepts to stack-specific idioms, patterns, and libraries. Produces STACK-MAP.md with concept mapping, gap analysis, and risk assessment. Bridges th",
+      "description": "Evaluate a target tech stack and map architectural concepts to stack-specific idioms, patterns, and libraries. Produces STACK-MAP.md with concept mapping, gap analysis, and risk assessment. Bridges the gap between source architecture and target implementation.",
       "phase": "MAP",
-      "category": "specialized"
+      "category": "engineering"
     },
     {
       "id": "stakeholder-add",
@@ -886,111 +926,111 @@
       "version": "1.0.0",
       "description": "Loads and validates system state for async operation. Reads memory files, execution history, and current configuration to establish baseline context.",
       "phase": "INIT",
-      "category": "async"
+      "category": "operations"
     },
     {
       "id": "taste-codifier",
       "name": "taste-codifier",
       "version": "1.0.0",
-      "description": "Analyzes diverse source material (text, images, video) to extract and codify a creator's 'taste'—their distinctive voice patterns across textual and visual dimensions. Use this skill when: (1) Creatin",
+      "description": "Analyzes diverse source material (text, images, video) to extract and codify a creator's 'taste'—their distinctive voice patterns across textual and visual dimensions. Use this skill when: (1) Creating a taste schema from source material, (2) Documenting a voice for consistent reproduction, (3) Building a style guide for AI-assisted content generation, (4) Capturing brand voice or personal voice patterns. Outputs a comprehensive JSON taste schema.",
       "phase": "SCAFFOLD",
-      "category": "specialized"
+      "category": "content"
     },
     {
       "id": "taste-discovery",
       "name": "taste-discovery",
       "version": "1.0.0",
-      "description": "Find and load project-specific taste evaluations. Discovers eval definitions through manifest, convention, or defaults. Provides the foundation for taste-first auditing by identifying what quality dim",
+      "description": "Find and load project-specific taste evaluations. Discovers eval definitions through manifest, convention, or defaults. Provides the foundation for taste-first auditing by identifying what quality dimensions matter for this specific project.",
       "phase": "TASTE",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "taste-eval",
       "name": "taste-eval",
       "version": "1.0.0",
-      "description": "Execute taste evaluation against discovered dimensions. Scores each dimension 1-5 with evidence, calculates weighted scores, identifies gaps where score falls below floor, and determines ship status. ",
+      "description": "Execute taste evaluation against discovered dimensions. Scores each dimension 1-5 with evidence, calculates weighted scores, identifies gaps where score falls below floor, and determines ship status. Produces TASTE-EVAL.md and TASTE-GAPS.md.",
       "phase": "TASTE",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "taste-report",
       "name": "taste-report",
       "version": "1.0.0",
-      "description": "Generate taste-ordered checklist for shipping. Uses trace data to prioritize failure modes by taste impact: Tier 1 (taste-critical), Tier 2 (taste-significant), Tier 3 (technical-only). Updates AUDIT-",
+      "description": "Generate taste-ordered checklist for shipping. Uses trace data to prioritize failure modes by taste impact: Tier 1 (taste-critical), Tier 2 (taste-significant), Tier 3 (technical-only). Updates AUDIT-REPORT.md with taste-weighted prioritization.",
       "phase": "DOCUMENT",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "taste-to-image-schema",
       "name": "taste-to-image-schema",
       "version": "1.0.0",
-      "description": "Derives a fully-specified image schema from a taste schema + topic. Use when: (1) Generating social media graphics aligned to a voice, (2) Creating infographics, illustrations, or photo-based content ",
+      "description": "Derives a fully-specified image schema from a taste schema + topic. Use when: (1) Generating social media graphics aligned to a voice, (2) Creating infographics, illustrations, or photo-based content that matches a style profile, (3) Producing image generation prompts (for Midjourney, DALL-E, Gemini, etc.) that maintain voice consistency. Input: taste schema JSON + topic/message. Output: image schema JSON + generation prompt.",
       "phase": "IMPLEMENT",
-      "category": "specialized"
+      "category": "content"
     },
     {
       "id": "taste-to-text-schema",
       "name": "taste-to-text-schema",
       "version": "1.0.0",
-      "description": "Derives a fully-specified text schema from a taste schema + topic. Use when: (1) Writing threads or articles aligned to a voice, (2) Creating social media content or blog posts that maintain voice con",
+      "description": "Derives a fully-specified text schema from a taste schema + topic. Use when: (1) Writing threads or articles aligned to a voice, (2) Creating social media content or blog posts that maintain voice consistency, (3) Generating content outlines with voice-aware structure. Input: taste schema JSON + topic/message. Output: text schema JSON with complete content or detailed outline. Every output includes a companion micro-post (140 chars) for sharing.",
       "phase": "IMPLEMENT",
-      "category": "specialized"
+      "category": "content"
     },
     {
       "id": "taste-trace",
       "name": "taste-trace",
       "version": "1.0.0",
-      "description": "Link taste gaps to technical failure modes. Creates traceability from subjective quality gaps to specific technical failures, enabling taste-ordered prioritization of fixes. Produces TASTE-TRACE.md wi",
+      "description": "Link taste gaps to technical failure modes. Creates traceability from subjective quality gaps to specific technical failures, enabling taste-ordered prioritization of fixes. Produces TASTE-TRACE.md with gap-to-failure-mode mappings.",
       "phase": "REVIEW",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "test-generation",
       "name": "test-generation",
       "version": "1.0.0",
-      "description": "Generate comprehensive test suites for code. Creates unit tests, integration tests, and end-to-end tests. Identifies what to test, designs test cases, and produces readable, maintainable tests. Ensure",
+      "description": "Generate comprehensive test suites for code. Creates unit tests, integration tests, and end-to-end tests. Identifies what to test, designs test cases, and produces readable, maintainable tests. Ensures adequate coverage of happy paths, edge cases, and error conditions.",
       "phase": "TEST",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "test-spec-generation",
       "name": "test-spec-generation",
       "version": "1.0.0",
-      "description": "Generate test specifications for unvalidated failure modes. Creates detailed test specs with setup, steps, and assertions for each unvalidated failure mode. Produces PIPELINE-TEST-SPECS.md and UI-TEST",
+      "description": "Generate test specifications for unvalidated failure modes. Creates detailed test specs with setup, steps, and assertions for each unvalidated failure mode. Produces PIPELINE-TEST-SPECS.md and UI-TEST-SPECS.md.",
       "phase": "VALIDATE",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "triage",
       "name": "triage",
       "version": "1.0.0",
-      "description": "Prioritize and re-prioritize work in the system queue based on changing conditions. Uses prioritization frameworks to order work by value, urgency, and dependencies. Responds to triggers like new requ",
+      "description": "Prioritize and re-prioritize work in the system queue based on changing conditions. Uses prioritization frameworks to order work by value, urgency, and dependencies. Responds to triggers like new requirements, blockers, and resource changes.",
       "phase": "INIT",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "ui-failure-mode-analysis",
       "name": "ui-failure-mode-analysis",
       "version": "1.0.0",
-      "description": "Apply MECE failure mode taxonomy to UI pipelines with L5/L6 extensions. Identifies UI-specific failure patterns like Dead Click, Stale Closure, State Desync. Produces UI-FAILURE-MODES.md with coverage",
+      "description": "Apply MECE failure mode taxonomy to UI pipelines with L5/L6 extensions. Identifies UI-specific failure patterns like Dead Click, Stale Closure, State Desync. Produces UI-FAILURE-MODES.md with coverage calculation.",
       "phase": "REVIEW",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "ui-interaction-test",
       "name": "ui-interaction-test",
       "version": "1.0.0",
-      "description": "Validate that UI flows actually work by tracing through each U-series pipeline step by step. Documents what works, what fails, and what needs attention. Produces UI-VALIDATION.md with interaction test",
+      "description": "Validate that UI flows actually work by tracing through each U-series pipeline step by step. Documents what works, what fails, and what needs attention. Produces UI-VALIDATION.md with interaction test results.",
       "phase": "VALIDATE",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "ui-pipeline-discovery",
       "name": "ui-pipeline-discovery",
       "version": "1.0.0",
-      "description": "Identify client-side UI pipelines (U-series) in the codebase. Discovers interaction flows involving chat, tool handlers, context synchronization, and real-time updates. Foundation for UI-specific fail",
+      "description": "Identify client-side UI pipelines (U-series) in the codebase. Discovers interaction flows involving chat, tool handlers, context synchronization, and real-time updates. Foundation for UI-specific failure mode analysis.",
       "phase": "INIT",
-      "category": "core"
+      "category": "engineering"
     },
     {
       "id": "use-case-clarity",
@@ -1008,5 +1048,6 @@
       "phase": "ACT",
       "category": "sales"
     }
-  ]
+  ],
+  "generatedAt": "2026-02-05T00:33:01.295Z"
 }
