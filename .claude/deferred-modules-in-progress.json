@@ -305,8 +305,15 @@
       "description": "Secure credential and API key management. Environment-aware secret storage, rotation policies, secure injection into loops/skills, and git-safe patterns to prevent accidental commits. Integrates with local-first encryption.",
       "dependsOn": [],
       "notes": "Currently secrets are manually managed via .env files and config JSON. Need: encrypted storage, per-environment secrets, rotation tracking, audit logging, and integration with distribution workflow to validate no secrets in commits."
+    },
+    {
+      "id": "moat-designer",
+      "layer": 5,
+      "description": "Design and analyze competitive moats and defensibility strategies. Framework for identifying, evaluating, and strengthening business moats.",
+      "dependsOn": [],
+      "notes": "10 moat types taxonomy to be integrated when implemented."
     }
   ],
   "createdAt": "2026-02-04T18:30:00.000Z",
-  "updatedAt": "2026-02-05T00:20:00.000Z"
+  "updatedAt": "2026-02-05T12:00:00.000Z"
 }

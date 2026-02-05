@@ -86,10 +86,16 @@ export function createApiRoutes(options: ApiRoutesOptions): Router {
   /**
    * Get current execution status as plain text for Claude Code statusline
    * Returns: "⟳ loop-name:PHASE" or empty string if no active execution
+   * Prioritizes the most recently started active/paused execution
    */
   router.get('/status', (_req: Request, res: Response) => {
     const executions = executionEngine.listExecutions();
-    const active = executions.find(e => e.status === 'active' || e.status === 'paused');
+    // Filter to active/paused and sort by most recent first
+    const activeExecutions = executions
+      .filter(e => e.status === 'active' || e.status === 'paused')
+      .sort((a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime());
+
+    const active = activeExecutions[0];
 
     if (active) {
       // Format: ⟳ engineering-loop:IMPLEMENT

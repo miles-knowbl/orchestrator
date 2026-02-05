@@ -699,6 +699,66 @@ export class ExecutionEngine {
       }
     }
 
+    // Auto-complete execution if this is the last phase
+    if (loop) {
+      const currentIndex = loop.phases.findIndex(p => p.name === execution.currentPhase);
+      const isLastPhase = currentIndex >= loop.phases.length - 1;
+
+      if (isLastPhase) {
+        // Check if there's a gate that needs approval first
+        const gate = loop.gates.find(g => g.afterPhase === execution.currentPhase);
+        const gateState = gate ? execution.gates.find(g => g.gateId === gate.id) : null;
+        const gateBlocking = gate && gate.required && gateState?.status !== 'approved' && gateState?.enabled !== false;
+
+        if (!gateBlocking) {
+          // Mark execution as completed
+          execution.status = 'completed';
+          execution.completedAt = new Date();
+
+          this.addExecutionLog(execution, {
+            level: 'info',
+            category: 'system',
+            message: `Loop execution completed (auto-completed on last phase)`,
+            details: {
+              totalPhases: loop.phases.length,
+              totalDurationMs: execution.completedAt.getTime() - execution.startedAt.getTime(),
+            },
+          });
+
+          // Send loop complete notification
+          if (this.messagingService) {
+            try {
+              const deliverables = execution.skillExecutions
+                .flatMap(s => s.deliverables || [])
+                .filter(Boolean);
+              await this.messagingService.notifyLoopComplete(
+                execution.loopId,
+                executionId,
+                execution.project,
+                `Completed in ${Math.round((execution.completedAt.getTime() - execution.startedAt.getTime()) / 1000)}s`,
+                deliverables
+              );
+            } catch (err) {
+              this.log('warn', `Failed to send loop complete notification: ${err}`);
+            }
+          }
+
+          // Auto-sync roadmap
+          if (this.roadmapService) {
+            try {
+              const moduleId = execution.project;
+              const updated = await this.roadmapService.markModuleCompleteByName(moduleId);
+              if (updated) {
+                this.log('info', `Roadmap synced: marked module "${updated.id}" as complete`);
+              }
+            } catch {
+              // Ignore roadmap sync errors
+            }
+          }
+        }
+      }
+    }
+
     await this.saveExecution(execution);
     return execution;
   }
