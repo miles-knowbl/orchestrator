@@ -1,0 +1,175 @@
+{
+  "id": "complete-loop",
+  "name": "Complete Loop",
+  "version": "1.0.0",
+  "description": "Take nearly-done apps across the finish line. Systematically catalog what's broken or missing, triage with MoSCoW, fix, verify, and ship.",
+  "iterative": true,
+
+  "phases": [
+    {
+      "name": "CATALOG",
+      "skills": [
+        { "skillId": "collect-bugs", "required": true },
+        { "skillId": "pipeline-discovery", "required": true },
+        { "skillId": "ui-pipeline-discovery", "required": true },
+        { "skillId": "smoke-test", "required": true },
+        { "skillId": "architecture-review", "required": false },
+        { "skillId": "taste-discovery", "required": false },
+        { "skillId": "taste-eval", "required": false }
+      ],
+      "required": true,
+      "notes": "Walk every module and feature. Tag each: WORKS / BROKEN / PARTIAL / MISSING. Hunt for silent failures, data pipeline bugs, UI/UX issues."
+    },
+    {
+      "name": "TRIAGE",
+      "skills": [
+        { "skillId": "triage", "required": true },
+        { "skillId": "failure-mode-analysis", "required": true },
+        { "skillId": "ui-failure-mode-analysis", "required": true },
+        { "skillId": "estimation", "required": false },
+        { "skillId": "blocker-analyzer", "required": false }
+      ],
+      "required": true,
+      "notes": "Apply MoSCoW framework: Must have (blocks launch), Should have (degrades experience), Could have (nice polish), Won't have (defer). Output: prioritized fix list."
+    },
+    {
+      "name": "FIX",
+      "skills": [
+        { "skillId": "implement", "required": true },
+        { "skillId": "bug-reproducer", "required": true },
+        { "skillId": "code-verification", "required": true },
+        { "skillId": "root-cause-analysis", "required": false },
+        { "skillId": "debug-assist", "required": false }
+      ],
+      "required": true,
+      "notes": "Work through Must and Should items. For each: reproduce, fix, verify the fix. Small targeted changes — no refactoring beyond what's needed."
+    },
+    {
+      "name": "VERIFY",
+      "skills": [
+        { "skillId": "smoke-test", "required": true },
+        { "skillId": "integration-test", "required": true },
+        { "skillId": "test-generation", "required": true },
+        { "skillId": "code-validation", "required": true },
+        { "skillId": "code-review", "required": true },
+        { "skillId": "ui-interaction-test", "required": false },
+        { "skillId": "security-audit", "required": false }
+      ],
+      "required": true,
+      "notes": "Re-run smoke tests from CATALOG. Confirm all Must/Should fixes landed. Generate regression tests. Check for new breakages."
+    },
+    {
+      "name": "SHIP",
+      "skills": [
+        { "skillId": "git-workflow", "required": true },
+        { "skillId": "document", "required": true },
+        { "skillId": "deploy", "required": true },
+        { "skillId": "distribute", "required": true },
+        { "skillId": "changelog-generator", "required": true },
+        { "skillId": "gotcha-documenter", "required": false }
+      ],
+      "required": true,
+      "notes": "Commit, push, deploy. Update docs and changelog. Confirm CI green and deployment live."
+    },
+    {
+      "name": "COMPLETE",
+      "skills": [
+        { "skillId": "retrospective", "required": true }
+      ],
+      "required": true,
+      "notes": "Archive run, update dream state progress, propose next leverage move."
+    }
+  ],
+
+  "gates": [
+    {
+      "id": "catalog-gate",
+      "name": "Catalog Approval",
+      "afterPhase": "CATALOG",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": ["COMPLETION-MANIFEST.md"],
+      "description": "Review the catalog of broken/missing/partial features. Confirm scope before triaging."
+    },
+    {
+      "id": "triage-gate",
+      "name": "Triage Approval",
+      "afterPhase": "TRIAGE",
+      "required": true,
+      "approvalType": "human",
+      "deliverables": ["TRIAGE.md"],
+      "description": "Review MoSCoW prioritization. Confirm Must/Should/Could/Won't before fixing."
+    },
+    {
+      "id": "verification-gate",
+      "name": "Verification Check",
+      "afterPhase": "VERIFY",
+      "required": true,
+      "approvalType": "auto",
+      "autoCheck": "build passes, tests pass, smoke tests green",
+      "description": "All fixes verified, no regressions, tests passing."
+    },
+    {
+      "id": "ship-gate",
+      "name": "Ship Confirmation",
+      "afterPhase": "SHIP",
+      "required": true,
+      "approvalType": "auto",
+      "autoCheck": "deployed, CI green, docs updated",
+      "description": "Deployment confirmed, CI passing, documentation complete."
+    }
+  ],
+
+  "defaults": {
+    "mode": "completion",
+    "autonomy": "supervised"
+  },
+
+  "ui": {
+    "theme": "complete",
+    "layout": "chat-focused",
+    "features": {
+      "skillBrowser": true,
+      "deliverableViewer": true,
+      "gateApprovalUI": true,
+      "progressTimeline": true,
+      "metricsPanel": true
+    },
+    "branding": {
+      "title": "Complete Loop",
+      "subtitle": "Last mile to done"
+    }
+  },
+
+  "skillUI": {
+    "collect-bugs": {
+      "displayName": "Bug Sweep",
+      "icon": "bug",
+      "outputDisplay": "markdown"
+    },
+    "smoke-test": {
+      "displayName": "Smoke Test",
+      "icon": "flame",
+      "outputDisplay": "markdown"
+    },
+    "triage": {
+      "displayName": "MoSCoW Triage",
+      "icon": "list-ordered",
+      "outputDisplay": "markdown"
+    },
+    "implement": {
+      "displayName": "Fix",
+      "icon": "wrench",
+      "outputDisplay": "code"
+    }
+  },
+
+  "metadata": {
+    "author": "Orchestrator",
+    "tags": ["completion", "qa", "shipping", "last-mile"],
+    "changelog": {
+      "1.0.0": "Initial version: CATALOG → TRIAGE → FIX → VERIFY → SHIP → COMPLETE with MoSCoW triage and 28 skills"
+    },
+    "category": "development"
+  }
+}
