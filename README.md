@@ -1,19 +1,63 @@
 # Orchestrator
 
-A self-improving meta-system for composing AI-driven workflows. Skills are the atomic primitive — everything else (loops, phases, memory, learning) emerges from how skills are collected, composed, and evolved.
+Structured workflows for Claude Code. Instead of giving Claude open-ended instructions, you run **loops** — guided multi-phase processes that produce consistent, high-quality results.
 
-## Getting Started
+> *A self-improving meta-system for composing AI-driven workflows. Skills are the atomic primitive — everything else emerges from how skills are collected, composed, and evolved.*
+
+**What you can do:**
+- `/engineering-loop` — Build a feature from requirements through code review
+- `/bugfix-loop` — Diagnose, fix, and verify with regression tests
+- `/proposal-loop` — Create evidence-backed proposals with research
+- `/audit-loop` — Security and architecture review with prioritized findings
+
+Each loop follows a defined sequence of phases with quality gates, so you get predictable outcomes instead of hoping Claude does the right thing.
+
+## Quick Example
+
+```
+You: /engineering-loop
+
+Claude: Starting engineering loop for this project.
+
+        What are we building?
+
+You: Add user authentication with email/password
+
+Claude: [INIT phase]
+        Analyzing codebase... Found Express backend, React frontend.
+
+        Requirements:
+        - Email/password signup and login
+        - Session management
+        - Password reset flow
+
+        Ready for SCAFFOLD phase. Proceed?
+
+You: go
+
+Claude: [SCAFFOLD phase]
+        Creating architecture...
+        - POST /api/auth/signup
+        - POST /api/auth/login
+        - POST /api/auth/logout
+        - POST /api/auth/reset-password
+
+        [continues through IMPLEMENT → TEST → VERIFY → REVIEW → SHIP]
+```
+
+The loop ensures you don't skip steps. Each phase has specific goals, and gates prevent moving forward until quality criteria are met.
+
+## Install
 
 ### Prerequisites
 
-1. [Node.js 18+](https://nodejs.org) (includes npm)
+1. [Node.js 18+](https://nodejs.org)
 2. git — Mac: `xcode-select --install` / Others: [git-scm.com](https://git-scm.com)
 3. [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — `npm install -g @anthropic-ai/claude-code`
 
-### Install
+### One-Command Install
 
 ```bash
-# Get the start command
 curl -sL https://raw.githubusercontent.com/miles-knowbl/orchestrator/main/commands/orchestrator-start-loop.md \
   > ~/.claude/commands/orchestrator-start-loop.md
 ```
@@ -24,219 +68,131 @@ Then in Claude Code:
 /orchestrator-start-loop
 ```
 
-That's it. The installer will:
-- Clone and build the project
-- Configure Claude Code to connect via HTTP
-- Install auto-start hooks
-- Open a Terminal window with the running server
+This clones the repo, builds it, and configures Claude Code. A Terminal window opens with the running server.
 
-### Usage
+### After Install
 
-Just use Claude Code normally. When you call any orchestrator tool (or run a loop), the server **starts automatically** in a Terminal window if it's not already running.
+Just use Claude Code normally. The server **starts automatically** when you run any loop. The Terminal window can be minimized but should stay open.
 
-**You don't need to:**
-- Manually start the server
-- Keep a terminal open
-- Remember any commands
+## Available Loops
 
-The Terminal window shows server logs and can be minimized but should stay open.
-
-### Available Commands
-
-| Command | What it does |
-|---------|-------------|
-| `/orchestrator-start-loop` | Start session, install, or update orchestrator |
-| `/engineering-loop` | **Full engineering loop** — build anything from scratch or extend existing code |
-| `/async-loop` | **Prepare for mobile/Slack operation** — builds work queue for autonomous execution |
-| `/bugfix-loop` | Systematic bug fixing with reproduction and regression tests |
-| `/distribution-loop` | Distribute to all targets (local, Vercel, GitHub Releases) |
-| `/learning-loop` | Review past work, improve skills, calibrate estimates |
-| `/dream-loop` | Define or update the dream state (vision and checklist) |
-| `/proposal-loop` | Create evidence-backed proposals |
-| `/transpose-loop` | Transpose architecture to a new tech stack, produce a feature spec |
-| `/infra-loop` | Infrastructure provisioning (CI/CD, databases) |
-| `/audit-loop` | Read-only system audit with prioritized findings |
+| Loop | What it does |
+|------|-------------|
+| `/engineering-loop` | Build features: requirements → architecture → implementation → testing → review |
+| `/bugfix-loop` | Fix bugs: reproduce → diagnose → fix → verify → regression test |
+| `/distribution-loop` | Ship code: verify → commit → push → deploy to all targets |
+| `/proposal-loop` | Write proposals: research → structure → draft → evidence |
+| `/audit-loop` | System audit: scan → analyze → prioritize findings (read-only) |
+| `/learning-loop` | Improve skills: review past work → identify patterns → update skills |
+| `/infra-loop` | Setup infrastructure: CI/CD, databases, environments |
 | `/deck-loop` | Generate slide decks from context and brand assets |
-| `/meta-loop` | Create new loops (the loop that makes loops) |
+| `/transpose-loop` | Port to new tech stack: analyze → map → generate spec |
+| `/meta-loop` | Create new loops (for building your own workflows) |
 
-### Updating
+## Key Concepts
+
+**Loops** are multi-phase workflows. Each loop has a specific purpose (building, fixing, shipping) and guides you through a proven sequence of steps.
+
+**Phases** are stages within a loop. The engineering loop has: INIT → SCAFFOLD → IMPLEMENT → TEST → VERIFY → VALIDATE → DOCUMENT → REVIEW → SHIP. You can't skip ahead.
+
+**Gates** are checkpoints between phases. They verify that quality criteria are met before proceeding. Some gates are automatic (tests pass), others require approval.
+
+**Skills** are the instructions that power each phase. When you run `/engineering-loop`, it executes skills like `architect`, `implement`, `test-generation`, and `code-review` in sequence. Skills improve over time based on feedback.
+
+## Updating
 
 Run `/orchestrator-start-loop` again. It detects the existing install and updates to the latest version.
 
-### Dashboard (optional)
+## How It Works
+
+The orchestrator runs as a local server (port 3002) that Claude Code connects to via MCP (Model Context Protocol). When you run a loop:
+
+1. Claude Code sends the command to the orchestrator
+2. The orchestrator loads the loop definition and starts tracking execution
+3. Each phase runs its skills, producing outputs
+4. Gates verify quality before phase transitions
+5. Progress is logged and can be viewed in the dashboard
+
+```
+Claude Code  ←→  Orchestrator Server (localhost:3002)  ←→  Skills + Loops
+                         ↓
+                    Dashboard (optional, localhost:3003)
+```
+
+## Dashboard (optional)
+
+A web UI for viewing skills, loops, and execution history:
 
 ```bash
 cd apps/dashboard
-cp .env.example .env.local
 npm install && npm run dev
 ```
 
-The dashboard starts on **http://localhost:3003**.
+Opens at **http://localhost:3003**. Also deployed at [orchestrator-xi.vercel.app](https://orchestrator-xi.vercel.app).
 
-## Architecture
+## Project Structure
 
 ```
 orchestrator/
 ├── src/                    # TypeScript server
-│   ├── services/           # SkillRegistry, ExecutionEngine, LoopComposer, MemoryService
+│   ├── services/           # SkillRegistry, ExecutionEngine, LoopComposer
 │   ├── server/             # Express HTTP + REST API
-│   └── tools/              # MCP tool handlers (54+ tools)
-├── skills/                 # Skill definitions (SKILL.md per skill)
-├── loops/                  # Loop definitions (loop.json + LOOP.md)
-├── memory/                 # Persistent learning state
-├── apps/
-│   └── dashboard/          # Next.js monitoring UI
-└── .github/workflows/      # CI/CD (Vercel + GitHub Releases)
-```
-
-### How It Works
-
-```
-                    ┌─────────────┐
-                    │  Dashboard  │  Next.js (port 3003)
-                    │  /skills    │  Reads from REST API
-                    │  /loops     │
-                    │  /executions│
-                    └──────┬──────┘
-                           │ REST + SSE
-                    ┌──────▼──────┐
-                    │ Orchestrator│  Express (port 3002)
-                    │  REST API   │  /api/* endpoints
-                    │  MCP Server │  /mcp endpoint
-                    └──────┬──────┘
-                           │
-              ┌────────────┼────────────┐
-              │            │            │
-         ┌────▼───┐  ┌────▼───┐  ┌────▼────┐
-         │ Skills │  │ Loops  │  │ Memory  │
-         │ 130+   │  │ 20     │  │ learning│
-         └────────┘  └────────┘  └─────────┘
-```
-
-### Deployment Topology
-
-| Context | What runs | Purpose |
-|---------|-----------|---------|
-| **Local** (auto-started) | Orchestrator on port 3002 | Claude Code connects here for slash commands and loops |
-| **Vercel** | Next.js dashboard | Read-only monitoring UI at orchestrator-xi.vercel.app |
-| **GitHub Releases** | Tarball + SHA256 | Downloadable archive, updated on every push to main |
-
-Local usage is the primary mode. The server starts automatically when you use orchestrator tools.
-
-## MCP Integration
-
-The `/orchestrator-start-loop` command configures MCP automatically by writing to `~/.claude/mcp.json`:
-
-```json
-{
-  "mcpServers": {
-    "orchestrator": {
-      "type": "http",
-      "url": "http://localhost:3002/mcp"
-    }
-  }
-}
-```
-
-This exposes 54+ tools for managing skills, loops, executions, memory, and inbox.
-
-**Auto-start hook:** A Claude Code hook (`~/.claude/hooks/ensure-orchestrator.sh`) automatically opens a terminal and starts the server when any orchestrator tool is called. By default it uses iTerm2 if installed, otherwise Terminal.app.
-
-**Custom terminal:** Set `ORCHESTRATOR_TERMINAL_CMD` in your shell profile to use a different terminal:
-```bash
-# ~/.zshrc
-export ORCHESTRATOR_TERMINAL_CMD='warp -e "cd $ORCHESTRATOR_DIR && npm start"'
+│   └── tools/              # MCP tool handlers
+├── skills/                 # 130+ skill definitions (SKILL.md files)
+├── loops/                  # 20 loop definitions (loop.json + LOOP.md)
+├── commands/               # Slash command definitions
+└── apps/dashboard/         # Next.js monitoring UI
 ```
 
 ## Environment Variables
 
-### Server (`.env`)
+Most users don't need to set any environment variables. The defaults work for local development.
 
-| Variable | Required | Default | Description |
-|----------|----------|---------|-------------|
-| `ANTHROPIC_API_KEY` | No | — | Anthropic API key (only needed for inbox processing) |
-| `PORT` | No | `3002` | Server port |
-| `HOST` | No | `0.0.0.0` | Server host |
-| `API_KEY` | No | — | API key for `/api` and `/mcp` auth |
-| `ALLOWED_ORIGINS` | No | `http://localhost:3003` | CORS allowed origins (comma-separated, or `*`) |
-| `LOG_LEVEL` | No | `info` | Logging level (`debug`, `info`, `warn`, `error`) |
-
-### Dashboard (`.env.local`)
-
-| Variable | Required | Default | Description |
-|----------|----------|---------|-------------|
-| `NEXT_PUBLIC_API_URL` | No | `http://localhost:3002` | Orchestrator API URL |
-| `NEXT_PUBLIC_API_KEY` | No | — | API key (must match server `API_KEY`) |
-
-## Core Concepts
-
-- **Skills**: Versioned instruction units that self-improve through execution feedback
-- **Loops**: Sequences of phases composed of skills (e.g., engineering-loop, proposal-loop)
-- **Memory**: Hierarchical learning at orchestrator, loop, and skill levels
-- **Inbox**: Second brain for capturing and extracting skills from external content
-
-## Development
-
-```bash
-npm run dev       # Hot reload (server)
-npm run build     # Compile TypeScript
-npm test -- --run # Run tests (--run flag required to exit)
-```
-
-## Live Deployment
-
-The hosted deployment powers the public dashboard — it is **not** required for local usage.
-
-- **Dashboard**: [orchestrator-xi.vercel.app](https://orchestrator-xi.vercel.app) — read-only monitoring UI (Vercel)
-- **Releases**: [GitHub Releases](https://github.com/miles-knowbl/orchestrator/releases) — tarball with SHA256 checksum
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `PORT` | `3002` | Server port |
+| `ANTHROPIC_API_KEY` | — | Only needed for inbox processing (optional feature) |
+| `API_KEY` | — | Optional auth for API endpoints |
 
 ## Troubleshooting
 
-### Server won't start in Terminal
-
-The auto-start hook opens iTerm or Terminal.app and runs `npm start`. If it opens in the wrong directory:
+### Server won't start
 
 ```bash
-# Check your orchestrator config has the correct path
-cat ~/.claude/orchestrator.json
-# Should show: "installPath": "/path/to/orchestrator"
-```
-
-If the path is wrong, update it or delete the file and re-run `/orchestrator-start-loop`.
-
-### Roadmap shows 0% when modules are complete
-
-The roadmap state is cached in `data/roadmap-state.json`. If it gets stale:
-
-```bash
-# Delete the cached state and restart
-rm data/roadmap-state.json
-# Then restart the server (kill and let it auto-start)
+# Check if something else is using port 3002
 lsof -ti:3002 | xargs kill -9
+
+# Verify the install path is correct
+cat ~/.claude/orchestrator.json
 ```
 
-The service will re-parse ROADMAP.md and detect ✓ markers correctly.
-
-### MCP tools not connecting
+### MCP not connecting
 
 ```bash
-# Verify ~/.claude/mcp.json has the correct config
+# Verify the config exists
 cat ~/.claude/mcp.json
-# Should contain orchestrator with "type": "http"
+# Should show: "orchestrator": { "type": "http", "url": "http://localhost:3002/mcp" }
 
 # Verify server is running
 curl http://localhost:3002/health
 ```
 
-### Port 3002 already in use
+### Need to reinstall
+
+Delete the config and run the installer again:
 
 ```bash
-lsof -ti:3002 | xargs kill -9
+rm ~/.claude/orchestrator.json
+# Then run /orchestrator-start-loop in Claude Code
 ```
 
-### Slack shows "skipping event type: startup_welcome"
+## Development
 
-This is normal. The Slack Socket Mode connection receives events your app isn't subscribed to handle. It's informational, not an error.
+```bash
+npm run dev       # Hot reload server
+npm run build     # Compile TypeScript
+npm test -- --run # Run tests
+```
 
 ## License
 
