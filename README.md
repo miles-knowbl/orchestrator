@@ -89,8 +89,6 @@ Just use Claude Code normally. The server **starts automatically** when you run 
 | `/deck-loop` | Generate slide decks from context and brand assets |
 | `/transpose-loop` | Port to new tech stack: analyze → map → generate spec |
 | `/meta-loop` | Create new loops (for building your own workflows) |
-| `/async-loop` | Prepare for mobile operation with Slack-based control |
-| `/cultivation-loop` | Build project knowledge: gather context, document gotchas, track patterns |
 
 ## Key Concepts
 

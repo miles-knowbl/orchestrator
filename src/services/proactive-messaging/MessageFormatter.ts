@@ -679,11 +679,14 @@ export class MessageFormatter {
       }
       lines.push(this.emptyLine());
 
-      // Show loops compactly (short names, wrapped)
-      const shortLoops = event.availableLoops.map(l => l.replace(/-loop$/, ''));
-      lines.push(this.padLine('Loops: ' + shortLoops.slice(0, 6).join(', ')));
-      if (shortLoops.length > 6) {
-        lines.push(this.padLine('       ' + shortLoops.slice(6).join(', ')));
+      // Show loops organized by category
+      const loopCategories = this.categorizeLoops(event.availableLoops);
+      lines.push(this.padLine('Loops:'));
+      for (const [category, catLoops] of Object.entries(loopCategories)) {
+        if (catLoops.length > 0) {
+          const shortNames = catLoops.map(l => l.replace(/-loop$/, ''));
+          lines.push(this.padLine(`  ${category}: ${shortNames.join(', ')}`));
+        }
       }
       lines.push(this.emptyLine());
 
@@ -1099,7 +1102,7 @@ export class MessageFormatter {
     };
 
     const buildLoops = ['engineering', 'bugfix', 'distribution', 'infra', 'infrastructure', 'deck'];
-    const planLoops = ['dream', 'learning', 'audit', 'proposal', 'async', 'transpose', 'meta', 'cultivation', 'loop-composer'];
+    const planLoops = ['dream', 'learning', 'audit', 'proposal', 'transpose', 'meta', 'loop-composer'];
 
     for (const loop of loops) {
       const base = loop.replace(/-loop$/, '');

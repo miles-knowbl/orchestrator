@@ -67,6 +67,13 @@ Assess current state:
 **When `installType: 'current'` (already installed + up-to-date), skip to streamlined flow:**
 
 ```bash
+# Read install path from config
+CONFIG_FILE="$HOME/.claude/orchestrator.json"
+if [ -f "$CONFIG_FILE" ]; then
+    ORCHESTRATOR_DIR=$(node -p "require('$CONFIG_FILE').installPath" 2>/dev/null)
+fi
+ORCHESTRATOR_DIR="${ORCHESTRATOR_DIR:-$HOME/orchestrator}"
+
 # Check if server is running
 HEALTH_URL="http://localhost:3002/health"
 
@@ -206,6 +213,36 @@ node -e "
 "
 echo "Installing to: $INSTALL_PATH"
 echo "(This will be your active orchestrator installation)"
+```
+
+**Install Loop Commands (after any install/update):**
+```bash
+# Copy loop commands to Claude Code commands directory
+# IMPORTANT: Uses $INSTALL_PATH from previous step (defaults to ~/orchestrator)
+INSTALL_PATH="${INSTALL_PATH:-$HOME/orchestrator}"
+mkdir -p ~/.claude/commands
+
+echo "Installing loop commands from $INSTALL_PATH/commands/..."
+
+# Copy all loop commands (excluding _shared directory and orchestrator-start-loop)
+count=0
+for cmd in "$INSTALL_PATH"/commands/*-loop.md; do
+  if [ -f "$cmd" ]; then
+    basename_cmd=$(basename "$cmd")
+    # Skip orchestrator-start-loop.md (it's already installed)
+    if [ "$basename_cmd" != "orchestrator-start-loop.md" ]; then
+      cp "$cmd" ~/.claude/commands/
+      echo "  Installed: $basename_cmd"
+      count=$((count + 1))
+    fi
+  fi
+done
+
+# Copy shared protocols
+mkdir -p ~/.claude/commands/_shared
+cp -r "$INSTALL_PATH"/commands/_shared/* ~/.claude/commands/_shared/ 2>/dev/null || true
+
+echo "✓ $count loop commands installed to ~/.claude/commands/"
 ```
 
 ### Phase 3: REGISTER
@@ -348,7 +385,9 @@ fi
 Start the orchestrator server in a visible Terminal window:
 
 ```bash
-cd ~/orchestrator
+# Use $INSTALL_PATH from previous steps (defaults to ~/orchestrator)
+INSTALL_PATH="${INSTALL_PATH:-$HOME/orchestrator}"
+cd "$INSTALL_PATH"
 
 # Kill existing process if running
 lsof -ti:3002 | xargs kill -9 2>/dev/null || true
@@ -365,7 +404,7 @@ tell application "iTerm"
     activate
     set newWindow to (create window with default profile)
     tell current session of newWindow
-        write text "cd '$HOME/orchestrator' && echo '🚀 Starting Orchestrator...' && npm start"
+        write text "cd '$INSTALL_PATH' && echo '🚀 Starting Orchestrator...' && npm start"
     end tell
 end tell
 EOF
@@ -374,7 +413,7 @@ else
     osascript <<EOF
 tell application "Terminal"
     activate
-    set newTab to do script "cd '$HOME/orchestrator' && echo '🚀 Starting Orchestrator...' && npm start"
+    set newTab to do script "cd '$INSTALL_PATH' && echo '🚀 Starting Orchestrator...' && npm start"
     set custom title of front window to "Orchestrator Server"
 end tell
 EOF
@@ -424,10 +463,11 @@ Show completion summary:
   Dashboard: http://localhost:3002
   MCP:       Connected ✓
   Auto-start: Enabled (server will start automatically)
+  Loops:     11 installed to ~/.claude/commands/
 
-  You're ready to go!
+  ⚠️  IMPORTANT: Restart Claude Code to load the new commands.
 
-  If this is your first time:
+  After restart, if this is your first time:
     Run /dream-loop to establish your vision and roadmap.
 
   Or start building:
@@ -590,6 +630,14 @@ Orchestrator Start Loop: Installing...
   Building...
   ✓ Build complete
 
+Orchestrator Start Loop: Installing loop commands...
+
+  Installed: engineering-loop.md
+  Installed: bugfix-loop.md
+  Installed: distribution-loop.md
+  ... (11 total)
+  ✓ Loop commands installed to ~/.claude/commands/
+
 Orchestrator Start Loop: Registering MCP...
 
   ✓ MCP server registered
@@ -612,9 +660,11 @@ Orchestrator Start Loop: Verifying...
   Location:  ~/orchestrator
   Server:    http://localhost:3002
   MCP:       Connected ✓
+  Loops:     11 installed
 
-  You're ready to go!
-  Run /dream-loop to establish your vision.
+  ⚠️  IMPORTANT: Restart Claude Code to load the new commands.
+
+  After restart, run /dream-loop to establish your vision.
 ═══════════════════════════════════════════════════════════════
 ```
 

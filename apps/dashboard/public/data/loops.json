@@ -1,113 +1,6 @@
 {
   "loops": [
     {
-      "id": "async-loop",
-      "name": "Async Preparation Loop",
-      "description": "Prepares the system for autonomous Slack-based operation. Run this before going mobile.",
-      "version": "1.0.0",
-      "category": "general",
-      "phases": [
-        {
-          "id": "INIT",
-          "name": "Initialize",
-          "description": "Load current state and check prerequisites for async operation",
-          "skills": [
-            "state-loader",
-            "prereq-checker"
-          ],
-          "deliverables": [
-            "memory/async-state.json"
-          ]
-        },
-        {
-          "id": "GATHER",
-          "name": "Gather Context",
-          "description": "Collect all 7 layers: dream state, roadmap, scores, patterns, calibration, history, improvements",
-          "skills": [
-            "dream-sync",
-            "pattern-collector",
-            "calibration-sync",
-            "history-collector"
-          ],
-          "deliverables": [
-            "memory/async-context.json"
-          ]
-        },
-        {
-          "id": "SCORE",
-          "name": "Score Modules",
-          "description": "Score all available modules and identify blockers",
-          "skills": [
-            "module-scorer",
-            "blocker-analyzer"
-          ],
-          "deliverables": [
-            "memory/module-scores.json"
-          ]
-        },
-        {
-          "id": "PLAN",
-          "name": "Plan Moves",
-          "description": "Build prioritized queue of next 5-10 moves using leverage protocol",
-          "skills": [
-            "leverage-calculator",
-            "queue-builder"
-          ],
-          "deliverables": [
-            "memory/async-queue.json"
-          ],
-          "gates": [
-            {
-              "id": "plan-gate",
-              "name": "Plan Review",
-              "description": "Review the planned moves before proceeding",
-              "approvalType": "manual",
-              "guarantees": [
-                {
-                  "type": "file_exists",
-                  "path": "memory/async-queue.json"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": "VERIFY",
-          "name": "Verify Channels",
-          "description": "Validate Slack connection and test notification delivery",
-          "skills": [
-            "slack-validator",
-            "notification-tester"
-          ],
-          "deliverables": [],
-          "gates": [
-            {
-              "id": "verify-gate",
-              "name": "Channel Verification",
-              "description": "Confirm Slack notifications are working",
-              "approvalType": "auto",
-              "guarantees": [
-                {
-                  "type": "custom",
-                  "description": "Slack connection verified"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": "HANDOFF",
-          "name": "Handoff",
-          "description": "Final confirmation - system is ready for async operation",
-          "skills": [
-            "handoff-confirmer"
-          ],
-          "deliverables": [],
-          "completionMessage": "Ready for async operation. Go mobile and use 'Start Next' on Slack."
-        }
-      ]
-    },
-    {
       "id": "audit-loop",
       "name": "Audit Loop",
       "description": "Taste-first audit loop for evaluating existing systems. Evaluates subjective quality (taste) before technical analysis, then applies MECE failure mode taxonomy to backend and UI pipelines. Produces a taste-ordered checklist to done.",
@@ -228,45 +121,6 @@
             "retrospective"
           ],
           "required": true
-        }
-      ]
-    },
-    {
-      "id": "cultivation-loop",
-      "name": "Context Cultivation",
-      "description": "Build and maintain project knowledge through systematic context gathering, gotcha documentation, guarantee tracking, and pattern recognition.",
-      "version": "1.0.0",
-      "category": "meta",
-      "phases": [
-        {
-          "name": "GATHER",
-          "description": "Gather context from multiple sources",
-          "skills": [
-            "context-ingestion"
-          ]
-        },
-        {
-          "name": "ANALYZE",
-          "description": "Analyze and cultivate gathered context",
-          "skills": [
-            "context-cultivation"
-          ]
-        },
-        {
-          "name": "DOCUMENT",
-          "description": "Document gotchas, guarantees, and patterns",
-          "skills": [
-            "gotcha-documenter",
-            "guarantee-tracker",
-            "pattern-collector"
-          ]
-        },
-        {
-          "name": "COMPLETE",
-          "description": "Finalize and integrate knowledge",
-          "skills": [
-            "knowledge-integrator"
-          ]
         }
       ]
     },
@@ -714,5 +568,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-02-05T01:41:08.159Z"
+  "generatedAt": "2026-02-05T02:27:34.257Z"
 }
