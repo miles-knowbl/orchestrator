@@ -14,7 +14,7 @@ A self-improving meta-system for composing AI-driven workflows. Skills are the a
 
 ```bash
 # Get the start command
-curl -sL https://raw.githubusercontent.com/superorganism/orchestrator/main/commands/orchestrator-start-loop.md \
+curl -sL https://raw.githubusercontent.com/miles-knowbl/orchestrator/main/commands/orchestrator-start-loop.md \
   > ~/.claude/commands/orchestrator-start-loop.md
 ```
 
@@ -188,7 +188,7 @@ npm test       # Run tests
 The hosted deployment powers the public dashboard — it is **not** required for local usage.
 
 - **Dashboard**: [orchestrator-xi.vercel.app](https://orchestrator-xi.vercel.app) — read-only monitoring UI (Vercel)
-- **Releases**: [GitHub Releases](https://github.com/superorganism/orchestrator/releases) — tarball with SHA256 checksum
+- **Releases**: [GitHub Releases](https://github.com/miles-knowbl/orchestrator/releases) — tarball with SHA256 checksum
 
 ## Troubleshooting
 

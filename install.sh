@@ -41,7 +41,7 @@ fi
 
 # --- Clone ---
 
-git clone https://github.com/superorganism/orchestrator.git
+git clone https://github.com/miles-knowbl/orchestrator.git
 echo "[OK] Cloned orchestrator"
 
 cd orchestrator

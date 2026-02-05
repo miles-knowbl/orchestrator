@@ -27,7 +27,7 @@ If you don't have this command yet:
 
 ```bash
 # One-liner to install the orchestrator-start-loop command
-curl -sL https://raw.githubusercontent.com/superorganism/orchestrator/main/commands/orchestrator-start-loop.md \
+curl -sL https://raw.githubusercontent.com/miles-knowbl/orchestrator/main/commands/orchestrator-start-loop.md \
   > ~/.claude/commands/orchestrator-start-loop.md
 ```
 
@@ -137,7 +137,7 @@ Based on detected state:
 **Fresh Install:**
 ```bash
 # Clone the repository
-git clone https://github.com/superorganism/orchestrator.git ~/orchestrator
+git clone https://github.com/miles-knowbl/orchestrator.git ~/orchestrator
 cd ~/orchestrator
 
 # Install dependencies
@@ -176,7 +176,7 @@ cp -r data data.backup
 cp -r .claude .claude.backup 2>/dev/null || true
 
 # Download latest release
-curl -sL https://github.com/superorganism/orchestrator/releases/latest/download/orchestrator.tar.gz \
+curl -sL https://github.com/miles-knowbl/orchestrator/releases/latest/download/orchestrator.tar.gz \
   | tar -xz --strip-components=1
 
 # Restore data and config
@@ -667,6 +667,6 @@ Orchestrator Start Loop: Starting server...
 
 ## References
 
-- GitHub Releases API: `https://api.github.com/repos/superorganism/orchestrator/releases/latest`
+- GitHub Releases API: `https://api.github.com/repos/miles-knowbl/orchestrator/releases/latest`
 - Claude MCP config: `~/.claude/mcp.json`
 - Orchestrator docs: https://orchestrator.dev

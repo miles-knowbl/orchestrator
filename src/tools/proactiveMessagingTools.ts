@@ -515,7 +515,7 @@ export function createProactiveMessagingToolHandlers(
       // Check for updates from GitHub (only on first call of day to avoid rate limits)
       if (isFirstOfDay) {
         try {
-          const response = await fetch('https://api.github.com/repos/superorganism/orchestrator/releases/latest');
+          const response = await fetch('https://api.github.com/repos/miles-knowbl/orchestrator/releases/latest');
           if (response.ok) {
             const release = await response.json() as { tag_name?: string; name?: string };
             const latestVersion = release.tag_name?.replace(/^v/, '') || release.name?.match(/(\d+\.\d+\.\d+)/)?.[1];
