@@ -115,7 +115,7 @@ export class LearningService {
     await mkdir(this.options.dataPath, { recursive: true });
     await mkdir(join(this.options.dataPath, 'proposals'), { recursive: true });
     await mkdir(join(this.options.dataPath, 'metrics'), { recursive: true });
-    await mkdir(join(this.options.dataPath, 'signals'), { recursive: true });
+    await mkdir(join(this.options.dataPath, 'learning'), { recursive: true });
     await mkdir(join(this.options.dataPath, 'improvements'), { recursive: true });
 
     // Load existing proposals
@@ -170,7 +170,7 @@ export class LearningService {
    * Load learning configuration
    */
   private async loadLearningConfig(): Promise<void> {
-    const configPath = join(this.options.dataPath, 'config.json');
+    const configPath = join(this.options.dataPath, 'learning', 'config.json');
     try {
       const content = await readFile(configPath, 'utf-8');
       this.learningConfig = JSON.parse(content) as LearningConfig;
@@ -183,7 +183,7 @@ export class LearningService {
    * Load run signals from disk
    */
   private async loadRunSignals(): Promise<void> {
-    const signalsPath = join(this.options.dataPath, 'signals.json');
+    const signalsPath = join(this.options.dataPath, 'learning', 'signals.json');
     try {
       const content = await readFile(signalsPath, 'utf-8');
       const data = JSON.parse(content) as { runs: RunSignal[] };
@@ -240,7 +240,7 @@ export class LearningService {
    * Save run signals to disk
    */
   private async saveRunSignals(): Promise<void> {
-    const signalsPath = join(this.options.dataPath, 'signals.json');
+    const signalsPath = join(this.options.dataPath, 'learning', 'signals.json');
     await mkdir(dirname(signalsPath), { recursive: true });
     await writeFile(signalsPath, JSON.stringify({ runs: this.runSignals }, null, 2));
   }

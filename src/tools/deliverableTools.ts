@@ -53,7 +53,7 @@ const GetTransientStateSchema = z.object({
 export const deliverableToolDefinitions = [
   {
     name: 'write_transient',
-    description: 'Writing transient file — saves per-execution working file (context, working, or scratch)',
+    description: 'Write a transient file for the current execution. Transient files are per-execution working files that are not versioned deliverables. Categories: context (execution context), working (in-progress work), scratch (temporary files).',
     inputSchema: {
       type: 'object',
       properties: {
@@ -84,7 +84,7 @@ export const deliverableToolDefinitions = [
   },
   {
     name: 'read_transient',
-    description: 'Reading transient file — loads per-execution working file',
+    description: 'Read a transient file from the current execution.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -107,7 +107,7 @@ export const deliverableToolDefinitions = [
   },
   {
     name: 'list_transient',
-    description: 'Listing transient files — shows per-execution files by category',
+    description: 'List all transient files for an execution, optionally filtered by category.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -126,7 +126,7 @@ export const deliverableToolDefinitions = [
   },
   {
     name: 'save_checkpoint',
-    description: 'Saving checkpoint — preserves execution state for resumption',
+    description: 'Save a checkpoint for resumable execution state. Use this before pausing or when you want to preserve progress.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -152,7 +152,7 @@ export const deliverableToolDefinitions = [
   },
   {
     name: 'load_checkpoint',
-    description: 'Loading checkpoint — restores execution state for resumption',
+    description: 'Load the last checkpoint for an execution. Use when resuming work.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -166,7 +166,7 @@ export const deliverableToolDefinitions = [
   },
   {
     name: 'cleanup_transient',
-    description: 'Cleaning transient files — removes per-execution temporary files',
+    description: 'Clean up transient files for an execution. Use scratchOnly=true to only clean scratch files, preserving context and working files.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -184,7 +184,7 @@ export const deliverableToolDefinitions = [
   },
   {
     name: 'get_transient_state',
-    description: 'Checking transient state — summarizes files and checkpoint for execution',
+    description: 'Get a summary of all transient state for an execution, including files and checkpoint.',
     inputSchema: {
       type: 'object',
       properties: {

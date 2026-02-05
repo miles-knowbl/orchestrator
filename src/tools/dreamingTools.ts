@@ -10,7 +10,7 @@ import type { DreamEngine, ProposalStatus, ProposalType } from '../services/drea
 export const dreamingTools: Tool[] = [
   {
     name: 'start_dreaming',
-    description: 'Starting dream engine — begins monitoring for idle periods',
+    description: 'Start the dream engine. Begins monitoring for idle periods and generating proposals.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -18,7 +18,7 @@ export const dreamingTools: Tool[] = [
   },
   {
     name: 'stop_dreaming',
-    description: 'Stopping dream engine — halts monitoring',
+    description: 'Stop the dream engine.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -26,7 +26,7 @@ export const dreamingTools: Tool[] = [
   },
   {
     name: 'get_dreaming_status',
-    description: 'Checking dream engine — retrieves idle state and pending proposals',
+    description: 'Get current status of the dream engine including idle state and pending proposals.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -34,7 +34,7 @@ export const dreamingTools: Tool[] = [
   },
   {
     name: 'get_dreaming_stats',
-    description: 'Checking dream statistics — retrieves session and proposal counts',
+    description: 'Get statistics about dreaming sessions and proposals.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -42,7 +42,7 @@ export const dreamingTools: Tool[] = [
   },
   {
     name: 'trigger_dream',
-    description: 'Triggering dream cycle — generates proposals immediately',
+    description: 'Manually trigger a dream cycle to generate proposals immediately.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -50,7 +50,7 @@ export const dreamingTools: Tool[] = [
   },
   {
     name: 'list_dream_proposals',
-    description: 'Listing dream proposals — filters by status, priority, or type',
+    description: 'List dream proposals with optional filtering.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -73,7 +73,7 @@ export const dreamingTools: Tool[] = [
   },
   {
     name: 'get_dream_proposal',
-    description: 'Loading dream proposal — retrieves full proposal details',
+    description: 'Get details of a specific dream proposal.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -87,7 +87,7 @@ export const dreamingTools: Tool[] = [
   },
   {
     name: 'approve_dream_proposal',
-    description: 'Approving dream proposal — marks for implementation',
+    description: 'Approve a dream proposal for implementation.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -105,7 +105,7 @@ export const dreamingTools: Tool[] = [
   },
   {
     name: 'reject_dream_proposal',
-    description: 'Rejecting dream proposal — declines with reason',
+    description: 'Reject a dream proposal.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -123,7 +123,7 @@ export const dreamingTools: Tool[] = [
   },
   {
     name: 'mark_proposal_implemented',
-    description: 'Completing dream proposal — marks as implemented with evidence',
+    description: 'Mark a proposal as implemented.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -137,7 +137,7 @@ export const dreamingTools: Tool[] = [
   },
   {
     name: 'list_dream_sessions',
-    description: 'Listing dream sessions — retrieves recent dreaming activity',
+    description: 'List recent dream sessions.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -150,7 +150,7 @@ export const dreamingTools: Tool[] = [
   },
   {
     name: 'configure_dreaming',
-    description: 'Configuring dream engine — updates settings and thresholds',
+    description: 'Configure dream engine settings.',
     inputSchema: {
       type: 'object',
       properties: {

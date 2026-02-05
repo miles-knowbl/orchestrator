@@ -13,7 +13,7 @@ export const skillTreeTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'generate_skill_tree',
-    description: 'Generating skill tree — builds progression tree for a domain',
+    description: 'Generate a skill tree for a specific domain (phase, tag, category, or loop).',
     inputSchema: {
       type: 'object',
       properties: {
@@ -32,7 +32,7 @@ export const skillTreeTools: Tool[] = [
   },
   {
     name: 'list_skill_trees',
-    description: 'Listing skill trees — retrieves all generated trees',
+    description: 'List all generated skill trees.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -40,7 +40,7 @@ export const skillTreeTools: Tool[] = [
   },
   {
     name: 'get_skill_tree',
-    description: 'Loading skill tree — retrieves tree structure and progression',
+    description: 'Get a specific skill tree by ID.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -54,7 +54,7 @@ export const skillTreeTools: Tool[] = [
   },
   {
     name: 'get_available_domains',
-    description: 'Listing tree domains — shows available phases, tags, categories, loops',
+    description: 'Get available domains (phases, tags, categories, loops) for tree generation.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -66,7 +66,7 @@ export const skillTreeTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'get_skill_progression',
-    description: 'Checking skill progression — retrieves familiarity and mastery level',
+    description: 'Get progression status for a skill.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -80,7 +80,7 @@ export const skillTreeTools: Tool[] = [
   },
   {
     name: 'record_skill_output',
-    description: 'Recording skill exposure — increases familiarity from output observation',
+    description: 'Record that user saw output from a skill (increases familiarity).',
     inputSchema: {
       type: 'object',
       properties: {
@@ -94,7 +94,7 @@ export const skillTreeTools: Tool[] = [
   },
   {
     name: 'record_skill_usage',
-    description: 'Recording skill usage — increases familiarity from loop execution',
+    description: 'Record that user used a skill in a loop (increases familiarity).',
     inputSchema: {
       type: 'object',
       properties: {
@@ -108,7 +108,7 @@ export const skillTreeTools: Tool[] = [
   },
   {
     name: 'update_skill_progression',
-    description: 'Updating skill progression — manually sets familiarity or mastery',
+    description: 'Manually update progression for a skill.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -135,7 +135,7 @@ export const skillTreeTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'generate_learning_path',
-    description: 'Generating learning path — plans route to reach target skill',
+    description: 'Generate a learning path to reach a target skill.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -153,7 +153,7 @@ export const skillTreeTools: Tool[] = [
   },
   {
     name: 'list_learning_paths',
-    description: 'Listing learning paths — retrieves all generated paths',
+    description: 'List all generated learning paths.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -161,7 +161,7 @@ export const skillTreeTools: Tool[] = [
   },
   {
     name: 'get_learning_path',
-    description: 'Loading learning path — retrieves path structure and progress',
+    description: 'Get a specific learning path by ID.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -179,7 +179,7 @@ export const skillTreeTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'get_skill_tree_status',
-    description: 'Checking skill tree status — retrieves service state',
+    description: 'Get current status of the skill tree service.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -187,7 +187,7 @@ export const skillTreeTools: Tool[] = [
   },
   {
     name: 'get_skill_tree_terminal_view',
-    description: 'Visualizing skill trees — generates terminal-friendly display',
+    description: 'Get a terminal-friendly view of skill trees.',
     inputSchema: {
       type: 'object',
       properties: {

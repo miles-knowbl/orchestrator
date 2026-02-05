@@ -49,7 +49,7 @@ const ValidateLoopSchema = z.object({
 export const loopToolDefinitions = [
   {
     name: 'list_loops',
-    description: 'Listing loops — retrieves all available loop definitions',
+    description: 'List all available loops',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -57,7 +57,7 @@ export const loopToolDefinitions = [
   },
   {
     name: 'get_loop',
-    description: 'Loading loop — retrieves definition with phases, skills, and gates',
+    description: 'Get a loop definition with phases, skills, and gates',
     inputSchema: {
       type: 'object',
       properties: {
@@ -71,7 +71,7 @@ export const loopToolDefinitions = [
   },
   {
     name: 'create_loop',
-    description: 'Creating loop — composes new loop from configuration',
+    description: 'Create a new loop from configuration',
     inputSchema: {
       type: 'object',
       properties: {
@@ -119,7 +119,7 @@ export const loopToolDefinitions = [
   },
   {
     name: 'validate_loop',
-    description: 'Validating loop — checks configuration integrity',
+    description: 'Validate a loop configuration',
     inputSchema: {
       type: 'object',
       properties: {

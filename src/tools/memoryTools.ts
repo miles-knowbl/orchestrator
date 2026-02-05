@@ -127,7 +127,7 @@ export const memoryToolDefinitions = [
   // Memory tools
   {
     name: 'get_memory',
-    description: 'Checking memory — reads accumulated knowledge, decisions, and patterns',
+    description: 'Get memory content at orchestrator, loop, or skill level',
     inputSchema: {
       type: 'object',
       properties: {
@@ -146,7 +146,7 @@ export const memoryToolDefinitions = [
   },
   {
     name: 'update_summary',
-    description: 'Recording memory — updates the knowledge summary',
+    description: 'Update the summary for a memory level',
     inputSchema: {
       type: 'object',
       properties: {
@@ -169,7 +169,7 @@ export const memoryToolDefinitions = [
   },
   {
     name: 'record_decision',
-    description: 'Recording decision — saves an architecture decision record to memory',
+    description: 'Record an Architecture Decision Record (ADR)',
     inputSchema: {
       type: 'object',
       properties: {
@@ -208,7 +208,7 @@ export const memoryToolDefinitions = [
   },
   {
     name: 'record_pattern',
-    description: 'Recording pattern — saves a learned pattern with context and solution',
+    description: 'Record a learned pattern',
     inputSchema: {
       type: 'object',
       properties: {
@@ -243,7 +243,7 @@ export const memoryToolDefinitions = [
   },
   {
     name: 'create_handoff',
-    description: 'Creating handoff — saves session state for continuity across conversations',
+    description: 'Create a session handoff for continuity',
     inputSchema: {
       type: 'object',
       properties: {
@@ -291,7 +291,7 @@ export const memoryToolDefinitions = [
   },
   {
     name: 'load_context',
-    description: 'Loading context — retrieves recent decisions, patterns, and handoff for cold boot',
+    description: 'Load context for cold boot (recent decisions, patterns, handoff)',
     inputSchema: {
       type: 'object',
       properties: {
@@ -312,7 +312,7 @@ export const memoryToolDefinitions = [
   // Learning tools
   {
     name: 'capture_skill_improvement',
-    description: 'Capturing improvement — records feedback and creates a skill improvement proposal',
+    description: 'Capture improvement feedback for a skill (creates a proposal)',
     inputSchema: {
       type: 'object',
       properties: {
@@ -339,7 +339,7 @@ export const memoryToolDefinitions = [
   },
   {
     name: 'list_proposals',
-    description: 'Reviewing proposals — lists skill improvement proposals',
+    description: 'List improvement proposals',
     inputSchema: {
       type: 'object',
       properties: {
@@ -362,7 +362,7 @@ export const memoryToolDefinitions = [
   },
   {
     name: 'apply_proposal',
-    description: 'Applying proposal — updates skill with proposed improvement',
+    description: 'Apply an improvement proposal to a skill',
     inputSchema: {
       type: 'object',
       properties: {
@@ -389,7 +389,7 @@ export const memoryToolDefinitions = [
   },
   {
     name: 'approve_proposal',
-    description: 'Approving proposal — marks improvement for later application',
+    description: 'Approve a proposal for later application',
     inputSchema: {
       type: 'object',
       properties: {
@@ -403,7 +403,7 @@ export const memoryToolDefinitions = [
   },
   {
     name: 'reject_proposal',
-    description: 'Rejecting proposal — declines improvement with reason',
+    description: 'Reject an improvement proposal',
     inputSchema: {
       type: 'object',
       properties: {
@@ -421,7 +421,7 @@ export const memoryToolDefinitions = [
   },
   {
     name: 'get_skill_metrics',
-    description: 'Checking skill metrics — retrieves execution statistics',
+    description: 'Get execution metrics for a skill or all skills',
     inputSchema: {
       type: 'object',
       properties: {
@@ -434,7 +434,7 @@ export const memoryToolDefinitions = [
   },
   {
     name: 'get_learning_status',
-    description: 'Checking learning status — retrieves system-wide learning health',
+    description: 'Get overall learning system status',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -442,7 +442,7 @@ export const memoryToolDefinitions = [
   },
   {
     name: 'identify_underutilized_skills',
-    description: 'Analyzing skill usage — identifies underutilized skills for pruning or improvement',
+    description: 'Find skills that may need pruning or improvement',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -452,7 +452,7 @@ export const memoryToolDefinitions = [
   // Calibration tools
   {
     name: 'get_calibrated_estimate',
-    description: 'Calibrating estimate — adjusts time prediction using historical performance data',
+    description: 'Get a calibrated time estimate based on historical data',
     inputSchema: {
       type: 'object',
       properties: {
@@ -498,7 +498,7 @@ export const memoryToolDefinitions = [
   },
   {
     name: 'record_estimate_result',
-    description: 'Recording calibration — saves actual time to improve future estimates',
+    description: 'Record actual time for a task (updates calibration)',
     inputSchema: {
       type: 'object',
       properties: {
@@ -544,7 +544,7 @@ export const memoryToolDefinitions = [
   },
   {
     name: 'get_calibration_report',
-    description: 'Checking calibration — retrieves estimation accuracy statistics and trends',
+    description: 'Get detailed calibration statistics and recommendations',
     inputSchema: {
       type: 'object',
       properties: {
@@ -562,7 +562,7 @@ export const memoryToolDefinitions = [
   },
   {
     name: 'get_calibration_recommendations',
-    description: 'Generating calibration advice — recommends ways to improve estimation accuracy',
+    description: 'Get recommendations for improving estimation accuracy',
     inputSchema: {
       type: 'object',
       properties: {

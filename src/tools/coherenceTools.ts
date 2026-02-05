@@ -18,7 +18,7 @@ export const coherenceTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'run_coherence_validation',
-    description: 'Validating coherence — checks consistency across all system components',
+    description: 'Run full coherence validation across all system components.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -26,7 +26,7 @@ export const coherenceTools: Tool[] = [
   },
   {
     name: 'get_coherence_status',
-    description: 'Checking coherence status — retrieves validation system state',
+    description: 'Get current status of the coherence system.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -34,7 +34,7 @@ export const coherenceTools: Tool[] = [
   },
   {
     name: 'get_coherence_report',
-    description: 'Loading coherence report — retrieves last validation findings',
+    description: 'Get the last coherence validation report.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -46,7 +46,7 @@ export const coherenceTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'list_coherence_issues',
-    description: 'Listing coherence issues — filters by severity, type, or status',
+    description: 'List coherence issues with optional filtering.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -79,7 +79,7 @@ export const coherenceTools: Tool[] = [
   },
   {
     name: 'get_coherence_issue',
-    description: 'Loading coherence issue — retrieves full details and context',
+    description: 'Get details of a specific coherence issue.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -93,7 +93,7 @@ export const coherenceTools: Tool[] = [
   },
   {
     name: 'update_issue_status',
-    description: 'Updating coherence issue — changes status or adds resolution',
+    description: 'Update the status of a coherence issue.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -116,7 +116,7 @@ export const coherenceTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'get_coherence_terminal_view',
-    description: 'Visualizing coherence — generates terminal-friendly status display',
+    description: 'Get a terminal-friendly view of the coherence status.',
     inputSchema: {
       type: 'object',
       properties: {},

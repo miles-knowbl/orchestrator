@@ -17,7 +17,7 @@ export const gameDesignTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'create_finite_game',
-    description: 'Creating finite game — defines win conditions for a module or system',
+    description: 'Create a finite game for a module or system with win conditions.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -44,7 +44,7 @@ export const gameDesignTools: Tool[] = [
   },
   {
     name: 'start_finite_game',
-    description: 'Starting finite game — begins tracking progress toward win conditions',
+    description: 'Start a finite game to begin tracking progress.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -58,7 +58,7 @@ export const gameDesignTools: Tool[] = [
   },
   {
     name: 'satisfy_win_condition',
-    description: 'Satisfying win condition — records evidence of completion',
+    description: 'Mark a win condition as satisfied with evidence.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -80,7 +80,7 @@ export const gameDesignTools: Tool[] = [
   },
   {
     name: 'get_finite_game',
-    description: 'Loading finite game — retrieves details and win condition status',
+    description: 'Get details of a specific finite game.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -94,7 +94,7 @@ export const gameDesignTools: Tool[] = [
   },
   {
     name: 'list_finite_games',
-    description: 'Listing finite games — filters by status or system',
+    description: 'List finite games with optional filtering.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -117,7 +117,7 @@ export const gameDesignTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'create_infinite_game',
-    description: 'Creating infinite game — defines organizational mission with health metrics',
+    description: 'Create an infinite game for an organization mission.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -135,7 +135,7 @@ export const gameDesignTools: Tool[] = [
   },
   {
     name: 'link_finite_to_infinite',
-    description: 'Linking games — connects finite game to infinite mission',
+    description: 'Link a finite game to an infinite game.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -153,7 +153,7 @@ export const gameDesignTools: Tool[] = [
   },
   {
     name: 'update_health_metric',
-    description: 'Updating health metric — records new value for infinite game metric',
+    description: 'Update a health metric value for an infinite game.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -175,7 +175,7 @@ export const gameDesignTools: Tool[] = [
   },
   {
     name: 'get_infinite_game',
-    description: 'Loading infinite game — retrieves mission and health metrics',
+    description: 'Get details of a specific infinite game.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -189,7 +189,7 @@ export const gameDesignTools: Tool[] = [
   },
   {
     name: 'list_infinite_games',
-    description: 'Listing infinite games — retrieves all organizational missions',
+    description: 'List all infinite games.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -201,7 +201,7 @@ export const gameDesignTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'generate_games_from_roadmap',
-    description: 'Generating games from roadmap — creates finite games for modules',
+    description: 'Generate finite games from roadmap modules.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -209,7 +209,7 @@ export const gameDesignTools: Tool[] = [
   },
   {
     name: 'get_game_state',
-    description: 'Checking game summary — retrieves overall game state',
+    description: 'Get overall game state summary.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -217,7 +217,7 @@ export const gameDesignTools: Tool[] = [
   },
   {
     name: 'get_game_design_status',
-    description: 'Checking game design status — retrieves service state',
+    description: 'Get game design service status.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -225,7 +225,7 @@ export const gameDesignTools: Tool[] = [
   },
   {
     name: 'get_game_design_terminal_view',
-    description: 'Visualizing game design — generates terminal-friendly display',
+    description: 'Get a terminal-friendly view of game design status.',
     inputSchema: {
       type: 'object',
       properties: {},

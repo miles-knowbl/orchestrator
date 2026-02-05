@@ -18,7 +18,7 @@ export const spacedRepetitionTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'create_srs_card',
-    description: 'Creating SRS card — adds new spaced repetition card',
+    description: 'Create a new spaced repetition card.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -54,7 +54,7 @@ export const spacedRepetitionTools: Tool[] = [
   },
   {
     name: 'get_srs_card',
-    description: 'Loading SRS card — retrieves card details',
+    description: 'Get a card by ID.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -68,7 +68,7 @@ export const spacedRepetitionTools: Tool[] = [
   },
   {
     name: 'list_srs_cards',
-    description: 'Listing SRS cards — filters by deck, tag, or status',
+    description: 'List cards with optional filtering.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -98,7 +98,7 @@ export const spacedRepetitionTools: Tool[] = [
   },
   {
     name: 'update_srs_card',
-    description: 'Updating SRS card — modifies card content or metadata',
+    description: 'Update a card.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -129,7 +129,7 @@ export const spacedRepetitionTools: Tool[] = [
   },
   {
     name: 'delete_srs_card',
-    description: 'Deleting SRS card — permanently removes card',
+    description: 'Delete a card.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -147,7 +147,7 @@ export const spacedRepetitionTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'create_srs_deck',
-    description: 'Creating SRS deck — adds new card collection',
+    description: 'Create a new deck.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -178,7 +178,7 @@ export const spacedRepetitionTools: Tool[] = [
   },
   {
     name: 'get_srs_deck',
-    description: 'Loading SRS deck — retrieves deck details',
+    description: 'Get a deck by ID.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -192,7 +192,7 @@ export const spacedRepetitionTools: Tool[] = [
   },
   {
     name: 'list_srs_decks',
-    description: 'Listing SRS decks — retrieves all card collections',
+    description: 'List all decks.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -200,7 +200,7 @@ export const spacedRepetitionTools: Tool[] = [
   },
   {
     name: 'add_card_to_deck',
-    description: 'Adding card to deck — assigns card to collection',
+    description: 'Add a card to a deck.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -218,7 +218,7 @@ export const spacedRepetitionTools: Tool[] = [
   },
   {
     name: 'remove_card_from_deck',
-    description: 'Removing card from deck — unassigns card from collection',
+    description: 'Remove a card from a deck.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -240,7 +240,7 @@ export const spacedRepetitionTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'get_due_cards',
-    description: 'Checking due cards — retrieves cards ready for review',
+    description: 'Get cards due for review.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -253,7 +253,7 @@ export const spacedRepetitionTools: Tool[] = [
   },
   {
     name: 'start_review_session',
-    description: 'Starting review session — begins deck review',
+    description: 'Start a review session for a deck.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -267,7 +267,7 @@ export const spacedRepetitionTools: Tool[] = [
   },
   {
     name: 'record_review',
-    description: 'Recording review response — updates card scheduling via SM-2 algorithm',
+    description: 'Record a review response (SM-2 algorithm).',
     inputSchema: {
       type: 'object',
       properties: {
@@ -294,7 +294,7 @@ export const spacedRepetitionTools: Tool[] = [
   },
   {
     name: 'complete_review_session',
-    description: 'Completing review session — finalizes and records results',
+    description: 'Complete a review session.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -308,7 +308,7 @@ export const spacedRepetitionTools: Tool[] = [
   },
   {
     name: 'list_review_sessions',
-    description: 'Listing review sessions — retrieves session history',
+    description: 'List review sessions.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -321,7 +321,7 @@ export const spacedRepetitionTools: Tool[] = [
   },
   {
     name: 'get_review_session',
-    description: 'Loading review session — retrieves session details and results',
+    description: 'Get a specific review session.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -339,7 +339,7 @@ export const spacedRepetitionTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'generate_cards_from_skills',
-    description: 'Generating cards from skills — auto-creates SRS cards from knowledge graph',
+    description: 'Auto-generate cards from skills in knowledge graph.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -364,7 +364,7 @@ export const spacedRepetitionTools: Tool[] = [
   },
   {
     name: 'generate_cards_from_patterns',
-    description: 'Generating cards from patterns — auto-creates SRS cards from memory patterns',
+    description: 'Auto-generate cards from patterns in memory.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -390,7 +390,7 @@ export const spacedRepetitionTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'get_srs_learning_stats',
-    description: 'Checking learning statistics — retrieves review performance data',
+    description: 'Get learning statistics.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -398,7 +398,7 @@ export const spacedRepetitionTools: Tool[] = [
   },
   {
     name: 'get_srs_status',
-    description: 'Checking SRS status — retrieves service state',
+    description: 'Get spaced repetition service status.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -406,7 +406,7 @@ export const spacedRepetitionTools: Tool[] = [
   },
   {
     name: 'get_srs_terminal_view',
-    description: 'Visualizing SRS — generates terminal-friendly status display',
+    description: 'Get a terminal-friendly view of SRS status.',
     inputSchema: {
       type: 'object',
       properties: {},

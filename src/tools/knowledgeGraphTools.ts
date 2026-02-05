@@ -39,17 +39,17 @@ export function createKnowledgeGraphTools(options: KnowledgeGraphToolsOptions) {
     tools: [
       {
         name: 'build_knowledge_graph',
-        description: 'Building knowledge graph — rebuilds from skill registry and run archives',
+        description: 'Build/rebuild the knowledge graph from skill registry and run archives. Use when skills have been added, updated, or removed.',
         inputSchema: { type: 'object' as const, properties: {}, required: [] },
       },
       {
         name: 'get_knowledge_graph',
-        description: 'Loading knowledge graph — retrieves nodes, edges, clusters, and statistics',
+        description: 'Get the full knowledge graph with nodes, edges, clusters, and statistics',
         inputSchema: { type: 'object' as const, properties: {}, required: [] },
       },
       {
         name: 'get_graph_node',
-        description: 'Loading skill node — retrieves metrics and relationships from graph',
+        description: 'Get a specific skill node from the graph with its metrics and relationships',
         inputSchema: {
           type: 'object' as const,
           properties: { skillId: { type: 'string', description: 'The skill ID' } },
@@ -58,7 +58,7 @@ export function createKnowledgeGraphTools(options: KnowledgeGraphToolsOptions) {
       },
       {
         name: 'get_graph_nodes_by_phase',
-        description: 'Filtering skills by phase — retrieves skill nodes for a specific phase',
+        description: 'Get all skill nodes in a specific phase (INIT, IMPLEMENT, TEST, etc.)',
         inputSchema: {
           type: 'object' as const,
           properties: { phase: { type: 'string', description: 'The phase name' } },
@@ -67,7 +67,7 @@ export function createKnowledgeGraphTools(options: KnowledgeGraphToolsOptions) {
       },
       {
         name: 'get_graph_nodes_by_tag',
-        description: 'Filtering skills by tag — retrieves skill nodes with a specific tag',
+        description: 'Get all skill nodes with a specific tag',
         inputSchema: {
           type: 'object' as const,
           properties: { tag: { type: 'string', description: 'The tag to filter by' } },
@@ -76,7 +76,7 @@ export function createKnowledgeGraphTools(options: KnowledgeGraphToolsOptions) {
       },
       {
         name: 'get_graph_edges',
-        description: 'Checking skill edges — retrieves incoming and outgoing connections',
+        description: 'Get all incoming and outgoing edges for a skill',
         inputSchema: {
           type: 'object' as const,
           properties: { skillId: { type: 'string', description: 'The skill ID' } },
@@ -85,7 +85,7 @@ export function createKnowledgeGraphTools(options: KnowledgeGraphToolsOptions) {
       },
       {
         name: 'get_graph_edges_by_type',
-        description: 'Filtering edges by type — retrieves edges of a specific relationship type',
+        description: 'Get all edges of a specific type (depends_on, tag_cluster, sequence, co_executed, improved_by)',
         inputSchema: {
           type: 'object' as const,
           properties: { type: { type: 'string', enum: ['depends_on', 'tag_cluster', 'sequence', 'co_executed', 'improved_by'] } },
@@ -94,7 +94,7 @@ export function createKnowledgeGraphTools(options: KnowledgeGraphToolsOptions) {
       },
       {
         name: 'get_graph_neighbors',
-        description: 'Finding connected skills — retrieves directly connected neighbors',
+        description: 'Get all skills directly connected to a skill',
         inputSchema: {
           type: 'object' as const,
           properties: { skillId: { type: 'string', description: 'The skill ID' } },
@@ -103,7 +103,7 @@ export function createKnowledgeGraphTools(options: KnowledgeGraphToolsOptions) {
       },
       {
         name: 'find_graph_path',
-        description: 'Finding skill path — traces shortest connection between two skills',
+        description: 'Find the shortest path between two skills in the graph',
         inputSchema: {
           type: 'object' as const,
           properties: {
@@ -115,12 +115,12 @@ export function createKnowledgeGraphTools(options: KnowledgeGraphToolsOptions) {
       },
       {
         name: 'get_graph_clusters',
-        description: 'Listing skill clusters — retrieves groups of related skills',
+        description: 'Get all skill clusters (groups of related skills)',
         inputSchema: { type: 'object' as const, properties: {}, required: [] },
       },
       {
         name: 'get_graph_cluster_by_tag',
-        description: 'Loading skill cluster — retrieves cluster details by tag',
+        description: 'Get a specific cluster by its tag',
         inputSchema: {
           type: 'object' as const,
           properties: { tag: { type: 'string', description: 'The cluster tag' } },
@@ -129,7 +129,7 @@ export function createKnowledgeGraphTools(options: KnowledgeGraphToolsOptions) {
       },
       {
         name: 'get_high_leverage_skills',
-        description: 'Finding high-leverage skills — ranks by connections and impact score',
+        description: 'Get the most connected and impactful skills based on leverage score',
         inputSchema: {
           type: 'object' as const,
           properties: { limit: { type: 'number', description: 'Max skills to return (default 10)' } },
@@ -138,12 +138,12 @@ export function createKnowledgeGraphTools(options: KnowledgeGraphToolsOptions) {
       },
       {
         name: 'get_isolated_skills',
-        description: 'Finding isolated skills — identifies unconnected potential gaps or orphans',
+        description: 'Get skills with no connections in the graph (potential gaps or orphans)',
         inputSchema: { type: 'object' as const, properties: {}, required: [] },
       },
       {
         name: 'get_unused_skills',
-        description: 'Finding stale skills — identifies skills not recently used',
+        description: 'Get skills that haven\'t been used recently',
         inputSchema: {
           type: 'object' as const,
           properties: { days: { type: 'number', description: 'Days since last use (default 30)' } },
@@ -152,17 +152,17 @@ export function createKnowledgeGraphTools(options: KnowledgeGraphToolsOptions) {
       },
       {
         name: 'analyze_graph_gaps',
-        description: 'Analyzing graph gaps — checks for missing dependencies, isolated skills, weak clusters',
+        description: 'Analyze the knowledge graph for gaps: missing dependencies, isolated skills, weak clusters, phase gaps',
         inputSchema: { type: 'object' as const, properties: {}, required: [] },
       },
       {
         name: 'get_graph_stats',
-        description: 'Checking graph statistics — retrieves node count, edge count, density',
+        description: 'Get knowledge graph statistics (node count, edge count, density, etc.)',
         inputSchema: { type: 'object' as const, properties: {}, required: [] },
       },
       {
         name: 'refresh_graph_node',
-        description: 'Refreshing skill node — updates graph after skill edit or versioning',
+        description: 'Refresh a single skill node after it has been updated or versioned',
         inputSchema: {
           type: 'object' as const,
           properties: { skillId: { type: 'string', description: 'The skill ID to refresh' } },
@@ -171,7 +171,7 @@ export function createKnowledgeGraphTools(options: KnowledgeGraphToolsOptions) {
       },
       {
         name: 'remove_graph_node',
-        description: 'Removing skill node — prunes node from knowledge graph',
+        description: 'Remove a skill node from the graph (for pruning)',
         inputSchema: {
           type: 'object' as const,
           properties: { skillId: { type: 'string', description: 'The skill ID to remove' } },
@@ -180,7 +180,7 @@ export function createKnowledgeGraphTools(options: KnowledgeGraphToolsOptions) {
       },
       {
         name: 'render_graph_terminal',
-        description: 'Visualizing knowledge graph — generates terminal-friendly display',
+        description: 'Get a terminal-friendly visualization of the knowledge graph',
         inputSchema: { type: 'object' as const, properties: {}, required: [] },
       },
     ],

@@ -159,7 +159,7 @@ const RejectUpgradeProposalSchema = z.object({
 export const executionToolDefinitions = [
   {
     name: 'start_execution',
-    description: 'Starting execution — begins a new loop run',
+    description: 'Start a new loop execution',
     inputSchema: {
       type: 'object',
       properties: {
@@ -187,7 +187,7 @@ export const executionToolDefinitions = [
   },
   {
     name: 'get_execution',
-    description: 'Checking execution — retrieves current state and progress',
+    description: 'Get current state of an execution',
     inputSchema: {
       type: 'object',
       properties: {
@@ -201,7 +201,7 @@ export const executionToolDefinitions = [
   },
   {
     name: 'list_executions',
-    description: 'Listing executions — retrieves runs with optional status and loop filtering',
+    description: 'List all executions with optional filtering',
     inputSchema: {
       type: 'object',
       properties: {
@@ -219,7 +219,7 @@ export const executionToolDefinitions = [
   },
   {
     name: 'advance_phase',
-    description: 'Advancing phase — moves execution forward (requires phase completed and gate approved)',
+    description: 'Advance execution to the next phase (requires current phase completed and gate approved)',
     inputSchema: {
       type: 'object',
       properties: {
@@ -233,7 +233,7 @@ export const executionToolDefinitions = [
   },
   {
     name: 'complete_phase',
-    description: 'Completing phase — marks current phase as done (requires all skills completed)',
+    description: 'Mark the current phase as completed (requires all skills completed)',
     inputSchema: {
       type: 'object',
       properties: {
@@ -247,7 +247,7 @@ export const executionToolDefinitions = [
   },
   {
     name: 'complete_skill',
-    description: 'Completing skill — records completion with rubric scores for learning',
+    description: 'Mark a skill as completed in the current phase with rubric scoring for learning',
     inputSchema: {
       type: 'object',
       properties: {
@@ -303,7 +303,7 @@ export const executionToolDefinitions = [
   },
   {
     name: 'resolve_guarantee',
-    description: 'Resolving guarantee — acknowledges guarantee satisfied through alternative means (e.g., deliverable in different location, work done via CI/CD). The skillId is optional and will be auto-discovered.',
+    description: 'Resolve a guarantee by acknowledging it was satisfied through alternative means. Use this when a skill or gate cannot proceed due to guarantee failures but the guarantee intent was actually met (e.g., deliverable exists in different location, work done via CI/CD). The skillId is optional - if not provided, it will be auto-discovered from the guarantee ID.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -334,7 +334,7 @@ export const executionToolDefinitions = [
   },
   {
     name: 'approve_gate',
-    description: 'Approving gate — authorizes phase advancement',
+    description: 'Approve a gate to allow phase advancement',
     inputSchema: {
       type: 'object',
       properties: {
@@ -356,7 +356,7 @@ export const executionToolDefinitions = [
   },
   {
     name: 'reject_gate',
-    description: 'Rejecting gate — blocks execution with feedback',
+    description: 'Reject a gate with feedback (blocks execution)',
     inputSchema: {
       type: 'object',
       properties: {
@@ -379,7 +379,7 @@ export const executionToolDefinitions = [
   // Gate CRUD tools
   {
     name: 'list_gates',
-    description: 'Checking gates — lists all gates with current state and approval type',
+    description: 'List all gates for an execution with their current state (enabled, status, approval type)',
     inputSchema: {
       type: 'object',
       properties: {
@@ -393,7 +393,7 @@ export const executionToolDefinitions = [
   },
   {
     name: 'update_gate',
-    description: 'Updating gate — changes gate properties (enable/disable, approval type)',
+    description: 'Update a gate properties (enable/disable, change approval type). Use to customize gate behavior for an execution.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -420,7 +420,7 @@ export const executionToolDefinitions = [
   },
   {
     name: 'disable_all_gates',
-    description: 'Disabling all gates — skips gate checks for mobile/async work',
+    description: 'Disable all gates for an execution. Useful for mobile/async work where you cannot approve gates interactively.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -434,7 +434,7 @@ export const executionToolDefinitions = [
   },
   {
     name: 'enable_all_gates',
-    description: 'Enabling all gates — restores normal gate operation',
+    description: 'Enable all gates for an execution (restore normal gate operation)',
     inputSchema: {
       type: 'object',
       properties: {
@@ -448,7 +448,7 @@ export const executionToolDefinitions = [
   },
   {
     name: 'set_all_gates_auto',
-    description: 'Auto-approving all gates — sets autonomous operation mode',
+    description: 'Set all gates to auto-approve mode for autonomous operation',
     inputSchema: {
       type: 'object',
       properties: {
@@ -463,7 +463,7 @@ export const executionToolDefinitions = [
   // Retry/Revalidate tools
   {
     name: 'revalidate_guarantees',
-    description: 'Revalidating skill guarantees — checks pass/fail status without completing',
+    description: 'Check which guarantees pass/fail for a skill without completing it. Use to see what still needs fixing before retrying.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -481,7 +481,7 @@ export const executionToolDefinitions = [
   },
   {
     name: 'revalidate_gate',
-    description: 'Revalidating gate guarantees — checks pass/fail before attempting approval',
+    description: 'Check which guarantees pass/fail for a gate without trying to approve it. Use to see what still needs resolving before attempting gate approval.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -499,7 +499,7 @@ export const executionToolDefinitions = [
   },
   {
     name: 'retry_skill',
-    description: 'Retrying skill — re-attempts completion after fixing deliverables',
+    description: 'Retry completing a skill after fixing deliverables. Automatically unblocks execution if blocked.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -522,7 +522,7 @@ export const executionToolDefinitions = [
   },
   {
     name: 'reset_skill',
-    description: 'Resetting skill — clears back to pending for re-execution from scratch',
+    description: 'Reset a skill back to pending status to re-execute from scratch. Clears previous acknowledgments by default. Use when you need to redo all the work for a skill, not just retry completion.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -544,7 +544,7 @@ export const executionToolDefinitions = [
   },
   {
     name: 'pause_execution',
-    description: 'Pausing execution — suspends active run',
+    description: 'Pause an active execution',
     inputSchema: {
       type: 'object',
       properties: {
@@ -558,7 +558,7 @@ export const executionToolDefinitions = [
   },
   {
     name: 'resume_execution',
-    description: 'Resuming execution — continues paused or blocked run',
+    description: 'Resume a paused or blocked execution',
     inputSchema: {
       type: 'object',
       properties: {
@@ -572,7 +572,7 @@ export const executionToolDefinitions = [
   },
   {
     name: 'abort_execution',
-    description: 'Aborting execution — terminates run',
+    description: 'Abort an execution',
     inputSchema: {
       type: 'object',
       properties: {
@@ -591,7 +591,7 @@ export const executionToolDefinitions = [
   // Learning System Tools
   {
     name: 'complete_run_tracking',
-    description: 'Completing run tracking — triggers learning analysis for execution',
+    description: 'Complete run tracking and trigger learning analysis. Automatically called when loop completes, but can be called manually.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -605,7 +605,7 @@ export const executionToolDefinitions = [
   },
   {
     name: 'list_upgrade_proposals',
-    description: 'Checking upgrade proposals — lists learning-generated skill improvements',
+    description: 'List skill upgrade proposals generated by the learning system',
     inputSchema: {
       type: 'object',
       properties: {
@@ -623,7 +623,7 @@ export const executionToolDefinitions = [
   },
   {
     name: 'get_learning_summary',
-    description: 'Checking learning summary — retrieves run signals and proposal status',
+    description: 'Get summary of learning system state including run signals and proposals',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -631,7 +631,7 @@ export const executionToolDefinitions = [
   },
   {
     name: 'approve_upgrade_proposal',
-    description: 'Approving upgrade — applies learning-generated skill improvement',
+    description: 'Approve a skill upgrade proposal and apply the changes',
     inputSchema: {
       type: 'object',
       properties: {
@@ -649,7 +649,7 @@ export const executionToolDefinitions = [
   },
   {
     name: 'reject_upgrade_proposal',
-    description: 'Rejecting upgrade — declines learning-generated skill improvement',
+    description: 'Reject a skill upgrade proposal',
     inputSchema: {
       type: 'object',
       properties: {

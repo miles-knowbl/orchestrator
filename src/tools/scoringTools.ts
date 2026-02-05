@@ -10,7 +10,7 @@ import type { ScoringService } from '../services/scoring/index.js';
 export const scoringTools: Tool[] = [
   {
     name: 'score_module',
-    description: 'Scoring module — computes comprehensive health score',
+    description: 'Get comprehensive score for a single module',
     inputSchema: {
       type: 'object',
       properties: {
@@ -24,7 +24,7 @@ export const scoringTools: Tool[] = [
   },
   {
     name: 'score_all_modules',
-    description: 'Scoring all modules — ranks by comprehensive health score',
+    description: 'Get scores for all modules, sorted by score',
     inputSchema: {
       type: 'object',
       properties: {
@@ -37,7 +37,7 @@ export const scoringTools: Tool[] = [
   },
   {
     name: 'score_system',
-    description: 'Checking system health — computes comprehensive system score',
+    description: 'Get comprehensive system health score',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -45,7 +45,7 @@ export const scoringTools: Tool[] = [
   },
   {
     name: 'get_modules_needing_attention',
-    description: 'Finding at-risk modules — identifies low scores and issues',
+    description: 'Get modules with low scores or issues',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -53,7 +53,7 @@ export const scoringTools: Tool[] = [
   },
   {
     name: 'get_score_history',
-    description: 'Loading score history — retrieves historical scoring data',
+    description: 'Get historical score data',
     inputSchema: {
       type: 'object',
       properties: {
@@ -66,7 +66,7 @@ export const scoringTools: Tool[] = [
   },
   {
     name: 'get_score_trends',
-    description: 'Analyzing score trends — computes trend direction and velocity',
+    description: 'Get score trend analysis',
     inputSchema: {
       type: 'object',
       properties: {
@@ -79,7 +79,7 @@ export const scoringTools: Tool[] = [
   },
   {
     name: 'record_score_history',
-    description: 'Recording scores — snapshots current scores to history',
+    description: 'Record current scores to history',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -87,7 +87,7 @@ export const scoringTools: Tool[] = [
   },
   {
     name: 'render_scorecard',
-    description: 'Visualizing scorecard — generates terminal-friendly display',
+    description: 'Get terminal-friendly scorecard visualization',
     inputSchema: {
       type: 'object',
       properties: {},

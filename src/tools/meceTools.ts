@@ -18,7 +18,7 @@ export const meceTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'run_mece_analysis',
-    description: 'Running MECE analysis — identifies opportunities, gaps, and overlaps',
+    description: 'Run full MECE analysis to identify opportunities, gaps, and overlaps.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -26,7 +26,7 @@ export const meceTools: Tool[] = [
   },
   {
     name: 'get_mece_status',
-    description: 'Checking MECE status — retrieves opportunity mapping state',
+    description: 'Get current status of the MECE opportunity mapping service.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -34,7 +34,7 @@ export const meceTools: Tool[] = [
   },
   {
     name: 'get_last_analysis',
-    description: 'Loading MECE results — retrieves last analysis findings',
+    description: 'Get the results of the last MECE analysis.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -46,7 +46,7 @@ export const meceTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'get_mece_taxonomy',
-    description: 'Loading MECE taxonomy — retrieves category structure',
+    description: 'Get the MECE category taxonomy.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -54,7 +54,7 @@ export const meceTools: Tool[] = [
   },
   {
     name: 'set_mece_category',
-    description: 'Updating MECE taxonomy — adds or modifies a category',
+    description: 'Add or update a category in the taxonomy.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -90,7 +90,7 @@ export const meceTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'list_opportunities',
-    description: 'Listing opportunities — filters by category, priority, or status',
+    description: 'List opportunities with optional filtering.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -110,7 +110,7 @@ export const meceTools: Tool[] = [
   },
   {
     name: 'add_opportunity',
-    description: 'Adding opportunity — creates new manually-identified opportunity',
+    description: 'Manually add a new opportunity.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -135,7 +135,7 @@ export const meceTools: Tool[] = [
   },
   {
     name: 'update_opportunity',
-    description: 'Updating opportunity — modifies existing opportunity details',
+    description: 'Update an existing opportunity.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -156,7 +156,7 @@ export const meceTools: Tool[] = [
   },
   {
     name: 'remove_opportunity',
-    description: 'Removing opportunity — deletes from analysis',
+    description: 'Remove an opportunity.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -171,7 +171,7 @@ export const meceTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'list_gaps',
-    description: 'Listing coverage gaps — identifies unaddressed areas',
+    description: 'List coverage gaps with optional filtering.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -186,7 +186,7 @@ export const meceTools: Tool[] = [
   },
   {
     name: 'list_overlaps',
-    description: 'Listing overlaps — shows duplicated effort between opportunities',
+    description: 'List identified overlaps between opportunities.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -198,7 +198,7 @@ export const meceTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'get_mece_terminal_view',
-    description: 'Visualizing MECE analysis — generates terminal-friendly display',
+    description: 'Get a terminal-friendly view of the MECE analysis.',
     inputSchema: {
       type: 'object',
       properties: {},

@@ -713,14 +713,12 @@ async function main() {
   // DEFERRED: proposing-decks tools disabled while module is deferred
   const proposingDecksHandlers = {}; // Empty handlers while deferred
   // const proposingDecksHandlers = createProposingDecksToolHandlers(proposingDecksService);
-  // Note: repoPath and roadmapService intentionally NOT passed here
-  // Roadmap is now project-agnostic - users should use roadmap tools with projectPath param
   const proactiveMessagingHandlers = createProactiveMessagingToolHandlers(
     proactiveMessagingService,
     installStateService,
     dreamEngine,
-    undefined, // repoPath - project-agnostic
-    undefined  // roadmapService - project-agnostic
+    config.repoPath,
+    roadmapService
   );
   const knopilotHandlers = createKnoPilotToolHandlers(knopilotService);
   const deliverableHandlers = createDeliverableToolHandlers(deliverableManager);
@@ -728,9 +726,7 @@ async function main() {
 
   // Create tools from factory functions that return { tools, handleTool }
   const knowledgeGraphToolsResult = createKnowledgeGraphTools({ knowledgeGraphService });
-  // Roadmap tools are now project-agnostic - they take projectPath parameter
-  // and create project-scoped RoadmapService instances on demand
-  const roadmapToolsResult = createRoadmapTools({});
+  const roadmapToolsResult = createRoadmapTools({ roadmapService });
   const orchestrationToolsResult = createOrchestrationTools({ orchestrationService });
 
   // Convert handleTool pattern to individual handlers

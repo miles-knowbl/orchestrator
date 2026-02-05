@@ -17,7 +17,7 @@ export const multiAgentTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'register_collaborator',
-    description: 'Registering collaborator — adds agent that can spawn agent sets',
+    description: 'Register a new collaborator who can spawn agent sets.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -35,7 +35,7 @@ export const multiAgentTools: Tool[] = [
   },
   {
     name: 'list_collaborators',
-    description: 'Listing collaborators — retrieves all registered agents',
+    description: 'List all registered collaborators.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -43,7 +43,7 @@ export const multiAgentTools: Tool[] = [
   },
   {
     name: 'get_collaborator',
-    description: 'Checking collaborator — retrieves details and capabilities',
+    description: 'Get details about a specific collaborator.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -57,7 +57,7 @@ export const multiAgentTools: Tool[] = [
   },
   {
     name: 'get_collaborator_work',
-    description: 'Checking collaborator work — retrieves current assignments',
+    description: 'Get what a collaborator is currently working on.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -75,7 +75,7 @@ export const multiAgentTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'create_agent_set',
-    description: 'Creating agent set — assigns work to a collaborator',
+    description: 'Create a new agent set for a collaborator.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -93,7 +93,7 @@ export const multiAgentTools: Tool[] = [
   },
   {
     name: 'list_agent_sets',
-    description: 'Listing agent sets — filters by collaborator',
+    description: 'List agent sets, optionally filtered by collaborator.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -106,7 +106,7 @@ export const multiAgentTools: Tool[] = [
   },
   {
     name: 'get_agent_set',
-    description: 'Loading agent set — retrieves details and status',
+    description: 'Get details about an agent set.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -120,7 +120,7 @@ export const multiAgentTools: Tool[] = [
   },
   {
     name: 'pause_agent_set',
-    description: 'Pausing agent set — suspends execution',
+    description: 'Pause an agent set.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -134,7 +134,7 @@ export const multiAgentTools: Tool[] = [
   },
   {
     name: 'resume_agent_set',
-    description: 'Resuming agent set — continues paused execution',
+    description: 'Resume a paused agent set.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -152,7 +152,7 @@ export const multiAgentTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'create_reservation',
-    description: 'Creating reservation — claims module, file, or path pattern',
+    description: 'Create a reservation to claim a module, file, or path pattern.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -191,7 +191,7 @@ export const multiAgentTools: Tool[] = [
   },
   {
     name: 'list_reservations',
-    description: 'Listing reservations — filters by collaborator',
+    description: 'List reservations, optionally filtered by collaborator.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -204,7 +204,7 @@ export const multiAgentTools: Tool[] = [
   },
   {
     name: 'release_reservation',
-    description: 'Releasing reservation — frees claimed resource',
+    description: 'Release a reservation.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -218,7 +218,7 @@ export const multiAgentTools: Tool[] = [
   },
   {
     name: 'extend_reservation',
-    description: 'Extending reservation — adds time to existing claim',
+    description: 'Extend a reservation duration.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -236,7 +236,7 @@ export const multiAgentTools: Tool[] = [
   },
   {
     name: 'check_resource_blocked',
-    description: 'Checking resource availability — tests for blocking reservations',
+    description: 'Check if a resource is blocked by reservations.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -259,7 +259,7 @@ export const multiAgentTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'request_merge',
-    description: 'Requesting merge — queues worktree branch for merge to main',
+    description: 'Request to merge a worktree branch to main.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -281,7 +281,7 @@ export const multiAgentTools: Tool[] = [
   },
   {
     name: 'check_merge_conflicts',
-    description: 'Checking merge conflicts — validates merge request',
+    description: 'Check a merge request for conflicts.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -295,7 +295,7 @@ export const multiAgentTools: Tool[] = [
   },
   {
     name: 'execute_merge',
-    description: 'Executing merge — applies approved merge to main',
+    description: 'Execute an approved merge request.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -309,7 +309,7 @@ export const multiAgentTools: Tool[] = [
   },
   {
     name: 'reject_merge',
-    description: 'Rejecting merge — declines with reason',
+    description: 'Reject a merge request.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -327,7 +327,7 @@ export const multiAgentTools: Tool[] = [
   },
   {
     name: 'list_merge_queue',
-    description: 'Listing merge queue — shows pending merge requests',
+    description: 'List the merge queue.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -341,7 +341,7 @@ export const multiAgentTools: Tool[] = [
   },
   {
     name: 'get_merge_request',
-    description: 'Loading merge request — retrieves full details',
+    description: 'Get details of a merge request.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -359,7 +359,7 @@ export const multiAgentTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'check_can_work',
-    description: 'Checking work eligibility — verifies collaborator can start module work',
+    description: 'Check if a collaborator can start work on a module.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -377,7 +377,7 @@ export const multiAgentTools: Tool[] = [
   },
   {
     name: 'get_all_active_work',
-    description: 'Listing all active work — shows assignments across collaborators',
+    description: 'Get all active work across all collaborators.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -385,7 +385,7 @@ export const multiAgentTools: Tool[] = [
   },
   {
     name: 'get_coordinator_status',
-    description: 'Checking coordinator status — retrieves multi-agent system health',
+    description: 'Get the overall status of the multi-agent coordinator.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -393,7 +393,7 @@ export const multiAgentTools: Tool[] = [
   },
   {
     name: 'get_coordinator_events',
-    description: 'Loading coordinator events — retrieves recent multi-agent activity',
+    description: 'Get recent coordinator events.',
     inputSchema: {
       type: 'object',
       properties: {

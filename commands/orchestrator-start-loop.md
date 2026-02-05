@@ -488,16 +488,11 @@ Show completion summary:
 
   ⚠️  IMPORTANT: Restart Claude Code to load the new commands.
 
-  ─────────────────────────────────────────────────────────────
-  NEXT STEP: Establish your upstream artifacts
+  After restart, if this is your first time:
+    Run /dream-loop to establish your vision and roadmap.
 
-  Run /dream-loop to create:
-    • DREAM-STATE.md — defines "what done looks like"
-    • ROADMAP.md — breaks vision into trackable modules
-
-  These are REQUIRED for progress tracking and leverage-based
-  recommendations. All other loops reference them.
-  ─────────────────────────────────────────────────────────────
+  Or start building:
+    Run /engineering-loop → your-module
 ═══════════════════════════════════════════════════════════════
 ```
 
@@ -516,32 +511,6 @@ The loop tracks state in `~/orchestrator/data/install-state.json`:
 }
 ```
 
-## Upstream Artifacts: Dream State & Roadmap
-
-**Dream State and Roadmap are the foundation of the orchestrator workflow:**
-
-```
-DREAM-STATE.md  →  ROADMAP.md  →  Engineering Loops
-     │                 │                 │
-     │                 │                 └── /engineering-loop, /bugfix-loop, etc.
-     │                 │                     (all reference dream state for context)
-     │                 │
-     │                 └── Modules with dependencies and status
-     │                     (tracked, provides leverage scoring)
-     │
-     └── Vision, completion criteria, success definition
-         (answers "what does done look like?")
-```
-
-**Why this matters:**
-- Without dream state, loops lack direction
-- Without roadmap, progress can't be measured
-- Leverage protocol uses these to recommend next moves
-
-**If these don't exist for your project:**
-1. Run `/dream-loop` first to create them
-2. Then proceed with engineering/bugfix/other loops
-
 ## Daily Welcome Messages
 
 On first MCP tool call of each day, orchestrator shows a contextual welcome:
@@ -551,10 +520,7 @@ On first MCP tool call of each day, orchestrator shows a contextual welcome:
 ┌─────────────────────────────────────────────────────────────┐
 │ Welcome to Orchestrator!                                    │
 │                                                             │
-│ ⚠️  No Dream State found for this project.                  │
-│                                                             │
-│ Dream State defines "what done looks like" and is required  │
-│ for progress tracking and leverage-based recommendations.   │
+│ No Dream State found.                                       │
 │                                                             │
 │ Run /dream-loop to establish your vision and roadmap.       │
 └─────────────────────────────────────────────────────────────┘
@@ -719,9 +685,7 @@ Orchestrator Start Loop: Verifying...
 
   ⚠️  IMPORTANT: Restart Claude Code to load the new commands.
 
-  NEXT STEP: Run /dream-loop to establish your upstream artifacts:
-    • DREAM-STATE.md (vision)
-    • ROADMAP.md (modules)
+  After restart, run /dream-loop to establish your vision.
 ═══════════════════════════════════════════════════════════════
 ```
 

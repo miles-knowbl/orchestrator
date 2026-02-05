@@ -11,7 +11,7 @@ import type { MemoryLevel } from '../types.js';
 export const patternsTools: Tool[] = [
   {
     name: 'query_patterns',
-    description: 'Searching patterns — filters across all memory levels',
+    description: 'Search and filter patterns across all memory levels',
     inputSchema: {
       type: 'object',
       properties: {
@@ -42,7 +42,7 @@ export const patternsTools: Tool[] = [
   },
   {
     name: 'get_pattern',
-    description: 'Loading pattern — retrieves pattern details by ID',
+    description: 'Get a single pattern by ID',
     inputSchema: {
       type: 'object',
       properties: {
@@ -56,7 +56,7 @@ export const patternsTools: Tool[] = [
   },
   {
     name: 'generate_pattern_roundup',
-    description: 'Summarizing patterns — generates formatted summary at a memory level',
+    description: 'Generate a formatted summary of patterns at a level',
     inputSchema: {
       type: 'object',
       properties: {
@@ -81,7 +81,7 @@ export const patternsTools: Tool[] = [
   },
   {
     name: 'detect_patterns',
-    description: 'Detecting patterns — runs automatic discovery from behaviors and codebase',
+    description: 'Run automatic pattern detection from behaviors and codebase',
     inputSchema: {
       type: 'object',
       properties: {
@@ -95,7 +95,7 @@ export const patternsTools: Tool[] = [
   },
   {
     name: 'get_pattern_gaps',
-    description: 'Analyzing pattern gaps — identifies missing coverage areas',
+    description: 'Analyze gaps in pattern coverage',
     inputSchema: {
       type: 'object',
       properties: {
@@ -109,7 +109,7 @@ export const patternsTools: Tool[] = [
   },
   {
     name: 'formalize_pattern',
-    description: 'Formalizing pattern — converts detected pattern into memory record',
+    description: 'Convert a detected pattern into a formal pattern in memory',
     inputSchema: {
       type: 'object',
       properties: {

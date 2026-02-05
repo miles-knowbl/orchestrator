@@ -17,7 +17,7 @@ export function createOODAClockTools(
      * List executions available for clock visualization
      */
     list_clock_executions: {
-      description: 'Listing OODA executions — retrieves runs available for clock visualization',
+      description: 'List executions available for OODA clock visualization',
       parameters: z.object({
         status: z.enum(['active', 'paused', 'completed', 'failed', 'all']).optional()
           .describe('Filter by execution status'),
@@ -58,7 +58,7 @@ export function createOODAClockTools(
      * Get clock events for an execution
      */
     get_clock_events: {
-      description: 'Loading OODA clock — retrieves phase timing events for execution',
+      description: 'Get clock events for a specific execution',
       parameters: z.object({
         executionId: z.string().describe('The execution ID'),
         includePatterns: z.boolean().optional()
@@ -116,7 +116,7 @@ export function createOODAClockTools(
      * Get rhythm patterns across all executions
      */
     get_rhythm_patterns: {
-      description: 'Analyzing OODA rhythms — detects timing patterns across executions',
+      description: 'Analyze rhythm patterns across executions',
       parameters: z.object({
         executionIds: z.array(z.string()).optional()
           .describe('Specific execution IDs to analyze (all if omitted)'),
@@ -169,7 +169,7 @@ export function createOODAClockTools(
      * Get current cycle progress for an execution
      */
     get_cycle_progress: {
-      description: 'Checking OODA progress — retrieves current cycle state for execution',
+      description: 'Get the current OODA cycle progress for an execution',
       parameters: z.object({
         executionId: z.string().describe('The execution ID'),
       }),

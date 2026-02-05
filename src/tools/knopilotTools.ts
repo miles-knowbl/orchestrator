@@ -99,7 +99,7 @@ const DealIdSchema = z.object({
 export const knopilotToolDefinitions = [
   {
     name: 'knopilot_create_deal',
-    description: 'Creating deal — adds new deal to KnoPilot sales intelligence',
+    description: 'Create a new deal in the KnoPilot sales intelligence system',
     inputSchema: {
       type: 'object',
       properties: {
@@ -118,7 +118,7 @@ export const knopilotToolDefinitions = [
   },
   {
     name: 'knopilot_get_deal',
-    description: 'Loading deal — retrieves full view with stakeholders, scores, NBA, and intelligence',
+    description: 'Get full deal view including stakeholders, scores, NBA, intelligence, and communications',
     inputSchema: {
       type: 'object',
       properties: {
@@ -129,7 +129,7 @@ export const knopilotToolDefinitions = [
   },
   {
     name: 'knopilot_list_deals',
-    description: 'Listing deals — filters by stage, status, or priority',
+    description: 'List all deals with optional filtering',
     inputSchema: {
       type: 'object',
       properties: {
@@ -147,7 +147,7 @@ export const knopilotToolDefinitions = [
   },
   {
     name: 'knopilot_update_deal',
-    description: 'Updating deal — modifies deal properties',
+    description: 'Update deal properties',
     inputSchema: {
       type: 'object',
       properties: {
@@ -162,7 +162,7 @@ export const knopilotToolDefinitions = [
   },
   {
     name: 'knopilot_advance_stage',
-    description: 'Advancing deal — moves to next pipeline stage',
+    description: 'Advance deal to the next stage in the pipeline (lead→target→discovery→contracting→production)',
     inputSchema: {
       type: 'object',
       properties: {
@@ -174,7 +174,7 @@ export const knopilotToolDefinitions = [
   },
   {
     name: 'knopilot_add_communication',
-    description: 'Adding communication — records email, meeting, call, or note for deal',
+    description: 'Add a communication (email, meeting, call, note) to a deal',
     inputSchema: {
       type: 'object',
       properties: {
@@ -198,7 +198,7 @@ export const knopilotToolDefinitions = [
   },
   {
     name: 'knopilot_process_communication',
-    description: 'Processing communication — extracts intelligence and updates scores',
+    description: 'Process a communication to extract intelligence, update scores, and regenerate NBA',
     inputSchema: {
       type: 'object',
       properties: {
@@ -210,7 +210,7 @@ export const knopilotToolDefinitions = [
   },
   {
     name: 'knopilot_add_stakeholder',
-    description: 'Adding stakeholder — registers contact for deal',
+    description: 'Add a stakeholder to a deal',
     inputSchema: {
       type: 'object',
       properties: {
@@ -234,7 +234,7 @@ export const knopilotToolDefinitions = [
   },
   {
     name: 'knopilot_update_stakeholder',
-    description: 'Updating stakeholder — modifies contact details',
+    description: 'Update stakeholder properties',
     inputSchema: {
       type: 'object',
       properties: {
@@ -259,7 +259,7 @@ export const knopilotToolDefinitions = [
   },
   {
     name: 'knopilot_get_intelligence',
-    description: 'Loading deal intelligence — retrieves pain points, AI maturity, budget, and competitive data',
+    description: 'Get all intelligence data for a deal (pain points, AI maturity, budget/timeline, stakeholders, technical reqs, use case, competitive)',
     inputSchema: {
       type: 'object',
       properties: {
@@ -270,7 +270,7 @@ export const knopilotToolDefinitions = [
   },
   {
     name: 'knopilot_compute_scores',
-    description: 'Recomputing deal scores — recalculates AI Readiness and Deal Confidence',
+    description: 'Recompute all scores for a deal (AI Readiness, Deal Confidence, 9 custom properties)',
     inputSchema: {
       type: 'object',
       properties: {
@@ -281,7 +281,7 @@ export const knopilotToolDefinitions = [
   },
   {
     name: 'knopilot_generate_nba',
-    description: 'Generating next best actions — recommends actions based on stage and scores',
+    description: 'Generate Next Best Actions for a deal based on stage, scores, and intelligence',
     inputSchema: {
       type: 'object',
       properties: {
@@ -292,7 +292,7 @@ export const knopilotToolDefinitions = [
   },
   {
     name: 'knopilot_get_pipeline',
-    description: 'Loading pipeline summary — retrieves metrics, priorities, and stage distribution',
+    description: 'Get pipeline summary with metrics, prioritized deals, and stage distribution',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -300,7 +300,7 @@ export const knopilotToolDefinitions = [
   },
   {
     name: 'knopilot_get_weekly_focus',
-    description: 'Loading weekly focus — retrieves top 5 actions based on NBA scores',
+    description: 'Get top 5 focus actions for the week based on NBA scores and risks',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -308,7 +308,7 @@ export const knopilotToolDefinitions = [
   },
   {
     name: 'knopilot_list_communications',
-    description: 'Listing deal communications — retrieves message history',
+    description: 'List all communications for a deal',
     inputSchema: {
       type: 'object',
       properties: {
@@ -319,7 +319,7 @@ export const knopilotToolDefinitions = [
   },
   {
     name: 'knopilot_list_stakeholders',
-    description: 'Listing deal stakeholders — retrieves contact list',
+    description: 'List all stakeholders for a deal',
     inputSchema: {
       type: 'object',
       properties: {

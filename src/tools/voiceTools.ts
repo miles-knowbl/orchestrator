@@ -44,7 +44,7 @@ export const listVoicesSchema = z.object({});
 export const voiceToolDefinitions = [
   {
     name: 'configure_voice',
-    description: 'Configuring voice — updates output settings',
+    description: 'Configure voice output settings',
     inputSchema: {
       type: 'object' as const,
       properties: {
@@ -77,7 +77,7 @@ export const voiceToolDefinitions = [
   },
   {
     name: 'test_voice',
-    description: 'Testing voice — plays sample with optional custom text',
+    description: 'Test voice output with optional custom text',
     inputSchema: {
       type: 'object' as const,
       properties: {
@@ -87,7 +87,7 @@ export const voiceToolDefinitions = [
   },
   {
     name: 'get_voice_status',
-    description: 'Checking voice status — retrieves current output settings',
+    description: 'Get current voice output status',
     inputSchema: {
       type: 'object' as const,
       properties: {},
@@ -95,7 +95,7 @@ export const voiceToolDefinitions = [
   },
   {
     name: 'list_voices',
-    description: 'Listing voices — retrieves available macOS voice options',
+    description: 'List available macOS voices',
     inputSchema: {
       type: 'object' as const,
       properties: {},

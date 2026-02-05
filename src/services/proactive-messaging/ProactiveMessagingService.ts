@@ -134,14 +134,6 @@ export class ProactiveMessagingService {
           ...(loaded.channels?.voice && { voice: loaded.channels.voice }),
         },
       };
-
-      // Env var fallback for Slack credentials
-      if (process.env.SLACK_BOT_TOKEN) {
-        this.config.channels.slack.botToken = process.env.SLACK_BOT_TOKEN;
-      }
-      if (process.env.SLACK_APP_TOKEN) {
-        this.config.channels.slack.appToken = process.env.SLACK_APP_TOKEN;
-      }
     } catch {
       // Use defaults
     }
