@@ -184,12 +184,13 @@ export default function DistributePage() {
 
           {/* Install */}
           <div>
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Install</p>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Install via /orchestrator-start-loop</p>
+            <p className="text-xs text-gray-500 mb-4">The <code className="text-orch-400">/orchestrator-start-loop</code> command is your single entry point. It handles all installation, configuration, and updates.</p>
             <div className="space-y-4">
               <div className="flex items-start gap-3">
                 <span className="w-6 h-6 rounded-full bg-orch-500/10 text-orch-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">4</span>
                 <div className="w-full">
-                  <p className="text-sm text-gray-300 mb-2">Get the install command</p>
+                  <p className="text-sm text-gray-300 mb-2">Download the installer command</p>
                   <p className="text-xs text-gray-500 mb-1.5">One-time setup &middot; any directory</p>
                   <CodeBlock command={`curl -sL https://raw.githubusercontent.com/${GITHUB_REPO}/main/commands/orchestrator-start-loop.md > ~/.claude/commands/orchestrator-start-loop.md`} />
                 </div>
@@ -197,10 +198,20 @@ export default function DistributePage() {
               <div className="flex items-start gap-3">
                 <span className="w-6 h-6 rounded-full bg-orch-500/10 text-orch-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">5</span>
                 <div className="w-full">
-                  <p className="text-sm text-gray-300 mb-2">Run the installer in Claude Code</p>
-                  <p className="text-xs text-gray-500 mb-1.5">Start Claude Code and run:</p>
+                  <p className="text-sm text-gray-300 mb-2">Run the installer</p>
+                  <p className="text-xs text-gray-500 mb-1.5">Start Claude Code (in any project) and run:</p>
                   <CodeBlock command="/orchestrator-start-loop" />
-                  <p className="text-xs text-gray-500 mt-2">This clones the repo, builds it, configures MCP, and opens a Terminal window with the running server.</p>
+                  <div className="mt-3 bg-[#0a0a0a] border border-[#222] rounded-lg px-4 py-3">
+                    <p className="text-xs text-gray-400 font-medium mb-2">What it does:</p>
+                    <ul className="text-xs text-gray-500 space-y-1">
+                      <li>&bull; Clones the orchestrator repository</li>
+                      <li>&bull; Installs dependencies and builds</li>
+                      <li>&bull; Configures Claude Code MCP connection</li>
+                      <li>&bull; Opens a Terminal window with the server</li>
+                      <li>&bull; Installs all loop commands to your Claude Code</li>
+                    </ul>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-3"><strong className="text-gray-400">To update:</strong> Just run <code className="text-orch-400">/orchestrator-start-loop</code> again. It detects existing installs and updates them.</p>
                 </div>
               </div>
             </div>
@@ -218,7 +229,7 @@ export default function DistributePage() {
                   <p className="text-sm text-gray-300 mb-2">Just use Claude Code normally</p>
                   <p className="text-xs text-gray-500 mb-3">The server <strong className="text-gray-400">starts automatically</strong> in a Terminal window when you call any orchestrator tool or loop.</p>
                   <div className="bg-[#0a0a0a] border border-[#222] rounded-lg px-4 py-3">
-                    <p className="text-xs text-gray-500 mb-2">Available commands:</p>
+                    <p className="text-xs text-gray-500 mb-2">Available loops (13):</p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5 text-sm">
                       <div><code className="text-orch-400">/engineering-loop</code> <span className="text-gray-500">— build features</span></div>
                       <div><code className="text-orch-400">/bugfix-loop</code> <span className="text-gray-500">— fix bugs</span></div>
@@ -231,6 +242,8 @@ export default function DistributePage() {
                       <div><code className="text-orch-400">/deck-loop</code> <span className="text-gray-500">— slide decks</span></div>
                       <div><code className="text-orch-400">/transpose-loop</code> <span className="text-gray-500">— port to new stack</span></div>
                       <div><code className="text-orch-400">/meta-loop</code> <span className="text-gray-500">— create new loops</span></div>
+                      <div><code className="text-orch-400">/async-loop</code> <span className="text-gray-500">— mobile operation</span></div>
+                      <div><code className="text-orch-400">/cultivation-loop</code> <span className="text-gray-500">— gather context</span></div>
                     </div>
                   </div>
                 </div>

@@ -679,17 +679,15 @@ export class MessageFormatter {
       }
       lines.push(this.emptyLine());
 
-      // Organize loops by category
-      const loopCategories = this.categorizeLoops(event.availableLoops);
-      lines.push(this.padLine('Available loops:'));
-      for (const [category, loops] of Object.entries(loopCategories)) {
-        if (loops.length > 0) {
-          lines.push(this.padLine(`  ${category}: ${loops.join(', ')}`));
-        }
+      // Show loops compactly (short names, wrapped)
+      const shortLoops = event.availableLoops.map(l => l.replace(/-loop$/, ''));
+      lines.push(this.padLine('Loops: ' + shortLoops.slice(0, 6).join(', ')));
+      if (shortLoops.length > 6) {
+        lines.push(this.padLine('       ' + shortLoops.slice(6).join(', ')));
       }
       lines.push(this.emptyLine());
 
-      lines.push(this.padLine('Tip: Run /orchestrator-start-loop to update.'));
+      lines.push(this.padLine('Run /orchestrator-start-loop to update.'));
 
       lines.push(this.emptyLine());
       lines.push(this.border());
