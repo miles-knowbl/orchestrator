@@ -113,13 +113,20 @@ export class ExecutionEngine {
   }
 
   /**
-   * Initialize by loading active executions
+   * Initialize by loading only active/paused executions
+   * Completed/failed executions are archived and not loaded into memory
    */
   async initialize(): Promise<void> {
     await mkdir(this.options.dataPath, { recursive: true });
 
+    // Ensure archive directory exists
+    const archivePath = join(this.options.dataPath, '..', 'archived-executions');
+    await mkdir(archivePath, { recursive: true });
+
     try {
       const entries = await readdir(this.options.dataPath, { withFileTypes: true });
+      let loadedCount = 0;
+      let archivedCount = 0;
 
       for (const entry of entries) {
         if (!entry.isDirectory()) continue;
@@ -129,6 +136,14 @@ export class ExecutionEngine {
           const content = await readFile(statePath, 'utf-8');
           const execution = JSON.parse(content) as LoopExecution;
 
+          // Only load active or paused executions into memory
+          // Archive completed/failed executions on startup
+          if (execution.status === 'completed' || execution.status === 'failed') {
+            await this.archiveExecution(execution.id, execution);
+            archivedCount++;
+            continue;
+          }
+
           // Restore dates
           execution.startedAt = new Date(execution.startedAt);
           execution.updatedAt = new Date(execution.updatedAt);
@@ -137,14 +152,51 @@ export class ExecutionEngine {
           }
 
           this.executions.set(execution.id, execution);
+          loadedCount++;
         } catch {
           // Invalid or missing state file
         }
       }
 
-      this.log('info', `Loaded ${this.executions.size} active executions`);
+      this.log('info', `Loaded ${loadedCount} active executions (archived ${archivedCount} completed/failed)`);
     } catch (error) {
       this.log('warn', `Failed to load executions: ${error}`);
+    }
+  }
+
+  /**
+   * Archive a completed/failed execution by moving its state to archived-executions
+   */
+  private async archiveExecution(executionId: string, execution?: LoopExecution): Promise<void> {
+    const sourcePath = join(this.options.dataPath, executionId);
+    const archivePath = join(this.options.dataPath, '..', 'archived-executions', executionId);
+
+    try {
+      // If execution provided, save final state first
+      if (execution) {
+        await this.saveExecution(execution);
+      }
+
+      // Move directory to archive
+      await mkdir(archivePath, { recursive: true });
+      const statePath = join(sourcePath, 'state.json');
+      const archiveStatePath = join(archivePath, 'state.json');
+
+      // Copy state file to archive
+      const stateContent = await readFile(statePath, 'utf-8');
+      const { writeFile } = await import('fs/promises');
+      await writeFile(archiveStatePath, stateContent);
+
+      // Remove from active directory
+      const { rm } = await import('fs/promises');
+      await rm(sourcePath, { recursive: true, force: true });
+
+      // Remove from memory
+      this.executions.delete(executionId);
+
+      this.log('info', `Archived execution ${executionId}`);
+    } catch (err) {
+      this.log('warn', `Failed to archive execution ${executionId}: ${err}`);
     }
   }
 
@@ -581,6 +633,10 @@ export class ExecutionEngine {
       }
 
       this.log('info', `Execution ${executionId} completed`);
+
+      // Archive completed execution (move to archived-executions, remove from memory)
+      await this.archiveExecution(executionId, execution);
+
       return execution;
     }
 
@@ -755,6 +811,11 @@ export class ExecutionEngine {
               // Ignore roadmap sync errors
             }
           }
+
+          // Archive completed execution (move to archived-executions, remove from memory)
+          await this.saveExecution(execution);
+          await this.archiveExecution(executionId, execution);
+          return execution;
         }
       }
     }

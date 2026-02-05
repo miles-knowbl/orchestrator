@@ -75,7 +75,7 @@ const SearchSkillsSchema = z.object({
 export const skillToolDefinitions = [
   {
     name: 'list_skills',
-    description: 'List all indexed skills with optional filtering by phase, category, or query',
+    description: 'Listing skills — searches by phase, category, or query',
     inputSchema: {
       type: 'object',
       properties: {
@@ -106,7 +106,7 @@ export const skillToolDefinitions = [
   },
   {
     name: 'get_skill',
-    description: 'Get full skill definition including content and optionally references',
+    description: 'Loading skill — retrieves full definition with content and references',
     inputSchema: {
       type: 'object',
       properties: {
@@ -128,7 +128,7 @@ export const skillToolDefinitions = [
   },
   {
     name: 'create_skill',
-    description: 'Create a new skill definition',
+    description: 'Creating skill — drafts new skill definition',
     inputSchema: {
       type: 'object',
       properties: {
@@ -160,7 +160,7 @@ export const skillToolDefinitions = [
   },
   {
     name: 'update_skill',
-    description: 'Update a skill and create a new version',
+    description: 'Updating skill — edits content and bumps version',
     inputSchema: {
       type: 'object',
       properties: {
@@ -191,7 +191,7 @@ export const skillToolDefinitions = [
   },
   {
     name: 'skill_versions',
-    description: 'Get version history for a skill',
+    description: 'Checking skill history — retrieves version changelog',
     inputSchema: {
       type: 'object',
       properties: {
@@ -205,7 +205,7 @@ export const skillToolDefinitions = [
   },
   {
     name: 'search_skills',
-    description: 'Search skills by keyword',
+    description: 'Searching skills — finds matches by keyword',
     inputSchema: {
       type: 'object',
       properties: {
@@ -228,7 +228,7 @@ export const skillToolDefinitions = [
   },
   {
     name: 'capture_improvement',
-    description: 'Capture feedback for improving a skill',
+    description: 'Capturing improvement — records feedback for skill refinement',
     inputSchema: {
       type: 'object',
       properties: {
@@ -259,7 +259,7 @@ export const skillToolDefinitions = [
   },
   {
     name: 'get_phases',
-    description: 'Get all phases with their associated skills',
+    description: 'Checking skill phases — lists phases with associated skills',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -267,7 +267,7 @@ export const skillToolDefinitions = [
   },
   {
     name: 'refresh_index',
-    description: 'Force re-index of all skills',
+    description: 'Reindexing skills — rebuilds skill registry from disk',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -275,7 +275,7 @@ export const skillToolDefinitions = [
   },
   {
     name: 'get_skill_graph',
-    description: 'Get skill dependency graph showing relationships between skills',
+    description: 'Mapping skill dependencies — builds relationship graph between skills',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -283,7 +283,7 @@ export const skillToolDefinitions = [
   },
   {
     name: 'analyze_skill_coverage',
-    description: 'Analyze skill coverage by phase and category, identify gaps and orphan skills',
+    description: 'Analyzing skill coverage — identifies gaps and orphan skills by phase and category',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -291,7 +291,7 @@ export const skillToolDefinitions = [
   },
   {
     name: 'find_similar_skills',
-    description: 'Find skills with similar names to check for potential duplicates',
+    description: 'Finding similar skills — checks for potential duplicates by name similarity',
     inputSchema: {
       type: 'object',
       properties: {

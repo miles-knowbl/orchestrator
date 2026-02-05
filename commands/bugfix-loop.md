@@ -515,6 +515,18 @@ mcp__orchestrator__approve_gate({
 mcp__orchestrator__advance_phase({ executionId: "[stored executionId]" })
 ```
 
+### Server Resilience (CRITICAL)
+
+**If any MCP tool call fails with a connection error, DO NOT exit the loop.** Follow the retry protocol in `commands/_shared/server-resilience-protocol.md`:
+
+1. Tell the user the server connection was lost
+2. Wait 5 seconds, then retry the same call (the PreToolUse hook will restart the server)
+3. If 3 retries fail, ask the user whether to wait, skip, or stop
+4. Your executionId survives server restarts — do NOT create a new execution
+5. Continue the loop from where you left off
+
+**The loop work (debugging, writing fixes, running tests) does not require the server.** Only tracking calls need it. If the server is down, continue the work and catch up on tracking when it returns.
+
 ### Why This Matters
 
 Without MCP execution tracking:

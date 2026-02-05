@@ -23,7 +23,7 @@ export const proposingDecksTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'get_daily_review',
-    description: 'Get the daily review summary showing knowledge cards and proposals ready for review.',
+    description: 'Loading daily review — retrieves knowledge cards and proposals ready for review',
     inputSchema: {
       type: 'object',
       properties: {
@@ -36,7 +36,7 @@ export const proposingDecksTools: Tool[] = [
   },
   {
     name: 'generate_daily_decks',
-    description: 'Trigger generation of daily review decks (knowledge + proposals).',
+    description: 'Generating daily decks — creates knowledge and proposal review decks',
     inputSchema: {
       type: 'object',
       properties: {
@@ -53,7 +53,7 @@ export const proposingDecksTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'list_review_decks',
-    description: 'List review decks with optional filtering.',
+    description: 'Listing review decks — filters by status or type',
     inputSchema: {
       type: 'object',
       properties: {
@@ -76,7 +76,7 @@ export const proposingDecksTools: Tool[] = [
   },
   {
     name: 'get_review_deck',
-    description: 'Get details of a specific review deck.',
+    description: 'Loading review deck — retrieves deck details and contents',
     inputSchema: {
       type: 'object',
       properties: {
@@ -90,7 +90,7 @@ export const proposingDecksTools: Tool[] = [
   },
   {
     name: 'start_deck_review',
-    description: 'Start reviewing a deck (changes status to in-review).',
+    description: 'Starting deck review — changes status to in-review',
     inputSchema: {
       type: 'object',
       properties: {
@@ -104,7 +104,7 @@ export const proposingDecksTools: Tool[] = [
   },
   {
     name: 'complete_deck_review',
-    description: 'Complete a deck review with results.',
+    description: 'Completing deck review — records review results and decisions',
     inputSchema: {
       type: 'object',
       properties: {
@@ -134,7 +134,7 @@ export const proposingDecksTools: Tool[] = [
   },
   {
     name: 'skip_review_deck',
-    description: 'Skip reviewing a deck.',
+    description: 'Skipping deck review — marks deck as skipped with reason',
     inputSchema: {
       type: 'object',
       properties: {
@@ -156,7 +156,7 @@ export const proposingDecksTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'get_generation_schedule',
-    description: 'Get the automatic deck generation schedule.',
+    description: 'Checking deck schedule — retrieves auto-generation timing',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -164,7 +164,7 @@ export const proposingDecksTools: Tool[] = [
   },
   {
     name: 'configure_generation_schedule',
-    description: 'Configure automatic deck generation schedule.',
+    description: 'Configuring deck schedule — updates auto-generation settings',
     inputSchema: {
       type: 'object',
       properties: {
@@ -189,7 +189,7 @@ export const proposingDecksTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'get_proposing_decks_stats',
-    description: 'Get statistics about deck generation and review habits.',
+    description: 'Checking deck statistics — retrieves generation and review metrics',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -197,7 +197,7 @@ export const proposingDecksTools: Tool[] = [
   },
   {
     name: 'get_deck_review_history',
-    description: 'Get history of completed deck reviews.',
+    description: 'Loading deck review history — retrieves past review results',
     inputSchema: {
       type: 'object',
       properties: {
@@ -214,7 +214,7 @@ export const proposingDecksTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'get_morning_review_view',
-    description: 'Get a terminal-friendly view of what to review this morning.',
+    description: 'Visualizing morning review — generates terminal-friendly review summary',
     inputSchema: {
       type: 'object',
       properties: {},

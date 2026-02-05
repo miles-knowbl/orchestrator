@@ -13,7 +13,7 @@ export const loopSequencingTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'analyze_loop_history',
-    description: 'Analyze run archives to detect loop co-occurrence patterns and transitions.',
+    description: 'Analyzing loop sequences — detects co-occurrence patterns and transitions',
     inputSchema: {
       type: 'object',
       properties: {
@@ -30,7 +30,7 @@ export const loopSequencingTools: Tool[] = [
   },
   {
     name: 'get_sequence_analysis',
-    description: 'Get the results of the last sequence analysis.',
+    description: 'Loading sequence analysis — retrieves last detection results',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -42,7 +42,7 @@ export const loopSequencingTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'list_loop_transitions',
-    description: 'List recorded loop-to-loop transitions with statistics.',
+    description: 'Listing loop transitions — shows recorded transitions with statistics',
     inputSchema: {
       type: 'object',
       properties: {
@@ -59,7 +59,7 @@ export const loopSequencingTools: Tool[] = [
   },
   {
     name: 'get_loop_transition',
-    description: 'Get details of a specific loop-to-loop transition.',
+    description: 'Loading loop transition — retrieves transition details and frequency',
     inputSchema: {
       type: 'object',
       properties: {
@@ -81,7 +81,7 @@ export const loopSequencingTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'list_loop_sequences',
-    description: 'List recorded multi-loop sequences.',
+    description: 'Listing loop sequences — shows recorded multi-loop patterns',
     inputSchema: {
       type: 'object',
       properties: {
@@ -98,7 +98,7 @@ export const loopSequencingTools: Tool[] = [
   },
   {
     name: 'get_loop_sequence',
-    description: 'Get details of a specific loop sequence.',
+    description: 'Loading loop sequence — retrieves sequence details',
     inputSchema: {
       type: 'object',
       properties: {
@@ -116,7 +116,7 @@ export const loopSequencingTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'generate_line',
-    description: 'Generate a multi-move line (plan) based on historical patterns and leverage.',
+    description: 'Generating multi-move line — plans loop sequence based on history and leverage',
     inputSchema: {
       type: 'object',
       properties: {
@@ -137,7 +137,7 @@ export const loopSequencingTools: Tool[] = [
   },
   {
     name: 'list_generated_lines',
-    description: 'List previously generated multi-move lines.',
+    description: 'Listing multi-move lines — shows previously generated plans',
     inputSchema: {
       type: 'object',
       properties: {
@@ -150,7 +150,7 @@ export const loopSequencingTools: Tool[] = [
   },
   {
     name: 'get_generated_line',
-    description: 'Get details of a specific generated line.',
+    description: 'Loading multi-move line — retrieves plan details',
     inputSchema: {
       type: 'object',
       properties: {
@@ -168,7 +168,7 @@ export const loopSequencingTools: Tool[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     name: 'get_sequencing_status',
-    description: 'Get current status of the loop sequencing service.',
+    description: 'Checking sequencing status — retrieves loop sequencing service state',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -176,7 +176,7 @@ export const loopSequencingTools: Tool[] = [
   },
   {
     name: 'get_sequencing_terminal_view',
-    description: 'Get a terminal-friendly view of loop sequencing status.',
+    description: 'Visualizing loop sequences — generates terminal-friendly display',
     inputSchema: {
       type: 'object',
       properties: {},

@@ -10,7 +10,7 @@ import type { AutonomousExecutor } from '../services/autonomous/index.js';
 export const autonomousTools: Tool[] = [
   {
     name: 'start_autonomous',
-    description: 'Start the autonomous background executor. Begins processing executions with autonomy=full.',
+    description: 'Starting autonomous executor — begins processing executions with full autonomy',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -18,7 +18,7 @@ export const autonomousTools: Tool[] = [
   },
   {
     name: 'stop_autonomous',
-    description: 'Stop the autonomous background executor. Active executions continue but no new ticks are processed.',
+    description: 'Stopping autonomous executor — halts tick processing',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -26,7 +26,7 @@ export const autonomousTools: Tool[] = [
   },
   {
     name: 'pause_autonomous',
-    description: 'Pause autonomous execution. Can be resumed later.',
+    description: 'Pausing autonomous executor — suspends, can be resumed later',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -34,7 +34,7 @@ export const autonomousTools: Tool[] = [
   },
   {
     name: 'resume_autonomous',
-    description: 'Resume paused autonomous execution.',
+    description: 'Resuming autonomous executor — continues paused processing',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -42,7 +42,7 @@ export const autonomousTools: Tool[] = [
   },
   {
     name: 'get_autonomous_status',
-    description: 'Get current status of the autonomous executor',
+    description: 'Checking autonomous status — retrieves executor state and configuration',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -50,7 +50,7 @@ export const autonomousTools: Tool[] = [
   },
   {
     name: 'configure_autonomous',
-    description: 'Update autonomous executor configuration',
+    description: 'Updating autonomous config — changes executor settings',
     inputSchema: {
       type: 'object',
       properties: {
@@ -71,7 +71,7 @@ export const autonomousTools: Tool[] = [
   },
   {
     name: 'run_autonomous_tick',
-    description: 'Manually run a single autonomous tick. Useful for testing or one-off processing.',
+    description: 'Running autonomous tick — manually triggers one processing cycle',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -79,7 +79,7 @@ export const autonomousTools: Tool[] = [
   },
   {
     name: 'list_autonomous_executions',
-    description: 'List all executions currently running in autonomous mode',
+    description: 'Listing autonomous executions — shows runs in autonomous mode',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -87,7 +87,7 @@ export const autonomousTools: Tool[] = [
   },
   {
     name: 'check_gate_auto_approval',
-    description: 'Check if a gate can be auto-approved based on autonomy level and approval type',
+    description: 'Checking gate auto-approval — evaluates autonomy level and approval type',
     inputSchema: {
       type: 'object',
       properties: {

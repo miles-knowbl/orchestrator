@@ -1,137 +1,189 @@
 /**
  * MCP Tool definitions for roadmap operations
+ *
+ * Project-agnostic: All tools accept a projectPath parameter to scope
+ * roadmap operations to a specific project's .claude/ directory.
+ * This ensures each project has its own roadmap (blank slate for new projects).
  */
 
 import { z } from 'zod';
+import { join } from 'path';
 import type { RoadmapService, ModuleStatus } from '../services/roadmapping/index.js';
+import { RoadmapService as RoadmapServiceClass } from '../services/roadmapping/index.js';
+
+// Cache of project-scoped RoadmapService instances
+const projectServices = new Map<string, RoadmapService>();
+
+/**
+ * Get or create a RoadmapService for a specific project path
+ */
+async function getProjectRoadmapService(projectPath: string): Promise<RoadmapService> {
+  const cached = projectServices.get(projectPath);
+  if (cached) {
+    return cached;
+  }
+
+  const service = new RoadmapServiceClass({
+    roadmapPath: join(projectPath, 'ROADMAP.md'),
+    statePath: join(projectPath, '.claude', 'roadmap.json'),
+  });
+
+  try {
+    await service.load();
+  } catch {
+    // Roadmap doesn't exist yet - that's fine, it's a blank slate
+  }
+
+  projectServices.set(projectPath, service);
+  return service;
+}
 
 // Zod schemas
 const ModuleStatusSchema = z.enum(['pending', 'in-progress', 'complete', 'blocked']);
 
-const GetRoadmapSchema = z.object({});
+const ProjectPathSchema = z.object({
+  projectPath: z.string().min(1).describe('Absolute path to the target project directory'),
+});
 
-const GetProgressSchema = z.object({});
+const GetRoadmapSchema = ProjectPathSchema;
 
-const GetModuleSchema = z.object({
+const GetProgressSchema = ProjectPathSchema;
+
+const GetModuleSchema = ProjectPathSchema.extend({
   moduleId: z.string().min(1),
 });
 
-const GetModulesByLayerSchema = z.object({
+const GetModulesByLayerSchema = ProjectPathSchema.extend({
   layer: z.number().min(0).max(6),
 });
 
-const UpdateModuleStatusSchema = z.object({
+const UpdateModuleStatusSchema = ProjectPathSchema.extend({
   moduleId: z.string().min(1),
   status: ModuleStatusSchema,
 });
 
-const SetCurrentModuleSchema = z.object({
+const SetCurrentModuleSchema = ProjectPathSchema.extend({
   moduleId: z.string().min(1),
 });
 
-const GetNextModuleSchema = z.object({});
+const GetNextModuleSchema = ProjectPathSchema;
 
-const GetLeverageScoresSchema = z.object({});
+const GetLeverageScoresSchema = ProjectPathSchema;
 
-const GetTerminalViewSchema = z.object({});
+const GetTerminalViewSchema = ProjectPathSchema;
 
 export interface RoadmapToolsOptions {
-  roadmapService: RoadmapService;
+  roadmapService?: RoadmapService; // Optional legacy global service (deprecated)
 }
 
-export function createRoadmapTools(options: RoadmapToolsOptions) {
-  const { roadmapService } = options;
+export function createRoadmapTools(options: RoadmapToolsOptions = {}) {
+  // Legacy global service is now optional and deprecated
+  const legacyService = options.roadmapService;
 
   return {
     tools: [
       {
         name: 'get_roadmap',
-        description: 'Get the full roadmap with all modules, layers, and current status',
+        description: 'Loading roadmap — retrieves modules, layers, and current status',
         inputSchema: {
           type: 'object' as const,
-          properties: {},
-          required: [],
+          properties: {
+            projectPath: { type: 'string', description: 'Absolute path to the target project directory' },
+          },
+          required: ['projectPath'],
         },
       },
       {
         name: 'get_roadmap_progress',
-        description: 'Get progress summary including per-layer progress, current module, and next available modules',
+        description: 'Checking roadmap progress — retrieves per-layer progress and next modules',
         inputSchema: {
           type: 'object' as const,
-          properties: {},
-          required: [],
+          properties: {
+            projectPath: { type: 'string', description: 'Absolute path to the target project directory' },
+          },
+          required: ['projectPath'],
         },
       },
       {
         name: 'get_roadmap_module',
-        description: 'Get details about a specific module by ID',
+        description: 'Loading module — retrieves details by ID',
         inputSchema: {
           type: 'object' as const,
           properties: {
+            projectPath: { type: 'string', description: 'Absolute path to the target project directory' },
             moduleId: { type: 'string', description: 'The module ID (lowercase, hyphenated)' },
           },
-          required: ['moduleId'],
+          required: ['projectPath', 'moduleId'],
         },
       },
       {
         name: 'get_modules_by_layer',
-        description: 'Get all modules in a specific layer (0-6)',
+        description: 'Listing layer modules — retrieves modules for a specific layer',
         inputSchema: {
           type: 'object' as const,
           properties: {
+            projectPath: { type: 'string', description: 'Absolute path to the target project directory' },
             layer: { type: 'number', description: 'Layer number (0-6)' },
           },
-          required: ['layer'],
+          required: ['projectPath', 'layer'],
         },
       },
       {
         name: 'update_module_status',
-        description: 'Update the status of a module (pending, in-progress, complete, blocked)',
+        description: 'Updating module status — changes to pending, in-progress, complete, or blocked',
         inputSchema: {
           type: 'object' as const,
           properties: {
+            projectPath: { type: 'string', description: 'Absolute path to the target project directory' },
             moduleId: { type: 'string', description: 'The module ID' },
             status: { type: 'string', enum: ['pending', 'in-progress', 'complete', 'blocked'], description: 'New status' },
           },
-          required: ['moduleId', 'status'],
+          required: ['projectPath', 'moduleId', 'status'],
         },
       },
       {
         name: 'set_current_module',
-        description: 'Set the current active module being worked on',
+        description: 'Setting active module — marks module as currently being worked on',
         inputSchema: {
           type: 'object' as const,
           properties: {
+            projectPath: { type: 'string', description: 'Absolute path to the target project directory' },
             moduleId: { type: 'string', description: 'The module ID to set as current' },
           },
-          required: ['moduleId'],
+          required: ['projectPath', 'moduleId'],
         },
       },
       {
         name: 'get_next_module',
-        description: 'Get the next highest leverage module to work on based on the leverage protocol',
+        description: 'Finding next module — identifies highest leverage work via leverage protocol',
         inputSchema: {
           type: 'object' as const,
-          properties: {},
-          required: [],
+          properties: {
+            projectPath: { type: 'string', description: 'Absolute path to the target project directory' },
+          },
+          required: ['projectPath'],
         },
       },
       {
         name: 'get_leverage_scores',
-        description: 'Get leverage scores for all available modules, ranked by value',
+        description: 'Scoring module leverage — ranks all available modules by value',
         inputSchema: {
           type: 'object' as const,
-          properties: {},
-          required: [],
+          properties: {
+            projectPath: { type: 'string', description: 'Absolute path to the target project directory' },
+          },
+          required: ['projectPath'],
         },
       },
       {
         name: 'render_roadmap_terminal',
-        description: 'Get a terminal-friendly visualization of the roadmap with progress',
+        description: 'Visualizing roadmap — generates terminal-friendly progress display',
         inputSchema: {
           type: 'object' as const,
-          properties: {},
-          required: [],
+          properties: {
+            projectPath: { type: 'string', description: 'Absolute path to the target project directory' },
+          },
+          required: ['projectPath'],
         },
       },
     ],
@@ -140,12 +192,28 @@ export function createRoadmapTools(options: RoadmapToolsOptions) {
       try {
         switch (name) {
           case 'get_roadmap': {
-            GetRoadmapSchema.parse(args);
+            const { projectPath } = GetRoadmapSchema.parse(args);
+            const roadmapService = await getProjectRoadmapService(projectPath);
+
+            if (!roadmapService.isLoaded()) {
+              return {
+                content: [{
+                  type: 'text',
+                  text: JSON.stringify({
+                    projectPath,
+                    status: 'no_roadmap',
+                    message: `No roadmap found for project at ${projectPath}. Create one by adding a ROADMAP.md or using module planning tools.`,
+                  }, null, 2),
+                }],
+              };
+            }
+
             const roadmap = roadmapService.getRoadmap();
             return {
               content: [{
                 type: 'text',
                 text: JSON.stringify({
+                  projectPath,
                   system: roadmap.system,
                   dreamState: roadmap.dreamState,
                   moduleCount: roadmap.modules.length,
@@ -160,39 +228,86 @@ export function createRoadmapTools(options: RoadmapToolsOptions) {
           }
 
           case 'get_roadmap_progress': {
-            GetProgressSchema.parse(args);
+            const { projectPath } = GetProgressSchema.parse(args);
+            const roadmapService = await getProjectRoadmapService(projectPath);
+
+            if (!roadmapService.isLoaded()) {
+              return {
+                content: [{
+                  type: 'text',
+                  text: JSON.stringify({
+                    projectPath,
+                    status: 'no_roadmap',
+                    message: `No roadmap found for project at ${projectPath}.`,
+                  }, null, 2),
+                }],
+              };
+            }
+
             const progress = roadmapService.getProgress();
             return {
               content: [{
                 type: 'text',
-                text: JSON.stringify(progress, null, 2),
+                text: JSON.stringify({ projectPath, ...progress }, null, 2),
               }],
             };
           }
 
           case 'get_roadmap_module': {
-            const { moduleId } = GetModuleSchema.parse(args);
+            const { projectPath, moduleId } = GetModuleSchema.parse(args);
+            const roadmapService = await getProjectRoadmapService(projectPath);
+
+            if (!roadmapService.isLoaded()) {
+              return {
+                content: [{
+                  type: 'text',
+                  text: JSON.stringify({
+                    projectPath,
+                    status: 'no_roadmap',
+                    message: `No roadmap found for project at ${projectPath}.`,
+                  }, null, 2),
+                }],
+              };
+            }
+
             const module = roadmapService.getModule(moduleId);
             if (!module) {
               return {
-                content: [{ type: 'text', text: `Module not found: ${moduleId}` }],
+                content: [{ type: 'text', text: JSON.stringify({ error: `Module not found: ${moduleId}` }) }],
               };
             }
             return {
               content: [{
                 type: 'text',
-                text: JSON.stringify(module, null, 2),
+                text: JSON.stringify({ projectPath, ...module }, null, 2),
               }],
             };
           }
 
           case 'get_modules_by_layer': {
-            const { layer } = GetModulesByLayerSchema.parse(args);
+            const { projectPath, layer } = GetModulesByLayerSchema.parse(args);
+            const roadmapService = await getProjectRoadmapService(projectPath);
+
+            if (!roadmapService.isLoaded()) {
+              return {
+                content: [{
+                  type: 'text',
+                  text: JSON.stringify({
+                    projectPath,
+                    status: 'no_roadmap',
+                    layer,
+                    modules: [],
+                  }, null, 2),
+                }],
+              };
+            }
+
             const modules = roadmapService.getModulesByLayer(layer);
             return {
               content: [{
                 type: 'text',
                 text: JSON.stringify({
+                  projectPath,
                   layer,
                   count: modules.length,
                   modules,
@@ -202,13 +317,27 @@ export function createRoadmapTools(options: RoadmapToolsOptions) {
           }
 
           case 'update_module_status': {
-            const { moduleId, status } = UpdateModuleStatusSchema.parse(args);
+            const { projectPath, moduleId, status } = UpdateModuleStatusSchema.parse(args);
+            const roadmapService = await getProjectRoadmapService(projectPath);
+
+            if (!roadmapService.isLoaded()) {
+              return {
+                content: [{
+                  type: 'text',
+                  text: JSON.stringify({
+                    error: `No roadmap found for project at ${projectPath}. Cannot update module status.`,
+                  }, null, 2),
+                }],
+              };
+            }
+
             const module = await roadmapService.updateModuleStatus(moduleId, status as ModuleStatus);
             return {
               content: [{
                 type: 'text',
                 text: JSON.stringify({
                   success: true,
+                  projectPath,
                   module,
                 }, null, 2),
               }],
@@ -216,13 +345,27 @@ export function createRoadmapTools(options: RoadmapToolsOptions) {
           }
 
           case 'set_current_module': {
-            const { moduleId } = SetCurrentModuleSchema.parse(args);
+            const { projectPath, moduleId } = SetCurrentModuleSchema.parse(args);
+            const roadmapService = await getProjectRoadmapService(projectPath);
+
+            if (!roadmapService.isLoaded()) {
+              return {
+                content: [{
+                  type: 'text',
+                  text: JSON.stringify({
+                    error: `No roadmap found for project at ${projectPath}. Cannot set current module.`,
+                  }, null, 2),
+                }],
+              };
+            }
+
             await roadmapService.setCurrentModule(moduleId);
             return {
               content: [{
                 type: 'text',
                 text: JSON.stringify({
                   success: true,
+                  projectPath,
                   currentModule: moduleId,
                 }, null, 2),
               }],
@@ -230,13 +373,30 @@ export function createRoadmapTools(options: RoadmapToolsOptions) {
           }
 
           case 'get_next_module': {
-            GetNextModuleSchema.parse(args);
+            const { projectPath } = GetNextModuleSchema.parse(args);
+            const roadmapService = await getProjectRoadmapService(projectPath);
+
+            if (!roadmapService.isLoaded()) {
+              return {
+                content: [{
+                  type: 'text',
+                  text: JSON.stringify({
+                    projectPath,
+                    status: 'no_roadmap',
+                    message: `No roadmap found for project at ${projectPath}.`,
+                    next: null,
+                  }, null, 2),
+                }],
+              };
+            }
+
             const next = roadmapService.getNextHighestLeverageModule();
             if (!next) {
               return {
                 content: [{
                   type: 'text',
                   text: JSON.stringify({
+                    projectPath,
                     message: 'No available modules (all complete or blocked)',
                     next: null,
                   }, null, 2),
@@ -247,6 +407,7 @@ export function createRoadmapTools(options: RoadmapToolsOptions) {
               content: [{
                 type: 'text',
                 text: JSON.stringify({
+                  projectPath,
                   next,
                   reasoning: `${next.moduleName} has the highest leverage score (${next.score}) based on dream state alignment, downstream unlock, and likelihood of completion.`,
                 }, null, 2),
@@ -255,12 +416,28 @@ export function createRoadmapTools(options: RoadmapToolsOptions) {
           }
 
           case 'get_leverage_scores': {
-            GetLeverageScoresSchema.parse(args);
+            const { projectPath } = GetLeverageScoresSchema.parse(args);
+            const roadmapService = await getProjectRoadmapService(projectPath);
+
+            if (!roadmapService.isLoaded()) {
+              return {
+                content: [{
+                  type: 'text',
+                  text: JSON.stringify({
+                    projectPath,
+                    status: 'no_roadmap',
+                    scores: [],
+                  }, null, 2),
+                }],
+              };
+            }
+
             const scores = roadmapService.calculateLeverageScores();
             return {
               content: [{
                 type: 'text',
                 text: JSON.stringify({
+                  projectPath,
                   count: scores.length,
                   scores,
                 }, null, 2),
@@ -269,12 +446,23 @@ export function createRoadmapTools(options: RoadmapToolsOptions) {
           }
 
           case 'render_roadmap_terminal': {
-            GetTerminalViewSchema.parse(args);
+            const { projectPath } = GetTerminalViewSchema.parse(args);
+            const roadmapService = await getProjectRoadmapService(projectPath);
+
+            if (!roadmapService.isLoaded()) {
+              return {
+                content: [{
+                  type: 'text',
+                  text: `No roadmap found for project at ${projectPath}.\n\nTo create a roadmap, add a ROADMAP.md file or use module planning tools.`,
+                }],
+              };
+            }
+
             const terminal = roadmapService.generateTerminalView();
             return {
               content: [{
                 type: 'text',
-                text: terminal,
+                text: `Project: ${projectPath}\n\n${terminal}`,
               }],
             };
           }

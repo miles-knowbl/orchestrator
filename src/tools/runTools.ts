@@ -34,7 +34,7 @@ const GetRecentContextSchema = z.object({
 export const runToolDefinitions = [
   {
     name: 'query_runs',
-    description: 'Query archived loop runs with filters. Use this to find past executions for context, learning, or analysis.',
+    description: 'Querying run archives — searches past executions with filters',
     inputSchema: {
       type: 'object',
       properties: {
@@ -76,7 +76,7 @@ export const runToolDefinitions = [
   },
   {
     name: 'archive_run',
-    description: 'Archive a completed loop run. Call this when a loop reaches COMPLETE phase to save the run and optionally prune the active state file.',
+    description: 'Archiving run — saves completed loop execution and optionally prunes active state',
     inputSchema: {
       type: 'object',
       properties: {
@@ -99,7 +99,7 @@ export const runToolDefinitions = [
   },
   {
     name: 'get_recent_context',
-    description: 'Get recent runs for a system to inject as context for new loops. Returns summaries of the last N runs.',
+    description: 'Loading recent runs — retrieves last N runs for context injection',
     inputSchema: {
       type: 'object',
       properties: {

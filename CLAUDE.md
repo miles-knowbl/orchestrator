@@ -121,7 +121,7 @@ Design principles:
 - `apps/` - Generated applications
   - `dashboard/` - Real-time monitoring UI (deployed to Vercel, not used in local dev)
 
-## MCP Tools (54+ tools)
+## MCP Tools (266 tools across 26 modules)
 
 ### Skill Tools
 | Tool | Purpose |
@@ -195,15 +195,19 @@ Design principles:
 
 ## Available Loops
 
-### Engineering Loop (engineering-loop)
-Complete engineering workflow with 9 phases:
-INIT → SCAFFOLD → IMPLEMENT → TEST → VERIFY → VALIDATE → DOCUMENT → REVIEW → SHIP
-
-Gates after: SCAFFOLD, IMPLEMENT, TEST, VALIDATE, DOCUMENT, REVIEW
-
-### Proposal Loop (proposal-loop)
-Proposal generation with 4 phases:
-INIT → SCAFFOLD → IMPLEMENT → COMPLETE
+| Loop | Phases | Purpose |
+|------|--------|---------|
+| `engineering-loop` | INIT → SCAFFOLD → IMPLEMENT → TEST → VERIFY → VALIDATE → DOCUMENT → REVIEW → SHIP | Full engineering workflow with quality gates |
+| `bugfix-loop` | INIT → DIAGNOSE → IMPLEMENT → TEST → VERIFY → COMPLETE | Bug diagnosis and fix with verification |
+| `proposal-loop` | INIT → SCAFFOLD → IMPLEMENT → COMPLETE | Proposal generation |
+| `learning-loop` | INIT → REVIEW → ANALYZE → IMPROVE → COMPLETE | Review runs and improve skills |
+| `meta-loop` | INIT → SCAFFOLD → IMPLEMENT → COMPLETE | Create new loops and skills |
+| `distribution-loop` | INIT → SCAFFOLD → IMPLEMENT → VERIFY → COMPLETE | Build, test, deploy |
+| `audit-loop` | INIT → SCAN → ANALYZE → REPORT → COMPLETE | Systematic audits |
+| `deck-loop` | INIT → SCAFFOLD → IMPLEMENT → COMPLETE | Generate review decks |
+| `dream-loop` | INIT → DREAM → REVIEW → COMPLETE | Background dreaming proposals |
+| `infrastructure-loop` | INIT → SCAFFOLD → IMPLEMENT → TEST → COMPLETE | Infrastructure changes |
+| `transpose-loop` | INIT → SCAFFOLD → IMPLEMENT → COMPLETE | Transform content between formats |
 
 ## Workflow Example
 
