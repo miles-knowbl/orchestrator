@@ -170,9 +170,13 @@ cat ~/.claude/orchestrator.json
 ### MCP not connecting
 
 ```bash
-# Verify the config exists
-cat ~/.claude/mcp.json
-# Should show: "orchestrator": { "type": "http", "url": "http://localhost:3002/mcp" }
+# Check if orchestrator is registered
+claude mcp list
+# Should show: orchestrator: http://localhost:3002/mcp (HTTP) - ✓ Connected
+
+# If not listed, register it:
+claude mcp add --transport http --scope user orchestrator http://localhost:3002/mcp
+# Then restart Claude Code
 
 # Verify server is running
 curl http://localhost:3002/health
