@@ -222,13 +222,14 @@ export default function DistributePage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5 text-sm">
                       <div><code className="text-orch-400">/engineering-loop</code> <span className="text-gray-500">— build features</span></div>
                       <div><code className="text-orch-400">/bugfix-loop</code> <span className="text-gray-500">— fix bugs</span></div>
-                      <div><code className="text-orch-400">/distribution-loop</code> <span className="text-gray-500">— ship to production</span></div>
-                      <div><code className="text-orch-400">/learning-loop</code> <span className="text-gray-500">— improve skills</span></div>
-                      <div><code className="text-orch-400">/audit-loop</code> <span className="text-gray-500">— system audits</span></div>
-                      <div><code className="text-orch-400">/transpose-loop</code> <span className="text-gray-500">— transpose architecture</span></div>
-                      <div><code className="text-orch-400">/infra-loop</code> <span className="text-gray-500">— infrastructure setup</span></div>
+                      <div><code className="text-orch-400">/distribution-loop</code> <span className="text-gray-500">— ship code</span></div>
                       <div><code className="text-orch-400">/proposal-loop</code> <span className="text-gray-500">— write proposals</span></div>
+                      <div><code className="text-orch-400">/audit-loop</code> <span className="text-gray-500">— system audits</span></div>
+                      <div><code className="text-orch-400">/dream-loop</code> <span className="text-gray-500">— define vision</span></div>
+                      <div><code className="text-orch-400">/learning-loop</code> <span className="text-gray-500">— improve skills</span></div>
+                      <div><code className="text-orch-400">/infra-loop</code> <span className="text-gray-500">— infrastructure</span></div>
                       <div><code className="text-orch-400">/deck-loop</code> <span className="text-gray-500">— slide decks</span></div>
+                      <div><code className="text-orch-400">/transpose-loop</code> <span className="text-gray-500">— port to new stack</span></div>
                       <div><code className="text-orch-400">/meta-loop</code> <span className="text-gray-500">— create new loops</span></div>
                     </div>
                   </div>

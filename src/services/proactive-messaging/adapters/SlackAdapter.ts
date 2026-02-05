@@ -193,12 +193,11 @@ export class SlackAdapter implements ChannelAdapter {
    * Supports: go, loops, skip, status, approve, feedback
    */
   private parseNaturalLanguage(text: string): { command: InboundCommand | null; feedback: string | null } {
-    // Available loops
+    // Available loops (matching loops/ directory)
     const loops = [
-      'engineering-loop', 'bugfix-loop', 'learning-loop', 'dream-loop',
-      'proposal-loop', 'distribution-loop', 'infrastructure-loop',
-      'deck-loop', 'audit-loop', 'transpose-loop', 'meta-loop',
-      'sales-loop', 'ops-loop'
+      'engineering-loop', 'bugfix-loop', 'distribution-loop', 'proposal-loop',
+      'audit-loop', 'dream-loop', 'learning-loop', 'infrastructure-loop',
+      'deck-loop', 'transpose-loop', 'loop-composer', 'async-loop', 'cultivation-loop'
     ];
 
     // Normalize: remove hyphens for matching

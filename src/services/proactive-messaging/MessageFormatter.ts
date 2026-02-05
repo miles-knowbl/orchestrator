@@ -1097,13 +1097,11 @@ export class MessageFormatter {
     const categories: Record<string, string[]> = {
       'Build': [],
       'Plan': [],
-      'Sales': [],
       'Other': [],
     };
 
-    const buildLoops = ['engineering', 'bugfix', 'distribution', 'infra', 'infrastructure'];
-    const planLoops = ['dream', 'learning', 'audit', 'proposal', 'async', 'transpose', 'meta'];
-    const salesLoops = ['champion', 'close-prep', 'cultivation', 'deal-intake', 'deal-review', 'discovery', 'pipeline', 'intelligence'];
+    const buildLoops = ['engineering', 'bugfix', 'distribution', 'infra', 'infrastructure', 'deck'];
+    const planLoops = ['dream', 'learning', 'audit', 'proposal', 'async', 'transpose', 'meta', 'cultivation', 'loop-composer'];
 
     for (const loop of loops) {
       const base = loop.replace(/-loop$/, '');
@@ -1112,8 +1110,6 @@ export class MessageFormatter {
         categories['Build'].push(loop);
       } else if (planLoops.some(p => base.includes(p))) {
         categories['Plan'].push(loop);
-      } else if (salesLoops.some(s => base.includes(s))) {
-        categories['Sales'].push(loop);
       } else {
         categories['Other'].push(loop);
       }

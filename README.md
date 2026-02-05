@@ -83,6 +83,7 @@ Just use Claude Code normally. The server **starts automatically** when you run 
 | `/distribution-loop` | Ship code: verify → commit → push → deploy to all targets |
 | `/proposal-loop` | Write proposals: research → structure → draft → evidence |
 | `/audit-loop` | System audit: scan → analyze → prioritize findings (read-only) |
+| `/dream-loop` | Define what "done" looks like at any tier of the hierarchy |
 | `/learning-loop` | Improve skills: review past work → identify patterns → update skills |
 | `/infra-loop` | Setup infrastructure: CI/CD, databases, environments |
 | `/deck-loop` | Generate slide decks from context and brand assets |
