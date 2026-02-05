@@ -97,8 +97,8 @@
       "afterPhase": "TRIAGE",
       "required": true,
       "approvalType": "human",
-      "deliverables": ["TRIAGE.md"],
-      "description": "Review MoSCoW prioritization. Confirm Must/Should/Could/Won't before fixing."
+      "deliverables": ["TRIAGE.md", "CHECKLIST-TO-DONE.md"],
+      "description": "Review MoSCoW prioritization and checklist to done. Confirm Must/Should/Could/Won't before fixing."
     },
     {
       "id": "verification-gate",

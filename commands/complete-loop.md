@@ -211,6 +211,47 @@ Apply the MoSCoW framework to everything found in CATALOG.
 | 6 | Instagram integration | Platform expansion — next release |
 ```
 
+### CHECKLIST-TO-DONE.md Format
+
+Generated from TRIAGE.md, this is the single artifact that answers **"what's left?"** — a flat, checkable list ordered by priority. Updated live during the FIX phase as items are completed.
+
+```markdown
+# Checklist to Done
+
+**App:** [name]
+**Iteration:** [N]
+**Generated:** [ISO date]
+**Status:** [X]/[total] complete
+
+## Must Have
+
+- [ ] #1 Password reset link 404s (auth) [S]
+- [ ] #2 Invoice total calculation wrong (billing) [M]
+- [ ] #3 Webhook handler 500s on refunds (payments) [M]
+
+## Should Have
+
+- [ ] #4 Avatar upload fails silently (profile) [S]
+- [ ] #5 No loading state on generation (content) [S]
+- [ ] #6 Search returns stale results (search) [M]
+
+## Could Have (stretch)
+
+- [ ] #7 Dark mode toggle (settings) [M]
+- [ ] #8 Keyboard shortcut help (ui) [S]
+
+---
+
+**Legend:** [S] = Small, [M] = Medium, [L] = Large
+**Updated:** [ISO date] — [X] items fixed this iteration
+```
+
+**Key properties:**
+- **Flat list** — no nested tables, just checkboxes. Easy to scan in 5 seconds.
+- **Ordered by MoSCoW** — Must first, then Should, then Could. Won't items are excluded (deferred).
+- **Updated during FIX** — Check items off as they're fixed. This is the living progress tracker.
+- **Numbers match TRIAGE.md** — Item #4 in the checklist maps to item #4 in the full triage document.
+
 ### Gate: triage-gate [HUMAN]
 
 ```
@@ -270,7 +311,7 @@ For each item in Must, then Should:
 - **One fix at a time.** Commit each fix separately.
 - **No refactoring** beyond what's needed for the fix.
 - **If a fix takes >30min**, stop and re-evaluate — it might be a Should, not a Must.
-- **Track progress** against the TRIAGE.md checklist.
+- **Check off items** in CHECKLIST-TO-DONE.md as each fix lands.
 
 ---
 
@@ -470,8 +511,8 @@ ARCHIVE_DIR=~/.claude/runs/$(date +%Y-%m)/${PROJECT}-complete-loop-$(date +%Y%m%
 mkdir -p "$ARCHIVE_DIR"
 
 mv complete-state.json "$ARCHIVE_DIR/" 2>/dev/null || true
-cp COMPLETION-MANIFEST.md TRIAGE.md BUG-BACKLOG.md SMOKE-TEST.md \
-   PIPELINE-MAP.md FAILURE-MODES.md RETROSPECTIVE.md \
+cp COMPLETION-MANIFEST.md TRIAGE.md CHECKLIST-TO-DONE.md BUG-BACKLOG.md \
+   SMOKE-TEST.md PIPELINE-MAP.md FAILURE-MODES.md RETROSPECTIVE.md \
    "$ARCHIVE_DIR/" 2>/dev/null || true
 ```
 
@@ -487,8 +528,8 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 ### 3. Clean Project Directory
 
 ```bash
-rm -f COMPLETION-MANIFEST.md TRIAGE.md BUG-BACKLOG.md SMOKE-TEST.md \
-      PIPELINE-MAP.md FAILURE-MODES.md RETROSPECTIVE.md \
+rm -f COMPLETION-MANIFEST.md TRIAGE.md CHECKLIST-TO-DONE.md BUG-BACKLOG.md \
+      SMOKE-TEST.md PIPELINE-MAP.md FAILURE-MODES.md RETROSPECTIVE.md \
       complete-state.json 2>/dev/null || true
 ```
 

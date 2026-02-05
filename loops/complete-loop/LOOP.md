@@ -124,6 +124,7 @@ Re-run everything from CATALOG to confirm fixes landed and nothing new broke.
 | `PIPELINE-MAP.md` | CATALOG | Backend + UI pipeline documentation |
 | `SMOKE-TEST.md` | CATALOG | Pass/fail per feature endpoint |
 | `TRIAGE.md` | TRIAGE | MoSCoW prioritized fix list |
+| `CHECKLIST-TO-DONE.md` | TRIAGE→FIX | Single checkable list — the answer to "what's left?" |
 | `FAILURE-MODES.md` | TRIAGE | MECE failure mode taxonomy |
 | `CHANGELOG.md` | SHIP | What changed |
 | `RETROSPECTIVE.md` | COMPLETE | Learnings and patterns |
