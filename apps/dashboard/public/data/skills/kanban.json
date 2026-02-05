@@ -1,0 +1,17 @@
+{
+  "id": "kanban",
+  "name": "kanban",
+  "version": "1.0.0",
+  "description": "Linear-style visualization of the module ladder to system completion. Dashboard for tracking roadmap progress across all 7 layers.",
+  "phase": "COMPLETE",
+  "category": "operations",
+  "content": "# Kanban Skill\n\n> Linear-style visualization of the module ladder to system completion\n\n## Overview\n\nThe kanban module provides a visual dashboard for tracking roadmap progress across all 7 layers of the system. It displays module status, dependencies, leverage scores, and critical path information in a human-readable format suitable for both monitoring and delegation.\n\n## Architecture\n\n### Dashboard Component\n\nLocated at `apps/dashboard/app/roadmap/page.tsx`, the kanban view:\n\n- Fetches data from `/api/roadmap/progress` and `/api/roadmap/leverage`\n- Displays 7 layers (0-6) with collapsible sections\n- Shows per-module status with color-coded indicators\n- Highlights current module and next available modules with leverage scores\n- Supports expand/collapse for layer sections\n\n### Data Flow\n\n```\nRoadmapService → API Endpoints → Dashboard Component\n     ↑\nROADMAP.md → roadmap-state.json (parsed state)\n```\n\n## Features\n\n### Overall Progress Panel\n\n- Aggregate completion percentage\n- Counts by status: complete, in-progress, pending, blocked\n- Visual progress bar\n\n### Leverage Scoring Panel\n\n- Top 3 highest-leverage next modules\n- Score breakdown: DSA, Unlock, Likelihood\n- Highlighted recommendation for next action\n\n### Layer Sections\n\nEach layer (0-6) displays:\n- Layer number and name\n- Progress bar and percentage\n- Module count breakdown\n- Expandable module cards\n\n### Module Cards\n\nEach module shows:\n- Status icon (checkmark, play, circle, X)\n- Module name\n- Current/Next badges\n- Leverage score (for next available)\n- Expandable details with description and dependencies\n\n## Status Indicators\n\n| Status | Icon | Color | Meaning |\n|--------|------|-------|---------|\n| complete | CheckCircle | Green | Module finished |\n| in-progress | PlayCircle | Yellow | Currently active |\n| pending | Circle | Gray | Ready or blocked |\n| blocked | XCircle | Red | Dependencies unmet |\n\n## API Dependencies\n\n| Endpoint | Purpose |\n|----------|---------|\n| `GET /api/roadmap/progress` | Overall and per-layer progress |\n| `GET /api/roadmap/leverage` | Leverage scores for available modules |\n\n## Layer Names\n\n| Layer | Name |\n|-------|------|\n| 0 | Foundation |\n| 1 | Core Capabilities |\n| 2 | Intelligence |\n| 3 | Interface |\n| 4 | Domain Loops |\n| 5 | Meta & Collaboration |\n| 6 | Sovereignty |\n\n## Delegation Ready\n\nThe kanban view is designed for worktree-based delegation:\n\n1. View current state and identify next module\n2. Check leverage scores for priority\n3. Review dependencies before starting\n4. Monitor progress from Layer 1 orchestrator\n\n## Integration\n\n- **RoadmapService**: Provides all progress and leverage data\n- **OrchestrationService**: Uses roadmap data for work assignment\n- **Dashboard**: Navigation includes Roadmap link\n\n## Version\n\n- v1.0.0 - Initial implementation with layer visualization, leverage scoring, and module cards",
+  "references": [],
+  "tags": [
+    "dashboard",
+    "visualization",
+    "roadmap",
+    "progress"
+  ],
+  "dependsOn": []
+}

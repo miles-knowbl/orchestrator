@@ -3,1116 +3,182 @@
     {
       "id": "async-loop",
       "name": "Async Preparation Loop",
-      "description": "Prepares the system for autonomous Slack-based operation. Run this before going mobile.",
       "version": "1.0.0",
-      "category": "general",
-      "phases": [
-        {
-          "id": "INIT",
-          "name": "Initialize",
-          "description": "Load current state and check prerequisites for async operation",
-          "skills": [
-            "state-loader",
-            "prereq-checker"
-          ],
-          "deliverables": [
-            "memory/async-state.json"
-          ]
-        },
-        {
-          "id": "GATHER",
-          "name": "Gather Context",
-          "description": "Collect all 7 layers: dream state, roadmap, scores, patterns, calibration, history, improvements",
-          "skills": [
-            "dream-sync",
-            "pattern-collector",
-            "calibration-sync",
-            "history-collector"
-          ],
-          "deliverables": [
-            "memory/async-context.json"
-          ]
-        },
-        {
-          "id": "SCORE",
-          "name": "Score Modules",
-          "description": "Score all available modules and identify blockers",
-          "skills": [
-            "module-scorer",
-            "blocker-analyzer"
-          ],
-          "deliverables": [
-            "memory/module-scores.json"
-          ]
-        },
-        {
-          "id": "PLAN",
-          "name": "Plan Moves",
-          "description": "Build prioritized queue of next 5-10 moves using leverage protocol",
-          "skills": [
-            "leverage-calculator",
-            "queue-builder"
-          ],
-          "deliverables": [
-            "memory/async-queue.json"
-          ],
-          "gates": [
-            {
-              "id": "plan-gate",
-              "name": "Plan Review",
-              "description": "Review the planned moves before proceeding",
-              "approvalType": "manual",
-              "guarantees": [
-                {
-                  "type": "file_exists",
-                  "path": "memory/async-queue.json"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": "VERIFY",
-          "name": "Verify Channels",
-          "description": "Validate Slack connection and test notification delivery",
-          "skills": [
-            "slack-validator",
-            "notification-tester"
-          ],
-          "deliverables": [],
-          "gates": [
-            {
-              "id": "verify-gate",
-              "name": "Channel Verification",
-              "description": "Confirm Slack notifications are working",
-              "approvalType": "auto",
-              "guarantees": [
-                {
-                  "type": "custom",
-                  "description": "Slack connection verified"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": "HANDOFF",
-          "name": "Handoff",
-          "description": "Final confirmation - system is ready for async operation",
-          "skills": [
-            "handoff-confirmer"
-          ],
-          "deliverables": [],
-          "completionMessage": "Ready for async operation. Go mobile and use 'Start Next' on Slack."
-        }
-      ]
+      "description": "Prepares the system for autonomous Slack-based operation. Run this before going mobile.",
+      "category": "meta",
+      "phaseCount": 6,
+      "skillCount": 13
     },
     {
       "id": "audit-loop",
       "name": "Audit Loop",
-      "description": "Taste-first audit loop for evaluating existing systems. Evaluates subjective quality (taste) before technical analysis, then applies MECE failure mode taxonomy to backend and UI pipelines. Produces a taste-ordered checklist to done.",
       "version": "4.0.0",
-      "category": "general",
-      "phases": [
-        {
-          "name": "TASTE",
-          "skills": [
-            "taste-discovery",
-            "taste-eval"
-          ],
-          "required": true
-        },
-        {
-          "name": "INIT",
-          "skills": [
-            "requirements",
-            "pipeline-discovery",
-            "ui-pipeline-discovery",
-            "dependency-mapping"
-          ],
-          "required": true
-        },
-        {
-          "name": "REVIEW",
-          "skills": [
-            "architecture-review",
-            "security-audit",
-            "perf-analysis",
-            "failure-mode-analysis",
-            "ui-failure-mode-analysis",
-            "quality-eval-design",
-            "taste-trace"
-          ],
-          "required": true
-        },
-        {
-          "name": "VALIDATE",
-          "skills": [
-            "integration-test",
-            "ui-interaction-test",
-            "code-verification",
-            "test-spec-generation"
-          ],
-          "required": true
-        },
-        {
-          "name": "DOCUMENT",
-          "skills": [
-            "document",
-            "taste-report"
-          ],
-          "required": true
-        },
-        {
-          "name": "COMPLETE",
-          "skills": [
-            "retrospective"
-          ],
-          "required": true
-        }
-      ]
+      "description": "Taste-first audit loop for evaluating existing systems. Evaluates subjective quality (taste) before technical analysis, then applies MECE failure mode taxonomy to backend and UI pipelines. Produces a ",
+      "category": "development",
+      "phaseCount": 6,
+      "skillCount": 20
     },
     {
       "id": "bugfix-loop",
       "name": "Bug Fix Loop",
-      "description": "Systematic debugging loop from reproduction to verified fix. Takes bug reports through reproduction, root cause analysis, implementation, testing, verification, and review with enforced quality gates.",
       "version": "1.0.0",
-      "category": "general",
-      "phases": [
-        {
-          "name": "INIT",
-          "skills": [
-            "bug-reproducer"
-          ],
-          "required": true
-        },
-        {
-          "name": "SCAFFOLD",
-          "skills": [
-            "debug-assist",
-            "root-cause-analysis"
-          ],
-          "required": true
-        },
-        {
-          "name": "IMPLEMENT",
-          "skills": [
-            "implement"
-          ],
-          "required": true
-        },
-        {
-          "name": "TEST",
-          "skills": [
-            "test-generation"
-          ],
-          "required": true
-        },
-        {
-          "name": "VERIFY",
-          "skills": [
-            "code-verification"
-          ],
-          "required": true
-        },
-        {
-          "name": "REVIEW",
-          "skills": [
-            "code-review"
-          ],
-          "required": true
-        },
-        {
-          "name": "COMPLETE",
-          "skills": [
-            "retrospective"
-          ],
-          "required": true
-        }
-      ]
+      "description": "Systematic debugging loop from reproduction to verified fix. Takes bug reports through reproduction, root cause analysis, implementation, testing, verification, and review with enforced quality gates.",
+      "category": "development",
+      "phaseCount": 7,
+      "skillCount": 8
     },
     {
       "id": "champion-loop",
       "name": "Champion Loop",
-      "description": "Focus on champion assessment and enablement to strengthen internal advocacy and deal momentum.",
       "version": "1.0.0",
-      "category": "sales",
-      "phases": [
-        {
-          "id": "ASSESS",
-          "name": "Assess Champion",
-          "description": "Evaluate champion strength and gaps",
-          "skills": [
-            "champion-scoring",
-            "stakeholder-sentiment"
-          ],
-          "requiredDeliverables": [
-            "champion assessment"
-          ]
-        },
-        {
-          "id": "IDENTIFY",
-          "name": "Identify Needs",
-          "description": "Identify what champion needs to succeed",
-          "skills": [
-            "risk-assessment"
-          ],
-          "requiredDeliverables": [
-            "needs analysis"
-          ]
-        },
-        {
-          "id": "ENABLE",
-          "name": "Enable Champion",
-          "description": "Create enablement materials",
-          "skills": [
-            "champion-enablement-asset"
-          ],
-          "requiredDeliverables": [
-            "enablement assets"
-          ]
-        },
-        {
-          "id": "COMPLETE",
-          "name": "Complete",
-          "description": "Plan champion engagement",
-          "skills": [
-            "next-best-action"
-          ],
-          "requiredDeliverables": [
-            "engagement plan"
-          ]
-        }
-      ]
+      "description": "Focus on champion assessment and enablement to strengthen internal advocacy and deal momentum.",
+      "category": "development",
+      "phaseCount": 4,
+      "skillCount": 5
     },
     {
       "id": "close-prep-loop",
       "name": "Close Prep Loop",
-      "description": "Prepare deals for close including prototype scoping, contract support, and final push to signature.",
       "version": "1.0.0",
-      "category": "sales",
-      "phases": [
-        {
-          "id": "ASSESS",
-          "name": "Close Readiness",
-          "description": "Assess readiness for close",
-          "skills": [
-            "deal-scoring",
-            "risk-assessment"
-          ],
-          "requiredDeliverables": [
-            "close readiness assessment"
-          ]
-        },
-        {
-          "id": "SCOPE",
-          "name": "Scope Pilot",
-          "description": "Define pilot/prototype scope if needed",
-          "skills": [
-            "prototype-scoping"
-          ],
-          "requiredDeliverables": [
-            "pilot scope"
-          ]
-        },
-        {
-          "id": "CONTRACT",
-          "name": "Contract Support",
-          "description": "Track and manage contracting",
-          "skills": [
-            "contract-support"
-          ],
-          "requiredDeliverables": [
-            "contract tracker"
-          ]
-        },
-        {
-          "id": "COMPLETE",
-          "name": "Complete",
-          "description": "Final close actions",
-          "skills": [
-            "next-best-action"
-          ],
-          "requiredDeliverables": [
-            "close plan"
-          ]
-        }
-      ]
+      "description": "Prepare deals for close including prototype scoping, contract support, and final push to signature.",
+      "category": "development",
+      "phaseCount": 4,
+      "skillCount": 5
     },
     {
       "id": "cultivation-loop",
       "name": "Context Cultivation",
-      "description": "Build and maintain project knowledge through systematic context gathering, gotcha documentation, guarantee tracking, and pattern recognition.",
       "version": "1.0.0",
-      "category": "meta",
-      "phases": [
-        {
-          "name": "GATHER",
-          "description": "Gather context from multiple sources",
-          "skills": [
-            "context-ingestion"
-          ]
-        },
-        {
-          "name": "ANALYZE",
-          "description": "Analyze and cultivate gathered context",
-          "skills": [
-            "context-cultivation"
-          ]
-        },
-        {
-          "name": "DOCUMENT",
-          "description": "Document gotchas, guarantees, and patterns",
-          "skills": [
-            "gotcha-documenter",
-            "guarantee-tracker",
-            "pattern-collector"
-          ]
-        },
-        {
-          "name": "COMPLETE",
-          "description": "Finalize and integrate knowledge",
-          "skills": [
-            "knowledge-integrator"
-          ]
-        }
-      ]
+      "description": "Build and maintain project knowledge through systematic context gathering, gotcha documentation, guarantee tracking, and pattern recognition.",
+      "category": "development",
+      "phaseCount": 4,
+      "skillCount": 6
     },
     {
       "id": "deal-intake-loop",
       "name": "Deal Intake Loop",
-      "description": "Standardized process for bringing new deals into the pipeline with proper structure, initial research, and qualification.",
       "version": "1.0.0",
-      "category": "sales",
-      "phases": [
-        {
-          "id": "INIT",
-          "name": "Initialize",
-          "description": "Set up deal and gather initial context",
-          "skills": [
-            "deal-create"
-          ],
-          "requiredDeliverables": [
-            "deal.json",
-            "DEAL.md"
-          ]
-        },
-        {
-          "id": "RESEARCH",
-          "name": "Research",
-          "description": "Research the lead and assess fit",
-          "skills": [
-            "lead-research"
-          ],
-          "requiredDeliverables": [
-            "research.json"
-          ]
-        },
-        {
-          "id": "CAPTURE",
-          "name": "Capture Intelligence",
-          "description": "Capture any existing communications and add stakeholders",
-          "skills": [
-            "communication-capture",
-            "stakeholder-add"
-          ],
-          "requiredDeliverables": [
-            "stakeholders.json"
-          ]
-        },
-        {
-          "id": "COMPLETE",
-          "name": "Complete",
-          "description": "Finalize deal intake and recommend next actions",
-          "skills": [
-            "next-best-action"
-          ],
-          "requiredDeliverables": [
-            "nba output"
-          ]
-        }
-      ]
+      "description": "Standardized process for bringing new deals into the pipeline with proper structure, initial research, and qualification.",
+      "category": "development",
+      "phaseCount": 4,
+      "skillCount": 5
     },
     {
       "id": "deal-review-loop",
       "name": "Deal Review Loop",
-      "description": "Comprehensive review of a single deal including scoring, risk assessment, and strategic recommendations.",
       "version": "1.0.0",
-      "category": "sales",
-      "phases": [
-        {
-          "id": "GATHER",
-          "name": "Gather Context",
-          "description": "Review all deal intelligence and communications",
-          "skills": [
-            "communication-parse"
-          ],
-          "requiredDeliverables": [
-            "context summary"
-          ]
-        },
-        {
-          "id": "SCORE",
-          "name": "Score Deal",
-          "description": "Calculate comprehensive deal scores",
-          "skills": [
-            "deal-scoring",
-            "champion-scoring",
-            "use-case-clarity"
-          ],
-          "requiredDeliverables": [
-            "updated scores"
-          ]
-        },
-        {
-          "id": "ASSESS",
-          "name": "Assess Risks",
-          "description": "Identify and assess deal risks",
-          "skills": [
-            "risk-assessment"
-          ],
-          "requiredDeliverables": [
-            "risk assessment"
-          ]
-        },
-        {
-          "id": "COMPLETE",
-          "name": "Complete",
-          "description": "Generate strategic recommendations",
-          "skills": [
-            "next-best-action"
-          ],
-          "requiredDeliverables": [
-            "deal review summary"
-          ]
-        }
-      ]
+      "description": "Comprehensive review of a single deal including scoring, risk assessment, and strategic recommendations.",
+      "category": "development",
+      "phaseCount": 4,
+      "skillCount": 6
     },
     {
       "id": "deck-loop",
       "name": "Deck Loop",
-      "description": "Presentation generation loop that transforms discovery context and brand assets into polished slide decks. Outputs HTML (reveal.js) as the canonical format with optional Google Slides export.",
       "version": "1.1.0",
-      "category": "general",
-      "phases": [
-        {
-          "name": "INIT",
-          "skills": [
-            "context-ingestion"
-          ],
-          "required": true
-        },
-        {
-          "name": "SCAFFOLD",
-          "skills": [
-            "taste-codifier"
-          ],
-          "required": true
-        },
-        {
-          "name": "IMPLEMENT",
-          "skills": [
-            "deck-text-schema",
-            "deck-image-schema"
-          ],
-          "required": true
-        },
-        {
-          "name": "VALIDATE",
-          "skills": [
-            "content-analysis"
-          ],
-          "required": true
-        },
-        {
-          "name": "DOCUMENT",
-          "skills": [
-            "html-slides"
-          ],
-          "required": true
-        },
-        {
-          "name": "COMPLETE",
-          "skills": [
-            "retrospective"
-          ],
-          "required": true
-        }
-      ]
+      "description": "Presentation generation loop that transforms discovery context and brand assets into polished slide decks. Outputs HTML (reveal.js) as the canonical format with optional Google Slides export.",
+      "category": "operations",
+      "phaseCount": 6,
+      "skillCount": 7
     },
     {
       "id": "discovery-loop",
       "name": "Discovery Loop",
-      "description": "Complete discovery meeting workflow including preparation, meeting execution guidance, and post-meeting debrief with intelligence extraction.",
       "version": "1.0.0",
-      "category": "sales",
-      "phases": [
-        {
-          "id": "PREP",
-          "name": "Prepare",
-          "description": "Prepare for discovery meeting",
-          "skills": [
-            "discovery-prep"
-          ],
-          "requiredDeliverables": [
-            "meeting prep document"
-          ]
-        },
-        {
-          "id": "MEETING",
-          "name": "Meeting",
-          "description": "Meeting execution guidance and capture",
-          "skills": [
-            "communication-capture"
-          ],
-          "requiredDeliverables": [
-            "meeting notes"
-          ]
-        },
-        {
-          "id": "DEBRIEF",
-          "name": "Debrief",
-          "description": "Post-meeting debrief and intelligence extraction",
-          "skills": [
-            "discovery-debrief",
-            "communication-parse"
-          ],
-          "requiredDeliverables": [
-            "debrief document"
-          ]
-        },
-        {
-          "id": "UPDATE",
-          "name": "Update",
-          "description": "Update deal intelligence and scores",
-          "skills": [
-            "pain-point-extraction",
-            "budget-timeline-extraction",
-            "stakeholder-sentiment",
-            "deal-scoring"
-          ],
-          "requiredDeliverables": [
-            "updated intelligence"
-          ]
-        },
-        {
-          "id": "COMPLETE",
-          "name": "Complete",
-          "description": "Generate follow-up actions",
-          "skills": [
-            "next-best-action"
-          ],
-          "requiredDeliverables": [
-            "NBA and follow-up plan"
-          ]
-        }
-      ]
+      "description": "Complete discovery meeting workflow including preparation, meeting execution guidance, and post-meeting debrief with intelligence extraction.",
+      "category": "development",
+      "phaseCount": 5,
+      "skillCount": 9
     },
     {
       "id": "distribution-loop",
       "name": "Distribution Loop",
-      "description": "Distribution loop for keeping all targets in sync: local rebuild, Railway server, Vercel dashboard, and GitHub Releases tarball. Lean 4-phase pipeline with auto gates designed for speed.",
       "version": "1.0.0",
-      "category": "general",
-      "phases": [
-        {
-          "name": "INIT",
-          "skills": [
-            "release-planner"
-          ],
-          "required": true
-        },
-        {
-          "name": "VERIFY",
-          "skills": [
-            "code-verification"
-          ],
-          "required": true
-        },
-        {
-          "name": "SHIP",
-          "skills": [
-            "git-workflow",
-            "deploy",
-            "distribute"
-          ],
-          "required": true
-        },
-        {
-          "name": "COMPLETE",
-          "skills": [
-            "retrospective"
-          ],
-          "required": true
-        }
-      ]
+      "description": "Distribution loop for keeping all targets in sync: local rebuild, Railway server, Vercel dashboard, and GitHub Releases tarball. Lean 4-phase pipeline with auto gates designed for speed.",
+      "category": "development",
+      "phaseCount": 4,
+      "skillCount": 6
     },
     {
       "id": "dream-loop",
       "name": "Dream Loop",
-      "description": "Define what 'done' looks like at any tier of the hierarchy. Walks through structured discovery to create dream states for organizations, domains, systems, or modules.",
       "version": "1.0.0",
-      "category": "general",
-      "phases": [
-        {
-          "name": "DISCOVER",
-          "skills": [
-            "observe",
-            "context-ingestion"
-          ],
-          "required": true,
-          "notes": "Understand current state, load relevant context from hierarchy"
-        },
-        {
-          "name": "DEFINE",
-          "skills": [
-            "define-dream-state"
-          ],
-          "required": true,
-          "notes": "Walk through structured dream state definition process"
-        },
-        {
-          "name": "VALIDATE",
-          "skills": [
-            "skill-verifier"
-          ],
-          "required": true,
-          "notes": "Review and validate the dream state definition"
-        },
-        {
-          "name": "COMPLETE",
-          "skills": [
-            "retrospective"
-          ],
-          "required": true,
-          "notes": "Finalize, update parent tier, archive run"
-        }
-      ]
+      "description": "Define what 'done' looks like at any tier of the hierarchy. Walks through structured discovery to create dream states for organizations, domains, systems, or modules.",
+      "category": "meta",
+      "phaseCount": 4,
+      "skillCount": 5
     },
     {
       "id": "engineering-loop",
       "name": "Engineering Loop",
-      "description": "Dream state-driven engineering loop. Starts by defining your end vision, decomposes it into systems, then iterates through each system until the dream state is achieved.",
       "version": "4.0.0",
-      "category": "general",
-      "phases": [
-        {
-          "name": "INIT",
-          "skills": [
-            "entry-portal",
-            "requirements",
-            "spec"
-          ],
-          "required": true,
-          "notes": "entry-portal runs only on first system when no system-queue.json exists"
-        },
-        {
-          "name": "SCAFFOLD",
-          "skills": [
-            "architect",
-            "scaffold"
-          ],
-          "required": true
-        },
-        {
-          "name": "IMPLEMENT",
-          "skills": [
-            "implement"
-          ],
-          "required": true
-        },
-        {
-          "name": "TEST",
-          "skills": [
-            "test-generation"
-          ],
-          "required": true
-        },
-        {
-          "name": "VERIFY",
-          "skills": [
-            "code-verification"
-          ],
-          "required": true
-        },
-        {
-          "name": "VALIDATE",
-          "skills": [
-            "code-validation",
-            "security-audit"
-          ],
-          "required": true
-        },
-        {
-          "name": "DOCUMENT",
-          "skills": [
-            "document"
-          ],
-          "required": true
-        },
-        {
-          "name": "REVIEW",
-          "skills": [
-            "code-review"
-          ],
-          "required": true
-        },
-        {
-          "name": "SHIP",
-          "skills": [
-            "deploy",
-            "distribute"
-          ],
-          "required": true
-        },
-        {
-          "name": "COMPLETE",
-          "skills": [
-            "retrospective"
-          ],
-          "required": true
-        }
-      ]
+      "description": "Dream state-driven engineering loop. Starts by defining your end vision, decomposes it into systems, then iterates through each system until the dream state is achieved.",
+      "category": "development",
+      "phaseCount": 10,
+      "skillCount": 15
     },
     {
       "id": "infrastructure-loop",
       "name": "Infrastructure Loop",
-      "description": "Infrastructure loop for provisioning dev environments, databases, containers, and CI/CD pipelines. Takes infrastructure requirements through planning, provisioning, and deployment with enforced quality gates.",
       "version": "1.0.0",
-      "category": "general",
-      "phases": [
-        {
-          "name": "INIT",
-          "skills": [
-            "requirements"
-          ],
-          "required": true
-        },
-        {
-          "name": "SCAFFOLD",
-          "skills": [
-            "scaffold",
-            "infra-devenv"
-          ],
-          "required": true
-        },
-        {
-          "name": "IMPLEMENT",
-          "skills": [
-            "infra-docker",
-            "infra-database",
-            "infra-monorepo",
-            "infra-services"
-          ],
-          "required": true
-        },
-        {
-          "name": "SHIP",
-          "skills": [
-            "deploy",
-            "distribute"
-          ],
-          "required": true
-        },
-        {
-          "name": "COMPLETE",
-          "skills": [
-            "retrospective"
-          ],
-          "required": true
-        }
-      ]
+      "description": "Infrastructure loop for provisioning dev environments, databases, containers, and CI/CD pipelines. Takes infrastructure requirements through planning, provisioning, and deployment with enforced qualit",
+      "category": "development",
+      "phaseCount": 5,
+      "skillCount": 10
     },
     {
       "id": "intelligence-loop",
       "name": "Intelligence Loop",
-      "description": "Process communications to extract and consolidate deal intelligence including pain points, budget, timeline, stakeholders, and competitive signals.",
       "version": "1.0.0",
-      "category": "sales",
-      "phases": [
-        {
-          "id": "CAPTURE",
-          "name": "Capture",
-          "description": "Capture and parse new communications",
-          "skills": [
-            "communication-capture",
-            "communication-parse"
-          ],
-          "requiredDeliverables": [
-            "parsed signals"
-          ]
-        },
-        {
-          "id": "EXTRACT",
-          "name": "Extract Intelligence",
-          "description": "Extract structured intelligence from signals",
-          "skills": [
-            "pain-point-extraction",
-            "budget-timeline-extraction",
-            "stakeholder-sentiment",
-            "competitive-intel",
-            "ai-maturity-assessment"
-          ],
-          "requiredDeliverables": [
-            "intelligence files"
-          ]
-        },
-        {
-          "id": "SCORE",
-          "name": "Update Scores",
-          "description": "Recalculate deal scores with new intelligence",
-          "skills": [
-            "deal-scoring",
-            "champion-scoring",
-            "use-case-clarity",
-            "risk-assessment"
-          ],
-          "requiredDeliverables": [
-            "updated scores"
-          ]
-        },
-        {
-          "id": "COMPLETE",
-          "name": "Complete",
-          "description": "Generate action recommendations",
-          "skills": [
-            "next-best-action"
-          ],
-          "requiredDeliverables": [
-            "NBA output"
-          ]
-        }
-      ]
+      "description": "Process communications to extract and consolidate deal intelligence including pain points, budget, timeline, stakeholders, and competitive signals.",
+      "category": "development",
+      "phaseCount": 4,
+      "skillCount": 12
     },
     {
       "id": "learning-loop",
       "name": "Learning Loop",
-      "description": "Iterate on the skills library by reviewing past work, identifying gaps, creating new skills, and refining existing ones. Turns execution experience into lasting improvements.",
       "version": "1.0.0",
-      "category": "general",
-      "phases": [
-        {
-          "name": "INIT",
-          "skills": [
-            "requirements"
-          ],
-          "required": true
-        },
-        {
-          "name": "ANALYZE",
-          "skills": [
-            "retrospective",
-            "skill-verifier"
-          ],
-          "required": true
-        },
-        {
-          "name": "IMPROVE",
-          "skills": [
-            "skill-design",
-            "calibration-tracker"
-          ],
-          "required": true
-        },
-        {
-          "name": "VALIDATE",
-          "skills": [
-            "memory-manager",
-            "context-delta"
-          ],
-          "required": true
-        },
-        {
-          "name": "COMPLETE",
-          "skills": [
-            "retrospective"
-          ],
-          "required": true
-        }
-      ]
+      "description": "Iterate on the skills library by reviewing past work, identifying gaps, creating new skills, and refining existing ones. Turns execution experience into lasting improvements.",
+      "category": "meta",
+      "phaseCount": 5,
+      "skillCount": 8
     },
     {
       "id": "loop-composer",
       "name": "Loop Composer",
-      "description": "Design and publish new loops and skills. Takes loop requirements through composition, skill design, and documentation to produce ready-to-use loop definitions.",
       "version": "1.1.0",
-      "category": "general",
-      "phases": [
-        {
-          "name": "INIT",
-          "skills": [
-            "requirements"
-          ],
-          "required": true
-        },
-        {
-          "name": "SCAFFOLD",
-          "skills": [
-            "loop-composer",
-            "skill-design"
-          ],
-          "required": true
-        },
-        {
-          "name": "DOCUMENT",
-          "skills": [
-            "loop-to-slash-command",
-            "document"
-          ],
-          "required": true
-        },
-        {
-          "name": "COMPLETE",
-          "skills": [
-            "retrospective"
-          ],
-          "required": true
-        }
-      ]
+      "description": "Design and publish new loops and skills. Takes loop requirements through composition, skill design, and documentation to produce ready-to-use loop definitions.",
+      "category": "meta",
+      "phaseCount": 4,
+      "skillCount": 6
     },
     {
       "id": "pipeline-loop",
       "name": "Pipeline Loop",
-      "description": "Weekly pipeline review across all deals including snapshot, prioritization, and weekly focus planning.",
       "version": "1.0.0",
-      "category": "sales",
-      "phases": [
-        {
-          "id": "SNAPSHOT",
-          "name": "Pipeline Snapshot",
-          "description": "Generate current pipeline state",
-          "skills": [
-            "pipeline-snapshot"
-          ],
-          "requiredDeliverables": [
-            "pipeline snapshot"
-          ]
-        },
-        {
-          "id": "PRIORITIZE",
-          "name": "Prioritize",
-          "description": "Rank and tier all deals",
-          "skills": [
-            "deal-prioritization"
-          ],
-          "requiredDeliverables": [
-            "priority ranking"
-          ]
-        },
-        {
-          "id": "FOCUS",
-          "name": "Weekly Focus",
-          "description": "Create weekly execution plan",
-          "skills": [
-            "weekly-focus"
-          ],
-          "requiredDeliverables": [
-            "weekly plan"
-          ]
-        },
-        {
-          "id": "COMPLETE",
-          "name": "Complete",
-          "description": "Finalize and commit to plan",
-          "skills": [
-            "retrospective"
-          ],
-          "requiredDeliverables": [
-            "committed plan"
-          ]
-        }
-      ]
+      "description": "Weekly pipeline review across all deals including snapshot, prioritization, and weekly focus planning.",
+      "category": "development",
+      "phaseCount": 4,
+      "skillCount": 4
     },
     {
       "id": "proposal-loop",
       "name": "Proposal Loop",
-      "description": "Create compelling proposals through structured context gathering, insight cultivation, priority analysis, content validation, and polished document assembly. Six phases with human-in-the-loop gates ensure quality at every transition.",
       "version": "2.0.0",
-      "category": "general",
-      "phases": [
-        {
-          "name": "INIT",
-          "skills": [
-            "context-ingestion",
-            "requirements"
-          ],
-          "required": true
-        },
-        {
-          "name": "SCAFFOLD",
-          "skills": [
-            "context-cultivation"
-          ],
-          "required": true
-        },
-        {
-          "name": "IMPLEMENT",
-          "skills": [
-            "priority-matrix"
-          ],
-          "required": true
-        },
-        {
-          "name": "VALIDATE",
-          "skills": [
-            "content-analysis"
-          ],
-          "required": true
-        },
-        {
-          "name": "DOCUMENT",
-          "skills": [
-            "proposal-builder"
-          ],
-          "required": true
-        },
-        {
-          "name": "COMPLETE",
-          "skills": [
-            "retrospective"
-          ],
-          "required": true
-        }
-      ]
+      "description": "Create compelling proposals through structured context gathering, insight cultivation, priority analysis, content validation, and polished document assembly. Six phases with human-in-the-loop gates en",
+      "category": "operations",
+      "phaseCount": 6,
+      "skillCount": 7
     },
     {
       "id": "transpose-loop",
       "name": "Transpose Loop",
-      "description": "Architecture transposition loop: extract an existing architecture, map it to a target tech stack, and produce a production-ready feature spec. Same composition, different key.",
       "version": "1.0.0",
-      "category": "general",
-      "phases": [
-        {
-          "name": "EXTRACT",
-          "skills": [
-            "architecture-extractor"
-          ],
-          "required": true
-        },
-        {
-          "name": "MAP",
-          "skills": [
-            "stack-analyzer",
-            "architect"
-          ],
-          "required": true
-        },
-        {
-          "name": "SPEC",
-          "skills": [
-            "spec"
-          ],
-          "required": true
-        },
-        {
-          "name": "COMPLETE",
-          "skills": [
-            "retrospective"
-          ],
-          "required": true
-        }
-      ]
+      "description": "Architecture transposition loop: extract an existing architecture, map it to a target tech stack, and produce a production-ready feature spec. Same composition, different key.",
+      "category": "development",
+      "phaseCount": 4,
+      "skillCount": 5
     }
-  ],
-  "generatedAt": "2026-02-05T00:33:01.300Z"
+  ]
 }
