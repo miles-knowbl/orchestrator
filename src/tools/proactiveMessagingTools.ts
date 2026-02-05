@@ -564,15 +564,16 @@ export function createProactiveMessagingToolHandlers(
               description: s.description,
             }));
 
-            // Parse Dream State to get completion for drift detection
+            // Parse Dream State JSON to get completion for drift detection
             const fs = await import('fs/promises');
             const path = await import('path');
-            const dreamStatePath = path.join(repoPath, '.claude', 'DREAM-STATE.md');
+            const dreamStateJsonPath = path.join(repoPath, '.claude', 'dream-state.json');
             try {
-              const content = await fs.readFile(dreamStatePath, 'utf-8');
-              const moduleLines = content.match(/^\|[^|]+\|[^|]+\|\s*(complete|in-progress|pending|blocked)\s*\|/gmi) || [];
-              dreamStateTotal = moduleLines.length;
-              dreamStateComplete = moduleLines.filter(l => /complete/i.test(l)).length;
+              const content = await fs.readFile(dreamStateJsonPath, 'utf-8');
+              const dreamState = JSON.parse(content);
+              const modules = dreamState.modules || [];
+              dreamStateTotal = modules.length;
+              dreamStateComplete = modules.filter((m: { status: string }) => m.status === 'complete').length;
             } catch {
               // Dream State doesn't exist or can't be read
             }

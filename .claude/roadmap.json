@@ -156,8 +156,7 @@
       ],
       "unlocks": [
         "skill-trees",
-        "mece-opportunity-mapping",
-        "spaced-repetition-learning"
+        "mece-opportunity-mapping"
       ]
     },
     {
@@ -180,12 +179,10 @@
       "layer": 1,
       "status": "complete",
       "dependsOn": [
-        "2-layer-orchestration",
+        "execution-engine",
         "proactive-messaging"
       ],
-      "unlocks": [
-        "dreaming"
-      ]
+      "unlocks": []
     },
     {
       "id": "kanban",
@@ -238,9 +235,7 @@
         "roadmapping",
         "knowledge-graph-ontology"
       ],
-      "unlocks": [
-        "game-design"
-      ]
+      "unlocks": []
     },
     {
       "id": "mece-opportunity-mapping",
