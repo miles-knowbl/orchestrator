@@ -1,21 +1,23 @@
 # /audit-loop Command
 
-**Single entry point for system audits.** Evaluates **taste** (subjective quality), backend pipelines, UI pipelines, and cross-cutting concerns using MECE failure mode analysis, content quality evals, and UI interaction validation — produces a **taste-ordered** "checklist to done" for shipping.
+**Single entry point for system audits.** Evaluates **taste** (subjective quality), backend pipelines, UI pipelines, and cross-cutting concerns using MECE failure mode analysis plus a **module × gap-dimension matrix** — produces a **taste-ordered** "checklist to done" for shipping.
 
 ## Purpose
 
-This command orchestrates a comprehensive system audit: **evaluating taste first**, then scoping the evaluation, identifying **backend pipelines (P-series)** and **UI pipelines (U-series)**, applying **MECE failure mode taxonomy** to each, running **content quality evals**, validating **UI interactions**, and producing test specifications for unvalidated failure modes. The loop is read-only by design — it observes and documents, never modifies code.
+This command orchestrates a comprehensive system audit: **evaluating taste first**, then enumerating **modules (M-series)**, scoping **backend pipelines (P-series)** and **UI pipelines (U-series)**, applying **MECE failure mode taxonomy** to each, annotating every finding with a **gap category (G-series)**, running content quality evals, validating UI interactions, and producing test specifications for unvalidated failure modes. The loop is read-only by design — it observes and documents, never modifies code.
 
 **Key Principle:** Taste gates technical readiness. If it doesn't feel right, coverage percentages don't matter.
 
 **The flow you want:** point it at a codebase, say `go`, and receive:
 1. **Taste evaluation** with dimension scores and gap analysis
-2. Infrastructure findings (architecture, security, performance)
-3. **Backend pipeline failure modes** with coverage percentages
-4. **UI pipeline failure modes** with interaction validation
-5. **Content quality evals** for AI-generated outputs
-6. **Test specifications** for all unvalidated failure modes
-7. A **taste-ordered** "checklist to done" for shipping
+2. **Module map** — all modules enumerated with their files, routes, components
+3. Infrastructure findings (architecture, security, performance)
+4. **Backend pipeline failure modes** with coverage percentages
+5. **UI pipeline failure modes** with interaction validation
+6. **Gap matrix** — 20 modules × 28 gap dimensions (`PRESENT | PARTIAL | MISSING`)
+7. **Content quality evals** for AI-generated outputs
+8. **Test specifications** for all unvalidated failure modes
+9. A **taste-ordered** "checklist to done" for shipping
 
 ## Version History
 
@@ -27,7 +29,8 @@ This command orchestrates a comprehensive system audit: **evaluating taste first
 | v3.1.0 | UI pipelines (U-series), interaction validation, L5/L6 locations |
 | v4.0.0 | TASTE phase as entry point, taste-ordered checklist, eval discovery |
 | v4.0.1 | Added Prerequisites section: server health check before loop start |
-| **v4.0.2** | **Fixed: Don't manually start server — hook auto-opens Terminal window** |
+| v4.0.2 | Fixed: Don't manually start server — hook auto-opens Terminal window |
+| **v5.0.0** | **Module-Gap Matrix: M-series modules, G-series gap taxonomy (28 dimensions), GAP-MATRIX.md, module-enumeration + gap-matrix-analysis skills** |
 
 ## Usage
 
@@ -79,7 +82,7 @@ TASTE ──► INIT ──► REVIEW ──► VALIDATE ──► DOCUMENT ─�
   │gate     │gate     │gate
 ```
 
-**6 phases, 18 skills, 4 human gates**
+**6 phases, 20 skills, 4 human gates**
 
 ---
 
@@ -140,27 +143,210 @@ traced_failure_modes: []  # Populated in REVIEW
 
 ---
 
+## Module Decomposition (M-series)
+
+**Modules are the outermost decomposition.** Before pipeline discovery, enumerate every logical module in the system. Each module gets an M-code. Every failure mode and gap finding references its module.
+
+### Module Discovery
+
+During INIT (`module-enumeration` skill), identify modules by:
+- Route groups / page directories (e.g., `src/app/(auth)/`, `src/app/customers/`)
+- Feature directories with co-located components, hooks, and API calls
+- Edge function groups (e.g., `supabase/functions/stripe-*`)
+- Shared infrastructure modules (notifications, realtime, public pages)
+
+### Module Entry Format
+
+```markdown
+### M-01: Customers
+
+| Attribute | Value |
+|-----------|-------|
+| **ID** | M-01 |
+| **Name** | Customers |
+| **Routes** | /customers, /customers/[id] |
+| **Components** | CustomerList, CustomerDetail, CustomerForm |
+| **Hooks** | useCustomers, useCustomer, useCreateCustomer |
+| **Edge Functions** | None |
+| **DB Tables** | customers, customer_contacts |
+| **Pipelines** | P-Cust-01: Create customer, P-Cust-02: Update customer |
+```
+
+### Standard Module List
+
+When auditing a service business application, default module enumeration:
+
+| ID | Module | Scope |
+|----|--------|-------|
+| M-01 | Auth | Login, signup, password reset, session management |
+| M-02 | Dashboard | Overview stats, activity feed, quick actions |
+| M-03 | Customers | Customer CRUD, contacts, history |
+| M-04 | Jobs/Dispatch | Job creation, scheduling, dispatch, status |
+| M-05 | Quotes | Quote creation, line items, approval, send |
+| M-06 | Invoices | Invoice generation, payment tracking, reminders |
+| M-07 | Subscriptions | Recurring billing, plan management, Stripe integration |
+| M-08 | Routes | Route planning, optimization, driver assignment |
+| M-09 | Messaging | In-app messaging, SMS, conversation threads |
+| M-10 | Email Marketing | Campaigns, templates, send, analytics |
+| M-11 | Reviews | Review requests, collection, display |
+| M-12 | Gallery/Photos | Photo upload, albums, before/after |
+| M-13 | Reports | Analytics, exports, scheduled reports |
+| M-14 | Team/HR | Staff management, roles, time tracking |
+| M-15 | Settings | Company settings, integrations, preferences |
+| M-16 | Portal | Customer-facing portal pages |
+| M-17 | Notifications | In-app notification center, preferences |
+| M-18 | Public Pages | Marketing/landing pages, SEO |
+| M-19 | Edge Functions | Serverless functions, webhooks, background jobs |
+| M-20 | Shared/Core | Auth guards, layouts, global hooks, design system |
+
+---
+
+## Gap Taxonomy (G-series)
+
+**Gap categories provide a product-level classification** of what kind of gap exists, complementing the MECE technical classification. Every failure mode finding gets both a MECE code (L×T×S) and a G-code.
+
+A fully annotated finding looks like:
+```
+M-03-005 | L1-Input · T1-Data · S1-Silent | G2-R3 | Customer email not validated server-side
+```
+
+### G-series Taxonomy (28 dimensions)
+
+#### G1: Functional
+
+| Code | Dimension | Description |
+|------|-----------|-------------|
+| G1-F1 | Feature completeness | Planned/implied features that aren't built |
+| G1-F2 | Workflow completeness | User can't complete a full end-to-end journey without hitting a dead end |
+| G1-F3 | Edge case handling | Happy path works, but boundary conditions (empty, max, concurrent) are unhandled |
+| G1-F4 | Integration composition | Modules exist in isolation but don't compose — data or actions don't flow across them |
+
+#### G2: Data & Reliability
+
+| Code | Dimension | Description |
+|------|-----------|-------------|
+| G2-R1 | Data integrity | Missing DB constraints, cascades, orphan records, no uniqueness enforcement |
+| G2-R2 | Error handling | Silent failures, swallowed exceptions, no retry logic, missing error boundaries |
+| G2-R3 | Validation | Inputs validated on client but not server (or vice versa), inconsistent rules |
+| G2-R4 | Recovery | What happens when a background job fails, a webhook is dropped, a payment times out |
+
+#### G3: Access Control
+
+| Code | Dimension | Description |
+|------|-----------|-------------|
+| G3-A1 | Permission / RBAC | Actions reachable by wrong role, owner scoping missing, viewer can write |
+| G3-A2 | Audit trail | Sensitive actions with no log — who deleted what, when |
+
+#### G4: Performance
+
+| Code | Dimension | Description |
+|------|-----------|-------------|
+| G4-P1 | Query performance | N+1s, unbounded selects, missing indexes, no pagination |
+| G4-P2 | Caching | Expensive reads happening on every render with no memoization or server cache |
+| G4-P3 | Bundle / load | Heavy pages with no code splitting, no skeleton states |
+
+#### G5: Observability
+
+| Code | Dimension | Description |
+|------|-----------|-------------|
+| G5-O1 | Monitoring | No alerting on edge function failures, background job errors, payment failures |
+| G5-O2 | Logging | Insufficient context in logs to debug production issues |
+| G5-O3 | Analytics | User actions that should be tracked but aren't |
+
+#### G6: Coverage
+
+| Code | Dimension | Description |
+|------|-----------|-------------|
+| G6-C1 | Email coverage | Events that warrant a notification email but don't have one |
+| G6-C2 | In-app notifications | Events tracked but not surfaced in the notification center |
+| G6-C3 | Realtime | Data that should live-update but requires a manual refresh |
+
+#### G7: Accessibility
+
+| Code | Dimension | Description |
+|------|-----------|-------------|
+| G7-X1 | a11y | Missing ARIA labels, keyboard navigation, color contrast, focus management, screen reader support |
+
+#### G8: Mobile / Responsive
+
+| Code | Dimension | Description |
+|------|-----------|-------------|
+| G8-M1 | Responsive | Components that break at small viewports |
+| G8-M2 | Touch | Tap targets too small, hover-only interactions, no swipe support |
+
+#### G9: Compliance & Privacy
+
+| Code | Dimension | Description |
+|------|-----------|-------------|
+| G9-V1 | GDPR / Compliance | No data export, no right-to-delete, missing consent flows |
+| G9-V2 | Data retention | No cleanup policy for old sessions, logs, uploads |
+
+#### G10: Developer Experience
+
+| Code | Dimension | Description |
+|------|-----------|-------------|
+| G10-D1 | Consistency | Same problem solved three different ways across modules |
+| G10-D2 | Dead code | Unused routes, hooks, DB columns that add confusion |
+| G10-D3 | Migrations | Schema changes that need backfills not yet written |
+| G10-D4 | Configuration | Missing env vars, feature flags, undocumented settings |
+
+### G-code to MECE Mapping
+
+Common G-code → MECE type pairings (not exhaustive — any combination is valid):
+
+| G-code | Typical L | Typical T | Typical S |
+|--------|-----------|-----------|-----------|
+| G1-F1 | L2 | T4 | S2-S4 |
+| G1-F2 | L4 | T5 | S4 |
+| G1-F3 | L1 | T2 | S1-S2 |
+| G1-F4 | L4 | T2 | S1-S2 |
+| G2-R1 | L3 | T1 | S1 |
+| G2-R2 | L2/L3 | T3 | S1 |
+| G2-R3 | L1 | T1 | S1-S3 |
+| G2-R4 | L2/L3 | T3 | S1 |
+| G3-A1 | L2 | T3 | S1 |
+| G3-A2 | L3 | T1 | S1 |
+| G4-P1 | L2 | T3 | S2-S3 |
+| G4-P2 | L2 | T3 | S2-S3 |
+| G4-P3 | L6 | T5 | S3 |
+| G5-O1 | L3 | T3 | S1 |
+| G5-O2 | L2/L3 | T3 | S1 |
+| G5-O3 | L3 | T5 | S2 |
+| G6-C1 | L3 | T5 | S2 |
+| G6-C2 | L3 | T5 | S2 |
+| G6-C3 | L6 | T1 | S2 |
+| G7-X1 | L5 | T5 | S3-S4 |
+| G8-M1 | L5 | T5 | S3 |
+| G8-M2 | L5 | T5 | S3 |
+| G9-V1 | L2/L3 | T3 | S1 |
+| G9-V2 | L3 | T3 | S1 |
+| G10-D1 | L2 | T2 | S2 |
+| G10-D2 | L2 | T2 | S2 |
+| G10-D3 | L3 | T1 | S1 |
+| G10-D4 | L1 | T3 | S1-S4 |
+
+---
+
 ## Pipeline Types
 
 ### Backend Pipelines (P-series)
 
-Server-side data flows triggered by user actions or system events:
+Server-side data flows triggered by user actions or system events. Scoped to their module (e.g., P-Inv-01 = Invoices module, pipeline 01):
 
-| ID | Example | Trigger | Outcome |
-|----|---------|---------|---------|
-| P1 | Source Ingestion | File upload | source_schema populated |
-| P2 | Content Generation | Generate button | Artifact created |
-| P3 | Publishing | Publish button | Post live on platform |
+| ID Format | Example | Trigger | Outcome |
+|-----------|---------|---------|---------|
+| P-[Mod]-NN | P-Quo-01: Create quote | Save button | Quote record created |
+| P-[Mod]-NN | P-Pay-01: Process payment | Pay button | Stripe charge + invoice updated |
+| P-[Mod]-NN | P-Job-01: Dispatch job | Dispatch button | Job assigned, notification sent |
 
 ### UI Pipelines (U-series)
 
 Client-side interaction flows involving state, context, and visual feedback:
 
-| ID | Example | Trigger | Outcome |
-|----|---------|---------|---------|
-| U1 | Chat-to-Edit | User describes edit | Artifact updated, change summary shown |
-| U2 | Chat-to-Generate | User requests in chat | Job created, artifact appears |
-| U3 | Chat-to-Post | User requests publish | Post live, link in chat |
+| ID Format | Example | Trigger | Outcome |
+|-----------|---------|---------|---------|
+| U-[Mod]-NN | U-Quo-01: Edit quote line items | Inline edit | Line item updated, total recalculated |
+| U-Job-01 | U-Job-01: Reassign job from map | Drag on map | Job reassigned, calendar updated |
 
 ### Cross-Pipeline (X-series)
 
@@ -168,8 +354,8 @@ Failure modes at boundaries between pipelines:
 
 | ID | Example | Boundary | Impact |
 |----|---------|----------|--------|
-| X-001 | Empty source_schema | P1→P2 | Lower quality generation |
-| X-002 | Context not synced | U1→P3 | Wrong artifact published |
+| X-001 | Invoice not created after job completion | P-Job→P-Inv | Missing revenue |
+| X-002 | Notification not sent after quote approval | P-Quo→P-Notif | Customer not informed |
 
 ---
 
@@ -216,27 +402,38 @@ Common failure patterns in UI pipelines:
 | Pattern | Code | Description | Example |
 |---------|------|-------------|---------|
 | **Dead Click** | L5-T2 | User action produces no response | Button does nothing |
-| **Stale Closure** | L5-T1 | Callback uses outdated state | Edit uses wrong artifact_id |
-| **State Desync** | L3-T1 | UI shows stale data | Artifact doesn't refresh |
-| **Missing Feedback** | L3-T5 | No loading/error indicator | Generation starts, no spinner |
-| **Context Loss** | L4-T1 | Navigation loses selection | Sources deselected on view change |
+| **Stale Closure** | L5-T1 | Callback uses outdated state | Edit uses wrong record id |
+| **State Desync** | L3-T1 | UI shows stale data | Record doesn't refresh after save |
+| **Missing Feedback** | L3-T5 | No loading/error indicator | Save starts, no spinner |
+| **Context Loss** | L4-T1 | Navigation loses selection | Selection cleared on tab change |
 | **Race Condition** | L5-T2 | Fast clicks cause wrong state | Double-submit creates duplicates |
 | **Stream Disconnect** | L6-T3 | SSE connection drops mid-response | Partial content shown |
 | **Callback Leak** | L5-T3 | Unregistered callbacks accumulate | Memory grows, slowdown |
+
+### Full Finding Format (v5.0.0)
+
+Every finding carries module, MECE classification, and G-code:
+
+```
+[ID] | [Location] · [Type] · [Severity] | [G-code] | [Description]
+
+Example:
+M03-P-Cust-01-005 | L1-Input · T1-Data · S1-Silent | G2-R3 | Customer email not validated server-side
+M04-U-Job-01-003  | L5-Interaction · T2-Logic · S4-Blocking | G1-F3 | Dispatch fails silently when no driver assigned
+```
 
 ### Coverage Calculation
 
 ```markdown
 ## Summary
 
-| Type | Pipeline | Failure Modes | Validated | Coverage |
-|------|----------|---------------|-----------|----------|
-| Backend | P1: Source Ingestion | 9 | 4 | 44% |
-| Backend | P2: Content Generation | 10 | 4 | 40% |
-| **UI** | **U1: Chat-to-Edit** | **8** | **2** | **25%** |
-| **UI** | **U2: Chat-to-Generate** | **10** | **3** | **30%** |
+| Module | Pipeline | Failure Modes | Validated | Coverage |
+|--------|----------|---------------|-----------|----------|
+| M-05 Quotes | P-Quo-01 | 8 | 3 | 38% |
+| M-06 Invoices | P-Inv-01 | 7 | 2 | 29% |
+| M-04 Jobs | U-Job-01 | 10 | 2 | 20% |
 | Cross | X-* | 6 | 0 | 0% |
-| **Total** | | **43** | **13** | **30%** |
+| **Total** | | **31** | **7** | **23%** |
 ```
 
 A failure mode is "Validated" only if:
@@ -260,17 +457,11 @@ A failure mode is "Validated" only if:
 
 During INIT, identify UI pipelines by looking for:
 
-### Chat/Agent Interactions
-- Chat components (ChatPanel, ChatInput)
-- Tool handlers that respond to chat commands
-- SSE/streaming response parsing
-- Context synchronization
-
 ### State Management Flows
 - Context providers and consumers
 - Selection state (what's selected → what's in context)
 - Navigation state (current view → context.current_view)
-- Real-time subscriptions
+- Real-time subscriptions (Supabase channels)
 
 ### User Interaction Patterns
 - Modal flows (open → configure → submit → result)
@@ -278,39 +469,10 @@ During INIT, identify UI pipelines by looking for:
 - Drag-and-drop
 - Keyboard shortcuts
 
-### Example UI Pipeline Definition
-
-```markdown
-### U1: Chat-to-Edit
-
-**Trigger:** User types edit instruction in chat while artifact is open
-**Context Required:** artifact_id must be set in ChatContext
-
-**Steps:**
-1. User opens artifact in artifact-editor view
-2. Canvas.tsx sets context.artifact_id (L120-122)
-3. ChatPanel displays "Editing: [artifact title]"
-4. User types edit instruction and submits
-5. ChatContext.sendMessage() initiates SSE stream to agent
-6. Agent invokes edit_artifact tool
-7. toolHandlers.ts:edit_artifact calls Supabase function
-8. Function returns { success, version, change_summary }
-9. React Query cache invalidated for artifact refresh
-10. ToolCallBubble displays change_summary
-11. Artifact re-renders with new content
-
-**Failure Modes:**
-| ID | Location | Type | Severity | Failure |
-|----|----------|------|----------|---------|
-| U1-001 | L5-Interaction | T1-Data | S4-Blocking | artifact_id not in context |
-| U1-002 | L6-Streaming | T3-Infra | S3-Visible | SSE stream timeout |
-| U1-003 | L2-Processing | T2-Logic | S1-Silent | Tool returns success but edit failed |
-| U1-004 | L3-Output | T5-UX | S2-Partial | Change summary missing |
-| U1-005 | L3-Output | T1-Data | S1-Silent | Cache not invalidated, stale UI |
-| U1-006 | L5-Interaction | T2-Logic | S1-Silent | ToolCallBubble shows wrong status |
-| U1-007 | L4-Integration | T1-Data | S1-Silent | Version not incremented |
-| U1-008 | L6-Streaming | T3-Infra | S3-Visible | Stream disconnects mid-response |
-```
+### Chat/Agent Interactions (if present)
+- Chat components, tool handlers
+- SSE/streaming response parsing
+- Context synchronization
 
 ---
 
@@ -365,64 +527,6 @@ During INIT, identify UI pipelines by looking for:
 | Integration | Multi-component flows, context | Vitest + RTL |
 | E2E | Full user interactions, visual | Playwright |
 
-### UI Test Spec Example
-
-```markdown
-### TEST-U1-005: Cache not invalidated after edit
-
-**Failure Mode:** U1-005 (L3-Output, T1-Data, S1-Silent)
-**Test Type:** Integration (Vitest + RTL)
-
-**Setup:**
-- Render ArtifactEditor with mock artifact
-- Mock ChatContext with sendMessage that resolves success
-- Mock React Query cache
-
-**Steps:**
-1. Trigger edit via ChatPanel
-2. Wait for tool completion
-3. Check queryClient.invalidateQueries was called with ['artifact', artifact_id]
-
-**Pass Criteria:**
-- invalidateQueries called with correct key
-- Artifact re-renders with updated content
-
-**Fail Criteria:**
-- invalidateQueries not called
-- UI shows stale artifact content
-```
-
-### E2E Test Spec Example (Playwright)
-
-```markdown
-### TEST-U2-E2E-001: Chat-to-Generate full flow
-
-**Failure Mode:** U2-* (full pipeline)
-**Test Type:** E2E (Playwright)
-
-**Setup:**
-- Seed database with test sources
-- Authenticate test user
-
-**Steps:**
-1. Navigate to sources view
-2. Select 2 sources by clicking checkboxes
-3. Open chat panel
-4. Type "generate a twitter thread about these sources"
-5. Wait for generation job to complete
-6. Navigate to artifacts view
-
-**Pass Criteria:**
-- New artifact appears in grid
-- Artifact type is "article" with subtype "twitter_thread"
-- Toast notification shows success
-
-**Fail Criteria:**
-- No artifact created
-- Error toast shown
-- Stuck in loading state
-```
-
 ---
 
 ## Execution Flow
@@ -432,13 +536,13 @@ During INIT, identify UI pipelines by looking for:
 ```json
 {
   "loop": "audit-loop",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "phase": "TASTE",
   "status": "active",
   "phases": {
     "TASTE": { "skills": ["taste-discovery", "taste-eval"] },
-    "INIT": { "skills": ["requirements", "pipeline-discovery", "ui-pipeline-discovery", "dependency-mapping"] },
-    "REVIEW": { "skills": ["architecture-review", "security-audit", "perf-analysis", "failure-mode-analysis", "ui-failure-mode-analysis", "quality-eval-design", "taste-trace"] },
+    "INIT": { "skills": ["requirements", "module-enumeration", "pipeline-discovery", "ui-pipeline-discovery", "dependency-mapping"] },
+    "REVIEW": { "skills": ["architecture-review", "security-audit", "perf-analysis", "failure-mode-analysis", "ui-failure-mode-analysis", "gap-matrix-analysis", "quality-eval-design", "taste-trace"] },
     "VALIDATE": { "skills": ["integration-test", "ui-interaction-test", "code-verification", "test-spec-generation"] },
     "DOCUMENT": { "skills": ["document", "taste-report"] },
     "COMPLETE": { "skills": ["retrospective"] }
@@ -449,6 +553,11 @@ During INIT, identify UI pipelines by looking for:
     "weighted_score": 0,
     "gaps": [],
     "ship_status": "unknown"
+  },
+  "modules": [],
+  "gap_matrix": {
+    "dimensions": ["G1-F1","G1-F2","G1-F3","G1-F4","G2-R1","G2-R2","G2-R3","G2-R4","G3-A1","G3-A2","G4-P1","G4-P2","G4-P3","G5-O1","G5-O2","G5-O3","G6-C1","G6-C2","G6-C3","G7-X1","G8-M1","G8-M2","G9-V1","G9-V2","G10-D1","G10-D2","G10-D3","G10-D4"],
+    "entries": []
   },
   "backend_pipelines": [],
   "ui_pipelines": [],
@@ -464,17 +573,18 @@ During INIT, identify UI pipelines by looking for:
 ### Phase Flow
 
 ```
-TASTE ─────────► INIT ──────────► REVIEW ──────────► VALIDATE
-  │                │                │
-  │ [taste-gate]   │ [scope-gate]   │ [findings-gate]
-  ▼                ▼                ▼
-taste-discovery  requirements     architecture-review    integration-test
-taste-eval       pipeline-disc    security-audit         ui-interaction-test
-                 ui-pipeline-disc perf-analysis          code-verification
-                 dependency-map   failure-mode-analysis  test-spec-generation
-                                  ui-failure-mode-analysis
-                                  quality-eval-design
-                                  taste-trace
+TASTE ─────────► INIT ──────────────► REVIEW ─────────────────► VALIDATE
+  │                │                     │
+  │ [taste-gate]   │ [scope-gate]        │ [findings-gate]
+  ▼                ▼                     ▼
+taste-discovery  requirements          architecture-review    integration-test
+taste-eval       module-enumeration    security-audit         ui-interaction-test
+                 pipeline-disc         perf-analysis          code-verification
+                 ui-pipeline-disc      failure-mode-analysis  test-spec-generation
+                 dependency-map        ui-failure-mode-analysis
+                                       gap-matrix-analysis
+                                       quality-eval-design
+                                       taste-trace
 
 DOCUMENT ──────────► COMPLETE
   │
@@ -484,26 +594,27 @@ document            retrospective
 taste-report
 ```
 
-**18 skills across 6 phases, 4 human gates**
+**20 skills across 6 phases, 4 human gates**
 
 ---
 
 ## Skills by Phase
 
-### TASTE Phase (NEW)
+### TASTE Phase
 
 | Skill | Output |
 |-------|--------|
-| **taste-discovery** | **Find project evals (manifest/convention/defaults)** |
-| **taste-eval** | **TASTE-EVAL.md, TASTE-GAPS.md** |
+| **taste-discovery** | Find project evals (manifest/convention/defaults) |
+| **taste-eval** | TASTE-EVAL.md, TASTE-GAPS.md |
 
 ### INIT Phase
 
 | Skill | Output |
 |-------|--------|
 | requirements | Audit scope definition |
-| pipeline-discovery | Backend pipelines (P-series) |
-| ui-pipeline-discovery | UI pipelines (U-series) |
+| **module-enumeration** | **MODULE-MAP.md — all modules with routes, components, hooks, DB tables** |
+| pipeline-discovery | Backend pipelines (P-series), scoped to modules |
+| ui-pipeline-discovery | UI pipelines (U-series), scoped to modules |
 | dependency-mapping | Cross-pipeline failure modes (X-series) |
 
 ### REVIEW Phase
@@ -513,10 +624,11 @@ taste-report
 | architecture-review | ARCHITECTURE-REVIEW.md |
 | security-audit | SECURITY-AUDIT.md |
 | perf-analysis | PERF-ANALYSIS.md |
-| failure-mode-analysis | Backend failure modes |
-| ui-failure-mode-analysis | UI failure modes (L5/L6 patterns) |
+| failure-mode-analysis | Backend failure modes with G-codes |
+| ui-failure-mode-analysis | UI failure modes (L5/L6 patterns) with G-codes |
+| **gap-matrix-analysis** | **GAP-MATRIX.md — module × 28 gap dimensions** |
 | quality-eval-design | Content + UX quality evals |
-| **taste-trace** | **TASTE-TRACE.md (gap-to-failure-mode mapping)** |
+| **taste-trace** | TASTE-TRACE.md (gap-to-failure-mode mapping) |
 
 ### VALIDATE Phase
 
@@ -532,7 +644,7 @@ taste-report
 | Skill | Output |
 |-------|--------|
 | document | AUDIT-REPORT.md |
-| **taste-report** | **Taste-ordered checklist** |
+| **taste-report** | Taste-ordered checklist |
 
 ---
 
@@ -540,49 +652,51 @@ taste-report
 
 | File | Phase | Purpose |
 |------|-------|---------|
-| `audit-state.json` | All | Phase, taste scores, coverage (backend + UI + cross) |
-| **`TASTE-EVAL.md`** | **TASTE** | **Full dimension scores with evidence** |
-| **`TASTE-GAPS.md`** | **TASTE** | **Identified taste gaps with evidence** |
-| **`TASTE-TRACE.md`** | **REVIEW** | **Gap-to-failure-mode mapping** |
+| `audit-state.json` | All | Phase, taste scores, modules, gap matrix, coverage |
+| `TASTE-EVAL.md` | TASTE | Full dimension scores with evidence |
+| `TASTE-GAPS.md` | TASTE | Identified taste gaps with evidence |
+| `TASTE-TRACE.md` | REVIEW | Gap-to-failure-mode mapping |
 | `AUDIT-SCOPE.md` | INIT | P-series + U-series + dependency map |
+| **`MODULE-MAP.md`** | **INIT** | **All modules: routes, components, hooks, DB tables** |
 | `ARCHITECTURE-REVIEW.md` | REVIEW | Architecture findings |
 | `SECURITY-AUDIT.md` | REVIEW | Security findings |
 | `PERF-ANALYSIS.md` | REVIEW | Performance findings |
-| `PIPELINE-FAILURE-MODES.md` | REVIEW | Backend MECE taxonomy |
-| `UI-FAILURE-MODES.md` | REVIEW | UI MECE taxonomy with L5/L6 |
+| `PIPELINE-FAILURE-MODES.md` | REVIEW | Backend MECE taxonomy with G-codes |
+| `UI-FAILURE-MODES.md` | REVIEW | UI MECE taxonomy with L5/L6 and G-codes |
+| **`GAP-MATRIX.md`** | **REVIEW** | **Module × 28 gap dimensions: PRESENT / PARTIAL / MISSING** |
 | `PIPELINE-VALIDATION.md` | VALIDATE | Backend coverage by pipeline |
 | `UI-VALIDATION.md` | VALIDATE | UI coverage by pipeline |
 | `PIPELINE-TEST-SPECS.md` | VALIDATE | Backend test specs |
 | `UI-TEST-SPECS.md` | VALIDATE | UI test specs (component + E2E) |
 | `CONTENT-QUALITY-EVALS.md` | REVIEW | Content quality framework |
 | `UX-QUALITY-EVALS.md` | REVIEW | UX quality framework |
-| `AUDIT-REPORT.md` | DOCUMENT | **Taste-ordered** checklist to done |
+| `AUDIT-REPORT.md` | DOCUMENT | Taste-ordered checklist to done |
 | `RETROSPECTIVE.md` | COMPLETE | Loop learnings |
+
+**20 deliverables across 6 phases**
 
 ---
 
 ## Gate Presentations
 
-### taste-gate (NEW)
+### taste-gate
 
 ```
 ═══════════════════════════════════════════════════════════════
 ║  TASTE GATE                                    [HUMAN]      ║
 ║                                                             ║
-║  Eval Source: CONTENT-QUALITY-EVALS.md + UX-QUALITY-EVALS.md║
+║  Eval Source: [manifest | TASTE-EVALS.md | defaults]        ║
 ║                                                             ║
 ║  Dimension Scores:                                          ║
-║    voice_fidelity:     3.2  [floor: 2.5] ✓                  ║
-║    topic_relevance:    4.1  [floor: 3.0] ✓                  ║
-║    engagement:         2.4  [floor: 2.5] ✗ GAP              ║
-║    responsiveness:     4.0  [floor: 3.0] ✓                  ║
-║    feedback_clarity:   2.8  [floor: 3.0] ✗ GAP              ║
+║    usability:       3.8  [floor: 2.5] ✓                    ║
+║    responsiveness:  3.2  [floor: 2.5] ✓                    ║
+║    reliability:     2.6  [floor: 2.5] ✓                    ║
+║    accessibility:   2.1  [floor: 2.5] ✗ GAP                ║
 ║                                                             ║
 ║  Taste Gaps:                                                ║
-║    TG-001 [content] engagement: 2.4 < 2.5 (CRITICAL)        ║
-║    TG-002 [ux] feedback_clarity: 2.8 < 3.0 (SIGNIFICANT)    ║
+║    TG-001 [ux] accessibility: 2.1 < 2.5 (CRITICAL)         ║
 ║                                                             ║
-║  Weighted Score: 3.3                                        ║
+║  Weighted Score: 3.1                                        ║
 ║  Ship Status: POLISH_THEN_SHIP                              ║
 ║                                                             ║
 ║  Commands:                                                  ║
@@ -599,6 +713,40 @@ taste-report
 
 ---
 
+### scope-gate
+
+```
+═══════════════════════════════════════════════════════════════
+║  SCOPE GATE                                    [HUMAN]      ║
+║                                                             ║
+║  Modules Enumerated: 20                                     ║
+║    M-01 Auth         M-11 Reviews                           ║
+║    M-02 Dashboard    M-12 Gallery/Photos                    ║
+║    M-03 Customers    M-13 Reports                           ║
+║    M-04 Jobs         M-14 Team/HR                           ║
+║    M-05 Quotes       M-15 Settings                          ║
+║    M-06 Invoices     M-16 Portal                            ║
+║    M-07 Subscriptions M-17 Notifications                    ║
+║    M-08 Routes       M-18 Public Pages                      ║
+║    M-09 Messaging    M-19 Edge Functions                    ║
+║    M-10 Email Mktg   M-20 Shared/Core                      ║
+║                                                             ║
+║  Pipelines Discovered:                                      ║
+║    Backend (P-series): 38 across 20 modules                 ║
+║    UI (U-series): 22 across 14 modules                      ║
+║    Cross (X-series): 11 boundaries                          ║
+║                                                             ║
+║  Gap Dimensions: 28 (G1-F1 → G10-D4)                       ║
+║  Matrix cells to fill: 20 × 28 = 560                        ║
+║                                                             ║
+║  Commands:                                                  ║
+║    approved      — Pass gate, continue to REVIEW            ║
+║    changes: ...  — Add/remove modules or dimensions         ║
+═══════════════════════════════════════════════════════════════
+```
+
+---
+
 ### findings-gate
 
 ```
@@ -612,18 +760,29 @@ taste-report
 ║    U-series: 28 modes | 5 validated | 18%                   ║
 ║                                                             ║
 ║  Cross-Pipeline:                                            ║
-║    X-series: 8 modes | 0 validated | 0%                     ║
+║    X-series: 11 modes | 0 validated | 0%                    ║
 ║                                                             ║
-║  Overall: 88 modes | 24 validated | 27%                     ║
+║  Overall: 91 modes | 24 validated | 26%                     ║
+║                                                             ║
+║  Gap Matrix Summary:                                        ║
+║    MISSING cells: 147/560 (26%)                             ║
+║    PARTIAL cells: 213/560 (38%)                             ║
+║    PRESENT cells: 200/560 (36%)                             ║
+║                                                             ║
+║  Top gap dimensions by MISSING count:                       ║
+║    G5-O1 Monitoring: 16/20 modules missing                  ║
+║    G2-R4 Recovery:   14/20 modules missing                  ║
+║    G9-V1 GDPR:       13/20 modules missing                  ║
 ║                                                             ║
 ║  Risk Heat Map:                                             ║
-║    S1-Silent: 22 (HIGHEST RISK)                             ║
-║    L5-Interaction: 12 (UI-specific)                         ║
-║    L6-Streaming: 6 (UI-specific)                            ║
+║    S1-Silent: 31 (HIGHEST RISK)                             ║
+║    L5-Interaction: 14 (UI-specific)                         ║
+║    G3-A1 RBAC: 8 modules (SECURITY)                         ║
 ║                                                             ║
 ║  Commands:                                                  ║
 ║    approved      — Pass gate, continue to VALIDATE          ║
 ║    changes: ...  — Request deeper analysis                  ║
+║    show matrix   — Full GAP-MATRIX.md contents              ║
 ═══════════════════════════════════════════════════════════════
 ```
 
@@ -641,7 +800,7 @@ Tier 2: Taste-Significant (failure modes linked to significant gaps)
 Tier 3: Technical-Only (no taste link, ordered by S1→S4)
 ```
 
-**Rationale:** A technically perfect system that doesn't feel right won't ship. Taste-linked failures directly impact user perception.
+**Within Tier 3, secondary ordering:** G3-A1 (security) > G2-R (reliability) > G1-F (functional) > all others.
 
 ### Example Output
 
@@ -651,36 +810,47 @@ Tier 3: Technical-Only (no taste link, ordered by S1→S4)
 ### Tier 1: Taste-Critical
 *Linked to critical taste gaps (below floor)*
 
-| # | Item | Taste Gap | Failure Mode | Effort |
-|---|------|-----------|--------------|--------|
-| 1 | Improve generated content engagement | TG-001 | P2-003 | M |
-| 2 | Add variety to tweet templates | TG-001 | P2-007 | S |
+| # | Module | Item | Taste Gap | Failure Mode | G-code | Effort |
+|---|--------|------|-----------|--------------|--------|--------|
+| 1 | M-07 Subscriptions | Fix payment failure leaving invoice unpaid | TG-001 | P-Sub-01-003 (S1) | G2-R4 | M |
+| 2 | M-04 Jobs | Show dispatch error when no driver available | TG-001 | U-Job-01-003 (S4) | G1-F3 | S |
 
 ### Tier 2: Taste-Significant
 *Linked to significant taste gaps*
 
-| # | Item | Taste Gap | Failure Mode | Effort |
-|---|------|-----------|--------------|--------|
-| 3 | Show clear loading states during gen | TG-002 | U2-003 | S |
-| 4 | Add change summary to edit responses | TG-002 | U1-004 | S |
+| # | Module | Item | Taste Gap | Failure Mode | G-code | Effort |
+|---|--------|------|-----------|--------------|--------|--------|
+| 3 | M-17 Notifications | Surface job-completed notification in center | TG-002 | P-Job-02-005 (S2) | G6-C2 | S |
+| 4 | M-05 Quotes | Show loading state during quote send | TG-002 | U-Quo-01-004 (S3) | G4-P3 | S |
 
 ### Tier 3: Technical-Only
-*No taste link, ordered by severity (S1 first)*
+*No taste link, ordered by: security > reliability > functional > all others*
 
-| # | Item | Type | Failure Mode | Effort |
-|---|------|------|--------------|--------|
-| 5 | Fix silent cache invalidation | UI | U1-005 (S1) | S |
-| 6 | Validate JSON before save | Backend | P1-007 (S1) | S |
-| 7 | Add retry for SSE timeout | UI | U2-002 (S3) | M |
+| # | Module | Item | Type | Failure Mode | G-code | Effort |
+|---|--------|------|------|--------------|--------|--------|
+| 5 | M-03 Customers | Add server-side email validation | Backend | P-Cust-01-005 (S1) | G2-R3 | S |
+| 6 | M-06 Invoices | Add RLS policy for viewer role | Backend | P-Inv-01-002 (S1) | G3-A1 | S |
+| 7 | M-19 Edge Fns | Alert on payment webhook failures | Backend | P-Pay-01-007 (S1) | G5-O1 | M |
+
+### Gap Matrix Summary
+
+| G-code | Dimension | Missing | Partial | Present |
+|--------|-----------|---------|---------|---------|
+| G5-O1 | Monitoring | 16 | 3 | 1 |
+| G2-R4 | Recovery | 14 | 4 | 2 |
+| G9-V1 | GDPR | 13 | 2 | 5 |
+| G3-A2 | Audit trail | 11 | 5 | 4 |
+| G6-C3 | Realtime | 10 | 6 | 4 |
 
 ### Coverage Summary
 
 | Metric | Current | Target | Gap |
 |--------|---------|--------|-----|
-| **Taste Score** | **3.3** | **3.5** | **+0.2** |
+| **Taste Score** | **3.1** | **3.5** | **+0.4** |
 | Backend Coverage | 37% | 70% | 33 tests |
 | UI Coverage | 18% | 60% | 23 tests |
-| Cross Coverage | 0% | 50% | 8 tests |
+| Cross Coverage | 0% | 50% | 11 tests |
+| Gap Matrix (PRESENT) | 36% | 70% | ~190 gaps |
 ```
 
 ---
@@ -711,12 +881,8 @@ The response includes:
 {
   "executionId": "...",
   "preLoopContext": {
-    "requiredDeliverables": [
-      { "phase": "DISCOVER", "skill": "taste-eval", "deliverables": ["TASTE-EVAL.md"] }
-    ],
-    "skillGuarantees": [
-      { "skill": "taste-eval", "guaranteeCount": 3, "guaranteeNames": ["..."] }
-    ],
+    "requiredDeliverables": [...],
+    "skillGuarantees": [...],
     "dreamStatePath": ".claude/DREAM-STATE.md",
     "roadmapPath": "ROADMAP.md"
   }
@@ -729,7 +895,7 @@ The response includes:
 3. **Note all required deliverables** — know what each skill must produce
 4. **Note guarantee counts** — understand what will be validated
 
-**DO NOT proceed to DISCOVER phase until you have loaded this context.** Skipping this step causes poor loop execution (missing deliverables, no completion proposal, etc.).
+**DO NOT proceed to TASTE phase until you have loaded this context.**
 
 ### During Execution
 
@@ -738,7 +904,7 @@ The response includes:
 mcp__orchestrator__complete_skill({
   executionId: "[stored executionId]",
   skillId: "[skill name]",
-  deliverables: ["TASTE-EVAL.md", "AUDIT-REPORT.md"]  // optional
+  deliverables: ["GAP-MATRIX.md", "MODULE-MAP.md"]  // optional
 })
 ```
 
@@ -775,13 +941,6 @@ mcp__orchestrator__advance_phase({ executionId: "[stored executionId]" })
 4. Your executionId survives server restarts — do NOT create a new execution
 5. Continue the loop from where you left off
 
-### Why This Matters
-
-Without MCP execution tracking:
-- No Slack notifications (thread-per-execution)
-- No execution history
-- No calibration data collection
-
 ---
 
 ## On Completion
@@ -796,23 +955,21 @@ When this loop reaches COMPLETE phase:
 ARCHIVE_DIR=~/.claude/runs/$(date +%Y-%m)/${PROJECT}-audit-loop-$(date +%Y%m%d-%H%M)
 mkdir -p "$ARCHIVE_DIR"
 
-# Archive all audit artifacts (including taste files)
+# Archive all audit artifacts
 mv audit-state.json "$ARCHIVE_DIR/" 2>/dev/null || true
 cp TASTE-EVAL.md TASTE-GAPS.md TASTE-TRACE.md \
-   AUDIT-REPORT.md AUDIT-SCOPE.md UI-FAILURE-MODES.md UI-VALIDATION.md \
-   UI-TEST-SPECS.md UX-QUALITY-EVALS.md RETROSPECTIVE.md \
+   MODULE-MAP.md GAP-MATRIX.md \
+   AUDIT-REPORT.md AUDIT-SCOPE.md \
+   ARCHITECTURE-REVIEW.md SECURITY-AUDIT.md PERF-ANALYSIS.md \
+   PIPELINE-FAILURE-MODES.md UI-FAILURE-MODES.md \
+   PIPELINE-VALIDATION.md UI-VALIDATION.md \
+   PIPELINE-TEST-SPECS.md UI-TEST-SPECS.md \
+   CONTENT-QUALITY-EVALS.md UX-QUALITY-EVALS.md \
+   RETROSPECTIVE.md \
    "$ARCHIVE_DIR/" 2>/dev/null || true
 ```
 
-**Artifact organization:**
-| Category | Location | Files |
-|----------|----------|-------|
-| **Permanent** | Project root | None (audit is read-only) |
-| **Transient** | `~/.claude/runs/` | All audit reports and state |
-
 ### 2. Commit Audit Report
-
-**Principle:** A completed loop leaves no orphaned files.
 
 ```bash
 git add -A
@@ -821,20 +978,19 @@ git diff --cached --quiet || git commit -m "Audit complete: [system] [coverage]%
 Co-Authored-By: Claude <noreply@anthropic.com>"
 ```
 
-**Note:** Commits before archiving. Use `/distribution-loop` to push.
-
 ### 3. Clean Project Directory
-
-Remove transient artifacts (already archived):
 
 ```bash
 rm -f TASTE-EVAL.md TASTE-GAPS.md TASTE-TRACE.md \
-      AUDIT-REPORT.md AUDIT-SCOPE.md UI-FAILURE-MODES.md UI-VALIDATION.md \
-      UI-TEST-SPECS.md UX-QUALITY-EVALS.md RETROSPECTIVE.md \
-      audit-state.json 2>/dev/null || true
+      MODULE-MAP.md GAP-MATRIX.md \
+      AUDIT-REPORT.md AUDIT-SCOPE.md \
+      ARCHITECTURE-REVIEW.md SECURITY-AUDIT.md PERF-ANALYSIS.md \
+      PIPELINE-FAILURE-MODES.md UI-FAILURE-MODES.md \
+      PIPELINE-VALIDATION.md UI-VALIDATION.md \
+      PIPELINE-TEST-SPECS.md UI-TEST-SPECS.md \
+      CONTENT-QUALITY-EVALS.md UX-QUALITY-EVALS.md \
+      RETROSPECTIVE.md audit-state.json 2>/dev/null || true
 ```
-
-**Result:** Project stays clean; audit history in `~/.claude/runs/`
 
 ### 4. Leverage Proposal (REQUIRED)
 
@@ -842,219 +998,156 @@ Before showing completion, evaluate and propose the next highest leverage move.
 
 ---
 
-## Summary of Changes (v4.0.0)
+## Summary of Changes
 
-| Area | v3.1.0 | v4.0.0 |
+### v5.0.0 (current)
+
+| Area | v4.0.2 | v5.0.0 |
 |------|--------|--------|
-| **Entry point** | INIT | **TASTE** |
-| **Phases** | 5 | **6** (+TASTE) |
-| **Skills** | 16 | **18** (+taste-discovery, +taste-eval, +taste-trace, +taste-report) |
-| **Deliverables** | 15 | **18** (+TASTE-EVAL.md, +TASTE-GAPS.md, +TASTE-TRACE.md) |
-| **Human gates** | 3 | **4** (+taste-gate) |
-| **Checklist ordering** | Severity (S1→S4) | **Taste-weighted (Tier 1/2/3)** |
-| **Eval discovery** | None | **Manifest → Convention → Defaults** |
-| **Ship decision** | Coverage-only | **Taste + Coverage matrix** |
+| **Module decomposition** | None | **M-series: 20 modules, explicit enumeration** |
+| **Gap taxonomy** | None | **G-series: 28 dimensions across 10 categories** |
+| **New skills** | 18 | **20 (+module-enumeration, +gap-matrix-analysis)** |
+| **New deliverables** | 18 | **20 (+MODULE-MAP.md, +GAP-MATRIX.md)** |
+| **Finding format** | `L×T×S` | **`Module · L×T×S · G-code`** |
+| **Scope gate** | Pipelines only | **Pipelines + module list** |
+| **Findings gate** | Coverage only | **Coverage + gap matrix summary** |
+| **Checklist Tier 3 order** | S1→S4 | **Security > Reliability > Functional > others** |
+| **Phases** | 6 | 6 (unchanged) |
+| **Human gates** | 4 | 4 (unchanged) |
 
-**Key insight:** Taste gates technical readiness. If it doesn't feel right, coverage percentages don't matter. A system with 95% test coverage that produces generic content won't ship.
+**Key insight:** The gap taxonomy is a *product-layer annotation* on the MECE technical classification. They answer different questions — MECE answers "what failed and where?", G-series answers "what kind of gap is this?" A single finding carries both.
 
 ### What Stays the Same
 
-All existing technical rigor preserved:
+All v4.x rigor preserved:
+- TASTE phase as entry point with taste-ordered checklist
 - MECE failure mode taxonomy (L1-L6, T1-T5, S1-S4)
 - Pipeline discovery (P-series, U-series, X-series)
 - Coverage tracking and percentages
 - Test spec generation
 - Security, architecture, performance audits
-- Existing gates (scope, findings, report)
-
-The technical layer becomes **ordered by taste impact**, not replaced.
+- All 4 human gates
 
 ---
 
-## Appendix: UI Failure Mode Entry Example
+## Appendix: MODULE-MAP.md Template
 
 ```markdown
-### U1-005: Cache not invalidated after edit
-
-| Attribute | Value |
-|-----------|-------|
-| **ID** | U1-005 |
-| **Pipeline** | U1: Chat-to-Edit |
-| **Location** | L3-Output |
-| **Type** | T1-Data |
-| **Severity** | S1-Silent |
-| **Pattern** | State Desync |
-| **Description** | Edit succeeds but React Query cache not invalidated |
-| **Impact** | User sees stale artifact content until manual refresh |
-| **Detection** | None (silent) |
-| **Status** | UNVALIDATED |
-| **Test Spec** | TEST-U1-005 |
-| **Fix** | Add queryClient.invalidateQueries(['artifact', id]) |
-| **Effort** | S |
-```
-
----
-
-## Appendix: UX Eval Template
-
-```yaml
-pipeline: U1-Chat-to-Edit
-evaluator: human
-timestamp: 2026-01-29T12:00:00Z
-
-scores:
-  responsiveness:
-    score: 4
-    evidence: "Edit completes in <2s, immediate feedback"
-  feedback_clarity:
-    score: 3
-    evidence: "Loading shown but change_summary often missing"
-  error_recovery:
-    score: 2
-    evidence: "No retry button, must re-type instruction"
-  state_consistency:
-    score: 3
-    evidence: "Sometimes shows stale content"
-  accessibility:
-    score: 4
-    evidence: "Keyboard accessible, good contrast"
-
-weighted_score: 3.2
-recommendation: polish_then_ship
-notes: "Fix change_summary and cache invalidation before launch"
-```
-
----
-
-## Appendix: UI Pipeline Discovery Checklist
-
-When discovering UI pipelines, look for:
-
-- [ ] Chat/agent interaction patterns
-- [ ] Context providers (ChatContext, SelectionContext, etc.)
-- [ ] Tool handlers and their UI feedback
-- [ ] SSE/streaming response handling
-- [ ] Modal flows (open → configure → submit → result)
-- [ ] Inline editing patterns
-- [ ] Real-time subscriptions (Supabase channels)
-- [ ] Navigation state synchronization
-- [ ] Selection state → context sync
-- [ ] Callback registration and cleanup
-
----
-
-## Appendix: TASTE-EVAL.md Template
-
-```markdown
-# Taste Evaluation
-
-**Project:** [project-name]
-**Eval Source:** [manifest | convention | defaults]
-**Timestamp:** [ISO 8601]
-
-## Discovered Evals
-
-| Source File | Category | Dimensions |
-|-------------|----------|------------|
-| CONTENT-QUALITY-EVALS.md | content | voice_fidelity, topic_relevance, engagement |
-| UX-QUALITY-EVALS.md | ux | responsiveness, feedback_clarity, error_recovery |
-
-## Dimension Scores
-
-### Content Quality
-
-| Dimension | Weight | Score | Floor | Status |
-|-----------|--------|-------|-------|--------|
-| voice_fidelity | 40% | 3.2 | 2.5 | ✓ Acceptable |
-| topic_relevance | 35% | 4.1 | 3.0 | ✓ Exceeds |
-| engagement | 25% | 2.4 | 2.5 | ✗ Gap |
-
-**Category Score:** 3.2 (weighted)
-
-### UX Quality
-
-| Dimension | Weight | Score | Floor | Status |
-|-----------|--------|-------|-------|--------|
-| responsiveness | 30% | 4.0 | 3.0 | ✓ Exceeds |
-| feedback_clarity | 30% | 2.8 | 3.0 | ✗ Gap |
-| error_recovery | 20% | 3.5 | 2.5 | ✓ Acceptable |
-| accessibility | 20% | 4.2 | 3.0 | ✓ Exceeds |
-
-**Category Score:** 3.6 (weighted)
-
-## Overall
-
-| Metric | Value |
-|--------|-------|
-| **Weighted Score** | **3.3** |
-| **Ship Status** | POLISH_THEN_SHIP |
-| **Gaps Found** | 2 |
-| **Critical Gaps** | 1 |
-```
-
----
-
-## Appendix: TASTE-TRACE.md Template
-
-```markdown
-# Taste-to-Failure-Mode Trace
+# Module Map
 
 **Project:** [project-name]
 **Timestamp:** [ISO 8601]
+**Modules:** 20
 
-## Traced Gaps
-
-### TG-001: engagement (CRITICAL)
+## M-01: Auth
 
 | Attribute | Value |
 |-----------|-------|
-| **Category** | content |
-| **Score** | 2.4 |
-| **Floor** | 2.5 |
-| **Pipeline** | P2: Content Generation |
+| **Routes** | /login, /signup, /forgot-password, /reset-password |
+| **Components** | LoginForm, SignupForm, PasswordResetForm |
+| **Hooks** | useAuth, useSession, useSignOut |
+| **Edge Functions** | auth-callback, resend-verification |
+| **DB Tables** | auth.users (Supabase managed) |
+| **Pipelines** | P-Auth-01: Sign in, P-Auth-02: Sign up, P-Auth-03: Password reset |
 
-**Evidence:**
-- Generated tweets sound generic
-- Lack of personality markers in output
-- Templates feel repetitive
+...
 
-**Linked Failure Modes:**
+## M-05: Quotes
 
-| ID | Location | Description | Impact on Taste |
-|----|----------|-------------|-----------------|
-| P2-003 | L2-Processing | Template selection too narrow | Direct cause of repetition |
-| P2-007 | L2-Processing | No personality injection | Generic voice output |
+| Attribute | Value |
+|-----------|-------|
+| **Routes** | /quotes, /quotes/new, /quotes/[id], /quotes/[id]/edit |
+| **Components** | QuoteList, QuoteDetail, QuoteForm, LineItemEditor, QuoteSummary |
+| **Hooks** | useQuotes, useQuote, useCreateQuote, useUpdateQuote, useSendQuote |
+| **Edge Functions** | send-quote-email, generate-quote-pdf |
+| **DB Tables** | quotes, quote_line_items, quote_attachments |
+| **Pipelines** | P-Quo-01: Create quote, P-Quo-02: Send quote, P-Quo-03: Approve quote |
+```
 
 ---
 
-### TG-002: feedback_clarity (SIGNIFICANT)
+## Appendix: GAP-MATRIX.md Template
 
-| Attribute | Value |
-|-----------|-------|
-| **Category** | ux |
-| **Score** | 2.8 |
-| **Floor** | 3.0 |
-| **Pipeline** | U2: Chat-to-Generate |
+```markdown
+# Gap Matrix
 
-**Evidence:**
-- Loading states unclear during generation
-- Change summaries often missing
+**Project:** [project-name]
+**Timestamp:** [ISO 8601]
+**Modules:** 20 | **Dimensions:** 28 | **Total cells:** 560
 
-**Linked Failure Modes:**
+## Legend
+- ✓ PRESENT — Gap addressed, handling exists
+- ⚠ PARTIAL — Some handling, incomplete
+- ✗ MISSING — No handling found
+- — N/A — Not applicable to this module
 
-| ID | Location | Description | Impact on Taste |
-|----|----------|-------------|-----------------|
-| U2-003 | L3-Output | Missing loading indicator | User confusion |
-| U1-004 | L3-Output | Change summary not returned | No feedback on edit |
+## Matrix
 
-## Untraced Failure Modes
+| Module | G1-F1 | G1-F2 | G1-F3 | G1-F4 | G2-R1 | G2-R2 | G2-R3 | G2-R4 | G3-A1 | G3-A2 | G4-P1 | G4-P2 | G4-P3 | G5-O1 | G5-O2 | G5-O3 | G6-C1 | G6-C2 | G6-C3 | G7-X1 | G8-M1 | G8-M2 | G9-V1 | G9-V2 | G10-D1 | G10-D2 | G10-D3 | G10-D4 |
+|--------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|--------|--------|--------|--------|
+| M-01 Auth | | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| M-02 Dashboard | | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| M-03 Customers | | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| M-04 Jobs | | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| M-05 Quotes | | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| M-06 Invoices | | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| M-07 Subscriptions | | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| M-08 Routes | | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| M-09 Messaging | | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| M-10 Email Mktg | | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| M-11 Reviews | | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| M-12 Gallery | | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| M-13 Reports | | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| M-14 Team/HR | | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| M-15 Settings | | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| M-16 Portal | | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| M-17 Notifications | | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| M-18 Public Pages | | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| M-19 Edge Functions | | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| M-20 Shared/Core | | | | | | | | | | | | | | | | | | | | | | | | | | | | |
 
-Failure modes not linked to taste gaps (Tier 3 in checklist):
+## Summary by Dimension
 
-| ID | Location | Type | Severity |
-|----|----------|------|----------|
-| U1-005 | L3-Output | T1-Data | S1-Silent |
-| P1-007 | L2-Processing | T1-Data | S1-Silent |
+| G-code | Dimension | PRESENT | PARTIAL | MISSING | N/A |
+|--------|-----------|---------|---------|---------|-----|
+| G1-F1 | Feature completeness | | | | |
+| G1-F2 | Workflow completeness | | | | |
+| G1-F3 | Edge case handling | | | | |
+| G1-F4 | Integration composition | | | | |
+| G2-R1 | Data integrity | | | | |
+| G2-R2 | Error handling | | | | |
+| G2-R3 | Validation | | | | |
+| G2-R4 | Recovery | | | | |
+| G3-A1 | Permission/RBAC | | | | |
+| G3-A2 | Audit trail | | | | |
+| G4-P1 | Query performance | | | | |
+| G4-P2 | Caching | | | | |
+| G4-P3 | Bundle/load | | | | |
+| G5-O1 | Monitoring | | | | |
+| G5-O2 | Logging | | | | |
+| G5-O3 | Analytics | | | | |
+| G6-C1 | Email coverage | | | | |
+| G6-C2 | In-app notifications | | | | |
+| G6-C3 | Realtime | | | | |
+| G7-X1 | Accessibility | | | | |
+| G8-M1 | Responsive | | | | |
+| G8-M2 | Touch | | | | |
+| G9-V1 | GDPR/Compliance | | | | |
+| G9-V2 | Data retention | | | | |
+| G10-D1 | Consistency | | | | |
+| G10-D2 | Dead code | | | | |
+| G10-D3 | Migrations | | | | |
+| G10-D4 | Configuration | | | | |
+
+## Top Gaps
+
+Dimensions with the most MISSING cells (ordered):
+
+| Rank | G-code | Dimension | Missing | Key modules affected |
+|------|--------|-----------|---------|---------------------|
+| 1 | | | | |
+| 2 | | | | |
+| 3 | | | | |
 ```
 
 ---
@@ -1090,8 +1183,6 @@ Projects can define `.claude/taste-manifest.json` for explicit eval configuratio
   ]
 }
 ```
-
-**Discovery priority:** manifest > convention > defaults
 
 ---
 
