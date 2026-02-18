@@ -105,14 +105,14 @@ The TASTE phase discovers project-specific quality evaluations (first match wins
 
 When no project-specific evals exist:
 
-| Dimension | Weight | Description |
-|-----------|--------|-------------|
-| Usability | 35% | Can users accomplish their goals? |
-| Responsiveness | 25% | Does UI respond quickly? |
-| Reliability | 25% | Does it work consistently? |
-| Accessibility | 15% | Keyboard nav, screen reader, contrast |
+| Dimension | Weight | Floor | Description |
+|-----------|--------|-------|-------------|
+| Business Completeness | 25% | 4.0 | All core workflows built and connected — do modules compose? Can a user accomplish their full goal without dead ends or workarounds? |
+| Customer Journey Quality | 25% | 4.0 | Every user-facing touchpoint is complete, professional, and self-sufficient |
+| Automation Depth | 25% | 4.0 | How much does the system handle automatically vs. requiring manual steps? |
+| Feedback Compression | 25% | 4.0 | Every action acknowledged; every async operation surfaces its outcome; cross-user state changes propagate in real-time |
 
-**Quality gates:** Ship (≥3.5), Polish (2.5-3.5), Fix (<2.5)
+**Quality gates:** Ship (≥4.0, all dimensions ≥ floor), Polish (3.0–4.0), Fix (<3.0 or any dimension below floor)
 
 ### Taste Gap Format
 
